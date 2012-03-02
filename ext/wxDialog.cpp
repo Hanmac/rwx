@@ -11,17 +11,15 @@ VALUE rb_cWXDialog;
 
 #define _self wrap<wxDialog*>(self)
 
-RubyDialog::RubyDialog(VALUE klass)
-: RubyToplevel::RubyToplevel(klass)
-{}
-
 namespace RubyWX {
 namespace Dialog {
 
 VALUE _alloc(VALUE self)
 {
-	return wrap(new RubyDialog(self));
+	return wrap(new wxDialog,self);
 }
+macro_attr(EscapeId,int)
+
 
 }
 }

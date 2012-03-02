@@ -8,23 +8,33 @@
 #ifndef WXIMAGE_HPP_
 #define WXIMAGE_HPP_
 
-
-#include "main.hpp"
+#include "wxSize.hpp"
 
 extern VALUE rb_cWXImage;
 void Init_WXImage(VALUE rb_mWX);
 
 
 template <>
-inline VALUE wrap< wxImage >(wxImage *color )
+inline VALUE wrap< wxImage >(wxImage *image )
 {
-	return Data_Wrap_Struct(rb_cWXImage, NULL, free, color);
+	return Data_Wrap_Struct(rb_cWXImage, NULL, free, image);
 }
 
 template <>
-inline wxImage* wrap< wxImage* >(const VALUE &vcolor)
+inline wxImage* wrap< wxImage* >(const VALUE &vimage)
 {
-	return unwrapPtr<wxImage>(vcolor, rb_cWXImage);
+	if(rb_obj_is_kind_of(vimage,rb_cWXImage))
+		return unwrapPtr<wxImage>(vimage, rb_cWXImage);
+	if(is_wrapable<wxSize>(vimage))
+		return new wxImage(wrap<wxSize>(vimage));
+	return unwrapPtr<wxImage>(rb_class_new_instance(1,const_cast<VALUE*>(&vimage),rb_cWXImage), rb_cWXImage);
+}
+
+
+template <>
+inline wxImage wrap< wxImage >(const VALUE &vimage)
+{
+	return *wrap<wxImage*>(vimage);
 }
 
 #endif /* WXIMAGE_HPP_ */

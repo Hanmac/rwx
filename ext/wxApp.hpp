@@ -23,6 +23,10 @@ public:
     virtual int OnExit();
 
     VALUE mRuby;
+protected:
+#if wxUSE_INTL
+    wxLocale *mLocale;  // locale we'll be using
+#endif
 };
 
 

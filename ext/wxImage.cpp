@@ -17,7 +17,6 @@
 
 VALUE rb_cWXImage;
 
-
 namespace RubyWX {
 namespace Image {
 
@@ -30,51 +29,53 @@ VALUE _load(int argc,VALUE *argv,VALUE self)
 
 	bool result;
 
-//	wxFileName dir(wxPathOnly(wrap<wxString>(name)));
-//	dir.MakeAbsolute(wxGetCwd());
-//
-//	wxFileName file(wrap<wxString>(name));
-//	file.MakeAbsolute(wxGetCwd());
-//
-//	if(dir.Exists())
-//	{
-//		if(file.Exists()){
-//			if(!file.IsFileReadable())
-//				err = EACCES;
-//		}else
-//			err = ENOENT;
-//	}else
-//		err = ENOENT;
-//
-//	if(err)
-//	{
-//		rb_syserr_fail(err,wrap< char* >(name));
-//		return Qfalse;
-//	}
-//
-//	if(NIL_P(nr))
-//		nr = INT2NUM(-1);
-//
-//	if(NIL_P(mime)){
-//		result = _self->LoadFile(file.GetFullPath());
-//	}else if(SYMBOL_P(mime) || FIXNUM_P(mime)){
-//		result = _self->LoadFile(file.GetFullPath(),wrap<wxBitmapType>(mime),NUM2INT(nr));
-//	}else
-//		result = _self->LoadFile(file.GetFullPath(),wrap<wxString>(mime),NUM2INT(nr));
-
-
 	if(NIL_P(nr))
 		nr = INT2NUM(-1);
 
-	RubyInputStream st(name);
+#if wxUSE_STREAMS
+	if(!rb_respond_to(name,rb_intern("read")))
+	{
+#endif
+		wxFileName dir(wxPathOnly(wrap<wxString>(name)));
+		dir.MakeAbsolute(wxGetCwd());
 
-	if(NIL_P(mime)){
-		result = _self->LoadFile(st);
-	}else if(SYMBOL_P(mime) || FIXNUM_P(mime)){
+		wxFileName file(wrap<wxString>(name));
+		file.MakeAbsolute(wxGetCwd());
+
+		if(dir.Exists())
+		{
+			if(file.Exists()){
+				if(!file.IsFileReadable())
+					err = EACCES;
+			}else
+				err = ENOENT;
+		}else
+			err = ENOENT;
+
+		if(err)
+		{
+			rb_syserr_fail(err,wrap< char* >(name));
+			return Qfalse;
+		}
+
+		if(NIL_P(mime)){
+			result = _self->LoadFile(file.GetFullPath());
+		}else if(SYMBOL_P(mime) || FIXNUM_P(mime)){
+			result = _self->LoadFile(file.GetFullPath(),wrap<wxBitmapType>(mime),NUM2INT(nr));
+		}else
+			result = _self->LoadFile(file.GetFullPath(),wrap<wxString>(mime),NUM2INT(nr));
+#if wxUSE_STREAMS
+	}else{
+		RubyInputStream st(name);
+
+		if(NIL_P(mime)){
+			result = _self->LoadFile(st);
+		}else if(SYMBOL_P(mime) || FIXNUM_P(mime)){
 			result = _self->LoadFile(st,wrap<wxBitmapType>(mime),NUM2INT(nr));
-	}else
-		result = _self->LoadFile(st,wrap<wxString>(mime),NUM2INT(nr));
-
+		}else
+			result = _self->LoadFile(st,wrap<wxString>(mime),NUM2INT(nr));
+	}
+#endif
 	return wrap(result);
 }
 

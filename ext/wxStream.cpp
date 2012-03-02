@@ -6,19 +6,20 @@
  */
 #include "wxStream.hpp"
 
-RubyBaseStream::RubyBaseStream(VALUE obj) : mRuby(obj) {}
-
-wxFileOffset RubyBaseStream::OnSysSeek(wxFileOffset seek, wxSeekMode mode)
+wxFileOffset RubyInputStream::OnSysSeek(wxFileOffset seek, wxSeekMode mode)
 {
 	return NUM2INT(rb_funcall(mRuby,rb_intern("seek"),2,INT2NUM(seek),INT2NUM(mode)));
 }
-wxFileOffset RubyBaseStream::OnSysTell() const
+
+wxFileOffset RubyInputStream::OnSysTell() const
 {
 	return NUM2INT(rb_funcall(mRuby,rb_intern("tell"),0));
 }
 
-
-RubyInputStream::RubyInputStream(VALUE obj) : RubyBaseStream(obj) {}
+bool RubyInputStream::IsSeekable() const
+{
+	return rb_respond_to(mRuby,rb_intern("seek"));
+}
 
 bool RubyInputStream::Eof() const
 {
@@ -30,23 +31,10 @@ bool RubyInputStream::CanRead() const
 	return !Eof() && !RTEST(rb_funcall(mRuby,rb_intern("closed?"),0));
 }
 
-
 size_t RubyInputStream::OnSysRead(void *buffer, size_t size)
 {
-	//std::cout << "read1" << std::endl;
-	buffer = wrap<char*>(rb_funcall(mRuby,rb_intern("read"),1,INT2NUM(size)));
-	//std::cout << "read2" << std::endl;
-	//return size;
-	return strlen((char*)buffer);
+	VALUE str = rb_funcall(mRuby,rb_intern("read"),1,INT2NUM(size));
+	size_t s = RSTRING_LEN(str);
+	memcpy(buffer, RSTRING_PTR(str), s);
+	return s;
 }
-
-
-wxFileOffset RubyInputStream::SeekI(wxFileOffset pos, wxSeekMode mode)
-{
-	return RubyBaseStream::OnSysSeek(pos, mode);
-}
-wxFileOffset RubyInputStream::TellI() const
-{
-	return RubyBaseStream::OnSysTell();
-}
-

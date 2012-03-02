@@ -14,18 +14,6 @@ extern VALUE rb_cWXDialog;
 
 void Init_WXDialog(VALUE rb_mWX);
 
-class RubyDialog : public wxDialog, public RubyToplevel {
-public:
-	RubyDialog(VALUE klass);
-
-};
-
-
-template <>
-inline VALUE wrap< RubyDialog >(RubyDialog *frame )
-{
-	return frame->mRuby;
-}
 
 template <>
 inline VALUE wrap< wxDialog >(wxDialog* window)
@@ -33,11 +21,7 @@ inline VALUE wrap< wxDialog >(wxDialog* window)
 	if(window==NULL)
 		return Qnil;
 
-	RubyDialog *frame = reinterpret_cast<RubyDialog*>(window);
-	if(frame)
-		return wrap(frame);
-
-	return Qnil;
+	return wrap(window,rb_cWXDialog);
 }
 
 

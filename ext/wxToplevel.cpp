@@ -11,9 +11,6 @@ VALUE rb_cWXTopLevel;
 
 #define _self wrap<wxTopLevelWindow*>(self)
 
-RubyToplevel::RubyToplevel(VALUE klass) : RubyWindow::RubyWindow(klass)
-{}
-
 namespace RubyWX {
 namespace TopLevel {
 
@@ -25,7 +22,7 @@ macro_attr(TmpDefaultItem,wxWindow*)
 
 VALUE _alloc(VALUE self)
 {
-	return wrap(new RubyToplevel(self));
+	return wrap(new wxTopLevelWindow,self);
 }
 
 }

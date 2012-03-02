@@ -11,7 +11,9 @@
 
 #define _self wrap<wxEvtHandler*>(self)
 
-VALUE rb_cWXEvtHandler;
+VALUE rb_mWXEvtHandler;
+
+std::map<VALUE,wxEvtHandler*> evthandlerholder;
 
 wxEventType unwrapEventType(VALUE type)
 {
@@ -27,32 +29,17 @@ wxEventType unwrapEventType(VALUE type)
 	return wxEVT_NULL;
 }
 
-class RubyFunctor
-#ifndef wxHAS_EVENT_BIND
- : public wxEvtHandler
-#endif
+void RubyFunctor::operator()( wxEvent & event )
 {
-public:
-	RubyFunctor(VALUE obj) : mValue(obj){
-	}
-	void call( wxEvent & event )
-	{
-		event.Skip(RTEST(rb_funcall(mValue,rb_intern("call"),1,wrap(event.Clone()))));
-	}
-	void operator()( wxEvent & event )
-	{
-		call(event);
-	}
-
-private:
-	VALUE mValue;
-};
+	event.Skip(RTEST(rb_funcall(mValue,rb_intern("call"),1,wrap(event.Clone()))));
+}
+void RubyFunctor::operator()( wxCommandEvent & event )
+{
+	event.Skip(RTEST(rb_funcall(mValue,rb_intern("call"),1,wrap(event.Clone()))));
+}
 
 namespace RubyWX {
 namespace EvtHandler {
-VALUE _alloc(VALUE self) {
-	return wrap(new wxEvtHandler);
-}
 
 VALUE _bind(int argc,VALUE *argv,VALUE self)
 {
@@ -67,7 +54,7 @@ VALUE _bind(int argc,VALUE *argv,VALUE self)
 #ifdef wxHAS_EVENT_BIND
 	_self->Bind(wxEventTypeTag<wxEvent>(unwrapEventType(type)),RubyFunctor(proc),wxid,wxlast);
 #else
-	_self->Connect(wxid,wxlast,unwrapEventType(type),(wxObjectEventFunction)&RubyFunctor::call,NULL,new RubyFunctor(proc));
+	_self->Connect(wxid,wxlast,unwrapEventType(type),(wxObjectEventFunction)&RubyFunctor::operator(),NULL,new RubyFunctor(proc));
 #endif
 	return self;
 }
@@ -94,11 +81,10 @@ VALUE _fire(int argc,VALUE *argv,VALUE self)
 void Init_WXEvtHandler(VALUE rb_mWX)
 {
 	using namespace RubyWX::EvtHandler;
-	rb_cWXEvtHandler = rb_define_class_under(rb_mWX,"EvtHandler",rb_cObject);
-	rb_define_alloc_func(rb_cWXEvtHandler,_alloc);
+	rb_mWXEvtHandler = rb_define_module_under(rb_mWX,"EvtHandler");
 
-	rb_define_method(rb_cWXEvtHandler,"bind",RUBY_METHOD_FUNC(_bind),-1);
-	rb_define_method(rb_cWXEvtHandler,"call",RUBY_METHOD_FUNC(_fire),-1);
+	rb_define_method(rb_mWXEvtHandler,"bind",RUBY_METHOD_FUNC(_bind),-1);
+	rb_define_method(rb_mWXEvtHandler,"call",RUBY_METHOD_FUNC(_fire),-1);
 }
 
 

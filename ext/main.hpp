@@ -22,6 +22,12 @@ template <typename T>
 VALUE wrap(T *arg);
 
 template <typename T>
+VALUE wrap(T *arg,VALUE klass)
+{
+	return Data_Wrap_Struct(klass, 0, 0, arg);
+}
+
+template <typename T>
 T wrap(const VALUE &arg);
 
 
@@ -46,13 +52,24 @@ inline VALUE wrap< bool >(const bool &st )
 	return st ? Qtrue : Qfalse;
 }
 
+template <>
+inline int wrap< int >(const VALUE &val )
+{
+	return NUM2INT(val);
+}
+
+template <>
+inline VALUE wrap< int >(const int &st )
+{
+	return INT2NUM(st);
+}
 
 
 template <>
 inline VALUE wrap< wxString >(const wxString &st )
 {
 #ifdef HAVE_RUBY_ENCODING_H
-	return rb_enc_str_new(st.c_str(),st.capacity(),rb_utf8_encoding());
+	return rb_enc_str_new(st.c_str(),strlen(st.c_str()),rb_utf8_encoding());
 #else
 	return rb_str_new2(st.c_str());
 #endif
@@ -83,7 +100,31 @@ inline wxString wrap< wxString >(const VALUE &val )
 	else
 		return wxString(wrap< char* >(val));
 }
+template <>
+inline VALUE wrap< wxArrayString >(const wxArrayString &st )
+{
+	VALUE ary = rb_ary_new();
+	for(wxArrayString::const_iterator it = st.begin(); it != st.end(); ++it)
+		rb_ary_push(ary,wrap(*it));
+	return ary;
+}
 
+template <>
+inline wxArrayString wrap< wxArrayString >(const VALUE &val )
+{
+	wxArrayString arry;
+	if(NIL_P(val))
+		return arry;
+	else if(rb_respond_to(val,rb_intern("each")))	{
+		VALUE dp = rb_funcall(val,rb_intern("to_a"),0);
+		size_t length = RARRAY_LEN(dp);
+		for(size_t i = 0; i < length; ++i)
+		arry.Add(wrap<wxString>(RARRAY_PTR(dp)[i]));
+	}else{
+		arry.Add(wrap<wxString>(val));
+	}
+	return arry;
+}
 
 
 #define macro_attr(attr,type) \

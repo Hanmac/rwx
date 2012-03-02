@@ -70,5 +70,9 @@ inline wxColor* wrap< wxColor* >(const VALUE &vcolor)
 		return unwrapPtr<wxColor>(vcolor, rb_cWXColor);
 	}
 }
-
+template <>
+inline wxColor wrap< wxColor >(const VALUE &vcolor)
+{
+	return *wrap<wxColor*>(vcolor);
+}
 #endif /* WXCOLOR_HPP_ */

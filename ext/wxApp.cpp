@@ -18,26 +18,41 @@ RubyApp::RubyApp(VALUE klass)
 }
 bool RubyApp::OnInit()
 {
-  wxApp::OnInit();
-  ruby_app_inited = true;
-  return RTEST(rb_funcall(mRuby, rb_intern("on_init"), 0));
+	wxApp::OnInit();
+
+#if wxUSE_INTL
+	wxLocale::CreateLanguagesDB();
+	mLocale = new wxLocale(wxLANGUAGE_DEFAULT);
+#if defined(__WXGTK__) || defined(__WXGTK20__)
+        // add locale search paths
+        //mLocale->AddCatalogLookupPathPrefix(wxT("/usr"));
+        //mLocale->AddCatalogLookupPathPrefix(wxT("/usr/local"));
+#endif
+	mLocale->AddCatalog("wxstd");
+#ifdef __LINUX__
+	mLocale->AddCatalog("fileutils");
+#endif
+#endif
+
+	ruby_app_inited = true;
+	return RTEST(rb_funcall(mRuby, rb_intern("on_init"), 0));
 }
 
 
 int RubyApp::OnRun()
 {
-  wxApp::OnRun();
-  rb_funcall(mRuby, rb_intern("on_run"), 0);
-  return 0;
+	wxApp::OnRun();
+	rb_funcall(mRuby, rb_intern("on_run"), 0);
+	return 0;
 }
 
 
 int RubyApp::OnExit()
 {
-  wxApp::OnExit();
-  ruby_app_inited = false;
-  rb_funcall(mRuby, rb_intern("on_exit"), 0);
-  return 0;
+	wxApp::OnExit();
+	ruby_app_inited = false;
+	rb_funcall(mRuby, rb_intern("on_exit"), 0);
+	return 0;
 }
 
 

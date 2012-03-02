@@ -13,10 +13,6 @@
 extern VALUE rb_cWXTopLevel;
 void Init_WXTopLevel(VALUE rb_mWX);
 
-class RubyToplevel : public wxTopLevelWindow, public RubyWindow {
-public:
-	RubyToplevel(VALUE klass);
-};
 
 #include "wxFrame.hpp"
 #include "wxDialog.hpp"
@@ -27,15 +23,15 @@ inline VALUE wrap< wxTopLevelWindow >(wxTopLevelWindow* window)
 	if(window==NULL)
 		return Qnil;
 
-	wxFrame *frame = reinterpret_cast<wxFrame*>(window);
+	wxFrame *frame = dynamic_cast<wxFrame*>(window);
 	if(frame)
 		return wrap(frame);
 
-	wxDialog *dialog = reinterpret_cast<wxDialog*>(window);
+	wxDialog *dialog = dynamic_cast<wxDialog*>(window);
 		if(dialog)
 			return wrap(dialog);
 
-	return Qnil;
+	return wrap(window,rb_cWXTopLevel);
 }
 
 

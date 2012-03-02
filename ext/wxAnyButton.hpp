@@ -10,10 +10,4 @@
 
 #include "wxControl.hpp"
 
-class RubyAnyButton : public wxAnyButton, RubyControl {
-public:
-	RubyAnyButton(VALUE klass);
-};
-
-
 #endif /* WXANYBUTTON_HPP_ */

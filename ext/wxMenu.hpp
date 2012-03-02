@@ -19,7 +19,7 @@ template <>
 inline VALUE wrap< wxMenu >(wxMenu *menu )
 {
 	if(menu)
-		return Data_Wrap_Struct(rb_cWXMenu, NULL, free, menu);
+		return Data_Wrap_Struct(rb_cWXMenu, NULL, NULL, menu);
 	return Qnil;
 }
 

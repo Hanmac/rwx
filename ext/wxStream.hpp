@@ -9,49 +9,39 @@
 #define WXSTREAM_HPP_
 
 #include "main.hpp"
+#include <fstream>
 
-class RubyBaseStream : virtual public wxStreamBase{
-public:
-	RubyBaseStream(VALUE obj);
-
-protected:
-	wxFileOffset OnSysSeek(wxFileOffset seek, wxSeekMode mode);
-	wxFileOffset OnSysTell() const;
-
-
-
-	VALUE mRuby;
-};
-
-class RubyInputStream : virtual public wxInputStream, public RubyBaseStream
+class RubyInputStream : public wxInputStream
 {
 public:
-	RubyInputStream(VALUE obj);
+	RubyInputStream(VALUE obj) : mRuby(obj) {}
 
 	bool Eof() const;
 	bool CanRead() const;
+	bool IsSeekable() const;
 
-	bool IsSeekable() const {
-		return true;
-	}
-
-	wxFileOffset SeekI(wxFileOffset pos, wxSeekMode mode = wxFromStart);
-	wxFileOffset TellI() const;
 protected:
 	size_t OnSysRead(void *buffer, size_t size);
-
+	wxFileOffset OnSysSeek(wxFileOffset seek, wxSeekMode mode);
+	wxFileOffset OnSysTell() const;
+private:
+	VALUE mRuby;
 };
-
-class RubyOutputStream :virtual public wxOutputStream, public RubyBaseStream
-{
-public:
-	RubyOutputStream(VALUE obj);
-
-	bool IsSeekable() const {
-		return true;
-	}
-protected:
-	size_t OnSysWrite(const void *buffer, size_t bufsize);
-};
+//
+//class RubyOutputStream :virtual public wxOutputStream
+//{
+//public:
+//	RubyOutputStream(VALUE obj);
+//
+//	bool IsSeekable() const {
+//		return true;
+//	}
+//protected:
+//	size_t OnSysWrite(const void *buffer, size_t bufsize);
+//	wxFileOffset OnSysSeek(wxFileOffset seek, wxSeekMode mode);
+//	wxFileOffset OnSysTell() const;
+//private:
+//	VALUE mRuby;
+//};
 
 #endif /* WXSTREAM_HPP_ */
