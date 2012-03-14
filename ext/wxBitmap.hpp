@@ -10,14 +10,17 @@
 
 #include "wxImage.hpp"
 
+#include <wx/artprov.h>
+
 extern VALUE rb_cWXBitmap;
 void Init_WXBitmap(VALUE rb_mWX);
-
 
 template <>
 inline VALUE wrap< wxBitmap >(wxBitmap *bitmap )
 {
-	return Data_Wrap_Struct(rb_cWXBitmap, NULL, free, bitmap);
+	if(bitmap)
+		return Data_Wrap_Struct(rb_cWXBitmap, NULL, free, bitmap);
+	return Qnil;
 }
 
 template <>
@@ -40,6 +43,23 @@ template <>
 inline wxBitmap wrap< wxBitmap >(const VALUE &vbitmap)
 {
 	return *wrap<wxBitmap*>(vbitmap);
+}
+
+wxBitmap wrapBitmap(const VALUE &vbitmap,wxWindowID id,bool disabled,const wxArtClient &type);
+
+template <>
+inline VALUE wrap< wxIcon >(wxIcon *icon )
+{
+	if(icon == &wxNullIcon)
+		return Qnil;
+	return wrap< wxBitmap >(icon);
+}
+template <>
+inline VALUE wrap< wxIcon >(const wxIcon &icon )
+{
+	if(&icon == &wxNullIcon)
+		return Qnil;
+	return wrap< wxBitmap >(new wxBitmap(icon));
 }
 
 template <>

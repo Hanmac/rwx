@@ -13,20 +13,26 @@
 #include "wxMenu.hpp"
 #include "wxApp.hpp"
 #include "wxWindow.hpp"
+#include "wxEvent.hpp"
 
+#include "wxTimer.hpp"
 extern std::map<VALUE,wxEvtHandler*> evthandlerholder;
+
+void registerEventType(const char *sym, wxEventType type,VALUE klass);
 
 class RubyFunctor
 #ifndef wxHAS_EVENT_BIND
- : public wxEvtHandler
+: public wxEvtHandler
 #endif
 {
 public:
 	RubyFunctor(VALUE obj) : mValue(obj){
 	}
 	void operator()( wxEvent & event );
+//*
 	void operator()( wxCommandEvent & event );
-
+//*/
+	void operator()( wxTimerEvent & event );
 private:
 	VALUE mValue;
 };
@@ -51,14 +57,7 @@ inline VALUE wrap< wxEvtHandler >(wxEvtHandler *handler )
 	if(window)
 		return wrap(window);
 
-	std::map<VALUE,wxEvtHandler*>::iterator it;
-	for(it = evthandlerholder.begin();it != evthandlerholder.end();++it)
-	{
-		if(it->second == handler)
-			return it->first;
-	}
-
-	return Qnil;
+	return getEvtObj(handler,Qnil);
 }
 
 template <>
@@ -70,6 +69,8 @@ inline wxEvtHandler* wrap< wxEvtHandler* >(const VALUE &vhandler)
 		return wrap< wxApp* >(vhandler);
 	if (rb_obj_is_kind_of(vhandler, rb_cWXMenu))
 		return wrap< wxMenu* >(vhandler);
+	if (rb_obj_is_kind_of(vhandler, rb_cWXTimer))
+		return wrap< wxTimer* >(vhandler);
 
 	std::map<VALUE,wxEvtHandler*>::iterator it = evthandlerholder.find(vhandler);
 	if(it != evthandlerholder.end())

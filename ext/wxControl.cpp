@@ -18,7 +18,7 @@ macro_attr(LabelText,wxString)
 
 VALUE _alloc(VALUE self)
 {
-	return wrap(new wxControl(NULL,wxID_ANY),self);
+	return getEvtObj(new wxControl(NULL,wxID_ANY),self);
 }
 
 }
@@ -31,5 +31,7 @@ void Init_WXControl(VALUE rb_mWX)
 	using namespace RubyWX::Control;
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
 	rb_define_alloc_func(rb_cWXControl,_alloc);
+
+	rb_define_attr_method(rb_cWXControl,"label_text",_getLabelText,_setLabelText);
 #endif
 }

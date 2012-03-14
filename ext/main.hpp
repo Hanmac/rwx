@@ -30,7 +30,6 @@ VALUE wrap(T *arg,VALUE klass)
 template <typename T>
 T wrap(const VALUE &arg);
 
-
 template <typename T>
 VALUE wrap(const T &arg){
 	return wrap(new T(arg));
@@ -115,28 +114,68 @@ inline wxArrayString wrap< wxArrayString >(const VALUE &val )
 	wxArrayString arry;
 	if(NIL_P(val))
 		return arry;
-	else if(rb_respond_to(val,rb_intern("each")))	{
+	else if(rb_respond_to(val,rb_intern("to_a")))	{
 		VALUE dp = rb_funcall(val,rb_intern("to_a"),0);
 		size_t length = RARRAY_LEN(dp);
 		for(size_t i = 0; i < length; ++i)
-		arry.Add(wrap<wxString>(RARRAY_PTR(dp)[i]));
+			arry.Add(wrap<wxString>(RARRAY_PTR(dp)[i]));
 	}else{
 		arry.Add(wrap<wxString>(val));
 	}
 	return arry;
 }
 
+template <>
+inline VALUE wrap< wxDateTime >(const wxDateTime &st )
+{
+	return rb_time_nano_new(st.GetTicks(),st.GetMillisecond()*1000);
+}
 
-#define macro_attr(attr,type) \
+template <>
+inline wxDateTime wrap< wxDateTime >(const VALUE &val )
+{
+	wxDateTime result;
+	result.SetToCurrent();
+	result.MakeTimezone(
+		NUM2UINT(rb_funcall(val,rb_intern("gmt_offset"),0)) - 3600,
+		RTEST(rb_funcall(val,rb_intern("dst?"),0))
+	);
+
+	result.Set(
+		NUM2UINT(rb_funcall(val,rb_intern("day"),0)),
+		(wxDateTime::Month)(NUM2UINT(rb_funcall(val,rb_intern("month"),0))-1),
+		NUM2UINT(rb_funcall(val,rb_intern("year"),0)),
+		NUM2UINT(rb_funcall(val,rb_intern("hour"),0)),
+		NUM2UINT(rb_funcall(val,rb_intern("min"),0)),
+		NUM2UINT(rb_funcall(val,rb_intern("sec"),0)),
+		NUM2UINT(rb_funcall(val,rb_intern("usec"),0)) / 1000
+	);
+	return result;
+}
+
+#define macro_attr_with_func(attr,get,set) \
 VALUE _get##attr(VALUE self)\
-{return wrap(_self->Get##attr());}\
+{return get(_self->Get##attr());}\
 \
 VALUE _set##attr(VALUE self,VALUE other)\
 {\
-	_self->Set##attr(wrap<type>(other));\
+	_self->Set##attr(set(other));\
 	return other;\
 }
 
+#define macro_attr_pre_with_func(attr,pre,get,set) \
+VALUE _get##attr(VALUE self)\
+{return get(_self->pre().Get##attr());}\
+\
+VALUE _set##attr(VALUE self,VALUE other)\
+{\
+	_self->pre().Set##attr(set(other));\
+	return other;\
+}
+
+
+#define macro_attr(attr,type) macro_attr_with_func(attr,wrap,wrap<type>)
+#define macro_attr_pre(attr,pre,type) macro_attr_pre_with_func(attr,pre,wrap,wrap<type>)
 
 template <typename T>
 T* unwrapPtr(const VALUE &obj,const VALUE &klass)
@@ -165,6 +204,7 @@ inline void rb_define_attr_method(VALUE klass,std::string name,VALUE(get)(VALUE)
 }
 
 
+VALUE getEvtObj(wxEvtHandler *handler,VALUE klass);
 
 
 #define singlefunc(func) \

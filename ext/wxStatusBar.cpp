@@ -16,11 +16,11 @@ VALUE rb_cWXStatusBar;
 
 namespace RubyWX {
 namespace StatusBar {
-//
-//VALUE _alloc(VALUE self)
-//{
-//	return wrap(new wxStatusBar(NULL,wxID_ANY),self);
-//}
+
+VALUE _alloc(VALUE self)
+{
+	return getEvtObj(new wxStatusBar,self);
+}
 
 }
 }
@@ -30,7 +30,7 @@ void Init_WXStatusBar(VALUE rb_mWX)
 #if wxUSE_STATUSBAR
 	using namespace RubyWX::StatusBar;
 	rb_cWXStatusBar = rb_define_class_under(rb_mWX,"StatusBar",rb_cWXControl);
-	rb_undef_alloc_func(rb_cWXStatusBar);
+	rb_define_alloc_func(rb_cWXStatusBar,_alloc);
 #endif
 //	rb_define_method(rb_cWXMenu,"each",RUBY_METHOD_FUNC(_each),0);
 

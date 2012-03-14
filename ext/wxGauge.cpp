@@ -21,15 +21,14 @@ macro_attr(Value,int)
 
 VALUE _alloc(VALUE self)
 {
-	return wrap(new wxGauge(),self);
+	return getEvtObj(new wxGauge(),self);
 }
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,id;
-	rb_scan_args(argc, argv, "11",&parent,&id);
-	int i = NIL_P(id) ? wxID_ANY : NUM2INT(id);
-	_self->Create(wrap<wxWindow*>(parent),i,0);
+	VALUE parent,hash;
+	rb_scan_args(argc, argv, "11",&parent,&hash);
+	_self->Create(wrap<wxWindow*>(parent),wxID_ANY,0);
 	rb_call_super(argc,argv);
 	return self;
 }

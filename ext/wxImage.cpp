@@ -13,6 +13,8 @@
 
 #include <wx/filename.h>
 
+#if wxUSE_IMAGE
+
 #define _self wrap<wxImage*>(self)
 
 VALUE rb_cWXImage;
@@ -245,12 +247,25 @@ VALUE _save(int argc,VALUE *argv,VALUE self)
 	return wrap(result);
 }
 
+
+VALUE _to_image(VALUE self)
+{
+	return self;
+}
+VALUE _to_bitmap(VALUE self)
+{
+	return wrap(wrap<wxBitmap*>(self));
+}
+
 }
 }
 
+#endif
 
 void Init_WXImage(VALUE rb_mWX)
 {
+#if wxUSE_IMAGE
+
 	wxInitAllImageHandlers();
 
 	using namespace RubyWX::Image;
@@ -265,6 +280,10 @@ void Init_WXImage(VALUE rb_mWX)
 	rb_define_method(rb_cWXImage,"height",RUBY_METHOD_FUNC(_getHeight),0);
 	rb_define_method(rb_cWXImage,"width",RUBY_METHOD_FUNC(_getWidth),0);
 
+	rb_define_method(rb_cWXImage,"to_image",RUBY_METHOD_FUNC(_to_image),0);
+	rb_define_method(rb_cWXImage,"to_bitmap",RUBY_METHOD_FUNC(_to_bitmap),0);
+
+
 	rb_define_method(rb_cWXImage,"[]",RUBY_METHOD_FUNC(_get),-1);
 	rb_define_method(rb_cWXImage,"[]=",RUBY_METHOD_FUNC(_set),-1);
 
@@ -272,6 +291,9 @@ void Init_WXImage(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXImage,"load",RUBY_METHOD_FUNC(_load),-1);
 	rb_define_method(rb_cWXImage,"save",RUBY_METHOD_FUNC(_save),-1);
+
+#endif
+
 }
 
 

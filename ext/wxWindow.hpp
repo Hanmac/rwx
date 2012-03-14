@@ -18,6 +18,10 @@
 extern VALUE rb_cWXWindow;
 void Init_WXWindow(VALUE rb_mWX);
 
+VALUE wrapID(wxWindowID val);
+wxWindowID unwrapID(VALUE val);
+void registerID(const char *name,wxWindowID id);
+
 template <>
 inline VALUE wrap< wxWindow >(wxWindow* window)
 {
@@ -40,7 +44,7 @@ inline VALUE wrap< wxWindow >(wxWindow* window)
 //	VALUE result = wrap(window,rb_cWXWindow);
 //	windowholder.insert(std::make_pair(window,result));
 //	return result;
-	return wrap(window,rb_cWXWindow);
+	return getEvtObj(window,rb_cWXWindow);
 }
 
 
@@ -50,4 +54,20 @@ inline wxWindow* wrap< wxWindow* >(const VALUE &vwindow)
 	return unwrapPtr<wxWindow>(vwindow, rb_cWXWindow);
 }
 
+
+#if wxUSE_TOOLTIPS
+#include <wx/tooltip.h>
+
+template <>
+inline VALUE wrap< wxToolTip >(wxToolTip* window)
+{
+	return wrap(window->GetTip());
+}
+
+template <>
+inline wxToolTip* wrap< wxToolTip* >(const VALUE &vwindow)
+{
+	return new wxToolTip(wrap<wxString>(vwindow));
+}
+#endif
 #endif /* WXWINDOW_HPP_ */

@@ -20,7 +20,7 @@ namespace MenuBar {
 VALUE _alloc(VALUE self)
 {
 	if(ruby_app_inited)
-		return wrap(new wxMenuBar,self);
+		return getEvtObj(new wxMenuBar,self);
 	else
 		rb_raise(rb_eArgError,"%s is not running.",rb_class2name(rb_cWXApp));
 	return Qnil;

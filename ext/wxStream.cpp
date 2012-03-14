@@ -5,7 +5,7 @@
  *      Author: hanmac
  */
 #include "wxStream.hpp"
-
+#if wxUSE_STREAMS
 wxFileOffset RubyInputStream::OnSysSeek(wxFileOffset seek, wxSeekMode mode)
 {
 	return NUM2INT(rb_funcall(mRuby,rb_intern("seek"),2,INT2NUM(seek),INT2NUM(mode)));
@@ -38,3 +38,4 @@ size_t RubyInputStream::OnSysRead(void *buffer, size_t size)
 	memcpy(buffer, RSTRING_PTR(str), s);
 	return s;
 }
+#endif

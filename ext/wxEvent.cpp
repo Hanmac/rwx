@@ -8,6 +8,7 @@
 
 
 #include "wxEvent.hpp"
+#include "wxWindow.hpp"
 
 #define _self wrap<wxEvent*>(self)
 
@@ -17,7 +18,7 @@ VALUE rb_cWXEvent;
 namespace RubyWX {
 namespace Event {
 
-macro_attr(Id,int)
+macro_attr_with_func(Id,wrapID,unwrapID)
 
 }
 }

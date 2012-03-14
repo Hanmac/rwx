@@ -5,8 +5,10 @@
  *      Author: hanmac
  */
 
+#include "wxWindow.hpp"
 #include "wxMenu.hpp"
 #include "wxMenuItem.hpp"
+#include "wxBitmap.hpp"
 
 #define _self wrap<wxMenuItem*>(self)
 
@@ -24,11 +26,20 @@ VALUE _alloc(VALUE self)
 
 macro_attr(Menu,wxMenu*)
 macro_attr(ItemLabel,wxString)
-macro_attr(Id,int)
+macro_attr_with_func(Id,wrapID,unwrapID)
 macro_attr(Kind,wxItemKind)
 macro_attr(SubMenu,wxMenu*)
 
 macro_attr(Help,wxString)
+
+singlereturn(GetBitmap)
+
+VALUE _SetBitmap(VALUE self,VALUE val)
+{
+	_self->SetBitmap(wrapBitmap(val,_self->GetId(),true,wxART_MENU));
+	return val;
+}
+
 }
 }
 
@@ -45,4 +56,6 @@ void Init_WXMenuItem(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXMenuItem,"id",_getId,_setId);
 
 	rb_define_attr_method(rb_cWXMenuItem,"help",_getHelp,_setHelp);
+
+	rb_define_attr_method(rb_cWXMenuItem,"bitmap",_GetBitmap,_SetBitmap);
 }

@@ -9,8 +9,7 @@
 #define WXSTREAM_HPP_
 
 #include "main.hpp"
-#include <fstream>
-
+#if wxUSE_STREAMS
 class RubyInputStream : public wxInputStream
 {
 public:
@@ -43,5 +42,5 @@ private:
 //private:
 //	VALUE mRuby;
 //};
-
+#endif
 #endif /* WXSTREAM_HPP_ */

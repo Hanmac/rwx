@@ -8,12 +8,18 @@
 #ifndef WXDIALOG_HPP_
 #define WXDIALOG_HPP_
 
-#include "wxToplevel.hpp"
+#include "main.hpp"
 
 extern VALUE rb_cWXDialog;
 
 void Init_WXDialog(VALUE rb_mWX);
 
+#include "wxColorDialog.hpp"
+#include "wxFontDialog.hpp"
+
+#include "wxFileDialog.hpp"
+#include "wxDirDialog.hpp"
+#include "wxProgressDialog.hpp"
 
 template <>
 inline VALUE wrap< wxDialog >(wxDialog* window)
@@ -23,6 +29,7 @@ inline VALUE wrap< wxDialog >(wxDialog* window)
 
 	return wrap(window,rb_cWXDialog);
 }
+
 
 
 template <>

@@ -32,7 +32,7 @@ singlereturn(PrependSeparator)
 VALUE _alloc(VALUE self)
 {
 	if(ruby_app_inited)
-		return wrap(new wxMenu,self);
+		return getEvtObj(new wxMenu,self);
 	else
 		rb_raise(rb_eArgError,"%s is not running.",rb_class2name(rb_cWXApp));
 	return Qnil;
@@ -72,9 +72,10 @@ VALUE _appendNormalItem(int argc,VALUE *argv,VALUE self)
 		return wrap(_self->AppendSubMenu(m,wrap<wxString>(text),wrap<wxString>(help)));
 	}else{
 		rb_scan_args(argc, argv, "12",&id,&text,&help);
-		if(!wxIsStockID(NUM2INT(id)) && NIL_P(text))
-			rb_raise(rb_eArgError,"id %d needs an text",NUM2INT(id));
-		wxMenuItem *item = _self->Append(NUM2INT(id),wrap<wxString>(text),wrap<wxString>(help));
+		wxWindowID wid = unwrapID(id);
+		if(!wxIsStockID(wid) && NIL_P(text))
+			rb_raise(rb_eArgError,"id %d needs an text",wid);
+		wxMenuItem *item = _self->Append(wid,wrap<wxString>(text),wrap<wxString>(help));
 		if(rb_block_given_p()){
 			VALUE proc = rb_block_proc();
 #ifdef wxHAS_EVENT_BIND
@@ -92,21 +93,22 @@ VALUE _appendCheckItem(int argc,VALUE *argv,VALUE self)
 {
 	VALUE id,text,help;
 	rb_scan_args(argc, argv, "12",&id,&text,&help);
-	return wrap(_self->AppendCheckItem(NUM2INT(id),wrap<wxString>(text),wrap<wxString>(help)));
+	return wrap(_self->AppendCheckItem(unwrapID(id),wrap<wxString>(text),wrap<wxString>(help)));
 }
 
 VALUE _appendRadioItem(int argc,VALUE *argv,VALUE self)
 {
 	VALUE id,text,help;
 	rb_scan_args(argc, argv, "12",&id,&text,&help);
-	return wrap(_self->AppendRadioItem(NUM2INT(id),wrap<wxString>(text),wrap<wxString>(help)));
+	return wrap(_self->AppendRadioItem(unwrapID(id),wrap<wxString>(text),wrap<wxString>(help)));
 }
 
 VALUE _appendShift(VALUE self,VALUE val)
 {
-	if(!wxIsStockID(NUM2INT(val)))
-		rb_raise(rb_eArgError,"id %d cant be fast added",NUM2INT(val));
-	_self->Append(NUM2INT(val));
+	wxWindowID id = unwrapID(val);
+	if(!wxIsStockID(id))
+		rb_raise(rb_eArgError,"id \"%s\" cant be fast added",wrap<char*>(val));
+	_self->Append(id);
 	return self;
 }
 
@@ -138,4 +140,7 @@ void Init_WXMenu(VALUE rb_mWX)
 	rb_define_method(rb_cWXMenu,"<<",RUBY_METHOD_FUNC(_appendShift),1);
 
 	rb_define_method(rb_cWXMenu,"menubar",RUBY_METHOD_FUNC(_GetMenuBar),0);
+
+	registerEventType("menu_selected",wxEVT_COMMAND_MENU_SELECTED,rb_cWXEvent);
+
 }

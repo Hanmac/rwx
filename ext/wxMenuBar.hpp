@@ -17,9 +17,7 @@ void Init_WXMenuBar(VALUE rb_mWX);
 template <>
 inline VALUE wrap< wxMenuBar >(wxMenuBar* window)
 {
-	if(window==NULL)
-		return Qnil;
-	return wrap(window,rb_cWXMenuBar);
+	return getEvtObj(window,rb_cWXMenuBar);
 }
 
 

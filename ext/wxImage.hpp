@@ -13,7 +13,7 @@
 extern VALUE rb_cWXImage;
 void Init_WXImage(VALUE rb_mWX);
 
-
+#if wxUSE_IMAGE
 template <>
 inline VALUE wrap< wxImage >(wxImage *image )
 {
@@ -36,5 +36,5 @@ inline wxImage wrap< wxImage >(const VALUE &vimage)
 {
 	return *wrap<wxImage*>(vimage);
 }
-
+#endif
 #endif /* WXIMAGE_HPP_ */

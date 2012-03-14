@@ -15,7 +15,7 @@ namespace Frame {
 
 VALUE _alloc(VALUE self)
 {
-	return wrap(new wxFrame(NULL,wxID_ANY,wxEmptyString),self);
+	return getEvtObj(new wxFrame(NULL,wxID_ANY,wxEmptyString),self);
 }
 
 #if wxUSE_MENUS

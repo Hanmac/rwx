@@ -18,9 +18,6 @@ VALUE rb_cWXToolBarTool;
 namespace RubyWX {
 namespace ToolBarTool {
 
-macro_attr(NormalBitmap,wxBitmap)
-macro_attr(DisabledBitmap,wxBitmap)
-
 macro_attr(Label,wxString)
 macro_attr(ShortHelp,wxString)
 macro_attr(LongHelp,wxString)
@@ -31,6 +28,20 @@ macro_attr(DropdownMenu,wxMenu*)
 
 singlereturn(GetToolBar)
 singlereturn(GetBitmap)
+singlereturn(GetNormalBitmap)
+singlereturn(GetDisabledBitmap)
+
+VALUE _SetNormalBitmap(VALUE self,VALUE val)
+{
+	_self->SetNormalBitmap(wrapBitmap(val,_self->GetId(),false,wxART_TOOLBAR));
+	return val;
+}
+
+VALUE _SetDisabledBitmap(VALUE self,VALUE val)
+{
+	_self->SetDisabledBitmap(wrapBitmap(val,_self->GetId(),true,wxART_TOOLBAR));
+	return val;
+}
 
 
 VALUE _getControl(VALUE self)
@@ -59,4 +70,18 @@ void Init_WXToolBarTool(VALUE rb_mWX)
 	rb_define_alloc_func(rb_cWXToolBarTool,_alloc);
 
 	rb_define_method(rb_cWXToolBarTool,"control",RUBY_METHOD_FUNC(_getControl),0);
+
+	rb_define_method(rb_cWXToolBarTool,"bitmap",RUBY_METHOD_FUNC(_GetBitmap),0);
+
+	rb_define_attr_method(rb_cWXToolBarTool,"normal_bitmap",_GetNormalBitmap,_SetNormalBitmap);
+	rb_define_attr_method(rb_cWXToolBarTool,"disabled_bitmap",_GetDisabledBitmap,_SetDisabledBitmap);
+
+	rb_define_attr_method(rb_cWXToolBarTool,"label",_getLabel,_setLabel);
+	rb_define_attr_method(rb_cWXToolBarTool,"short_help",_getShortHelp,_setShortHelp);
+	rb_define_attr_method(rb_cWXToolBarTool,"long_help",_getLongHelp,_setLongHelp);
+
+#if wxUSE_MENUS
+	rb_define_attr_method(rb_cWXToolBarTool,"dropdown_menu",_getDropdownMenu,_setDropdownMenu);
+#endif
+
 }

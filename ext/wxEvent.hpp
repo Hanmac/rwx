@@ -8,17 +8,23 @@
 #ifndef WXEVENT_HPP_
 #define WXEVENT_HPP_
 
+#include <map>
 
 #include "main.hpp"
 
 extern VALUE rb_cWXEvent;
 void Init_WXEvent(VALUE rb_mWX);
 
+extern std::map<wxEventType,VALUE> evttypeclassholder;
 
 template <>
-inline VALUE wrap< wxEvent >(wxEvent *color )
+inline VALUE wrap< wxEvent >(wxEvent *event )
 {
-	return Data_Wrap_Struct(rb_cWXEvent, NULL, free, color);
+	VALUE klass = rb_cWXEvent;
+	std::map<wxEventType,VALUE>::iterator it = evttypeclassholder.find(event->GetEventType());
+	if(it != evttypeclassholder.end())
+		klass = it->second;
+	return Data_Wrap_Struct(klass, NULL, free, event);
 }
 
 template <>

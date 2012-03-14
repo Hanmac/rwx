@@ -26,15 +26,14 @@ macro_attr(ToolSeparation,int)
 
 VALUE _alloc(VALUE self)
 {
-	return wrap(new wxToolBar(),self);
+	return getEvtObj(new wxToolBar(),self);
 }
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,id;
-	rb_scan_args(argc, argv, "11",&parent,&id);
-	int i = NIL_P(id) ? wxID_ANY : NUM2INT(id);
-	_self->Create(wrap<wxWindow*>(parent),i);
+	VALUE parent,hash;
+	rb_scan_args(argc, argv, "11",&parent,&hash);
+	_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
 	rb_call_super(argc,argv);
 	return self;
 }
@@ -55,11 +54,11 @@ VALUE _addNormal(int argc,VALUE *argv,VALUE self)
 			rb_yield(vc);
 		c = wrap<wxControl*>(vc);
 	}else {
-		rb_scan_args(argc, argv, "33",&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
-		if(NIL_P(bitmap))
-			rb_raise(rb_eArgError,"need an valid bitmap");
-		tool = _self->AddTool(NUM2INT(id), wrap<wxString>(text),
-				wrap<wxBitmap>(bitmap), wrap<wxBitmap>(bmpDisabled),wxITEM_NORMAL,
+		rb_scan_args(argc, argv, "24",&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
+		wxWindowID wxid = unwrapID(id);
+		tool = _self->AddTool(wxid, wrap<wxString>(text),
+				wrapBitmap(bitmap,wxid,false,wxART_TOOLBAR),
+				wrapBitmap(bmpDisabled,wxid,true,wxART_TOOLBAR),wxITEM_NORMAL,
 				wrap<wxString>(shorthelp), wrap<wxString>(longhelp));
 	}
 	if(c)
@@ -80,12 +79,12 @@ VALUE _addNormal(int argc,VALUE *argv,VALUE self)
 VALUE _addCheck(int argc,VALUE *argv,VALUE self)
 {
 	VALUE id,text,bitmap,bmpDisabled,shorthelp,longhelp;
-	rb_scan_args(argc, argv, "33",&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
-	if(NIL_P(bitmap))
-		rb_raise(rb_eArgError,"need an valid bitmap");
+	rb_scan_args(argc, argv, "24",&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
+	wxWindowID wxid = unwrapID(id);
 
-	wxToolBarToolBase *tool = _self->AddCheckTool(NUM2INT(id), wrap<wxString>(text),
-				wrap<wxBitmap>(bitmap), wrap<wxBitmap>(bmpDisabled),
+	wxToolBarToolBase *tool = _self->AddCheckTool(unwrapID(id), wrap<wxString>(text),
+				wrapBitmap(bitmap,wxid,false,wxART_TOOLBAR),
+				wrapBitmap(bmpDisabled,wxid,true,wxART_TOOLBAR),
 				wrap<wxString>(shorthelp), wrap<wxString>(longhelp));
 
 	if(rb_block_given_p()){
@@ -104,11 +103,11 @@ VALUE _addCheck(int argc,VALUE *argv,VALUE self)
 VALUE _addRadio(int argc,VALUE *argv,VALUE self)
 {
 	VALUE id,text,bitmap,bmpDisabled,shorthelp,longhelp;
-	rb_scan_args(argc, argv, "33",&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
-	if(NIL_P(bitmap))
-		rb_raise(rb_eArgError,"need an valid bitmap");
-	wxToolBarToolBase *tool = _self->AddRadioTool(NUM2INT(id), wrap<wxString>(text),
-			wrap<wxBitmap>(bitmap), wrap<wxBitmap>(bmpDisabled),
+	rb_scan_args(argc, argv, "24",&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
+	wxWindowID wxid = unwrapID(id);
+	wxToolBarToolBase *tool = _self->AddRadioTool(unwrapID(id), wrap<wxString>(text),
+			wrapBitmap(bitmap,wxid,false,wxART_TOOLBAR),
+			wrapBitmap(bmpDisabled,wxid,true,wxART_TOOLBAR),
 			wrap<wxString>(shorthelp), wrap<wxString>(longhelp));
 
 	if(rb_block_given_p()){

@@ -14,7 +14,7 @@ bool ruby_app_inited;
 
 RubyApp::RubyApp(VALUE klass)
 {
-	mRuby = Data_Wrap_Struct(klass, 0, 0, this);
+	mRuby = getEvtObj(this,klass);
 }
 bool RubyApp::OnInit()
 {
@@ -23,11 +23,6 @@ bool RubyApp::OnInit()
 #if wxUSE_INTL
 	wxLocale::CreateLanguagesDB();
 	mLocale = new wxLocale(wxLANGUAGE_DEFAULT);
-#if defined(__WXGTK__) || defined(__WXGTK20__)
-        // add locale search paths
-        //mLocale->AddCatalogLookupPathPrefix(wxT("/usr"));
-        //mLocale->AddCatalogLookupPathPrefix(wxT("/usr/local"));
-#endif
 	mLocale->AddCatalog("wxstd");
 #ifdef __LINUX__
 	mLocale->AddCatalog("fileutils");
@@ -41,18 +36,18 @@ bool RubyApp::OnInit()
 
 int RubyApp::OnRun()
 {
-	wxApp::OnRun();
+	int result = wxApp::OnRun();
 	rb_funcall(mRuby, rb_intern("on_run"), 0);
-	return 0;
+	return result;
 }
 
 
 int RubyApp::OnExit()
 {
-	wxApp::OnExit();
+	int result = wxApp::OnExit();
 	ruby_app_inited = false;
 	rb_funcall(mRuby, rb_intern("on_exit"), 0);
-	return 0;
+	return result;
 }
 
 

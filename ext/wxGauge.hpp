@@ -14,16 +14,11 @@ extern VALUE rb_cWXGauge;
 
 void Init_WXGauge(VALUE rb_mWX);
 
-
 template <>
 inline VALUE wrap< wxGauge >(wxGauge* window)
 {
-	if(window==NULL)
-		return Qnil;
-
-	return wrap(window,rb_cWXGauge);
+	return getEvtObj(window,rb_cWXGauge);
 }
-
 
 template <>
 inline wxGauge* wrap< wxGauge* >(const VALUE &vwindow)

@@ -18,10 +18,7 @@ void Init_WXToolBar(VALUE rb_mWX);
 template <>
 inline VALUE wrap< wxToolBar >(wxToolBar* window)
 {
-	if(window==NULL)
-		return Qnil;
-
-	return wrap(window,rb_cWXToolBar);
+	return getEvtObj(window,rb_cWXToolBar);
 }
 
 
