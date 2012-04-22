@@ -17,7 +17,7 @@ void Init_WXImage(VALUE rb_mWX);
 template <>
 inline VALUE wrap< wxImage >(wxImage *image )
 {
-	return Data_Wrap_Struct(rb_cWXImage, NULL, free, image);
+	return Data_Wrap_Struct(rb_cWXImage, NULL, NULL, image);
 }
 
 template <>

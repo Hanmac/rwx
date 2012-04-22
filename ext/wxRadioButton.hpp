@@ -18,7 +18,7 @@ void Init_WXRadioButton(VALUE rb_mWX);
 template <>
 inline VALUE wrap< wxRadioButton >(wxRadioButton* window)
 {
-	return getEvtObj(window,rb_cWXRadioButton);
+	return wrap(window,rb_cWXRadioButton);
 }
 
 

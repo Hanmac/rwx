@@ -19,7 +19,7 @@ void Init_WXDirDialog(VALUE rb_mWX);
 template <>
 inline VALUE wrap< wxDirDialog >(wxDirDialog* window)
 {
-	return getEvtObj(window,rb_cWXDirDialog);
+	return wrap(window,rb_cWXDirDialog);
 }
 
 

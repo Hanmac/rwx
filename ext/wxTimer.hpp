@@ -17,7 +17,7 @@ void Init_WXTimer(VALUE rb_mWX);
 template <>
 inline VALUE wrap< wxTimer >(wxTimer *timer )
 {
-	return getEvtObj(timer,rb_cWXTimer);
+	return wrap(timer,rb_cWXTimer);
 }
 
 template <>

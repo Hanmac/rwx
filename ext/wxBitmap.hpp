@@ -19,7 +19,7 @@ template <>
 inline VALUE wrap< wxBitmap >(wxBitmap *bitmap )
 {
 	if(bitmap)
-		return Data_Wrap_Struct(rb_cWXBitmap, NULL, free, bitmap);
+		return Data_Wrap_Struct(rb_cWXBitmap, NULL, NULL, bitmap);
 	return Qnil;
 }
 
@@ -30,13 +30,14 @@ inline wxBitmap* wrap< wxBitmap* >(const VALUE &vbitmap)
 		return &wxNullBitmap;
 	if(rb_obj_is_kind_of(vbitmap,rb_cWXBitmap))
 		return unwrapPtr<wxBitmap>(vbitmap, rb_cWXBitmap);
+#if wxUSE_IMAGE
+	if(rb_obj_is_kind_of(vbitmap,rb_cWXImage))
+		return new wxBitmap(wrap<wxImage>(vbitmap));
+#endif
 	if(is_wrapable<wxSize>(vbitmap))
 		return new wxBitmap(wrap<wxSize>(vbitmap));
-#if wxUSE_IMAGE
-	return new wxBitmap(wrap<wxImage>(vbitmap));
-#else
-	return new wxBitmap(wrap<wxString>(vbitmap),wxBITMAP_TYPE_ANY);
-#endif
+	else
+		return new wxBitmap(wrap<wxString>(vbitmap),wxBITMAP_TYPE_ANY);
 }
 
 template <>
@@ -78,5 +79,27 @@ inline wxIcon wrap< wxIcon >(const VALUE &vbitmap)
 	return *wrap<wxIcon*>(vbitmap);
 }
 
+#include <wx/imaglist.h>
 
+template <>
+inline VALUE wrap< wxImageList >(wxImageList *imagelist )
+{
+	VALUE result = rb_ary_new();
+	int count = imagelist->GetImageCount();
+	for(int i = 0;i < count;++i)
+		rb_ary_push(result,wrap(imagelist->GetBitmap(i)));
+	return result;
+}
+
+template <>
+inline wxImageList* wrap< wxImageList* >(const VALUE &imagelist)
+{
+	wxImageList *result = new wxImageList;
+	VALUE dup = rb_funcall(imagelist,rb_intern("to_a"),0);
+	result->Create();
+	size_t count = RARRAY_LEN(dup);
+	for(size_t i = 0;i < count;++i)
+		result->Add(wrap<wxBitmap>(RARRAY_PTR(dup)[i]));
+	return result;
+}
 #endif /* WXBITMAP_HPP_ */

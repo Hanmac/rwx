@@ -18,7 +18,7 @@ void Init_WXDirPicker(VALUE rb_mWX);
 template <>
 inline VALUE wrap< wxDirPickerCtrl >(wxDirPickerCtrl* window)
 {
-	return getEvtObj(window,rb_cWXDirPicker);
+	return wrap(window,rb_cWXDirPicker);
 }
 
 

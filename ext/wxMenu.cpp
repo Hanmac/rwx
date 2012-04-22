@@ -32,7 +32,7 @@ singlereturn(PrependSeparator)
 VALUE _alloc(VALUE self)
 {
 	if(ruby_app_inited)
-		return getEvtObj(new wxMenu,self);
+		return wrap(new wxMenu,self);
 	else
 		rb_raise(rb_eArgError,"%s is not running.",rb_class2name(rb_cWXApp));
 	return Qnil;
@@ -79,9 +79,9 @@ VALUE _appendNormalItem(int argc,VALUE *argv,VALUE self)
 		if(rb_block_given_p()){
 			VALUE proc = rb_block_proc();
 #ifdef wxHAS_EVENT_BIND
-	_self->Bind(wxEVT_COMMAND_MENU_SELECTED,RubyFunctor(proc),item->GetId());
+			_self->Bind(wxEVT_COMMAND_MENU_SELECTED,RubyFunctor(proc),item->GetId());
 #else
-	_self->Connect(item->GetId(),wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&RubyFunctor::operator(),NULL,new RubyFunctor(proc));
+			_self->Connect(item->GetId(),wxEVT_COMMAND_MENU_SELECTED,wxCommandEventHandler(RubyFunctor::operator()),NULL,new RubyFunctor(proc));
 #endif
 		}
 		return wrap(item);
@@ -93,14 +93,32 @@ VALUE _appendCheckItem(int argc,VALUE *argv,VALUE self)
 {
 	VALUE id,text,help;
 	rb_scan_args(argc, argv, "12",&id,&text,&help);
-	return wrap(_self->AppendCheckItem(unwrapID(id),wrap<wxString>(text),wrap<wxString>(help)));
+	wxMenuItem *item = _self->AppendCheckItem(unwrapID(id),wrap<wxString>(text),wrap<wxString>(help));
+	if(rb_block_given_p()){
+		VALUE proc = rb_block_proc();
+#ifdef wxHAS_EVENT_BIND
+		_self->Bind(wxEVT_COMMAND_MENU_SELECTED,RubyFunctor(proc),item->GetId());
+#else
+		_self->Connect(item->GetId(),wxEVT_COMMAND_MENU_SELECTED,wxCommandEventHandler(RubyFunctor::operator()),NULL,new RubyFunctor(proc));
+#endif
+	}
+	return wrap(item);
 }
 
 VALUE _appendRadioItem(int argc,VALUE *argv,VALUE self)
 {
 	VALUE id,text,help;
 	rb_scan_args(argc, argv, "12",&id,&text,&help);
-	return wrap(_self->AppendRadioItem(unwrapID(id),wrap<wxString>(text),wrap<wxString>(help)));
+	wxMenuItem *item = _self->AppendRadioItem(unwrapID(id),wrap<wxString>(text),wrap<wxString>(help));
+	if(rb_block_given_p()){
+		VALUE proc = rb_block_proc();
+#ifdef wxHAS_EVENT_BIND
+		_self->Bind(wxEVT_COMMAND_MENU_SELECTED,RubyFunctor(proc),item->GetId());
+#else
+		_self->Connect(item->GetId(),wxEVT_COMMAND_MENU_SELECTED,wxCommandEventHandler(RubyFunctor::operator()),NULL,new RubyFunctor(proc));
+#endif
+	}
+	return wrap(item);
 }
 
 VALUE _appendShift(VALUE self,VALUE val)

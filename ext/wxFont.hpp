@@ -18,7 +18,7 @@ template <>
 inline VALUE wrap< wxFont >(wxFont *menu )
 {
 	if(menu)
-		return Data_Wrap_Struct(rb_cWXFont, NULL, NULL, menu);
+		return wrap(menu,rb_cWXFont);
 	return Qnil;
 }
 

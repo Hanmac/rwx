@@ -14,8 +14,6 @@
 #endif
 extern VALUE rb_cWXDC;
 void Init_WXDC(VALUE rb_mWX);
-#if wxUSE_CONFIG
-#include <wx/config.h>
 
 template <>
 inline VALUE wrap< wxDC >(wxDC* window)
@@ -32,6 +30,5 @@ inline wxDC* wrap< wxDC* >(const VALUE &vwindow)
 {
 	return unwrapPtr<wxDC>(vwindow, rb_cWXDC);
 }
-#endif
 
 #endif /* WXDC_HPP_ */

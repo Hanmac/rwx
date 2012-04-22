@@ -14,10 +14,11 @@ extern VALUE rb_cWXGauge;
 
 void Init_WXGauge(VALUE rb_mWX);
 
+#if wxUSE_GAUGE
 template <>
 inline VALUE wrap< wxGauge >(wxGauge* window)
 {
-	return getEvtObj(window,rb_cWXGauge);
+	return wrap(window,rb_cWXGauge);
 }
 
 template <>
@@ -25,6 +26,6 @@ inline wxGauge* wrap< wxGauge* >(const VALUE &vwindow)
 {
 	return unwrapPtr<wxGauge>(vwindow, rb_cWXGauge);
 }
-
+#endif
 
 #endif /* WXGAUGE_HPP_ */

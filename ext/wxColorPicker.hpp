@@ -18,7 +18,7 @@ void Init_WXColorPicker(VALUE rb_mWX);
 template <>
 inline VALUE wrap< wxColourPickerCtrl >(wxColourPickerCtrl* window)
 {
-	return getEvtObj(window,rb_cWXColorPicker);
+	return wrap(window,rb_cWXColorPicker);
 }
 
 

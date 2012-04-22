@@ -30,7 +30,7 @@ public:
 template <>
 inline VALUE wrap< wxProgressDialog >(wxProgressDialog* window)
 {
-	return getEvtObj(window,rb_cWXProgressDialog);
+	return wrap(window,rb_cWXProgressDialog);
 }
 
 

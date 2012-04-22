@@ -1,0 +1,10 @@
+<project name="Project Alpha">
+<map name="Map1" file="../../../unbenannt.tmx">
+	<map name="Map1A">
+	</map>
+</map>
+<map name="Map2">
+	<map name="Map2A">
+	</map>
+</map>
+</project>

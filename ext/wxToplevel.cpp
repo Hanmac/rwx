@@ -5,7 +5,7 @@
  *      Author: hanmac
  */
 
-#include "wxWindow.hpp"
+#include "wxEvtHandler.hpp"
 #include "wxBitmap.hpp"
 
 VALUE rb_cWXTopLevel;
@@ -23,7 +23,7 @@ macro_attr(TmpDefaultItem,wxWindow*)
 
 VALUE _alloc(VALUE self)
 {
-	return getEvtObj(new wxTopLevelWindow,self);
+	return wrap(new wxTopLevelWindow,self);
 }
 
 
@@ -31,7 +31,6 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		VALUE temp;

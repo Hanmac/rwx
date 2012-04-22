@@ -6,7 +6,7 @@
  */
 
 
-#include "wxWindow.hpp"
+#include "wxEvtHandler.hpp"
 
 VALUE rb_cWXFileDialog;
 
@@ -18,7 +18,7 @@ namespace FileDialog {
 
 VALUE _alloc(VALUE self)
 {
-	return getEvtObj(new wxFileDialog,self);
+	return wrap(new wxFileDialog,self);
 }
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
@@ -26,9 +26,8 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 
-	//FIXME: fileDialog is broken
-	DATA_PTR(self) = new wxFileDialog(wrap<wxWindow*>(parent));
-	//_self->Create(wrap<wxWindow*>(parent));
+	_self->Create(wrap<wxWindow*>(parent));
+	_created = true;
 	rb_call_super(argc,argv);
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))

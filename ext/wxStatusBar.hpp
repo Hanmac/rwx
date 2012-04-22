@@ -19,7 +19,7 @@ void Init_WXStatusBar(VALUE rb_mWX);
 template <>
 inline VALUE wrap< wxStatusBar >(wxStatusBar* window)
 {
-	return getEvtObj(window,rb_cWXStatusBar);
+	return wrap(window,rb_cWXStatusBar);
 }
 
 

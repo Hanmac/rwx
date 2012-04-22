@@ -6,7 +6,10 @@
  */
 
 #include "wxSize.hpp"
+#include "wxRect.hpp"
+
 #include "wxImage.hpp"
+#include "wxBitmap.hpp"
 #include "wxColor.hpp"
 
 #include "wxStream.hpp"
@@ -134,9 +137,14 @@ VALUE _getWidth(VALUE self)
 VALUE _get(int argc,VALUE *argv,VALUE self)
 {
 	VALUE vx,vy;
-	rb_scan_args(argc, argv, "20",&vx,&vy);
+	rb_scan_args(argc, argv, "11",&vx,&vy);
 	if(_self->IsOk())
 	{
+		if(NIL_P(vy))
+		{
+			return wrap(_self->GetSubImage(wrap<wxRect>(vx)));
+		}
+
 		int x,y;
 		x = NUM2UINT(vx);
 		y = NUM2UINT(vy);
@@ -177,6 +185,80 @@ VALUE _set(int argc,VALUE *argv,VALUE self)
 	}
 
 	return value;
+}
+
+VALUE _scale(VALUE self,VALUE x_scale,VALUE y_scale)
+{
+	wxImage result(*_self);
+
+	double x,y;
+	x = NUM2DBL(x_scale);
+	y = NUM2DBL(y_scale);
+
+	if(x < 0)
+	{
+		x *= -1;
+		result = result.Mirror(false);
+	}
+	if(y < 0)
+	{
+		y *= -1;
+		result = result.Mirror();
+	}
+
+	result = result.Scale(result.GetWidth() * x,result.GetHeight() * y);
+	return wrap(result);
+}
+
+VALUE _mal(VALUE self,VALUE obj)
+{
+
+
+	wxImage *result = new wxImage(_self->GetWidth(),_self->GetHeight());
+	//result->SetData(_self->GetData(),true);
+	//result->SetAlpha(_self->GetAlpha());
+	result->Paste(*_self,0,0);
+	if(rb_obj_is_kind_of(obj,rb_cNumeric))
+	{
+		double d = NUM2DBL(obj);
+		for(int x = 0; x < result->GetWidth();++x)
+			for(int y = 0; y < result->GetHeight();++y)
+			{
+				unsigned char alpha;
+				if(result->HasAlpha())
+					alpha = result->GetAlpha(x,y);
+				else
+				{
+					result->InitAlpha();
+					alpha = wxALPHA_OPAQUE;
+				}
+				result->SetAlpha(x,y,d * alpha);
+			}
+
+	}else
+	{
+		wxColor c(wrap<wxColor>(obj));
+		for(int x = 0; x < result->GetWidth();++x)
+			for(int y = 0; y < result->GetHeight();++y)
+			{
+				unsigned char red,green,blue,alpha;
+				red = result->GetRed(x,y);
+				green = result->GetGreen(x,y);
+				blue = result->GetBlue(x,y);
+
+				if(result->HasAlpha())
+					alpha = result->GetAlpha(x,y);
+				else
+					alpha = wxALPHA_OPAQUE;
+				result->SetRGB(x,y,
+						red * c.Red() / 256,
+						green * c.Green() / 256,
+						blue * c.Blue() / 256);
+				result->SetAlpha(x,y,alpha * c.Alpha() / wxALPHA_OPAQUE);
+			}
+
+	}
+	return wrap(result);
 }
 
 VALUE _getMask(VALUE self)
@@ -283,6 +365,9 @@ void Init_WXImage(VALUE rb_mWX)
 	rb_define_method(rb_cWXImage,"to_image",RUBY_METHOD_FUNC(_to_image),0);
 	rb_define_method(rb_cWXImage,"to_bitmap",RUBY_METHOD_FUNC(_to_bitmap),0);
 
+
+	rb_define_method(rb_cWXImage,"*",RUBY_METHOD_FUNC(_mal),1);
+	rb_define_method(rb_cWXImage,"scale",RUBY_METHOD_FUNC(_scale),2);
 
 	rb_define_method(rb_cWXImage,"[]",RUBY_METHOD_FUNC(_get),-1);
 	rb_define_method(rb_cWXImage,"[]=",RUBY_METHOD_FUNC(_set),-1);

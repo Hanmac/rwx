@@ -18,7 +18,7 @@ void Init_WXFilePicker(VALUE rb_mWX);
 template <>
 inline VALUE wrap< wxFilePickerCtrl >(wxFilePickerCtrl* window)
 {
-	return getEvtObj(window,rb_cWXFilePicker);
+	return wrap(window,rb_cWXFilePicker);
 }
 
 

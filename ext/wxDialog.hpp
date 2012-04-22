@@ -21,6 +21,8 @@ void Init_WXDialog(VALUE rb_mWX);
 #include "wxDirDialog.hpp"
 #include "wxProgressDialog.hpp"
 
+#include "wxWizard.hpp"
+
 template <>
 inline VALUE wrap< wxDialog >(wxDialog* window)
 {

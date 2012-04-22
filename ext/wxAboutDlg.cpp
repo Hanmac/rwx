@@ -6,6 +6,7 @@
  */
 
 #include "wxAboutDlg.hpp"
+#include "wxWindow.hpp"
 #include "wxApp.hpp"
 
 namespace RubyWX {
@@ -74,7 +75,7 @@ VALUE _aboutBox(int argc,VALUE *argv,VALUE self)
 	if(!NIL_P(value))
 		info.SetTranslators(wrap<wxArrayString>(value));
 
-	wxAboutBox(info);
+	wxAboutBox(info,wrap<wxWindow*>(parent));
 
 
 	return self;

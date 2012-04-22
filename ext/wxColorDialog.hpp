@@ -19,7 +19,7 @@ void Init_WXColorDialog(VALUE rb_mWX);
 template <>
 inline VALUE wrap< wxColourDialog >(wxColourDialog* window)
 {
-	return getEvtObj(window,rb_cWXColorDialog);
+	return wrap(window,rb_cWXColorDialog);
 }
 
 

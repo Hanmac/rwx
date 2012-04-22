@@ -6,7 +6,7 @@
  */
 
 
-#include "wxWindow.hpp"
+#include "wxEvtHandler.hpp"
 
 VALUE rb_cWXRadioButton;
 
@@ -21,7 +21,7 @@ macro_attr(Value,bool)
 
 VALUE _alloc(VALUE self)
 {
-	return getEvtObj(new wxRadioButton(),self);
+	return wrap(new wxRadioButton(),self);
 }
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
@@ -29,6 +29,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 	_self->Create(wrap<wxWindow*>(parent),wxID_ANY,wxEmptyString);
+	_created = true;
 	rb_call_super(argc,argv);
 	return self;
 }

@@ -19,7 +19,7 @@ namespace StatusBar {
 
 VALUE _alloc(VALUE self)
 {
-	return getEvtObj(new wxStatusBar,self);
+	return wrap(new wxStatusBar,self);
 }
 
 }

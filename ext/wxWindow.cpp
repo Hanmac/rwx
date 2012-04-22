@@ -8,24 +8,37 @@
 #include "wxEvtHandler.hpp"
 #include "wxFont.hpp"
 #include "wxColor.hpp"
+#include "wxSizer.hpp"
+#include "wxPoint.hpp"
 #include "wxDC.hpp"
 
-
+#include "wxAui.hpp"
 #define _self wrap<wxWindow*>(self)
 
 VALUE rb_cWXWindow;
 
-std::map<ID,wxWindowID> idholder;
+static std::map<ID,wxWindowID> idholder;
 
 VALUE wrapID(wxWindowID val)
 {
 	if(val == wxID_NONE)
 		return Qnil;
-	for(std::map<ID,wxWindowID>::iterator it = idholder.begin();
+
+	for(std::map<ID,wxWindowID>::const_iterator it = idholder.begin();
 			it != idholder.end();
-			++it)
+			it++)
+	{
 		if(it->second == val)
 			return ID2SYM(it->first);
+	}
+#if wxUSE_XRC
+	wxString str(wxXmlResource::FindXRCIDById(val));
+	if(!str.IsEmpty()) {
+		ID id = rb_intern(str.c_str());
+		idholder.insert(std::make_pair(id,val));
+		return ID2SYM(id);
+	}
+#endif
 	return INT2NUM(val);
 }
 wxWindowID unwrapID(VALUE val)
@@ -40,12 +53,17 @@ wxWindowID unwrapID(VALUE val)
 			return it->second;
 		else
 		{
-			wxWindowID newid = wxNewId();
+			wxWindowID newid;
+#if wxUSE_XRC
+			newid = XRCID(rb_id2name(id));
+#else
+			newid = wxNewId();
+#endif
 			idholder.insert(std::make_pair(id,newid));
 			return newid;
 		}
-	}
-	return NUM2INT(val);
+	}else
+		return NUM2INT(val);
 }
 
 void registerID(const char *name,wxWindowID id)
@@ -112,6 +130,8 @@ singlefunc(ReleaseMouse)
 singlefunc(Update)
 singlefunc(Refresh)
 
+singlereturn(Layout)
+
 singlereturn(GetParent)
 singlereturn(GetGrandParent)
 
@@ -137,7 +157,6 @@ VALUE _SetBackgroundColour(VALUE self,VALUE val)
 	return val;
 }
 
-
 VALUE _SetForegroundColour(VALUE self,VALUE val)
 {
 	_self->SetForegroundColour(wrap<wxColor>(val));
@@ -155,6 +174,11 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 
+	if(!_created) {
+		_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+		_created = true;
+	}
+
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		VALUE temp;
@@ -162,13 +186,22 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			_self->SetName(wrap<wxString>(temp));
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("label")))))
 			_self->SetLabel(wrap<wxString>(temp));
-
+		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("id")))))
+			_self->SetId(unwrapID(temp));
+		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("size")))))
+			_self->SetSize(wrap<wxSize>(temp));
 	}
 
 	if(rb_block_given_p() && !(wxUSE_PROGRESSDLG && wxUSE_TIMER && rb_obj_is_kind_of(self,rb_cWXProgressDialog)))
 		rb_yield(self);
 	return self;
 }
+
+VALUE _getchild(VALUE self,VALUE id)
+{
+	return wrap(_self->FindWindowById(unwrapID(id)));
+}
+
 
 VALUE _draw(int argc,VALUE *argv,VALUE self)
 {
@@ -177,28 +210,77 @@ VALUE _draw(int argc,VALUE *argv,VALUE self)
 	wxDC *dc;
 if(NIL_P(paint) || RTEST(paint))
 {
-	wxPaintDC mdc(_self);
+	wxPaintDC *mdc = new wxPaintDC(_self);
+	_self->PrepareDC(*mdc);
 #if wxUSE_GRAPHICS_CONTEXT
-	wxGCDC gdc(mdc);
-	dc = &gdc;
+	 dc = new wxGCDC(*mdc);
+	_self->PrepareDC(*dc);
 #else
-	dc = &mdc;
+	dc = mdc;
 #endif
 }else
 {
-	wxClientDC cdc(_self);
+	wxClientDC *cdc = new wxClientDC(_self);
+	_self->PrepareDC(*cdc);
 #if wxUSE_GRAPHICS_CONTEXT
-	wxGCDC gdc(cdc);
-	dc = &gdc;
+	dc = new wxGCDC(*cdc);
+	_self->PrepareDC(*dc);
 #else
-	dc = &cdc;
+	dc = cdc;
 #endif
 }
+
+	dc->Clear();
 	rb_yield(wrap(dc));
 	return self;
 }
 
+VALUE _Close(int argc,VALUE *argv,VALUE self)
+{
+	VALUE force;
+	rb_scan_args(argc, argv, "01",&force);
+	return wrap(_self->Close(RTEST(force)));
+}
 
+
+#if wxUSE_MENUS
+VALUE _popupmenu(int argc,VALUE *argv,VALUE self)
+{
+	VALUE menu,pos;
+	wxPoint cpoint;
+	if(rb_block_given_p())
+	{
+		rb_scan_args(argc, argv, "01",&pos);
+		menu = wrap(new wxMenu);
+		rb_yield(menu);
+	}else{
+		rb_scan_args(argc, argv, "11",&menu,&pos);
+	}
+	if(NIL_P(pos))
+		cpoint = wxDefaultPosition;
+	else
+		cpoint = wrap<wxPoint>(pos);
+
+
+	return wrap(_self->PopupMenu(wrap<wxMenu*>(menu),cpoint));
+}
+#endif
+
+#if wxUSE_AUI
+VALUE _aui(VALUE self)
+{
+	wxWindow *wnd = _self;
+	VALUE result = Qnil;
+	wxAuiManager *mgr = wxAuiManager::GetManager(wnd);
+	if(!mgr && rb_block_given_p())
+	{
+		result = wrap(new wxAuiManager(wnd));
+	}
+	if(rb_block_given_p())
+		rb_yield(result);
+	return result;
+}
+#endif
 
 VALUE _each(VALUE self)
 {
@@ -210,6 +292,23 @@ VALUE _each(VALUE self)
 	}
 	return self;
 }
+
+VALUE _GetMousePosition(VALUE self)
+{
+	return wrap(wxGetMousePosition());
+}
+
+
+VALUE _ClientToScreen(VALUE self,VALUE point)
+{
+	return wrap(_self->ClientToScreen(wrap<wxPoint>(point)));
+}
+
+VALUE _ScreenToClient(VALUE self,VALUE point)
+{
+	return wrap(_self->ScreenToClient(wrap<wxPoint>(point)));
+}
+
 }
 }
 
@@ -230,6 +329,12 @@ void Init_WXWindow(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXWindow, "id",_getId,_setId);
 
+	rb_define_attr_method(rb_cWXWindow, "size",_getSize,_setSize);
+	rb_define_attr_method(rb_cWXWindow, "min_size",_getMinSize,_setMinSize);
+	rb_define_attr_method(rb_cWXWindow, "max_size",_getMaxSize,_setMaxSize);
+
+	rb_define_attr_method(rb_cWXWindow, "sizer",_getSizer,_setSizer);
+
 	rb_define_attr_method(rb_cWXWindow, "backgroundColor",_GetBackgroundColour,_SetBackgroundColour);
 	rb_define_attr_method(rb_cWXWindow, "foregroundColor",_GetForegroundColour,_SetForegroundColour);
 
@@ -241,10 +346,29 @@ void Init_WXWindow(VALUE rb_mWX)
 	rb_define_method(rb_cWXWindow,"show",RUBY_METHOD_FUNC(_Show),0);
 	rb_define_method(rb_cWXWindow,"hide",RUBY_METHOD_FUNC(_Hide),0);
 
+	rb_define_method(rb_cWXWindow,"[]",RUBY_METHOD_FUNC(_getchild),1);
+
 	rb_define_method(rb_cWXWindow,"each",RUBY_METHOD_FUNC(_each),0);
+
+	rb_define_method(rb_cWXWindow,"layout",RUBY_METHOD_FUNC(_Layout),0);
 
 	rb_define_method(rb_cWXWindow,"update",RUBY_METHOD_FUNC(_Update),0);
 	rb_define_method(rb_cWXWindow,"refresh",RUBY_METHOD_FUNC(_Refresh),0);
+
+	rb_define_method(rb_cWXWindow,"draw",RUBY_METHOD_FUNC(_draw),-1);
+	rb_define_method(rb_cWXWindow,"close",RUBY_METHOD_FUNC(_Close),-1);
+
+#if wxUSE_MENUS
+	rb_define_method(rb_cWXWindow,"popupmenu",RUBY_METHOD_FUNC(_popupmenu),-1);
+#endif
+#if wxUSE_AUI
+	rb_define_method(rb_cWXWindow,"aui",RUBY_METHOD_FUNC(_aui),0);
+#endif
+
+	rb_define_module_function(rb_mWX,"mouse_position",RUBY_METHOD_FUNC(_GetMousePosition),0);
+
+	rb_define_method(rb_cWXWindow,"client_to_screen",RUBY_METHOD_FUNC(_ClientToScreen),1);
+	rb_define_method(rb_cWXWindow,"screen_to_client",RUBY_METHOD_FUNC(_ScreenToClient),1);
 
 	registerID("open",wxID_OPEN);
 	registerID("close",wxID_CLOSE);
@@ -375,4 +499,5 @@ void Init_WXWindow(VALUE rb_mWX)
 	registerID("iconize_frame",wxID_ICONIZE_FRAME);
 	registerID("restore_frame",wxID_RESTORE_FRAME);
 
+	registerEventType("paint",wxEVT_PAINT,rb_cWXEvent);
 }

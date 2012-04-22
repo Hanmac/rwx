@@ -5,7 +5,7 @@
  *      Author: hanmac
  */
 
-#include "wxWindow.hpp"
+#include "wxEvtHandler.hpp"
 #include "wxFont.hpp"
 
 VALUE rb_cWXFontDialog;
@@ -26,6 +26,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 
 	_self->Create(wrap<wxWindow*>(parent));
+	_created = true;
 	rb_call_super(argc,argv);
 	return self;
 }

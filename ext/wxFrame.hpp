@@ -17,7 +17,7 @@ void Init_WXFrame(VALUE rb_mWX);
 template <>
 inline VALUE wrap< wxFrame >(wxFrame* window)
 {
-	return getEvtObj(window,rb_cWXFrame);
+	return wrap(window,rb_cWXFrame);
 }
 
 

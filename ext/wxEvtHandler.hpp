@@ -15,27 +15,60 @@
 #include "wxWindow.hpp"
 #include "wxEvent.hpp"
 
+#include "wxTaskBar.hpp"
+
+
 #include "wxTimer.hpp"
+#include "wxAui.hpp"
+
+#include <wx/sharedptr.h>
+
 extern std::map<VALUE,wxEvtHandler*> evthandlerholder;
 
 void registerEventType(const char *sym, wxEventType type,VALUE klass);
+
+class RubyFunctorPtr
+{
+public:
+	RubyFunctorPtr(VALUE obj);
+
+	~RubyFunctorPtr();
+
+	VALUE get() {return mValue;};
+private:
+	VALUE mValue;
+
+};
 
 class RubyFunctor
 #ifndef wxHAS_EVENT_BIND
 : public wxEvtHandler
 #endif
+
 {
 public:
-	RubyFunctor(VALUE obj) : mValue(obj){
-	}
+	RubyFunctor(VALUE obj);
+
 	void operator()( wxEvent & event );
-//*
+#if wxUSE_GUI
 	void operator()( wxCommandEvent & event );
-//*/
+#endif
+#if wxUSE_TIMER
 	void operator()( wxTimerEvent & event );
+#endif
 private:
-	VALUE mValue;
+	wxSharedPtr<RubyFunctorPtr> ptr;
 };
+
+class RubyClientData : public wxClientData
+{
+public:
+	RubyClientData(VALUE obj);
+	~RubyClientData();
+	VALUE mRuby;
+	bool created;
+};
+
 
 extern VALUE rb_mWXEvtHandler;
 void Init_WXEvtHandler(VALUE rb_mWX);
@@ -47,17 +80,19 @@ inline VALUE wrap< wxEvtHandler >(wxEvtHandler *handler )
 	if(handler==NULL)
 			return Qnil;
 
-	wxMenu *menu = dynamic_cast<wxMenu*>(handler);
-	if(menu)
+	if(wxMenu *menu = dynamic_cast<wxMenu*>(handler))
 		return wrap(menu);
-	wxApp *app = dynamic_cast<wxApp*>(handler);
-	if(app)
+	if(wxApp *app = dynamic_cast<wxApp*>(handler))
 		return wrap(app);
-	wxWindow *window = dynamic_cast<wxWindow*>(handler);
-	if(window)
+	if(wxWindow *window = dynamic_cast<wxWindow*>(handler))
 		return wrap(window);
-
-	return getEvtObj(handler,Qnil);
+	if(wxTimer *timer = dynamic_cast<wxTimer*>(handler))
+		return wrap(timer);
+#if wxUSE_AUI
+	if(wxAuiManager *mgr = dynamic_cast<wxAuiManager*>(handler))
+		return wrap(mgr);
+#endif
+	return wrap(handler,Qnil);
 }
 
 template <>
@@ -71,7 +106,10 @@ inline wxEvtHandler* wrap< wxEvtHandler* >(const VALUE &vhandler)
 		return wrap< wxMenu* >(vhandler);
 	if (rb_obj_is_kind_of(vhandler, rb_cWXTimer))
 		return wrap< wxTimer* >(vhandler);
-
+#if wxUSE_AUI
+	if (rb_obj_is_kind_of(vhandler, rb_cWXAuiManager))
+		return wrap< wxAuiManager* >(vhandler);
+#endif
 	std::map<VALUE,wxEvtHandler*>::iterator it = evthandlerholder.find(vhandler);
 	if(it != evthandlerholder.end())
 		return it->second;
@@ -83,6 +121,7 @@ inline wxEvtHandler* wrap< wxEvtHandler* >(const VALUE &vhandler)
 	}
 }
 
+#define _created static_cast<RubyClientData*>(_self->GetClientObject())->created
 
 
 #endif /* WXEVTHANDLER_HPP_ */

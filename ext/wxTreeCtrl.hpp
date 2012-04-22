@@ -18,7 +18,7 @@ void Init_WXTreeCtrl(VALUE rb_mWX);
 template <>
 inline VALUE wrap< wxTreeCtrl >(wxTreeCtrl* window)
 {
-	return getEvtObj(window,rb_cWXTreeCtrl);
+	return wrap(window,rb_cWXTreeCtrl);
 }
 
 template <>
@@ -35,25 +35,46 @@ public:
 	~RubyTreeCtrlItem();
 	VALUE getRuby(){ return mRuby; }
 
+	bool GetBold();
 	wxString GetText();
 	wxColour GetTextColour();
 	wxColour GetBackgroundColour();
 	wxFont GetFont();
+	int GetState();
 
+	void SetBold(const bool bold);
 	void SetText(const wxString& text);
 	void SetTextColour(const wxColour& col);
 	void SetBackgroundColour(const wxColour& col);
 	void SetFont(const wxFont& font);
+	void SetState(int state);
 
 	VALUE AppendItem(const wxString& text, int image = -1, int selImage = -1);
+	VALUE PrependItem(const wxString& text, int image = -1, int selImage = -1);
+
+	VALUE GetNextSibling();
+	VALUE GetPrevSibling();
 
 	void Delete();
+
+	void each();
+	VALUE compare(RubyTreeCtrlItem *other);
+
+//	wxTreeCtrl* getTree();
 private:
 	void checkDestroyed();
 	VALUE mRuby;
 	wxTreeCtrl* mTree;
 
 };
+
+template <>
+inline wxTreeItemId wrap< wxTreeItemId >(const VALUE &vwindow)
+{
+	return unwrapPtr<RubyTreeCtrlItem>(vwindow, rb_cWXTreeCtrl)->GetId();
+}
+
+
 
 VALUE wrap(wxTreeCtrl* tree,wxTreeItemId id);
 

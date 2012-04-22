@@ -5,9 +5,7 @@
  *      Author: hanmac
  */
 
-
-
-#include "wxWindow.hpp"
+#include "wxEvtHandler.hpp"
 #include "wxBitmap.hpp"
 
 VALUE rb_cWXStaticBitmap;
@@ -23,7 +21,7 @@ macro_attr(Bitmap,wxBitmap)
 
 VALUE _alloc(VALUE self)
 {
-	return getEvtObj(new wxStaticBitmap(),self);
+	return wrap(new wxStaticBitmap(),self);
 }
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
@@ -31,6 +29,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 	_self->Create(wrap<wxWindow*>(parent),wxID_ANY,wxNullBitmap);
+	_created = true;
 	rb_call_super(argc,argv);
 	return self;
 }
@@ -52,6 +51,3 @@ void Init_WXStaticBitmap(VALUE rb_mWX)
 #endif
 
 }
-
-
-

@@ -17,11 +17,38 @@
 
 VALUE rb_mWXEvtHandler;
 
+VALUE global_evthandler;
+
 std::map<VALUE,wxEvtHandler*> evthandlerholder;
 
 std::map<ID,wxEventType> evttypeholder;
 
 std::map<wxEventType,VALUE> evttypeclassholder;
+
+
+#define rubyclientdata(T) \
+VALUE wrap(T *handler,VALUE klass)\
+{\
+	if(!handler)\
+		return Qnil;\
+\
+	RubyClientData *rcd = NULL;\
+		rcd = dynamic_cast<RubyClientData*>(handler->GetClientObject());\
+	if(!rcd)\
+	{\
+		if(NIL_P(klass))\
+			return Qnil;\
+		handler->SetClientObject(rcd = new RubyClientData(wrap((void*)handler,klass)));\
+	}\
+	if(rcd)\
+		return rcd->mRuby;\
+	return Qnil;\
+}
+
+
+rubyclientdata(wxEvtHandler)
+rubyclientdata(wxClientDataContainer)
+rubyclientdata(wxSizer)
 
 wxEventType unwrapEventType(VALUE type)
 {
@@ -33,8 +60,6 @@ wxEventType unwrapEventType(VALUE type)
 		return it->second;
 
 	return wxEVT_NULL;
-//	if(id==rb_intern("button_clicked"))
-//		return wxEVT_COMMAND_BUTTON_CLICKED;
 }
 
 void registerEventType(const char *sym, wxEventType type,VALUE klass)
@@ -43,37 +68,45 @@ void registerEventType(const char *sym, wxEventType type,VALUE klass)
 	evttypeclassholder.insert(std::make_pair(type,klass));
 }
 
-VALUE getEvtObj(wxEvtHandler *handler,VALUE klass)
+RubyClientData::RubyClientData(VALUE obj) : wxClientData(), mRuby(obj),created(false)
 {
-	if(!handler)
-		return Qnil;
-
-	std::map<VALUE,wxEvtHandler*>::iterator it;
-	for(it = evthandlerholder.begin();it != evthandlerholder.end();++it)
-	{
-		if(it->second == handler)
-			return it->first;
-	}
-	if(NIL_P(klass))
-		return Qnil;
-	VALUE result = wrap(handler,klass);
-	evthandlerholder.insert(std::make_pair(result,handler));
-	return result;
+	rb_hash_aset(global_evthandler,INT2NUM(obj),obj);
 }
+
+RubyClientData::~RubyClientData()
+{
+	rb_hash_delete(global_evthandler,INT2NUM(mRuby));
+}
+
+RubyFunctorPtr::RubyFunctorPtr(VALUE obj) : mValue(obj){
+	rb_hash_aset(global_evthandler,INT2NUM(obj),obj);
+}
+
+RubyFunctorPtr::~RubyFunctorPtr(){
+	rb_hash_delete(global_evthandler,INT2NUM(mValue));
+}
+
+RubyFunctor::RubyFunctor(VALUE obj) : ptr(new RubyFunctorPtr(obj)){
+
+}
+
 
 void RubyFunctor::operator()( wxEvent & event )
 {
-	event.Skip(RTEST(rb_funcall(mValue,rb_intern("call"),1,wrap(event.Clone()))));
+	rb_funcall(ptr->get(),rb_intern("call"),1,wrap(&event));
 }
+#if wxUSE_GUI
 void RubyFunctor::operator()( wxCommandEvent & event )
 {
-	event.Skip(RTEST(rb_funcall(mValue,rb_intern("call"),1,wrap(event.Clone()))));
+	rb_funcall(ptr->get(),rb_intern("call"),1,wrap<wxEvent>(&event));
 }
+#endif
+#if wxUSE_TIMER
 void RubyFunctor::operator()( wxTimerEvent & event )
 {
-	event.Skip(RTEST(rb_funcall(mValue,rb_intern("call"),1,wrap(event.Clone()))));
+	rb_funcall(ptr->get(),rb_intern("call"),1,wrap<wxEvent>(&event));
 }
-
+#endif
 namespace RubyWX {
 namespace EvtHandler {
 
@@ -87,7 +120,7 @@ VALUE _bind(int argc,VALUE *argv,VALUE self)
 #ifdef wxHAS_EVENT_BIND
 	_self->Bind(wxEventTypeTag<wxEvent>(unwrapEventType(type)),RubyFunctor(proc),unwrapID(id),unwrapID(last));
 #else
-	_self->Connect(unwrapID(id),unwrapID(last),unwrapEventType(type),(wxObjectEventFunction)&RubyFunctor::operator(),NULL,new RubyFunctor(proc));
+	_self->Connect(unwrapID(id),unwrapID(last),unwrapEventType(type),wxEventHandler(RubyFunctor::operator()),NULL,new RubyFunctor(proc));
 #endif
 	return self;
 }
@@ -113,6 +146,9 @@ void Init_WXEvtHandler(VALUE rb_mWX)
 
 	rb_define_method(rb_mWXEvtHandler,"bind",RUBY_METHOD_FUNC(_bind),-1);
 	rb_define_method(rb_mWXEvtHandler,"call",RUBY_METHOD_FUNC(_fire),-1);
+
+	global_evthandler = rb_hash_new();
+	rb_global_variable(&global_evthandler);
 }
 
 

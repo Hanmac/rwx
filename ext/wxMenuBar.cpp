@@ -8,7 +8,7 @@
 #include "wxApp.hpp"
 
 #include "wxMenu.hpp"
-#include "wxWindow.hpp"
+#include "wxEvtHandler.hpp"
 
 VALUE rb_cWXMenuBar;
 
@@ -20,12 +20,22 @@ namespace MenuBar {
 VALUE _alloc(VALUE self)
 {
 	if(ruby_app_inited)
-		return getEvtObj(new wxMenuBar,self);
+		return wrap(new wxMenuBar,self);
 	else
 		rb_raise(rb_eArgError,"%s is not running.",rb_class2name(rb_cWXApp));
 	return Qnil;
 
 }
+
+
+
+VALUE _initialize(int argc,VALUE *argv,VALUE self)
+{
+	_created = true;
+	rb_call_super(argc,argv);
+	return self;
+}
+
 
 VALUE _each(VALUE self)
 {
@@ -72,6 +82,7 @@ void Init_WXMenuBar(VALUE rb_mWX)
 	rb_cWXMenuBar = rb_define_class_under(rb_cWXMenu,"Bar",rb_cWXWindow);
 	rb_define_alloc_func(rb_cWXMenuBar,_alloc);
 
+	rb_define_method(rb_cWXMenuBar,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_method(rb_cWXMenuBar,"each_menu",RUBY_METHOD_FUNC(_each),0);
 

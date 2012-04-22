@@ -19,7 +19,7 @@ void Init_WXFileDialog(VALUE rb_mWX);
 template <>
 inline VALUE wrap< wxFileDialog >(wxFileDialog* window)
 {
-	return getEvtObj(window,rb_cWXFileDialog);
+	return wrap(window,rb_cWXFileDialog);
 }
 
 

@@ -5,7 +5,7 @@
  *      Author: hanmac
  */
 
-#include "wxWindow.hpp"
+#include "wxEvtHandler.hpp"
 
 VALUE rb_cWXGauge;
 
@@ -21,7 +21,7 @@ macro_attr(Value,int)
 
 VALUE _alloc(VALUE self)
 {
-	return getEvtObj(new wxGauge(),self);
+	return wrap(new wxGauge(),self);
 }
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
@@ -29,6 +29,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 	_self->Create(wrap<wxWindow*>(parent),wxID_ANY,0);
+	_created = true;
 	rb_call_super(argc,argv);
 	return self;
 }

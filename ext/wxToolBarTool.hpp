@@ -18,7 +18,7 @@ template <>
 inline VALUE wrap< wxToolBarToolBase >(wxToolBarToolBase *menu )
 {
 	if(menu)
-		return Data_Wrap_Struct(rb_cWXToolBarTool, NULL, NULL, menu);
+		return wrap(menu,rb_cWXToolBarTool);
 	return Qnil;
 }
 

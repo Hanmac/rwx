@@ -6,6 +6,11 @@
  */
 
 #include "wxDC.hpp"
+#include "wxRect.hpp"
+#include "wxBitmap.hpp"
+#include "wxPen.hpp"
+#include "wxBrush.hpp"
+
 #define _self wrap<wxDC*>(self)
 
 VALUE rb_cWXDC;
@@ -57,6 +62,21 @@ VALUE _page(VALUE self)
 	return self;
 }
 
+VALUE _DrawRectangle(VALUE self,VALUE rect)
+{
+	_self->DrawRectangle(wrap<wxRect>(rect));
+	return self;
+}
+
+VALUE _DrawBitmap(VALUE self,VALUE bitmap,VALUE x,VALUE y)
+{
+
+	_self->DrawBitmap(wrap<wxBitmap>(bitmap),NUM2INT(x),NUM2INT(y));
+	return self;
+}
+
+
+
 }
 }
 
@@ -66,7 +86,13 @@ void Init_WXDC(VALUE rb_mWX)
 	rb_cWXDC = rb_define_class_under(rb_mWX,"DC",rb_cObject);
 	rb_undef_alloc_func(rb_cWXDC);
 
+	rb_define_method(rb_cWXDC,"draw_rectangle",RUBY_METHOD_FUNC(_DrawRectangle),1);
+	rb_define_method(rb_cWXDC,"draw_bitmap",RUBY_METHOD_FUNC(_DrawBitmap),3);
 
+	rb_define_method(rb_cWXDC,"clear",RUBY_METHOD_FUNC(_Clear),0);
+
+	rb_define_attr_method(rb_cWXDC,"pen",_getPen,_setPen);
+	rb_define_attr_method(rb_cWXDC,"brush",_getBrush,_setBrush);
 }
 
 

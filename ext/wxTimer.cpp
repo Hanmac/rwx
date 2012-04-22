@@ -7,7 +7,7 @@
 
 #include "wxEvtHandler.hpp"
 
-VALUE rb_cWXTimer;
+VALUE rb_cWXTimer,rb_cWXTimerEvent;
 #if wxUSE_TIMER
 #define _self wrap<wxTimer*>(self)
 
@@ -17,7 +17,7 @@ namespace Timer {
 VALUE _alloc(VALUE self)
 {
 	if(ruby_app_inited)
-		return getEvtObj(new wxTimer,self);
+		return wrap(new wxTimer,self);
 	else
 		rb_raise(rb_eArgError,"%s is not running.",rb_class2name(rb_cWXApp));
 	return Qnil;
@@ -31,7 +31,7 @@ VALUE _initialize(VALUE self)
 #ifdef wxHAS_EVENT_BIND
 		_self->Bind(wxEVT_TIMER,RubyFunctor(proc),_self->GetId());
 #else
-		_self->Connect(_self->GetId(),wxEVT_TIMER,(wxObjectEventFunction)&RubyFunctor::operator(),NULL,new RubyFunctor(proc));
+		_self->Connect(_self->GetId(),wxEVT_TIMER,wxTimerEventHandler(RubyFunctor::operator()),NULL,new RubyFunctor(proc));
 #endif
 	}
 
@@ -73,6 +73,13 @@ void Init_WXTimer(VALUE rb_mWX)
 	rb_define_method(rb_cWXTimer,"stop",RUBY_METHOD_FUNC(_Stop),0);
 
 	rb_define_attr_method(rb_cWXTimer,"owner",_GetOwner,_setOwner);
+
+	rb_cWXTimerEvent = rb_define_class_under(rb_cWXEvent,"Timer",rb_cWXEvent);
+	registerEventType("timer",wxEVT_TIMER,rb_cWXTimerEvent);
+
+	//rb_define_attr_method(rb_cWXFileDirPickerEvent,"path",
+	//		Event::_getPath,Event::_setPath);
+
 #endif
 }
 

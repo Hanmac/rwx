@@ -14,7 +14,7 @@ bool ruby_app_inited;
 
 RubyApp::RubyApp(VALUE klass)
 {
-	mRuby = getEvtObj(this,klass);
+	mRuby = wrap(this,klass);
 }
 bool RubyApp::OnInit()
 {
@@ -22,11 +22,13 @@ bool RubyApp::OnInit()
 
 #if wxUSE_INTL
 	wxLocale::CreateLanguagesDB();
-	mLocale = new wxLocale(wxLANGUAGE_DEFAULT);
+	mLocale = new wxLocale(wxLANGUAGE_GERMAN);
 	mLocale->AddCatalog("wxstd");
 #ifdef __LINUX__
 	mLocale->AddCatalog("fileutils");
 #endif
+//	std::cout << mLocale->GetCanonicalName() << std::endl;
+//	std::cout << mLocale->GetString("Undo") << std::endl;
 #endif
 
 	ruby_app_inited = true;
@@ -88,8 +90,16 @@ VALUE _on_exit(VALUE self)
 {
 	return Qnil;
 }
+
+VALUE _wxExit(VALUE self)
+{
+	wxExit();
+	return self;
+}
+
 }
 }
+
 
 void Init_WXApp(VALUE rb_mWX)
 {
@@ -109,5 +119,8 @@ void Init_WXApp(VALUE rb_mWX)
 	rb_define_method(rb_cWXApp,"on_init",RUBY_METHOD_FUNC(_on_init),0);
 	rb_define_method(rb_cWXApp,"on_run",RUBY_METHOD_FUNC(_on_run),0);
 	rb_define_method(rb_cWXApp,"on_exit",RUBY_METHOD_FUNC(_on_exit),0);
+
+
+	rb_define_module_function(rb_mWX,"exit",RUBY_METHOD_FUNC(_wxExit),0);
 }
 

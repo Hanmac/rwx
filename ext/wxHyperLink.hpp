@@ -19,7 +19,7 @@ void Init_WXHyperLink(VALUE rb_mWX);
 template <>
 inline VALUE wrap< wxHyperlinkCtrl >(wxHyperlinkCtrl* window)
 {
-	return getEvtObj(window,rb_cWXHyperLink);
+	return wrap(window,rb_cWXHyperLink);
 }
 
 template <>

@@ -10,7 +10,7 @@
 
 #include "wxAnyButton.hpp"
 
-#include "wxToolBar.hpp"
+#include "wxToolBarBase.hpp"
 
 
 #include "wxStatusBar.hpp"
@@ -19,7 +19,12 @@
 
 #include "wxRadioButton.hpp"
 
+#include "wxStaticLine.hpp"
 #include "wxStaticBitmap.hpp"
+#include "wxStaticText.hpp"
+
+#include "wxSlider.hpp"
+#include "wxSpinButton.hpp"
 
 #include "wxTimePicker.hpp"
 #include "wxFontPicker.hpp"
@@ -29,7 +34,15 @@
 
 #include "wxTreeCtrl.hpp"
 
+#include "wxFileCtrl.hpp"
+
+#include "wxDataView.hpp"
+
 #include "wxHyperLink.hpp"
+
+#include "wxBookCtrl.hpp"
+
+#include "wxSTC.hpp"
 
 extern VALUE rb_cWXControl;
 void Init_WXControl(VALUE rb_mWX);
@@ -44,7 +57,7 @@ inline VALUE wrap< wxControl >(wxControl* window)
 		return wrap(anybutton);
 #endif
 #if wxUSE_TOOLBAR
-	if(wxToolBar *toolbar = dynamic_cast<wxToolBar*>(window))
+	if(wxToolBarBase *toolbar = dynamic_cast<wxToolBarBase*>(window))
 		return wrap(toolbar);
 #endif
 #if wxUSE_STATUSBAR
@@ -55,6 +68,30 @@ inline VALUE wrap< wxControl >(wxControl* window)
 	if(wxGauge *gauge = dynamic_cast<wxGauge*>(window))
 		return wrap(gauge);
 #endif
+
+#if wxUSE_STATBMP
+	if(wxStaticBitmap *bitmap = dynamic_cast<wxStaticBitmap*>(window))
+		return wrap(bitmap);
+#endif
+#if wxUSE_STATLINE
+	if(wxStaticLine *line = dynamic_cast<wxStaticLine*>(window))
+		return wrap(line);
+#endif
+#if wxUSE_STATTEXT
+	if(wxStaticText *text = dynamic_cast<wxStaticText*>(window))
+		return wrap(text);
+#endif
+
+#if wxUSE_SLIDER
+	if(wxSlider *slider = dynamic_cast<wxSlider*>(window))
+		return wrap(slider);
+#endif
+
+#if wxUSE_FILECTRL
+	if(wxFileCtrl *filectrl = dynamic_cast<wxFileCtrl*>(window))
+		return wrap(filectrl);
+#endif
+
 #if wxUSE_TIMEPICKCTRL
 	if(wxTimePickerCtrl *timepicker = dynamic_cast<wxTimePickerCtrl*>(window))
 		return wrap(timepicker);
@@ -84,7 +121,17 @@ inline VALUE wrap< wxControl >(wxControl* window)
 		return wrap(hyperlink);
 #endif
 
-	return getEvtObj(window,rb_cWXControl);
+#if wxUSE_BOOKCTRL
+	if(wxBookCtrlBase *bookctrl = dynamic_cast<wxBookCtrlBase*>(window))
+		return wrap(bookctrl);
+#endif
+
+#if wxUSE_STC
+	if(wxStyledTextCtrl *stc = dynamic_cast<wxStyledTextCtrl*>(window))
+		return wrap(stc);
+#endif
+
+	return wrap(window,rb_cWXControl);
 }
 
 

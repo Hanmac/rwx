@@ -6,7 +6,7 @@
  */
 
 
-#include "wxWindow.hpp"
+#include "wxEvtHandler.hpp"
 
 VALUE rb_cWXTimePicker;
 
@@ -21,7 +21,7 @@ macro_attr(Value,wxDateTime)
 
 VALUE _alloc(VALUE self)
 {
-	return getEvtObj(new wxTimePickerCtrl(),self);
+	return wrap(new wxTimePickerCtrl(),self);
 }
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
@@ -29,6 +29,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 	_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+	_created = true;
 	rb_call_super(argc,argv);
 	return self;
 }

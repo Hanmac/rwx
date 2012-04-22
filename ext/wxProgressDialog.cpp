@@ -22,7 +22,7 @@ singlereturn(GetMessage)
 
 VALUE _alloc(VALUE self)
 {
-	return getEvtObj(new RubyProgressDialog(),self);
+	return wrap(new RubyProgressDialog(),self);
 }
 #if wxUSE_TIMER
 class RubyTimerThread
@@ -59,6 +59,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 	if(!NIL_P(parent))
 		_self->Reparent(wrap<wxWindow*>(parent));
+	_created = true;
 	rb_call_super(argc,argv);
 #if wxUSE_TIMER
 	if(rb_block_given_p())
@@ -67,7 +68,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 #ifdef wxHAS_EVENT_BIND
 		_self->mTimer->Bind(wxEVT_TIMER,RubyTimerThread(),_self->mTimer->GetId());
 #else
-		_self->mTimer->Connect(_self->mTimer->GetId(),wxEVT_TIMER,(wxObjectEventFunction)&RubyTimerThread::operator(),NULL,new RubyTimerThread());
+		_self->mTimer->Connect(_self->mTimer->GetId(),wxEVT_TIMER,wxTimerEventHandler(RubyTimerThread::operator()),NULL,new RubyTimerThread());
 #endif
 		_self->mTimer->Start(10);
 		rb_thread_create((VALUE (*)(ANYARGS))&thread_code,new rt_holder(rb_block_proc(),self));

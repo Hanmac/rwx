@@ -6,7 +6,7 @@
  */
 
 
-#include "wxWindow.hpp"
+#include "wxEvtHandler.hpp"
 
 VALUE rb_cWXHyperLink;
 
@@ -26,7 +26,7 @@ macro_attr(Visited,bool)
 
 VALUE _alloc(VALUE self)
 {
-	return getEvtObj(new wxHyperlinkCtrl(),self);
+	return wrap(new wxHyperlinkCtrl(),self);
 }
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
@@ -42,6 +42,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	}
 	_self->Create(wrap<wxWindow*>(parent),wxID_ANY,
 			label,wxEmptyString);
+	_created = true;
 	rb_call_super(argc,argv);
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{

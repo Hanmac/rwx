@@ -20,7 +20,7 @@ void Init_WXFontPicker(VALUE rb_mWX);
 template <>
 inline VALUE wrap< wxFontPickerCtrl >(wxFontPickerCtrl* window)
 {
-	return getEvtObj(window,rb_cWXFontPicker);
+	return wrap(window,rb_cWXFontPicker);
 }
 
 

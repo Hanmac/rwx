@@ -18,7 +18,7 @@ void Init_WXMenu(VALUE rb_mWX);
 template <>
 inline VALUE wrap< wxMenu >(wxMenu *menu )
 {
-	return getEvtObj(menu,rb_cWXMenu);
+	return wrap(menu,rb_cWXMenu);
 }
 
 template <>

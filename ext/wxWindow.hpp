@@ -12,6 +12,7 @@
 #include "main.hpp"
 
 #include "wxMenuBar.hpp"
+#include "wxPanel.hpp"
 #include "wxControl.hpp"
 #include "wxToplevel.hpp"
 
@@ -28,23 +29,20 @@ inline VALUE wrap< wxWindow >(wxWindow* window)
 	if(window==NULL)
 		return Qnil;
 
-	wxMenuBar *menubar = dynamic_cast<wxMenuBar*>(window);
-	if(menubar)
+	if(wxMenuBar *menubar = dynamic_cast<wxMenuBar*>(window))
 		return wrap(menubar);
 
-	wxTopLevelWindow *toplevel = dynamic_cast<wxTopLevelWindow*>(window);
-	if(toplevel)
+	if(wxTopLevelWindow *toplevel = dynamic_cast<wxTopLevelWindow*>(window))
 		return wrap(toplevel);
 
+	if(wxPanel *panel = dynamic_cast<wxPanel*>(window))
+		return wrap(panel);
+
 #if wxUSE_CONTROLS
-	wxControl *control = dynamic_cast<wxControl*>(window);
-	if(control)
+	if(wxControl *control = dynamic_cast<wxControl*>(window))
 		return wrap(control);
 #endif
-//	VALUE result = wrap(window,rb_cWXWindow);
-//	windowholder.insert(std::make_pair(window,result));
-//	return result;
-	return getEvtObj(window,rb_cWXWindow);
+	return wrap(window,rb_cWXWindow);
 }
 
 

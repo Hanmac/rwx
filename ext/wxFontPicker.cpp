@@ -24,7 +24,7 @@ macro_attr(SelectedFont,wxFont)
 
 VALUE _alloc(VALUE self)
 {
-	return getEvtObj(new wxFontPickerCtrl(),self);
+	return wrap(new wxFontPickerCtrl(),self);
 }
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)

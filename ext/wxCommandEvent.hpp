@@ -9,6 +9,4 @@
 #define WXCOMMANDEVENT_HPP_
 
 
-
-
 #endif /* WXCOMMANDEVENT_HPP_ */

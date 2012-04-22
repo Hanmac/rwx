@@ -24,7 +24,7 @@ inline VALUE wrap< wxEvent >(wxEvent *event )
 	std::map<wxEventType,VALUE>::iterator it = evttypeclassholder.find(event->GetEventType());
 	if(it != evttypeclassholder.end())
 		klass = it->second;
-	return Data_Wrap_Struct(klass, NULL, free, event);
+	return wrap(event,klass);
 }
 
 template <>

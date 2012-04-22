@@ -9,6 +9,7 @@
 #include "wxBitmap.hpp"
 #include "wxImage.hpp"
 #include "wxDC.hpp"
+
 #define _self wrap<wxBitmap*>(self)
 
 VALUE rb_cWXBitmap;

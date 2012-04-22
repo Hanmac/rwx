@@ -21,7 +21,7 @@ void Init_WXStaticBitmap(VALUE rb_mWX);
 template <>
 inline VALUE wrap< wxStaticBitmap >(wxStaticBitmap* window)
 {
-	return getEvtObj(window,rb_cWXStaticBitmap);
+	return wrap(window,rb_cWXStaticBitmap);
 }
 
 

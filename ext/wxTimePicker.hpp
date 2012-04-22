@@ -21,7 +21,7 @@ void Init_WXTimePicker(VALUE rb_mWX);
 template <>
 inline VALUE wrap< wxTimePickerCtrl >(wxTimePickerCtrl* window)
 {
-	return getEvtObj(window,rb_cWXTimePicker);
+	return wrap(window,rb_cWXTimePicker);
 }
 
 
