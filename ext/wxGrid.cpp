@@ -11,7 +11,7 @@
 #include "wxGridCellRenderer.hpp"
 #include "wxGridCellAttr.hpp"
 
-VALUE rb_cWXGrid;
+VALUE rb_cWXGrid, rb_cWXGridEvent;
 #if wxUSE_GRID
 
 #define _self wrap<wxGrid*>(self)
@@ -180,6 +180,33 @@ void Init_WXGrid(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXGrid,"selected_topleft",RUBY_METHOD_FUNC(_GetSelectionBlockTopLeft),0);
 	rb_define_method(rb_cWXGrid,"selected_bottomright",RUBY_METHOD_FUNC(_GetSelectionBlockBottomRight),0);
+
+
+	rb_cWXGridEvent = rb_define_class_under(rb_cWXEvent,"Grid",rb_cWXEvent);
+
+	registerEventType("grid_cell_left_click", wxEVT_GRID_CELL_LEFT_CLICK, rb_cWXGridEvent );
+	registerEventType("grid_cell_right_click", wxEVT_GRID_CELL_RIGHT_CLICK, rb_cWXGridEvent );
+	registerEventType("grid_cell_left_dclick", wxEVT_GRID_CELL_LEFT_DCLICK, rb_cWXGridEvent );
+	registerEventType("grid_cell_right_dclick", wxEVT_GRID_CELL_RIGHT_DCLICK, rb_cWXGridEvent );
+	registerEventType("grid_label_left_click", wxEVT_GRID_LABEL_LEFT_CLICK, rb_cWXGridEvent );
+	registerEventType("grid_label_right_click", wxEVT_GRID_LABEL_RIGHT_CLICK, rb_cWXGridEvent );
+	registerEventType("grid_label_left_dclick", wxEVT_GRID_LABEL_LEFT_DCLICK, rb_cWXGridEvent );
+	registerEventType("grid_label_right_dclick", wxEVT_GRID_LABEL_RIGHT_DCLICK, rb_cWXGridEvent );
+	//registerEventType("", wxEVT_GRID_ROW_SIZE, wxGridSizeEvent );
+	//registerEventType("", wxEVT_GRID_COL_SIZE, wxGridSizeEvent );
+	//registerEventType("", wxEVT_GRID_RANGE_SELECT, wxGridRangeSelectEvent );
+	registerEventType("grid_cell_changing", wxEVT_GRID_CELL_CHANGING, rb_cWXGridEvent );
+	registerEventType("grid_cell_changed", wxEVT_GRID_CELL_CHANGED, rb_cWXGridEvent );
+	registerEventType("grid_select_cell", wxEVT_GRID_SELECT_CELL, rb_cWXGridEvent );
+	registerEventType("grid_editor_shown", wxEVT_GRID_EDITOR_SHOWN, rb_cWXGridEvent );
+	registerEventType("grid_editor_hidden", wxEVT_GRID_EDITOR_HIDDEN, rb_cWXGridEvent );
+	//registerEventType("", wxEVT_GRID_EDITOR_CREATED, wxGridEditorCreatedEvent );
+	registerEventType("grid_cell_begin_drag", wxEVT_GRID_CELL_BEGIN_DRAG, rb_cWXGridEvent );
+	registerEventType("grid_col_move", wxEVT_GRID_COL_MOVE, rb_cWXGridEvent );
+	registerEventType("grid_col_sort", wxEVT_GRID_COL_SORT, rb_cWXGridEvent );
+
+
+
 #endif
 }
 

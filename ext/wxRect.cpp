@@ -6,6 +6,9 @@
  */
 
 #include "wxRect.hpp"
+#include "wxPoint.hpp"
+#include "wxSize.hpp"
+
 VALUE rb_cWXRect;
 
 #define _self wrap<wxRect*>(self)
@@ -18,6 +21,14 @@ macro_attr(X,int)
 macro_attr(Y,int)
 macro_attr(Width,int)
 macro_attr(Height,int)
+
+macro_attr(Position,wxPoint)
+macro_attr(Size,wxSize)
+
+macro_attr(TopLeft,wxPoint)
+macro_attr(TopRight,wxPoint)
+macro_attr(BottomLeft,wxPoint)
+macro_attr(BottomRight,wxPoint)
 
 VALUE _alloc(VALUE self)
 {

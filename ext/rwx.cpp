@@ -132,18 +132,23 @@ extern "C" void Init_rwx()
 
 	Init_WXSlider(rb_mWX);
 	Init_WXSpinButton(rb_mWX);
+	Init_WXSpinCtrl(rb_mWX);
 
 	Init_WXHyperLink(rb_mWX);
 
 	Init_WXStaticBitmap(rb_mWX);
 	Init_WXStaticLine(rb_mWX);
 	Init_WXStaticText(rb_mWX);
+	Init_WXStaticBox(rb_mWX);
+
+	Init_WXTextCtrl(rb_mWX);
 
 	Init_WXTreeCtrl(rb_mWX);
 
 	Init_WXAnyButton(rb_mWX);
 	Init_WXButton(rb_mWX);
 
+	Init_WXCheckBox(rb_mWX);
 	Init_WXRadioButton(rb_mWX);
 	Init_WXStatusBar(rb_mWX);
 

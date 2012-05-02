@@ -27,6 +27,60 @@ end
 
 STDERR.reopen("file.log","w")
 
+class MapDialog < WX::Dialog
+
+	def initialize(parent)
+		super(parent,:title => "Map Properies",:style => DEFAULT_STYLE | RESIZE_BORDER)
+		
+		self.sizer = WX::BoxSizer.new {|box|
+			box.orientation = true
+			sbs = WX::StaticBox.new(self,:label => "Eigenschaften:").containing_sizer
+			sbs.orientation = true
+			sbs.add(create_text_sizer("Name:"))
+			sbs.add(WX::TextCtrl.new(self),:expand => true)
+			sbs.add(create_text_sizer("Anzeigename:"))
+			sbs.add(WX::TextCtrl.new(self),:expand => true)
+			
+			sbs.add(create_text_sizer("Abmessungen:"))
+			sbs.add(WX::BoxSizer.new {|siz|
+				siz.add(WX::SpinCtrl.new(self))
+				siz.add(create_text_sizer("×"))
+				siz.add(WX::SpinCtrl.new(self))
+			},:expand => true)
+			
+			box.add(sbs,:expand => true)
+			
+			sbs = WX::StaticBox.new(self,:label => "SystemSwitches:").containing_sizer
+			sbs.orientation = true
+			#sizer.orientation = true
+			sbs.add(WX::CheckBox.new(self,:label => "Rennverbot ändern:"))
+			sbs.add(WX::BoxSizer.new {|siz|
+				siz.add(WX::RadioButton.new(self,:label => "An",:group => true,:disabled=>true))
+				siz.add(WX::RadioButton.new(self,:label => "Aus",:disabled=>true))
+				siz.add(WX::RadioButton.new(self,:label => "Eltern-Map",:disabled=>true))
+			},:expand => true)
+			sbs.add(WX::CheckBox.new(self,:label => "Speicherverbot ändern:"))
+			sbs.add(WX::BoxSizer.new {|siz|
+				siz.add(WX::RadioButton.new(self,:label => "An",:group => true,:disabled=>true))
+				siz.add(WX::RadioButton.new(self,:label => "Aus",:disabled=>true))
+				siz.add(WX::RadioButton.new(self,:label => "Eltern-Map",:disabled=>true))
+			},:expand => true)
+			
+			sbs.add(WX::BoxSizer.new {|siz|
+				siz.add(WX::RadioButton.new(self,:label => "An",:group => true,:disabled=>true))
+				siz.add(WX::RadioButton.new(self,:label => "Aus",:disabled=>true))
+				siz.add(WX::RadioButton.new(self,:label => "Eltern-Map",:disabled=>true))
+			},:expand => true)
+			
+			box.add(sbs,:expand => true)
+			box.add(create_button_sizer(:ok,:cancel,:help,:apply),:expand => true)
+
+		}
+		fit
+		layout
+	end
+
+end
 
 class TilesetGridTable < WX::GridTable
 
@@ -129,7 +183,7 @@ class A < WX::App
 			}
 		}
 #		#i=WX::Image.new("new16x16.png")
-#		t = @frame.createToolBar
+		t = @frame.createToolBar
 
 #		#t.addNormal(WX::TimePickerCtrl)
 #		#t.addNormal(WX::RadioButton) {|g| g.label_text = "abc" }
@@ -161,19 +215,9 @@ class A < WX::App
 #		#c.label_text = "abc"
 ##		t.addNormal(WX::TimePickerCtrl.new(t))
 #		
-#		t.addNormal(:new,nil) {|e|
-##			p e.id
-#			WX::Dialog.new(@frame) {|dir|
-#				dir.sizer = WX::BoxSizer.new {|box|
-#				box.orientation = true
-#				box.add(WX::Button.new(dir,:id => :cancel),:expand => true)
-#				
-#				box.add(dir.create_button_sizer(:yes,:no))
-#				#sizer.orientation = true
-#				}
-#				dir.layout
-#				p dir.show_modal
-#			}
+		t.addNormal(:new,nil) {|e|
+			MapDialog.new(@frame).show_modal
+		}
 #			#@t = WX::Timer.new() {|e| p e }
 #			#@t.start(2000)
 #			#WX::ProgressDialog.new(nil,:title=>"title") { |pd|p 1; pd.update(50,"message") }
@@ -200,7 +244,7 @@ class A < WX::App
 #		
 #		
 #		#p t.each_tool.to_a
-#		t.realize
+		t.realize
 #		popup = WX::Menu.new("") {|menu| menu.appendNormal(:new_menu,"new Map") }
 		doc = File.open("project.xml"){|f| Nokogiri::XML(f) }
 
@@ -242,43 +286,48 @@ class A < WX::App
 								#p grid.selected_cells, grid.selected_topleft, grid.selected_bottomright
 								if xi >= 0 && xi < map.width && yi >= 0 && yi < map.height && grid.selection?
 								
-#									cells = grid.selected_cells
-#									cells.each {|xi,yi|
-#										rect = WX::Rect.new(
-#											x + xi*map.tilewidth,
-#											y + yi*map.tileheight,
-#											map.tilewidth,map.tileheight
-#										)
-#										
-#										dc.draw_rectangle(rect)
-#										dc.draw_bitmap(grid.table[yi,xi] * 0.5,
-#											rect.x,rect.y)
-
-#									}
-									tl = grid.selected_topleft
-									br = grid.selected_bottomright
+									cells = grid.selected_cells
+									unless cells.empty?
+										x_off = (cells.map {|x,y| x}.minmax.inject(:+) / 2.0).ceil
+										y_off = (cells.map {|x,y| y}.minmax.inject(:+) / 2.0).ceil
 									
-									tl.size.times {|i|
-
-										rect = WX::Rect.new(
-											x + map.tilewidth * (tl[i][0] - tl[0][0]),
-											y + map.tileheight * (br[i][1] - br[0][1]),
-											map.tilewidth * (br[i][0] - tl[i][0] + 1),
-											map.tileheight * (br[i][1] - tl[i][1] + 1)
-										)
-										dc.draw_rectangle(rect)
-
-										tl[i][0].upto(br[i][0]).with_index {|xi,xii|
-											tl[i][1].upto(br[i][1]).with_index {|yi,yii|
-												dc.draw_bitmap(
-													grid.table[yi,xi] * 0.5,
-													x + map.tilewidth * (0 + xii),
-													y + map.tileheight * (0 + yii)
-												)
-											}
-										}
+										cells.each {|xi,yi|
+											rect = WX::Rect.new(
+												x + (xi-x_off)*map.tilewidth,
+												y + (yi-y_off)*map.tileheight,
+												map.tilewidth,map.tileheight
+											)
 										
-									}
+											dc.draw_rectangle(rect)
+											dc.draw_bitmap(grid.table[yi,xi] * 0.5,
+												rect.x,rect.y)
+
+										}
+									end
+#									tl = grid.selected_topleft
+#									br = grid.selected_bottomright
+#									
+#									tl.size.times {|i|
+
+#										rect = WX::Rect.new(
+#											x + map.tilewidth * (tl[i][0] - tl[0][0]),
+#											y + map.tileheight * (br[i][1] - br[0][1]),
+#											map.tilewidth * (br[i][0] - tl[i][0] + 1),
+#											map.tileheight * (br[i][1] - tl[i][1] + 1)
+#										)
+#										dc.draw_rectangle(rect)
+
+#										tl[i][0].upto(br[i][0]).with_index {|xi,xii|
+#											tl[i][1].upto(br[i][1]).with_index {|yi,yii|
+#												dc.draw_bitmap(
+#													grid.table[yi,xi] * 0.5,
+#													x + map.tilewidth * (0 + xii),
+#													y + map.tileheight * (0 + yii)
+#												)
+#											}
+#										}
+#										
+#									}
 
 
 #									
@@ -297,39 +346,41 @@ class A < WX::App
 							
 							pwnd.refresh
 						}
-						pwnd.bind(:left_down) {|e|
-							layer = @frame[:side][:layerlist].selection.instance_variable_get(:@layer)
+						
+						
+#						pwnd.bind(:left_down) {|e|
+#							layer = @frame[:side][:layerlist].selection.instance_variable_get(:@layer)
 
-								x = 10
-								y = 10
-								point = pwnd.screen_to_client(WX.mouse_position)
-								x = (point.x - x) / map.tilewidth
-								y = (point.y - y)/ map.tileheight
-								grid = @frame[:tilemap].current_page
+#								x = 10
+#								y = 10
+#								point = pwnd.screen_to_client(WX.mouse_position)
+#								x = (point.x - x) / map.tilewidth
+#								y = (point.y - y)/ map.tileheight
+#								grid = @frame[:tilemap].current_page
 
-								if x >= 0 && x < map.width && y >= 0 && y < map.height && grid.selection?
-									tl = grid.selected_topleft
-									p tl
-									tl = tl[0]
-									br = grid.selected_bottomright[0]
+#								if x >= 0 && x < map.width && y >= 0 && y < map.height && grid.selection?
+#									tl = grid.selected_topleft
+#									p tl
+#									tl = tl[0]
+#									br = grid.selected_bottomright[0]
 
-									br = tl if br.nil?
+#									br = tl if br.nil?
 
-									if !tl.nil? && !br.nil?
-#										tl[0].upto(br[0]).with_index {|xi,xii|
-#											tl[1].upto(br[1]).with_index {|yi,yii|
-#												dc.draw_bitmap(grid.table[yi,xi] * 0.5,
-#													x + map.tilewidth * xii,y + map.tileheight * yii)
-#											}
-#										}
-										table = grid.table
-										id = map.tilesets.key(table.set)
-										layer[y * map.width + x] =  id + tl[0] + table.cols * tl[1]
-										#p x,y,tl,br
-									end
-								
-								end
-						}
+#									if !tl.nil? && !br.nil?
+##										tl[0].upto(br[0]).with_index {|xi,xii|
+##											tl[1].upto(br[1]).with_index {|yi,yii|
+##												dc.draw_bitmap(grid.table[yi,xi] * 0.5,
+##													x + map.tilewidth * xii,y + map.tileheight * yii)
+##											}
+##										}
+#										table = grid.table
+#										id = map.tilesets.key(table.set)
+#										layer[y * map.width + x] =  id + tl[0] + table.cols * tl[1]
+#										#p x,y,tl,br
+#									end
+#								
+#								end
+#						}
 					} if map
 				
 				}
@@ -367,6 +418,8 @@ class A < WX::App
 							grid.editable = false
 							
 							grid.autosize
+							
+							grid.bind(:grid_select_cell) {|e| p :select }
 						}
 					}
 

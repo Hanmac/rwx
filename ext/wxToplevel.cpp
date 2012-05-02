@@ -56,4 +56,19 @@ void Init_WXTopLevel(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXTopLevel, "title",_getTitle,_setTitle);
 	rb_define_attr_method(rb_cWXTopLevel, "icon",_getIcon,_setIcon);
+
+
+	rb_define_const(rb_cWXTopLevel,"STAY_ON_TOP",INT2NUM(wxSTAY_ON_TOP));
+	rb_define_const(rb_cWXTopLevel,"ICONIZE",INT2NUM(wxICONIZE));
+	rb_define_const(rb_cWXTopLevel,"MINIMIZE",INT2NUM(wxMINIMIZE));
+	rb_define_const(rb_cWXTopLevel,"MAXIMIZE",INT2NUM(wxMAXIMIZE));
+	rb_define_const(rb_cWXTopLevel,"CLOSE_BOX",INT2NUM(wxCLOSE_BOX));
+
+	rb_define_const(rb_cWXTopLevel,"SYSTEM_MENU",INT2NUM(wxSYSTEM_MENU));
+	rb_define_const(rb_cWXTopLevel,"MINIMIZE_BOX",INT2NUM(wxMINIMIZE_BOX));
+	rb_define_const(rb_cWXTopLevel,"MAXIMIZE_BOX",INT2NUM(wxMAXIMIZE_BOX));
+
+	rb_define_const(rb_cWXTopLevel,"TINY_CAPTION",INT2NUM(wxTINY_CAPTION));
+	rb_define_const(rb_cWXTopLevel,"RESIZE_BORDER",INT2NUM(wxRESIZE_BORDER));
+
 }

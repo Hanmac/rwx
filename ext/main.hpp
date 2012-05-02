@@ -37,7 +37,6 @@
 
 
 
-
 #include <wx/wx.h>
 #include <ruby.h>
 
@@ -64,7 +63,7 @@ inline VALUE wrap(void *arg,VALUE klass)
 template <typename T>
 T wrap(const VALUE &arg);
 
-template <typename T>
+template <class T>
 VALUE wrap(const T &arg){
 	return wrap(new T(arg));
 };

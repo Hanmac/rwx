@@ -17,14 +17,21 @@
 
 #include "wxGauge.hpp"
 
+
+#include "wxCheckBox.hpp"
 #include "wxRadioButton.hpp"
 
 #include "wxStaticLine.hpp"
 #include "wxStaticBitmap.hpp"
 #include "wxStaticText.hpp"
+#include "wxStaticBox.hpp"
 
 #include "wxSlider.hpp"
+
 #include "wxSpinButton.hpp"
+#include "wxSpinCtrl.hpp"
+
+#include "wxTextCtrl.hpp"
 
 #include "wxTimePicker.hpp"
 #include "wxFontPicker.hpp"
@@ -45,7 +52,7 @@
 #include "wxSTC.hpp"
 
 extern VALUE rb_cWXControl;
-void Init_WXControl(VALUE rb_mWX);
+DLL_LOCAL void Init_WXControl(VALUE rb_mWX);
 #if wxUSE_CONTROLS
 template <>
 inline VALUE wrap< wxControl >(wxControl* window)
@@ -81,15 +88,29 @@ inline VALUE wrap< wxControl >(wxControl* window)
 	if(wxStaticText *text = dynamic_cast<wxStaticText*>(window))
 		return wrap(text);
 #endif
+#if wxUSE_STATBOX
+	if(wxStaticBox *box = dynamic_cast<wxStaticBox*>(window))
+		return wrap(box);
+#endif
 
 #if wxUSE_SLIDER
 	if(wxSlider *slider = dynamic_cast<wxSlider*>(window))
 		return wrap(slider);
 #endif
 
+#if wxUSE_SPINCTRL
+	if(wxSpinCtrl *spinctrl = dynamic_cast<wxSpinCtrl*>(window))
+		return wrap(spinctrl);
+#endif
+
 #if wxUSE_FILECTRL
 	if(wxFileCtrl *filectrl = dynamic_cast<wxFileCtrl*>(window))
 		return wrap(filectrl);
+#endif
+
+#if wxUSE_TEXTCTRL
+	if(wxTextCtrl *textctrl = dynamic_cast<wxTextCtrl*>(window))
+		return wrap(textctrl);
 #endif
 
 #if wxUSE_TIMEPICKCTRL
@@ -116,6 +137,12 @@ inline VALUE wrap< wxControl >(wxControl* window)
 	if(wxRadioButton *radiobtn = dynamic_cast<wxRadioButton*>(window))
 		return wrap(radiobtn);
 #endif
+#if wxUSE_CHECKBOX
+	if(wxCheckBox *check = dynamic_cast<wxCheckBox*>(window))
+		return wrap(check);
+#endif
+
+
 #if wxUSE_HYPERLINKCTRL
 	if(wxHyperlinkCtrl *hyperlink = dynamic_cast<wxHyperlinkCtrl*>(window))
 		return wrap(hyperlink);

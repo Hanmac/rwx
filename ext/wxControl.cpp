@@ -40,7 +40,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 
 #endif
-void Init_WXControl(VALUE rb_mWX)
+DLL_LOCAL void Init_WXControl(VALUE rb_mWX)
 {
 #if wxUSE_CONTROLS
 	using namespace RubyWX::Control;

@@ -19,6 +19,11 @@ void Init_WXAnyButton(VALUE rb_mWX);
 template <>
 inline VALUE wrap< wxAnyButton >(wxAnyButton* window)
 {
+#if wxUSE_BUTTON
+	if(wxButton *button = dynamic_cast<wxButton*>(window))
+		return wrap(button);
+#endif
+
 	return wrap(window,rb_cWXAnyButton);
 }
 

@@ -143,6 +143,15 @@ VALUE _inspect(VALUE self)
 void Init_WXColor(VALUE rb_mWX)
 {
 	using namespace RubyWX::Color;
+
+#if 0
+	rb_define_attr(rb_cWXColor,"red",1,1);
+	rb_define_attr(rb_cWXColor,"green",1,1);
+	rb_define_attr(rb_cWXColor,"blue",1,1);
+	rb_define_attr(rb_cWXColor,"alpha",1,1);
+#endif
+
+
 	rb_cWXColor = rb_define_class_under(rb_mWX,"Color",rb_cObject);
 	rb_define_alloc_func(rb_cWXColor,_alloc);
 

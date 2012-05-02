@@ -84,6 +84,8 @@ macro_attr_with_func(Id,wrapID,unwrapID)
 macro_attr(Position,wxPoint)
 
 macro_attr(Size,wxSize)
+macro_attr(VirtualSize,wxSize)
+
 macro_attr(ClientSize,wxSize)
 
 macro_attr(MinSize,wxSize)
@@ -124,12 +126,24 @@ macro_attr(ContainingSizer,wxSizer*)
 singlefunc(Show)
 singlefunc(Hide)
 
+singlefunc(Enable)
+singlefunc(Disable)
+
+
+singlefunc(Raise)
+singlefunc(Lower)
+
+singlefunc(Freeze)
+singlefunc(Thaw)
+
+
 singlefunc(CaptureMouse)
 singlefunc(ReleaseMouse)
 
 singlefunc(Update)
 singlefunc(Refresh)
 
+singlefunc(Fit)
 singlereturn(Layout)
 
 singlereturn(GetParent)
@@ -186,10 +200,22 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			_self->SetName(wrap<wxString>(temp));
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("label")))))
 			_self->SetLabel(wrap<wxString>(temp));
+#if wxUSE_HELP
+		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("help_text")))))
+			_self->SetHelpText(wrap<wxString>(temp));
+#endif // wxUSE_HELP
+
+
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("id")))))
 			_self->SetId(unwrapID(temp));
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("size")))))
 			_self->SetSize(wrap<wxSize>(temp));
+		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("position")))))
+			_self->SetPosition(wrap<wxPoint>(temp));
+
+		if(RTEST(rb_hash_aref(hash,ID2SYM(rb_intern("disabled")))))
+			_self->Disable();
+
 	}
 
 	if(rb_block_given_p() && !(wxUSE_PROGRESSDLG && wxUSE_TIMER && rb_obj_is_kind_of(self,rb_cWXProgressDialog)))
@@ -199,7 +225,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 VALUE _getchild(VALUE self,VALUE id)
 {
-	return wrap(_self->FindWindowById(unwrapID(id)));
+	return wrap(_self->FindWindow(unwrapID(id)));
 }
 
 
@@ -315,6 +341,28 @@ VALUE _ScreenToClient(VALUE self,VALUE point)
 void Init_WXWindow(VALUE rb_mWX)
 {
 	using namespace RubyWX::Window;
+#if 0
+	rb_define_attr(rb_cWXWindow, "label",1,1);
+	rb_define_attr(rb_cWXWindow, "name",1,1);
+	rb_define_attr(rb_cWXWindow, "parent",1,1);
+
+	rb_define_attr(rb_cWXWindow, "id",1,1);
+
+	rb_define_attr(rb_cWXWindow, "size",1,1);
+	rb_define_attr(rb_cWXWindow, "min_size",1,1);
+	rb_define_attr(rb_cWXWindow, "max_size",1,1);
+
+	rb_define_attr(rb_cWXWindow, "sizer",1,1);
+	rb_define_attr(rb_cWXWindow, "containing_sizer",1,1);
+
+	rb_define_attr(rb_cWXWindow, "backgroundColor",1,1);
+	rb_define_attr(rb_cWXWindow, "foregroundColor",1,1);
+
+	rb_define_attr(rb_cWXWindow, "font",1,1);
+	rb_define_attr(rb_cWXWindow, "help_text",1,1);
+
+#endif
+
 	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
 	rb_define_alloc_func(rb_cWXWindow,_alloc);
 
@@ -334,13 +382,14 @@ void Init_WXWindow(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXWindow, "max_size",_getMaxSize,_setMaxSize);
 
 	rb_define_attr_method(rb_cWXWindow, "sizer",_getSizer,_setSizer);
+	rb_define_attr_method(rb_cWXWindow, "containing_sizer",_getContainingSizer,_setContainingSizer);
 
 	rb_define_attr_method(rb_cWXWindow, "backgroundColor",_GetBackgroundColour,_SetBackgroundColour);
 	rb_define_attr_method(rb_cWXWindow, "foregroundColor",_GetForegroundColour,_SetForegroundColour);
 
 	rb_define_attr_method(rb_cWXWindow, "font",_getFont,_setFont);
 #if wxUSE_HELP
-	rb_define_attr_method(rb_cWXWindow, "helpText",_getHelpText,_setHelpText);
+	rb_define_attr_method(rb_cWXWindow, "help_text",_getHelpText,_setHelpText);
 #endif // wxUSE_HELP
 
 	rb_define_method(rb_cWXWindow,"show",RUBY_METHOD_FUNC(_Show),0);
@@ -350,6 +399,7 @@ void Init_WXWindow(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXWindow,"each",RUBY_METHOD_FUNC(_each),0);
 
+	rb_define_method(rb_cWXWindow,"fit",RUBY_METHOD_FUNC(_Fit),0);
 	rb_define_method(rb_cWXWindow,"layout",RUBY_METHOD_FUNC(_Layout),0);
 
 	rb_define_method(rb_cWXWindow,"update",RUBY_METHOD_FUNC(_Update),0);

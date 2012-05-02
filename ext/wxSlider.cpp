@@ -11,7 +11,7 @@
 
 VALUE rb_cWXSlider;
 
-#if wxUSE_STATBMP
+#if wxUSE_SLIDER
 #define _self wrap<wxSlider*>(self)
 
 namespace RubyWX {
@@ -55,7 +55,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 #endif
 void Init_WXSlider(VALUE rb_mWX)
 {
-#if wxUSE_STATBMP
+#if wxUSE_SLIDER
 	using namespace RubyWX::Slider;
 	rb_cWXSlider = rb_define_class_under(rb_mWX,"Slider",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXSlider,_alloc);

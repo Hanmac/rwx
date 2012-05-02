@@ -65,6 +65,8 @@ inline VALUE wrap< wxToolTip >(wxToolTip* window)
 template <>
 inline wxToolTip* wrap< wxToolTip* >(const VALUE &vwindow)
 {
+	if(NIL_P(vwindow))
+		return NULL;
 	return new wxToolTip(wrap<wxString>(vwindow));
 }
 #endif

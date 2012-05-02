@@ -21,14 +21,24 @@ macro_attr(Value,bool)
 
 VALUE _alloc(VALUE self)
 {
-	return wrap(new wxRadioButton(),self);
+	return wrap(new wxRadioButton,self);
 }
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
+	int style = 0;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY,wxEmptyString);
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		VALUE temp;
+		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("style")))))
+			style = NUM2INT(temp);
+		if(RTEST(rb_hash_aref(hash,ID2SYM(rb_intern("group")))))
+			style |= wxRB_GROUP;
+	}
+
+	_self->Create(wrap<wxWindow*>(parent),wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,style);
 	_created = true;
 	rb_call_super(argc,argv);
 	return self;
@@ -48,6 +58,7 @@ void Init_WXRadioButton(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXRadioButton,"value",_getValue,_setValue);
 
+	rb_define_const(rb_cWXRadioButton,"GROUP",INT2NUM(wxRB_GROUP));
 #endif
 
 }
