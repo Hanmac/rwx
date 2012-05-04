@@ -26,6 +26,10 @@
 #include "wxStaticText.hpp"
 #include "wxStaticBox.hpp"
 
+#include "wxItemContainer.hpp"
+
+#include "wxChoice.hpp"
+
 #include "wxSlider.hpp"
 
 #include "wxSpinButton.hpp"
@@ -91,6 +95,11 @@ inline VALUE wrap< wxControl >(wxControl* window)
 #if wxUSE_STATBOX
 	if(wxStaticBox *box = dynamic_cast<wxStaticBox*>(window))
 		return wrap(box);
+#endif
+
+#if wxUSE_CHOICE
+	if(wxChoice *choice = dynamic_cast<wxChoice*>(window))
+		return wrap(choice);
 #endif
 
 #if wxUSE_SLIDER

@@ -9,10 +9,23 @@
 #include "wxBitmap.hpp"
 #include "wxImage.hpp"
 #include "wxDC.hpp"
+#include <map>
 
 #define _self wrap<wxBitmap*>(self)
 
 VALUE rb_cWXBitmap;
+
+typedef std::map<wxWindowID,wxArtID> WindowArt;
+WindowArt windowArtHolder;
+typedef std::map<ID,wxArtID> RubyArt;
+RubyArt rubyArtHolder;
+
+void registerArtID(const char * name,const wxArtID& artid,wxWindowID wid = wxID_NONE)
+{
+	if(wid != wxID_NONE)
+		windowArtHolder.insert(std::make_pair(wid,artid));
+	rubyArtHolder.insert(std::make_pair(rb_intern(name),artid));
+}
 
 
 namespace RubyWX {
@@ -80,66 +93,19 @@ wxBitmap wrapBitmap(const VALUE &vbitmap,wxWindowID id,bool disabled,const wxArt
 			return wxNullBitmap;
 		else
 		{
-			wxArtID aid;
-			switch(id){
-			case wxID_NEW:
-				aid = wxART_NEW;
-				break;
-			case wxID_OPEN:
-				aid = wxART_FILE_OPEN;
-				break;
-			case wxID_SAVE:
-				aid = wxART_FILE_SAVE;
-				break;
-			case wxID_SAVEAS:
-				aid = wxART_FILE_SAVE_AS;
-				break;
-			case wxID_COPY:
-				aid = wxART_COPY;
-				break;
-			case wxID_CUT:
-				aid = wxART_CUT;
-				break;
-			case wxID_PASTE:
-				aid = wxART_PASTE;
-				break;
-			case wxID_UNDO:
-				aid = wxART_UNDO;
-				break;
-			case wxID_REDO:
-				aid = wxART_REDO;
-				break;
-
-			case wxID_PRINT:
-				aid = wxART_PRINT;
-				break;
-
-			case wxID_DELETE:
-				aid = wxART_DELETE;
-				break;
-			case wxID_HELP:
-				aid = wxART_HELP;
-				break;
-
-			case wxID_CLOSE:
-				aid = wxART_CLOSE;
-				break;
-
-			case wxID_FIND:
-				aid = wxART_FIND;
-				break;
-
-			case wxID_REPLACE:
-				aid = wxART_FIND_AND_REPLACE;
-				break;
-
-			default:
+			WindowArt::iterator it = windowArtHolder.find(id);
+			if(it == windowArtHolder.end())
 				if(!disabled)
 					rb_raise(rb_eArgError,"need an valid bitmap");
-				break;
-			}
-			return wxArtProvider::GetBitmap(aid,type);
+			return wxArtProvider::GetBitmap(it->second,type);
 		}
+	}else if(SYMBOL_P(vbitmap))
+	{
+		RubyArt::iterator it = rubyArtHolder.find(SYM2ID(vbitmap));
+		if(it == rubyArtHolder.end())
+			if(!disabled)
+				rb_raise(rb_eArgError,"need an valid bitmap");
+		return wxArtProvider::GetBitmap(it->second,type);
 	}
 	wxBitmap temp = wxArtProvider::GetBitmap(wrap<wxString>(vbitmap),type);
 	if(temp.IsOk())
@@ -160,5 +126,43 @@ void Init_WXBitmap(VALUE rb_mWX)
 	rb_define_method(rb_cWXBitmap,"to_image",RUBY_METHOD_FUNC(_to_image),0);
 #endif
 	rb_define_method(rb_cWXBitmap,"to_bitmap",RUBY_METHOD_FUNC(_to_bitmap),0);
+
+
+	registerArtID("new",wxART_NEW,wxID_NEW);
+
+	registerArtID("folder",wxART_FOLDER);
+
+	registerArtID("open",wxART_FILE_OPEN,wxID_OPEN);
+	registerArtID("save",wxART_FILE_SAVE,wxID_SAVE);
+	registerArtID("save_as",wxART_FILE_SAVE_AS,wxID_SAVEAS);
+
+	registerArtID("folder_open",wxART_FOLDER_OPEN);
+
+
+	registerArtID("copy",wxART_COPY,wxID_COPY);
+	registerArtID("cut",wxART_CUT,wxID_CUT);
+	registerArtID("paste",wxART_PASTE,wxID_PASTE);
+
+	registerArtID("undo",wxART_UNDO,wxID_UNDO);
+	registerArtID("redo",wxART_REDO,wxID_REDO);
+
+	registerArtID("print",wxART_PRINT,wxID_PRINT);
+
+	registerArtID("delete",wxART_DELETE,wxID_DELETE);
+
+	registerArtID("help",wxART_HELP,wxID_HELP);
+	registerArtID("tip",wxART_TIP);
+
+
+	registerArtID("close",wxART_CLOSE,wxID_CLOSE);
+	registerArtID("quit",wxART_QUIT);
+
+	registerArtID("find",wxART_FIND,wxID_FIND);
+	registerArtID("replace",wxART_FIND_AND_REPLACE,wxID_FIND);
+
+
+	registerArtID("floppy",wxART_FLOPPY,wxID_FLOPPY);
+	registerArtID("cdrom",wxART_CDROM,wxID_CDROM);
+
 
 }

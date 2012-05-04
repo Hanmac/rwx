@@ -369,7 +369,6 @@ void Init_WXWindow(VALUE rb_mWX)
 	rb_define_method(rb_cWXWindow,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_include_module(rb_cWXWindow,rb_mWXEvtHandler);
-	rb_include_module(rb_cWXWindow,rb_mEnumerable);
 
 	rb_define_attr_method(rb_cWXWindow, "label",_getLabel,_setLabel);
 	rb_define_attr_method(rb_cWXWindow, "name",_getName,_setName);
@@ -397,7 +396,7 @@ void Init_WXWindow(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXWindow,"[]",RUBY_METHOD_FUNC(_getchild),1);
 
-	rb_define_method(rb_cWXWindow,"each",RUBY_METHOD_FUNC(_each),0);
+	rb_define_method(rb_cWXWindow,"each_child",RUBY_METHOD_FUNC(_each),0);
 
 	rb_define_method(rb_cWXWindow,"fit",RUBY_METHOD_FUNC(_Fit),0);
 	rb_define_method(rb_cWXWindow,"layout",RUBY_METHOD_FUNC(_Layout),0);

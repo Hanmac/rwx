@@ -141,6 +141,9 @@ extern "C" void Init_rwx()
 	Init_WXStaticText(rb_mWX);
 	Init_WXStaticBox(rb_mWX);
 
+	Init_WXItemContainer(rb_mWX);
+	Init_WXChoice(rb_mWX);
+
 	Init_WXTextCtrl(rb_mWX);
 
 	Init_WXTreeCtrl(rb_mWX);

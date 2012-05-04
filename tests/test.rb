@@ -55,9 +55,7 @@ class MapDialog < WX::Dialog
 			#sizer.orientation = true
 			sbs.add(WX::CheckBox.new(self,:label => "Rennverbot ändern:"))
 			sbs.add(WX::BoxSizer.new {|siz|
-				siz.add(WX::RadioButton.new(self,:label => "An",:group => true,:disabled=>true))
-				siz.add(WX::RadioButton.new(self,:label => "Aus",:disabled=>true))
-				siz.add(WX::RadioButton.new(self,:label => "Eltern-Map",:disabled=>true))
+				siz.add(WX::Choice.new(self,:items =>["An","Aus","Eltern-Map"],:select=>0))
 			},:expand => true)
 			sbs.add(WX::CheckBox.new(self,:label => "Speicherverbot ändern:"))
 			sbs.add(WX::BoxSizer.new {|siz|
