@@ -10,7 +10,7 @@
 
 #include "main.hpp"
 extern VALUE rb_cWXTaskBar;
-void Init_WXTaskBar(VALUE rb_mWX);
+DLL_LOCAL void Init_WXTaskBar(VALUE rb_mWX);
 
 #if wxUSE_TASKBARICON
 
@@ -34,18 +34,7 @@ private:
 
 	wxMenu* CreatePopupMenu() { return mMenu;}
 };
-//
-//template <>
-//inline VALUE wrap< wxTimer >(wxTimer *timer )
-//{
-//	return wrap(timer,rb_cWXTimer);
-//}
 
-template <>
-inline RubyTaskBarIcon* wrap< RubyTaskBarIcon* >(const VALUE &vtimer)
-{
-	return unwrapPtr<RubyTaskBarIcon>(vtimer, rb_cWXTaskBar);
-}
 #endif
 
 

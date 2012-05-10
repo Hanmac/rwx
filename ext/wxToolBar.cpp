@@ -6,7 +6,8 @@
  */
 
 
-#include "wxEvtHandler.hpp"
+#include "wxToolBar.hpp"
+#include "wxToolBarBase.hpp"
 
 VALUE rb_cWXToolBar;
 
@@ -15,10 +16,7 @@ VALUE rb_cWXToolBar;
 namespace RubyWX {
 namespace ToolBar {
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxToolBar(),self);
-}
+APP_PROTECT(wxToolBar)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -40,6 +38,8 @@ void Init_WXToolBar(VALUE rb_mWX)
 	rb_define_alloc_func(rb_cWXToolBar,_alloc);
 
 	rb_define_method(rb_cWXToolBar,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
+
+	registerType<wxToolBar>(rb_cWXToolBar);
 }
 
 

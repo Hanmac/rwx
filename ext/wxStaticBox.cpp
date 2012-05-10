@@ -5,7 +5,7 @@
  *      Author: hanmac
  */
 
-#include "wxEvtHandler.hpp"
+#include "wxStaticBox.hpp"
 #include "wxSizer.hpp"
 
 VALUE rb_cWXStaticBox;
@@ -16,10 +16,7 @@ VALUE rb_cWXStaticBox;
 namespace RubyWX {
 namespace StaticBox {
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxStaticBox(),self);
-}
+APP_PROTECT(wxStaticBox)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -54,6 +51,8 @@ void Init_WXStaticBox(VALUE rb_mWX)
 
 
 	rb_define_method(rb_cWXStaticBox,"containing_sizer",RUBY_METHOD_FUNC(_GetContainingSizer),0);// :nodoc:
+
+	registerType<wxStaticBox>(rb_cWXStaticBox);
 #endif
 
 }

@@ -6,6 +6,7 @@
  */
 
 #include "wxFileHistory.hpp"
+#include "wxApp.hpp"
 #include "wxConfig.hpp"
 #include "wxMenu.hpp"
 
@@ -20,11 +21,7 @@ namespace FileHistory
 
 macro_attr(BaseId,wxWindowID)
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxFileHistory);
-}
-
+APP_PROTECT(wxFileHistory)
 
 VALUE _each(VALUE self)
 {
@@ -131,5 +128,7 @@ void Init_WXFileHistory(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXFileHistory,"<<",RUBY_METHOD_FUNC(_shiftleft),1);
 	rb_define_method(rb_cWXFileHistory,">>",RUBY_METHOD_FUNC(_shiftright),1);
+
+	registerType<wxFileHistory>(rb_cWXFileHistory);
 #endif
 }

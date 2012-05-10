@@ -9,26 +9,12 @@
 #define WXWIZARD_HPP_
 
 
-#include "main.hpp"
+#include "wxDialog.hpp"
 
 extern VALUE rb_cWXWizard;
-void Init_WXWizard(VALUE rb_mWX);
+DLL_LOCAL void Init_WXWizard(VALUE rb_mWX);
 
 #if wxUSE_WIZARDDLG
 #include <wx/wizard.h>
-
-template <>
-inline VALUE wrap< wxWizard >(wxWizard* window)
-{
-	return wrap(window,rb_cWXWizard);
-}
-
-
-
-template <>
-inline wxWizard* wrap< wxWizard* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxWizard>(vwindow, rb_cWXWizard);
-}
 #endif
 #endif /* WXWIZARD_HPP_ */

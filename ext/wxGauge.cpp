@@ -5,7 +5,7 @@
  *      Author: hanmac
  */
 
-#include "wxEvtHandler.hpp"
+#include "wxGauge.hpp"
 
 VALUE rb_cWXGauge;
 
@@ -18,11 +18,7 @@ namespace Gauge {
 macro_attr(Range,int)
 macro_attr(Value,int)
 
-
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxGauge(),self);
-}
+APP_PROTECT(wxGauge)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -39,7 +35,7 @@ singlefunc(Pulse)
 }
 }
 #endif
-void Init_WXGauge(VALUE rb_mWX)
+DLL_LOCAL void Init_WXGauge(VALUE rb_mWX)
 {
 #if wxUSE_GAUGE
 	using namespace RubyWX::Gauge;
@@ -52,6 +48,8 @@ void Init_WXGauge(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXGauge,"value",_getValue,_setValue);
 
 	rb_define_method(rb_cWXGauge,"pulse",RUBY_METHOD_FUNC(_Pulse),0);
+
+	registerType<wxGauge>(rb_cWXGauge);
 #endif
 
 }

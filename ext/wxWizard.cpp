@@ -5,10 +5,10 @@
  *      Author: hanmac
  */
 
-#include "wxEvtHandler.hpp"
+#include "wxWizard.hpp"
 
 VALUE rb_cWXWizard;
-
+#if wxUSE_WIZARDDLG
 #define _self wrap<wxWizard*>(self)
 
 namespace RubyWX {
@@ -20,10 +20,7 @@ macro_attr(Bitmap,wxBitmap)
 singlereturn(IsRunning)
 singlereturn(GetCurrentPage)
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxWizard,self);
-}
+APP_PROTECT(wxWizard)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -82,8 +79,11 @@ VALUE _chainPages(int argc,VALUE *argv,VALUE self)
 }
 }
 
-void Init_WXWizard(VALUE rb_mWX)
+#endif
+
+DLL_LOCAL void Init_WXWizard(VALUE rb_mWX)
 {
+#if wxUSE_WIZARDDLG
 	using namespace RubyWX::Wizard;
 	rb_cWXWizard = rb_define_class_under(rb_mWX,"Wizard",rb_cWXDialog);
 	rb_define_alloc_func(rb_cWXWizard,_alloc);
@@ -100,7 +100,7 @@ void Init_WXWizard(VALUE rb_mWX)
 	rb_define_module_function(rb_cWXWizard,"chainPages",RUBY_METHOD_FUNC(_chainPages),-1);
 
 	rb_define_method(rb_cWXWizard,"chainPages",RUBY_METHOD_FUNC(_chainPages),-1);
+
+	registerType<wxWizard>(rb_cWXWizard);
+#endif
 }
-
-
-

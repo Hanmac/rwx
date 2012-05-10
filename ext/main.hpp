@@ -35,10 +35,12 @@
   #endif
 #endif
 
-
-
 #include <wx/wx.h>
 #include <ruby.h>
+
+#include <typeinfo>
+#include <map>
+#include <string>
 
 #ifdef HAVE_RUBY_ENCODING_H
 #include <ruby/encoding.h>
@@ -48,20 +50,120 @@
 #include <wx/xrc/xmlres.h>
 #endif
 
-template <typename T>
-VALUE wrap(T *arg);
+#if wxUSE_PROPGRID
+#include <wx/propgrid/property.h>
+#endif
 
-/*
+
+template< class T > struct remove_pointer                    {typedef T type;};
+template< class T > struct remove_pointer<T*>                {typedef T type;};
+template< class T > struct remove_pointer<T* const>          {typedef T type;};
+template< class T > struct remove_pointer<T* volatile>       {typedef T type;};
+template< class T > struct remove_pointer<T* const volatile> {typedef T type;};
+
+template< typename T >
+struct is_pointer{
+  static const bool value = false;
+};
+
+template< typename T >
+struct is_pointer< T* >{
+  static const bool value = true;
+};
+
+typedef std::map<std::string,VALUE> klassholdertype;
+extern klassholdertype klassholder;
+
+
+VALUE wrap(void *arg,VALUE klass);
+VALUE wrap(wxEvtHandler *handler,VALUE klass);
+VALUE wrap(wxClientDataContainer *sizer,VALUE klass);
+VALUE wrap(wxSizer *sizer,VALUE klass);
+
+#if wxUSE_PROPGRID
+VALUE wrap(wxPGProperty *sizer,VALUE klass);
+#endif
+
+
 template <typename T>
-*/
-inline VALUE wrap(void *arg,VALUE klass)
+void registerType(VALUE klass)
 {
-	return Data_Wrap_Struct(klass, 0, 0, arg);
+	klassholder[typeid(T).name()]=klass;
+	klassholder[typeid(T*).name()]=klass;
 }
-//*/
 
 template <typename T>
-T wrap(const VALUE &arg);
+VALUE wrap(T *arg)
+{
+	if(!arg)
+		return Qnil;
+	typedef typename remove_pointer<T>::type rtype;
+	klassholdertype::iterator it = klassholder.find(typeid(T).name());
+	if(it != klassholder.end())
+	{
+		return wrap(arg,it->second);
+	}
+	rb_warn("%s type unknown",typeid(T).name());
+	return Qnil;
+}
+
+template <typename T>
+T* unwrapPtr(const VALUE &obj,const VALUE &klass)
+{
+	if(NIL_P(obj))
+		return NULL;
+
+	if(rb_obj_is_instance_of(obj,rb_cClass) && rb_class_inherited(obj,klass)) {
+		return unwrapPtr<T>(rb_class_new_instance(0,NULL,klass),klass);
+	}else if (rb_obj_is_kind_of(obj, klass)){
+		T *temp;
+		Data_Get_Struct( obj, T, temp);
+		return temp;
+	}else{
+		rb_raise(rb_eTypeError,
+			"Expected %s got %s!",
+			rb_class2name(klass),
+			rb_obj_classname(obj)
+		);
+		return NULL;
+	}
+
+}
+
+template <typename T>
+struct WrapReturn
+{
+	WrapReturn(T *val) : mValue(val) {};
+	WrapReturn(T &val) : mValue(&val) {};
+
+	T *mValue;
+
+	operator T*() {return mValue;};
+	operator T() {return *mValue;};
+
+};
+
+template <typename T>
+T nullPtr(){
+	return (T)NULL;
+}
+
+
+template <typename T>
+T wrap(const VALUE &arg)
+{
+	if(NIL_P(arg))
+		return nullPtr<T>();
+	typedef typename remove_pointer<T>::type rtype;
+
+	klassholdertype::iterator it = klassholder.find(std::string(typeid(rtype).name()));
+	if(it != klassholder.end())
+	{
+		return WrapReturn<rtype>(unwrapPtr<rtype>(arg,it->second));
+	}
+	rb_raise(rb_eTypeError,"%s type unknown",typeid(rtype).name());
+	return nullPtr<T>();
+}
 
 template <class T>
 VALUE wrap(const T &arg){
@@ -73,127 +175,40 @@ bool is_wrapable(const VALUE &arg);
 
 
 template <>
-inline bool wrap< bool >(const VALUE &val )
-{
-	return RTEST(val);
-}
+bool wrap< bool >(const VALUE &val );
+template <>
+VALUE wrap< bool >(const bool &st );
+template <>
+int wrap< int >(const VALUE &val );
+template <>
+VALUE wrap< int >(const int &st );
 
 template <>
-inline VALUE wrap< bool >(const bool &st )
-{
-	return st ? Qtrue : Qfalse;
-}
+VALUE wrap< wxString >(const wxString &st );
 
 template <>
-inline int wrap< int >(const VALUE &val )
-{
-	return NUM2INT(val);
-}
+VALUE wrap< wxChar >(const wxChar &c );
 
 template <>
-inline VALUE wrap< int >(const int &st )
-{
-	return INT2NUM(st);
-}
-
+char* wrap< char* >(const VALUE &val );
 
 template <>
-inline VALUE wrap< wxString >(const wxString &st )
-{
-#ifdef HAVE_RUBY_ENCODING_H
-	return rb_enc_str_new(st.c_str(),strlen(st.c_str()),rb_utf8_encoding());
-#else
-	return rb_str_new2(st.c_str());
-#endif
-}
-template <>
-inline VALUE wrap< wxChar >(const wxChar &c )
-{
-	return wrap(wxString(c));
-}
+wxString wrap< wxString >(const VALUE &val );
 
 template <>
-inline char* wrap< char* >(const VALUE &val )
-{
-	if(NIL_P(val))
-		return NULL;
-	if (rb_obj_is_kind_of(val, rb_cString)){
-		return RSTRING_PTR(val);
-	}
-	else
-		return wrap< char* >(rb_funcall(val,rb_intern("to_s"),0));
-}
+VALUE wrap< wxArrayString >(const wxArrayString &st );
 
 template <>
-inline wxString wrap< wxString >(const VALUE &val )
-{
-	if(NIL_P(val))
-		return wxEmptyString;
-	else
-		return wxString(wrap< char* >(val));
-}
-template <>
-inline VALUE wrap< wxArrayString >(const wxArrayString &st )
-{
-	VALUE ary = rb_ary_new();
-	for(wxArrayString::const_iterator it = st.begin(); it != st.end(); ++it)
-		rb_ary_push(ary,wrap(*it));
-	return ary;
-}
+VALUE wrap< wxArrayInt >(const wxArrayInt &st );
 
 template <>
-inline VALUE wrap< wxArrayInt >(const wxArrayInt &st )
-{
-	VALUE ary = rb_ary_new();
-	for(wxArrayInt::const_iterator it = st.begin(); it != st.end(); ++it)
-		rb_ary_push(ary,wrap(*it));
-	return ary;
-}
+wxArrayString wrap< wxArrayString >(const VALUE &val );
 
 template <>
-inline wxArrayString wrap< wxArrayString >(const VALUE &val )
-{
-	wxArrayString arry;
-	if(NIL_P(val))
-		return arry;
-	else if(rb_respond_to(val,rb_intern("to_a")))	{
-		VALUE dp = rb_funcall(val,rb_intern("to_a"),0);
-		size_t length = RARRAY_LEN(dp);
-		for(size_t i = 0; i < length; ++i)
-			arry.Add(wrap<wxString>(RARRAY_PTR(dp)[i]));
-	}else{
-		arry.Add(wrap<wxString>(val));
-	}
-	return arry;
-}
+VALUE wrap< wxDateTime >(const wxDateTime &st );
 
 template <>
-inline VALUE wrap< wxDateTime >(const wxDateTime &st )
-{
-	return rb_time_nano_new(st.GetTicks(),st.GetMillisecond()*1000);
-}
-
-template <>
-inline wxDateTime wrap< wxDateTime >(const VALUE &val )
-{
-	wxDateTime result;
-	result.SetToCurrent();
-	result.MakeTimezone(
-		NUM2UINT(rb_funcall(val,rb_intern("gmt_offset"),0)) - 3600,
-		RTEST(rb_funcall(val,rb_intern("dst?"),0))
-	);
-
-	result.Set(
-		NUM2UINT(rb_funcall(val,rb_intern("day"),0)),
-		(wxDateTime::Month)(NUM2UINT(rb_funcall(val,rb_intern("month"),0))-1),
-		NUM2UINT(rb_funcall(val,rb_intern("year"),0)),
-		NUM2UINT(rb_funcall(val,rb_intern("hour"),0)),
-		NUM2UINT(rb_funcall(val,rb_intern("min"),0)),
-		NUM2UINT(rb_funcall(val,rb_intern("sec"),0)),
-		NUM2UINT(rb_funcall(val,rb_intern("usec"),0)) / 1000
-	);
-	return result;
-}
+wxDateTime wrap< wxDateTime >(const VALUE &val );
 
 #define macro_attr_with_func(attr,get,set) \
 DLL_LOCAL VALUE _get##attr(VALUE self)\
@@ -219,34 +234,8 @@ DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
 #define macro_attr(attr,type) macro_attr_with_func(attr,wrap,wrap<type>)
 #define macro_attr_pre(attr,pre,type) macro_attr_pre_with_func(attr,pre,wrap,wrap<type>)
 
-template <typename T>
-T* unwrapPtr(const VALUE &obj,const VALUE &klass)
-{
-	if(NIL_P(obj))
-		return NULL;
-	if (rb_obj_is_kind_of(obj, klass)){
-		T *temp;
-		Data_Get_Struct( obj, T, temp);
-		return temp;
-	}else{
-		rb_raise(rb_eTypeError,
-				"Expected %s got %s!",
-				rb_class2name(klass),
-				rb_obj_classname(obj)
-		);
-		return NULL;
-	}
 
-}
-
-void rb_define_attr_method(VALUE klass,std::string name,VALUE(get)(VALUE),VALUE(set)(VALUE,VALUE));
-
-VALUE wrap(wxEvtHandler *handler,VALUE klass);
-VALUE wrap(wxClientDataContainer *sizer,VALUE klass);
-VALUE wrap(wxSizer *sizer,VALUE klass);
-
-VALUE wrapVariant(const wxVariant& var);
-wxVariant unwrapVariant(VALUE obj,const wxString &type);
+DLL_LOCAL void rb_define_attr_method(VALUE klass,std::string name,VALUE(get)(VALUE),VALUE(set)(VALUE,VALUE));
 
 #define singlefunc(func) \
 DLL_LOCAL VALUE _##func(VALUE self)\

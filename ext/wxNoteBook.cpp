@@ -5,7 +5,8 @@
  *      Author: hanmac
  */
 
-#include "wxEvtHandler.hpp"
+#include "wxNoteBook.hpp"
+#include "wxBookCtrl.hpp"
 
 VALUE rb_cWXNotebook;
 
@@ -46,6 +47,7 @@ void Init_WXNoteBookCtrl(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXNotebook,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
+	registerType<wxNotebook>(rb_cWXNotebook);
 #endif
 
 }

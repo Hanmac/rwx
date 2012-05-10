@@ -9,9 +9,7 @@
 #include "wxEvtHandler.hpp"
 #include "wxEvent.hpp"
 
-#if wxUSE_COLOURPICKERCTRL
-	#include <wx/clrpicker.h>
-#endif
+#include <map>
 
 #define _self wrap<wxEvtHandler*>(self)
 
@@ -25,6 +23,24 @@ std::map<ID,wxEventType> evttypeholder;
 
 std::map<wxEventType,VALUE> evttypeclassholder;
 
+template <>
+wxEvtHandler* wrap< wxEvtHandler* >(const VALUE &vhandler)
+{
+	if(rb_type_p(vhandler,T_DATA))
+		return unwrapPtr<wxEvtHandler>(vhandler,rb_mWXEvtHandler);
+	std::map<VALUE,wxEvtHandler*>::iterator it = evthandlerholder.find(vhandler);
+	if(it != evthandlerholder.end())
+		return it->second;
+	else
+	{
+		wxEvtHandler *result = new wxEvtHandler;
+		evthandlerholder.insert(std::make_pair(vhandler,result));
+		return result;
+	}
+}
+
+
+
 
 #define rubyclientdata(T) \
 VALUE wrap(T *handler,VALUE klass)\
@@ -32,8 +48,7 @@ VALUE wrap(T *handler,VALUE klass)\
 	if(!handler)\
 		return Qnil;\
 \
-	RubyClientData *rcd = NULL;\
-		rcd = dynamic_cast<RubyClientData*>(handler->GetClientObject());\
+	RubyClientData *rcd = dynamic_cast<RubyClientData*>(handler->GetClientObject());\
 	if(!rcd)\
 	{\
 		if(NIL_P(klass))\
@@ -49,6 +64,10 @@ VALUE wrap(T *handler,VALUE klass)\
 rubyclientdata(wxEvtHandler)
 rubyclientdata(wxClientDataContainer)
 rubyclientdata(wxSizer)
+
+#if wxUSE_PROPGRID
+rubyclientdata(wxPGProperty)
+#endif
 
 wxEventType unwrapEventType(VALUE type)
 {
@@ -149,6 +168,9 @@ void Init_WXEvtHandler(VALUE rb_mWX)
 
 	global_evthandler = rb_hash_new();
 	rb_global_variable(&global_evthandler);
+
+	//because only Evthandler are created different
+	registerType<wxEvtHandler>(Qnil);
 }
 
 

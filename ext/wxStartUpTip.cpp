@@ -7,7 +7,7 @@
 
 #include "wxStartUpTip.hpp"
 #if wxUSE_STARTUP_TIPS
-class RubyTipProvider : public wxTipProvider
+class DLL_LOCAL RubyTipProvider : public wxTipProvider
 {
 public:
 	RubyTipProvider(VALUE obj,VALUE i) : wxTipProvider(NUM2UINT(i)), mRuby(obj) {}
@@ -36,7 +36,7 @@ VALUE _showTip(int argc,VALUE *argv,VALUE self)
 	return wrap(wxShowTip(wrap<wxWindow*>(parent),&tip,RTEST(show)));
 }
 #endif
-void Init_ShowTip(VALUE rb_mWX)
+DLL_LOCAL void Init_ShowTip(VALUE rb_mWX)
 {
 #if wxUSE_STARTUP_TIPS
 	rb_define_module_function(rb_mWX,"show_tip",RUBY_METHOD_FUNC(_showTip),-1);

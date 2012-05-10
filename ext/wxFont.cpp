@@ -7,22 +7,89 @@
 
 #include "wxFont.hpp"
 #include "wxApp.hpp"
+#include "wxSize.hpp"
 
 #define _self wrap<wxFont*>(self)
 
 VALUE rb_cWXFont;
 
+template <>
+VALUE wrap< wxFontWeight >(const wxFontWeight &vmenu)
+{
+	switch(vmenu){
+	case wxFONTWEIGHT_NORMAL:
+		return ID2SYM(rb_intern("normal"));
+	case wxFONTWEIGHT_LIGHT:
+		return ID2SYM(rb_intern("light"));
+	case wxFONTWEIGHT_BOLD:
+		return ID2SYM(rb_intern("bold"));
+	default:
+		return ID2SYM(rb_intern("normal"));
+	}
+}
+
+
+template <>
+wxFontWeight wrap< wxFontWeight >(const VALUE &vmenu)
+{
+	if(NIL_P(vmenu))
+		return wxFONTWEIGHT_NORMAL;
+	ID id = SYM2ID(vmenu);
+	if(id == rb_intern("normal"))
+		return wxFONTWEIGHT_NORMAL;
+	if(id == rb_intern("light"))
+		return wxFONTWEIGHT_LIGHT;
+	if(id == rb_intern("bold"))
+		return wxFONTWEIGHT_BOLD;
+	return wxFONTWEIGHT_NORMAL;
+}
+
+template <>
+wxFontStyle wrap< wxFontStyle >(const VALUE &vmenu)
+{
+	if(NIL_P(vmenu))
+		return wxFONTSTYLE_NORMAL;
+	ID id = SYM2ID(vmenu);
+	if(id == rb_intern("normal"))
+		return wxFONTSTYLE_NORMAL;
+	if(id == rb_intern("italic"))
+		return wxFONTSTYLE_ITALIC;
+	if(id == rb_intern("slant"))
+		return wxFONTSTYLE_SLANT;
+	return wxFONTSTYLE_NORMAL;
+}
+
+template <>
+wxFontFamily wrap< wxFontFamily >(const VALUE &vmenu)
+{
+	if(NIL_P(vmenu))
+		return wxFONTFAMILY_DEFAULT;
+	ID id = SYM2ID(vmenu);
+	if(id == rb_intern("default"))
+		return wxFONTFAMILY_DEFAULT;
+	if(id == rb_intern("decorative"))
+		return wxFONTFAMILY_DECORATIVE;
+	if(id == rb_intern("roman"))
+		return wxFONTFAMILY_ROMAN;
+	if(id == rb_intern("script"))
+		return wxFONTFAMILY_SCRIPT;
+	if(id == rb_intern("swiss"))
+		return wxFONTFAMILY_SWISS;
+	if(id == rb_intern("modern"))
+		return wxFONTFAMILY_MODERN;
+	if(id == rb_intern("teletype"))
+		return wxFONTFAMILY_TELETYPE;
+	return wxFONTFAMILY_DEFAULT;
+}
+
+template <>
+wxFont nullPtr<wxFont>(){ return wxNullFont;}
+
 
 namespace RubyWX {
 namespace Font {
-VALUE _alloc(VALUE self) {
-	if(ruby_app_inited)
-		return wrap(new wxFont);
-	else
-		rb_raise(rb_eArgError,"%s is not running.",rb_class2name(rb_cWXApp));
-	return Qnil;
 
-}
+APP_PROTECT(wxFont)
 
 macro_attr(PointSize,int)
 macro_attr(PixelSize,wxSize)
@@ -49,7 +116,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 
-void Init_WXFont(VALUE rb_mWX)
+DLL_LOCAL void Init_WXFont(VALUE rb_mWX)
 {
 	using namespace RubyWX::Font;
 	rb_cWXFont = rb_define_class_under(rb_mWX,"Font",rb_cObject);
@@ -64,7 +131,6 @@ void Init_WXFont(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXFont,"Style",_getStyle,_setStyle);
 	rb_define_attr_method(rb_cWXFont,"weight",_getWeight,_setWeight);
 	rb_define_attr_method(rb_cWXFont,"faceName",_getFaceName,_setFaceName);
+
+	registerType<wxFont>(rb_cWXFont);
 }
-
-
-

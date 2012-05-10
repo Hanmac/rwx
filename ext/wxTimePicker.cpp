@@ -6,7 +6,7 @@
  */
 
 
-#include "wxEvtHandler.hpp"
+#include "wxTimePicker.hpp"
 
 VALUE rb_cWXTimePicker;
 
@@ -18,11 +18,7 @@ namespace TimePicker {
 
 macro_attr(Value,wxDateTime)
 
-
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxTimePickerCtrl(),self);
-}
+APP_PROTECT(wxTimePickerCtrl)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -48,6 +44,7 @@ void Init_WXTimePicker(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXTimePicker,"value",_getValue,_setValue);
 
+	registerType<wxTimePickerCtrl>(rb_cWXTimePicker);
 #endif
 
 }

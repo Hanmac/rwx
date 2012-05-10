@@ -148,6 +148,7 @@ void Init_WXBookCtrl(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXBookCtrlEvent,"selection",Event::_getSelection,Event::_setSelection);
 	rb_define_attr_method(rb_cWXBookCtrlEvent,"old_selection",Event::_getOldSelection,Event::_setOldSelection);
 
+	registerType<wxBookCtrlBase>(rb_cWXBookCtrlBase);
 #endif
 
 }

@@ -6,6 +6,7 @@
  */
 
 #include "wxWindow.hpp"
+#include "wxApp.hpp"
 #include "wxMenu.hpp"
 #include "wxMenuItem.hpp"
 #include "wxBitmap.hpp"
@@ -18,11 +19,7 @@ VALUE rb_cWXMenuItem;
 namespace RubyWX {
 namespace MenuItem {
 
-VALUE _alloc(VALUE self)
-{
-
-	return wrap(new wxMenuItem);
-}
+APP_PROTECT(wxMenuItem)
 
 macro_attr(Menu,wxMenu*)
 macro_attr(ItemLabel,wxString)
@@ -44,7 +41,7 @@ VALUE _SetBitmap(VALUE self,VALUE val)
 }
 
 
-void Init_WXMenuItem(VALUE rb_mWX)
+DLL_LOCAL void Init_WXMenuItem(VALUE rb_mWX)
 {
 	using namespace RubyWX::MenuItem;
 	//rb_cWXMenu = rb_define_class_under(rb_mWX,"Menu",rb_cObject);
@@ -58,4 +55,6 @@ void Init_WXMenuItem(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXMenuItem,"help",_getHelp,_setHelp);
 
 	rb_define_attr_method(rb_cWXMenuItem,"bitmap",_GetBitmap,_SetBitmap);
+
+	registerType<wxMenuItem>(rb_cWXMenuItem);
 }

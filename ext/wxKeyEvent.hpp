@@ -11,6 +11,6 @@
 #include "main.hpp"
 
 extern VALUE rb_cWXKeyEvent;
-void Init_WXKeyEvent(VALUE rb_mWX);
+DLL_LOCAL void Init_WXKeyEvent(VALUE rb_mWX);
 
 #endif /* WXKEYEVENT_HPP_ */

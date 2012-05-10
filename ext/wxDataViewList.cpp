@@ -5,7 +5,9 @@
  *      Author: hanmac
  */
 
-#include "wxEvtHandler.hpp"
+
+#include "wxDataViewList.hpp"
+#include "wxVariant.hpp"
 
 VALUE rb_cWXDataViewList;
 
@@ -20,16 +22,12 @@ public:
 	}
 };
 
-
 namespace RubyWX {
 namespace DataViewList {
 #define _self wrap<wxDataViewListCtrl*>(self)
 //macro_attr(Path,wxString)
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxDataViewListCtrl(),self);
-}
+APP_PROTECT(wxDataViewListCtrl)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -163,6 +161,8 @@ void Init_WXDataViewList(VALUE rb_mWX)
 
 
 //	rb_define_attr_method(rb_cWXDataView,"path",_getPath,_setPath);
+
+	registerType< wxDataViewListCtrl >(rb_cWXDataViewList);
 
 #endif
 

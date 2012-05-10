@@ -6,20 +6,31 @@
  */
 
 
-#include "wxEvtHandler.hpp"
+#include "wxBookCtrl.hpp"
+#include "wxChoiceBook.hpp"
 
 VALUE rb_cWXChoicebook;
 
 #if wxUSE_CHOICEBOOK
 #define _self wrap<wxChoicebook*>(self)
 
+template <>
+VALUE wrap< wxChoicebook >(wxChoicebook* window)
+{
+	return wrap(window,rb_cWXChoicebook);
+}
+
+template <>
+wxChoicebook* wrap< wxChoicebook* >(const VALUE &vwindow)
+{
+	return unwrapPtr<wxChoicebook>(vwindow, rb_cWXChoicebook);
+}
+
+
 namespace RubyWX {
 namespace Choicebook {
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxChoicebook(),self);
-}
+APP_PROTECT(wxChoicebook)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {

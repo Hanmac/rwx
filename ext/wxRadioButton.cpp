@@ -6,7 +6,7 @@
  */
 
 
-#include "wxEvtHandler.hpp"
+#include "wxRadioButton.hpp"
 
 VALUE rb_cWXRadioButton;
 
@@ -18,11 +18,7 @@ namespace RadioButton {
 
 macro_attr(Value,bool)
 
-
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxRadioButton,self);
-}
+APP_PROTECT(wxRadioButton)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -47,7 +43,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
-void Init_WXRadioButton(VALUE rb_mWX)
+DLL_LOCAL void Init_WXRadioButton(VALUE rb_mWX)
 {
 #if wxUSE_RADIOBTN
 	using namespace RubyWX::RadioButton;
@@ -59,6 +55,8 @@ void Init_WXRadioButton(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXRadioButton,"value",_getValue,_setValue);
 
 	rb_define_const(rb_cWXRadioButton,"GROUP",INT2NUM(wxRB_GROUP));
+
+	registerType<wxRadioButton>(rb_cWXRadioButton);
 #endif
 
 }

@@ -11,6 +11,47 @@ VALUE rb_cWXPoint;
 #define _self wrap<wxPoint*>(self)
 
 
+template <>
+VALUE wrap< wxPoint >(wxPoint *point )
+{
+	return Data_Wrap_Struct(rb_cWXPoint, NULL, free, point);
+}
+
+template <>
+bool is_wrapable< wxPoint >(const VALUE &vpoint)
+{
+	if (rb_obj_is_kind_of(vpoint, rb_cWXPoint)){
+		return true;
+	}else if(rb_respond_to(vpoint,rb_intern("x")) &&
+		rb_respond_to(vpoint,rb_intern("y"))){
+		return true;
+	}else
+		return false;
+}
+
+template <>
+wxPoint* wrap< wxPoint* >(const VALUE &vpoint)
+{
+	if(!rb_obj_is_kind_of(vpoint, rb_cWXPoint) &&
+		rb_respond_to(vpoint,rb_intern("x")) &&
+		rb_respond_to(vpoint,rb_intern("y"))){
+		wxPoint *point = new wxPoint;
+		point->x = NUM2INT(rb_funcall(vpoint,rb_intern("x"),0));
+		point->y = NUM2INT(rb_funcall(vpoint,rb_intern("y"),0));
+		return point;
+	}else{
+		return unwrapPtr<wxPoint>(vpoint, rb_cWXPoint);
+	}
+}
+
+
+template <>
+wxPoint wrap< wxPoint >(const VALUE &vpoint)
+{
+	return *wrap<wxPoint*>(vpoint);
+}
+
+
 namespace RubyWX {
 namespace Point {
 
@@ -79,7 +120,7 @@ VALUE _inspect(VALUE self)
 }
 
 
-void Init_WXPoint(VALUE rb_mWX)
+DLL_LOCAL void Init_WXPoint(VALUE rb_mWX)
 {
 	using namespace RubyWX::Point;
 	rb_cWXPoint = rb_define_class_under(rb_mWX,"Point",rb_cObject);

@@ -26,6 +26,40 @@ wxStockCursor toStockCursor(ID id)
 	return wxCURSOR_ARROW;
 }
 
+
+template <>
+VALUE wrap< wxCursor >(wxCursor *bitmap )
+{
+	if(bitmap)
+		return Data_Wrap_Struct(rb_cWXCursor, NULL, free, bitmap);
+	return Qnil;
+}
+
+template <>
+wxCursor* wrap< wxCursor* >(const VALUE &vbitmap)
+{
+	if(NIL_P(vbitmap))
+		return &wxNullCursor;
+	if(SYMBOL_P(vbitmap))
+	{
+		return new wxCursor(toStockCursor(SYM2ID(vbitmap)));
+	}else if(rb_obj_is_kind_of(vbitmap,rb_cWXCursor))
+		return unwrapPtr<wxCursor>(vbitmap, rb_cWXCursor);
+	else
+#if wxUSE_IMAGE
+	return new wxCursor(wrap<wxImage>(vbitmap));
+#else
+	return &wxNullCursor;
+#endif
+}
+
+template <>
+wxCursor wrap< wxCursor >(const VALUE &vbitmap)
+{
+	return *wrap< wxCursor* >(vbitmap);
+}
+
+
 VALUE _busy(int argc,VALUE *argv,VALUE self)
 {
 	VALUE cursor;

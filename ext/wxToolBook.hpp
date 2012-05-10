@@ -9,25 +9,14 @@
 #define WXTOOLBOOK_HPP_
 
 
-#include "main.hpp"
+#include "wxEvtHandler.hpp"
 
 extern VALUE rb_cWXToolbook;
 
 void Init_WXToolBookCtrl(VALUE rb_mWX);
 
-#if wxUSE_NOTEBOOK
+#if wxUSE_TOOLBOOK
 #include <wx/toolbook.h>
-template <>
-inline VALUE wrap< wxToolbook >(wxToolbook* window)
-{
-	return wrap(window,rb_cWXToolbook);
-}
-
-template <>
-inline wxToolbook* wrap< wxToolbook* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxToolbook>(vwindow, rb_cWXToolbook);
-}
 #endif
 
 

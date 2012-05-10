@@ -11,20 +11,6 @@
 #include "main.hpp"
 
 extern VALUE rb_cWXTimer;
-void Init_WXTimer(VALUE rb_mWX);
-
-#if wxUSE_TIMER
-template <>
-inline VALUE wrap< wxTimer >(wxTimer *timer )
-{
-	return wrap(timer,rb_cWXTimer);
-}
-
-template <>
-inline wxTimer* wrap< wxTimer* >(const VALUE &vtimer)
-{
-	return unwrapPtr<wxTimer>(vtimer, rb_cWXTimer);
-}
-#endif
+DLL_LOCAL void Init_WXTimer(VALUE rb_mWX);
 
 #endif /* WXTIMER_HPP_ */

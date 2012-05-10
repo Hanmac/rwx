@@ -6,7 +6,7 @@
  */
 
 
-#include "wxEvtHandler.hpp"
+#include "wxWizardPage.hpp"
 
 VALUE rb_cWXWizardPage;
 
@@ -51,10 +51,7 @@ macro_attr(Prev,wxWizardPage*)
 macro_attr(Next,wxWizardPage*)
 macro_attr(Bitmap,wxBitmap)
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new RubyWizardPage,self);
-}
+APP_PROTECT(RubyWizardPage)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -82,4 +79,7 @@ void Init_WXWizardPage(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXWizardPage,"next",_getNext,_setNext);
 
 	rb_define_attr_method(rb_cWXWizardPage,"bitmap",_getBitmap,_setBitmap);
+
+	registerType<wxWizardPage>(rb_cWXWizardPage);
+	registerType<RubyWizardPage>(rb_cWXWizardPage);
 }

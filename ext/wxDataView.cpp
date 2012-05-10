@@ -5,47 +5,14 @@
  *      Author: hanmac
  */
 
-#include "wxEvtHandler.hpp"
+#include "wxControl.hpp"
+#include "wxDataView.hpp"
 #include "wxBitmap.hpp"
+#include "wxVariant.hpp"
 
 VALUE rb_cWXDataView, rb_cWXDataViewEvent,rb_cWXDataViewItem;
 
 #if wxUSE_DATAVIEWCTRL
-
-VALUE wrapVariant(const wxVariant& var)
-{
-	wxString type = var.GetType();
-	if(type == "null")
-		return Qnil;
-	if(type == "bool")
-		return wrap(var.GetBool());
-	else if(type == "string")
-		return wrap(var.GetString());
-	else if(type == "long")
-		return LONG2NUM(var.GetLong());
-	else
-		std::cout << type << std::endl;
-	return Qnil;
-}
-wxVariant unwrapVariant(VALUE obj,const wxString &type)
-{
-	wxVariant result;
-	if(type == "string")
-		result = wrap<wxString>(obj);
-	else if(type == "bool")
-		result = wrap<bool>(obj);
-	else if(type == "long")
-		result = NUM2LONG(obj);
-	else if(type == "wxDataViewIconText")
-	{
-		wxDataViewIconText icontext;
-		icontext.SetIcon(wrap<wxIcon>(obj));
-		result = wxVariant(icontext);
-	}
-	else
-		std::cout << type << std::endl;
-	return result;
-}
 
 wxClientData* DataViewClientHolder::getClientValue(const wxDataViewItem & item) const
 {
@@ -106,11 +73,7 @@ namespace DataView {
 #define _self wrap<wxDataViewCtrl*>(self)
 //macro_attr(Path,wxString)
 
-
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxDataViewCtrl(),self);
-}
+APP_PROTECT(wxDataViewCtrl)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -142,7 +105,7 @@ VALUE _getValue(VALUE self)
 	//omg is this ugly
 	wxVariant var;
 	_self->GetModel()->GetValue(var,_self->GetItem(),_self->GetColumn());
-	return wrapVariant(var);
+	return wrap(var);
 }
 VALUE _setValue(VALUE self,VALUE val)
 {
@@ -194,6 +157,8 @@ void Init_WXDataView(VALUE rb_mWX)
 
 	rb_cWXDataViewItem = rb_define_class_under(rb_cWXDataView,"Item",rb_cObject);
 	rb_undef_alloc_func(rb_cWXDataViewItem);
+
+	registerType<wxDataViewCtrl>(rb_cWXDataView);
 #endif
 
 }

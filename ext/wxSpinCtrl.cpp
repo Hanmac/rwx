@@ -6,7 +6,7 @@
  */
 
 
-#include "wxEvtHandler.hpp"
+#include "wxSpinCtrl.hpp"
 
 
 VALUE rb_cWXSpinCtrl;
@@ -33,11 +33,7 @@ VALUE _setMax(VALUE self,VALUE val)
 	return val;
 }
 
-
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxSpinCtrl(),self);
-}
+APP_PROTECT(wxSpinCtrl)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -70,7 +66,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL void Init_WXSpinCtrl(VALUE rb_mWX)
 {
-#if wxUSE_SLIDER
+#if wxUSE_SPINCTRL
 	using namespace RubyWX::SpinCtrl;
 	rb_cWXSpinCtrl = rb_define_class_under(rb_mWX,"SpinCtrl",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXSpinCtrl,_alloc);
@@ -80,6 +76,8 @@ DLL_LOCAL void Init_WXSpinCtrl(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXSpinCtrl,"value",_getValue,_setValue);
 	rb_define_attr_method(rb_cWXSpinCtrl,"min",_GetMin,_setMin);
 	rb_define_attr_method(rb_cWXSpinCtrl,"max",_GetMax,_setMax);
+
+	registerType<wxSpinCtrl>(rb_cWXSpinCtrl);
 #endif
 
 }

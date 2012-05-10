@@ -22,13 +22,11 @@ bool RubyApp::OnInit()
 
 #if wxUSE_INTL
 	wxLocale::CreateLanguagesDB();
-	mLocale = new wxLocale(wxLANGUAGE_GERMAN);
+	mLocale = new wxLocale(wxLANGUAGE_DEFAULT);
 	mLocale->AddCatalog("wxstd");
 #ifdef __LINUX__
 	mLocale->AddCatalog("fileutils");
 #endif
-//	std::cout << mLocale->GetCanonicalName() << std::endl;
-//	std::cout << mLocale->GetString("Undo") << std::endl;
 #endif
 
 	ruby_app_inited = true;

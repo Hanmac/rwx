@@ -5,11 +5,18 @@
  *      Author: hanmac
  */
 
-#include "wxEvtHandler.hpp"
+#include "wxProgressDialog.hpp"
 
 VALUE rb_cWXProgressDialog;
 #if wxUSE_PROGRESSDLG
 #define _self wrap<RubyProgressDialog*>(self)
+
+#if wxUSE_TIMER
+void RubyProgressDialog::onTimer(wxTimerEvent &evt)
+{
+	rb_thread_schedule();
+}
+#endif
 
 namespace RubyWX {
 namespace ProgressDialog {
@@ -19,24 +26,9 @@ macro_attr(Range,int)
 singlereturn(GetValue)
 singlereturn(GetMessage)
 
+APP_PROTECT(RubyProgressDialog)
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new RubyProgressDialog(),self);
-}
 #if wxUSE_TIMER
-class RubyTimerThread
-#ifndef wxHAS_EVENT_BIND
-: public wxEvtHandler
-#endif
-{
-public:
-	void operator()(wxTimerEvent &evt)
-	{
-
-		rb_thread_schedule();
-	}
-};
 struct rt_holder
 {
 	rt_holder(VALUE b,VALUE p) : block(b),pd(p) {};
@@ -66,9 +58,9 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	{
 		_self->mTimer = new wxTimer;
 #ifdef wxHAS_EVENT_BIND
-		_self->mTimer->Bind(wxEVT_TIMER,RubyTimerThread(),_self->mTimer->GetId());
+		_self->mTimer->Bind(wxEVT_TIMER,wxTimerEventHandler(RubyProgressDialog::onTimer),_self,_self->mTimer->GetId());
 #else
-		_self->mTimer->Connect(_self->mTimer->GetId(),wxEVT_TIMER,wxTimerEventHandler(RubyTimerThread::operator()),NULL,new RubyTimerThread());
+		_self->mTimer->Connect(_self->mTimer->GetId(),wxEVT_TIMER,wxTimerEventHandler(RubyProgressDialog::onTimer),NULL,_self);
 #endif
 		_self->mTimer->Start(10);
 		rb_thread_create((VALUE (*)(ANYARGS))&thread_code,new rt_holder(rb_block_proc(),self));
@@ -101,7 +93,7 @@ VALUE _pulse(int argc,VALUE *argv,VALUE self)
 }
 }
 
-void Init_WXProgressDialog(VALUE rb_mWX)
+DLL_LOCAL void Init_WXProgressDialog(VALUE rb_mWX)
 {
 #if wxUSE_PROGRESSDLG
 	using namespace RubyWX::ProgressDialog;
@@ -111,5 +103,8 @@ void Init_WXProgressDialog(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXProgressDialog,"update",RUBY_METHOD_FUNC(_update),-1);
 	rb_define_method(rb_cWXProgressDialog,"pulse",RUBY_METHOD_FUNC(_pulse),-1);
+
+	registerType<wxProgressDialog>(rb_cWXProgressDialog);
+	registerType<RubyProgressDialog>(rb_cWXProgressDialog);
 #endif
 }

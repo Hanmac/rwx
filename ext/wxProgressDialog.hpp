@@ -8,11 +8,11 @@
 #ifndef WXPROGRESSDIALOG_HPP_
 #define WXPROGRESSDIALOG_HPP_
 
-#include "main.hpp"
+#include "wxDialog.hpp"
 
 extern VALUE rb_cWXProgressDialog;
 
-void Init_WXProgressDialog(VALUE rb_mWX);
+DLL_LOCAL void Init_WXProgressDialog(VALUE rb_mWX);
 #if wxUSE_PROGRESSDLG
 #include <wx/progdlg.h>
 
@@ -23,29 +23,9 @@ public:
 
 #if wxUSE_TIMER
 	wxTimer* mTimer;
+	void onTimer(wxTimerEvent &evt);
 #endif
 };
-
-
-template <>
-inline VALUE wrap< wxProgressDialog >(wxProgressDialog* window)
-{
-	return wrap(window,rb_cWXProgressDialog);
-}
-
-
-template <>
-inline wxProgressDialog* wrap< wxProgressDialog* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxProgressDialog>(vwindow, rb_cWXProgressDialog);
-}
-
-
-template <>
-inline RubyProgressDialog* wrap< RubyProgressDialog* >(const VALUE &vwindow)
-{
-	return unwrapPtr<RubyProgressDialog>(vwindow, rb_cWXProgressDialog);
-}
 
 #endif
 

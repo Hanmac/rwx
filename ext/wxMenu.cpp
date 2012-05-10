@@ -12,10 +12,11 @@
 #include "wxEvtHandler.hpp"
 #include "wxApp.hpp"
 
-#define _self wrap<wxMenu*>(self)
-
 VALUE rb_cWXMenu;
 
+#if wxUSE_MENUS
+
+#define _self wrap<wxMenu*>(self)
 
 namespace RubyWX {
 namespace Menu {
@@ -28,16 +29,7 @@ singlereturn(AppendSeparator)
 singlereturn(PrependSeparator)
 
 
-
-VALUE _alloc(VALUE self)
-{
-	if(ruby_app_inited)
-		return wrap(new wxMenu,self);
-	else
-		rb_raise(rb_eArgError,"%s is not running.",rb_class2name(rb_cWXApp));
-	return Qnil;
-
-}
+APP_PROTECT(wxMenu)
 
 VALUE _initialize(VALUE self,VALUE title)
 {
@@ -133,10 +125,11 @@ VALUE _appendShift(VALUE self,VALUE val)
 
 }
 }
+#endif
 
-
-void Init_WXMenu(VALUE rb_mWX)
+DLL_LOCAL void Init_WXMenu(VALUE rb_mWX)
 {
+#if wxUSE_MENUS
 	using namespace RubyWX::Menu;
 	//rb_cWXEvtHandler = rb_define_class_under(rb_mWX,"EvtHandler",rb_cObject);
 	rb_cWXMenu = rb_define_class_under(rb_mWX,"Menu",rb_cObject);
@@ -161,4 +154,6 @@ void Init_WXMenu(VALUE rb_mWX)
 
 	registerEventType("menu_selected",wxEVT_COMMAND_MENU_SELECTED,rb_cWXEvent);
 
+	registerType<wxMenu>(rb_cWXMenu);
+#endif
 }

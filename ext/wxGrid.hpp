@@ -8,7 +8,7 @@
 #ifndef WXGRID_HPP_
 #define WXGRID_HPP_
 
-#include "main.hpp"
+#include "wxEvtHandler.hpp"
 
 extern VALUE rb_cWXGrid;
 void Init_WXGrid(VALUE rb_mWX);

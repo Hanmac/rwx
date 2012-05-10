@@ -5,20 +5,18 @@
  *      Author: hanmac
  */
 
-#include "wxEvtHandler.hpp"
+#include "wxToolBook.hpp"
+#include "wxBookCtrl.hpp"
 
 VALUE rb_cWXToolbook;
 
-#if wxUSE_NOTEBOOK
+#if wxUSE_TOOLBOOK
 #define _self wrap<wxToolbook*>(self)
 
 namespace RubyWX {
 namespace Toolbook {
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxToolbook(),self);
-}
+APP_PROTECT(wxToolbook)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -39,13 +37,14 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 #endif
 void Init_WXToolBookCtrl(VALUE rb_mWX)
 {
-#if wxUSE_NOTEBOOK
+#if wxUSE_TOOLBOOK
 	using namespace RubyWX::Toolbook;
 	rb_cWXToolbook = rb_define_class_under(rb_mWX,"ToolBookCtrl",rb_cWXBookCtrlBase);
 	rb_define_alloc_func(rb_cWXToolbook,_alloc);
 
 	rb_define_method(rb_cWXToolbook,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
+	registerType<wxToolbook>(rb_cWXToolbook);
 #endif
 
 }

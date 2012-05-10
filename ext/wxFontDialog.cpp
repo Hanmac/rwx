@@ -5,7 +5,7 @@
  *      Author: hanmac
  */
 
-#include "wxEvtHandler.hpp"
+#include "wxFontDialog.hpp"
 #include "wxFont.hpp"
 
 VALUE rb_cWXFontDialog;
@@ -15,10 +15,7 @@ VALUE rb_cWXFontDialog;
 namespace RubyWX {
 namespace FontDialog {
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxFontDialog,self);
-}
+APP_PROTECT(wxFontDialog)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -41,9 +38,11 @@ VALUE _getUserFont(int argc,VALUE *argv,VALUE self)
 	wxFont col = wxGetFontFromUser(wrap<wxWindow*>(parent),wxNullFont,wrap<wxString>(caption));
 	return col.IsOk() ? wrap(col) : Qnil;
 }
+
+}
+}
+
 #endif
-}
-}
 
 void Init_WXFontDialog(VALUE rb_mWX)
 {
@@ -57,5 +56,7 @@ void Init_WXFontDialog(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXFontDialog,"chosen_font",_getChosenFont,_setChosenFont);
 
 	rb_define_module_function(rb_mWX,"font_dialog",RUBY_METHOD_FUNC(_getUserFont),-1);
+
+	registerType<wxFontDialog>(rb_cWXFontDialog);
 #endif
 }

@@ -5,7 +5,7 @@
  *      Author: hanmac
  */
 
-#include "wxEvtHandler.hpp"
+#include "wxSTC.hpp"
 #include "wxColor.hpp"
 
 VALUE rb_cWXSTC;
@@ -25,10 +25,7 @@ macro_attr(CaretLineVisible,bool)
 macro_attr(CaretForeground,wxColor)
 macro_attr(CaretLineBackground,wxColor)
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxStyledTextCtrl(),self);
-}
+APP_PROTECT(wxStyledTextCtrl)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -76,6 +73,8 @@ void Init_WXSTC(VALUE rb_mWX)
 
 
 	rb_define_const(rb_cWXSTC,"Version",wrap(wxStyledTextCtrl::GetLibraryVersionInfo().GetVersionString()));
+
+	registerType<wxStyledTextCtrl>(rb_cWXSTC);
 #endif
 
 }

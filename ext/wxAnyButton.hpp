@@ -17,22 +17,10 @@ void Init_WXAnyButton(VALUE rb_mWX);
 #ifdef wxHAS_ANY_BUTTON
 
 template <>
-inline VALUE wrap< wxAnyButton >(wxAnyButton* window)
-{
-#if wxUSE_BUTTON
-	if(wxButton *button = dynamic_cast<wxButton*>(window))
-		return wrap(button);
-#endif
-
-	return wrap(window,rb_cWXAnyButton);
-}
-
+VALUE wrap< wxAnyButton >(wxAnyButton* window);
 
 template <>
-inline wxAnyButton* wrap< wxAnyButton* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxAnyButton>(vwindow, rb_cWXAnyButton);
-}
+wxAnyButton* wrap< wxAnyButton* >(const VALUE &vwindow);
 #endif
 
 #endif /* WXANYBUTTON_HPP_ */

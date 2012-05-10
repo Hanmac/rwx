@@ -43,4 +43,13 @@ inline wxApp* wrap< wxApp* >(const VALUE &vapp)
 }
 
 
+#define APP_PROTECT(type) DLL_LOCAL VALUE _alloc(VALUE self)\
+{\
+	if(ruby_app_inited)\
+	return wrap(new type,self);\
+	else\
+	rb_raise(rb_eArgError,"%s is not running.",rb_class2name(rb_cWXApp));\
+	return Qnil;\
+}
+
 #endif /* WXAPP_HPP_ */

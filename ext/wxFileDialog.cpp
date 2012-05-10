@@ -6,7 +6,7 @@
  */
 
 
-#include "wxEvtHandler.hpp"
+#include "wxFileDialog.hpp"
 
 VALUE rb_cWXFileDialog;
 
@@ -16,10 +16,7 @@ VALUE rb_cWXFileDialog;
 namespace RubyWX {
 namespace FileDialog {
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxFileDialog,self);
-}
+APP_PROTECT(wxFileDialog)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -111,6 +108,8 @@ void Init_WXFileDialog(VALUE rb_mWX)
 
 	rb_define_module_function(rb_mWX,"load_dialog",RUBY_METHOD_FUNC(_loadFileSelector),-1);
 	rb_define_module_function(rb_mWX,"save_dialog",RUBY_METHOD_FUNC(_saveFileSelector),-1);
+
+	registerType<wxFileDialog>(rb_cWXFileDialog);
 #endif
 }
 

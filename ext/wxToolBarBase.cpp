@@ -5,10 +5,10 @@
  *      Author: hanmac
  */
 
-#include "wxWindow.hpp"
+#include "wxToolBarBase.hpp"
 #include "wxBitmap.hpp"
 #include "wxToolBarTool.hpp"
-#include "wxEvtHandler.hpp"
+#include "wxControl.hpp"
 
 VALUE rb_cWXToolBarBase;
 
@@ -154,4 +154,5 @@ void Init_WXToolBarBase(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXToolBarBase,"each_tool",RUBY_METHOD_FUNC(_each),0);
 
+	registerType<wxToolBarBase>(rb_cWXToolBarBase);
 }

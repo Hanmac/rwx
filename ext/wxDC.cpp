@@ -10,11 +10,12 @@
 #include "wxBitmap.hpp"
 #include "wxPen.hpp"
 #include "wxBrush.hpp"
+#include "wxColor.hpp"
+#include "wxFont.hpp"
 
 #define _self wrap<wxDC*>(self)
 
 VALUE rb_cWXDC;
-
 
 namespace RubyWX {
 namespace DC {
@@ -93,6 +94,8 @@ void Init_WXDC(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXDC,"pen",_getPen,_setPen);
 	rb_define_attr_method(rb_cWXDC,"brush",_getBrush,_setBrush);
+
+	registerType<wxDC>(rb_cWXDC);
 }
 
 

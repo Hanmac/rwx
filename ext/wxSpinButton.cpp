@@ -5,7 +5,7 @@
  *      Author: hanmac
  */
 
-#include "wxEvtHandler.hpp"
+#include "wxSpinButton.hpp"
 
 
 VALUE rb_cWXSpinButton;
@@ -20,11 +20,7 @@ macro_attr(Value,int)
 macro_attr(Max,int)
 macro_attr(Min,int)
 
-
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxSpinButton(),self);
-}
+APP_PROTECT(wxSpinButton)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -51,6 +47,8 @@ void Init_WXSpinButton(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXSpinButton,"value",_getValue,_setValue);
 	rb_define_attr_method(rb_cWXSpinButton,"min",_getMin,_setMin);
 	rb_define_attr_method(rb_cWXSpinButton,"max",_getMax,_setMax);
+
+	registerType<wxSpinButton>(rb_cWXSpinButton);
 #endif
 
 }

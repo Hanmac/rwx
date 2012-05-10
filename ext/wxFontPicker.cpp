@@ -6,10 +6,8 @@
  */
 
 
-
-#include "wxWindow.hpp"
+#include "wxFontPicker.hpp"
 #include "wxFont.hpp"
-#include "wxEvtHandler.hpp"
 
 VALUE rb_cWXFontPicker,rb_cWXFontPickerEvent;
 
@@ -21,11 +19,7 @@ namespace FontPicker {
 
 macro_attr(SelectedFont,wxFont)
 
-
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxFontPickerCtrl(),self);
-}
+APP_PROTECT(wxFontPickerCtrl)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -60,6 +54,9 @@ void Init_WXFontPicker(VALUE rb_mWX)
 	rb_cWXFontPickerEvent = rb_define_class_under(rb_cWXEvent,"FontPicker",rb_cWXEvent);
 	registerEventType("fontpicker_changed",wxEVT_COMMAND_FONTPICKER_CHANGED,rb_cWXFontPickerEvent);
 	rb_define_attr_method(rb_cWXFontPickerEvent,"font",Event::_getFont,Event::_setFont);
+
+	registerType<wxFontPickerCtrl>(rb_cWXFontPicker);
+	registerType<wxFontPickerEvent>(rb_cWXFontPickerEvent);
 #endif
 
 }

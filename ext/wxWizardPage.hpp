@@ -9,7 +9,7 @@
 #define WXWIZARDPAGE_HPP_
 
 
-#include "main.hpp"
+#include "wxPanel.hpp"
 
 extern VALUE rb_cWXWizardPage;
 void Init_WXWizardPage(VALUE rb_mWX);
@@ -28,32 +28,6 @@ public:
 private:
 	bool mutable rubycall;
 };
-
-
-template <>
-inline VALUE wrap< RubyWizardPage >(RubyWizardPage* window)
-{
-	return wrap(window,rb_cWXWizardPage);
-}
-
-template <>
-inline VALUE wrap< wxWizardPage >(wxWizardPage* window)
-{
-	return wrap(window,rb_cWXWizardPage);
-}
-
-
-template <>
-inline wxWizardPage* wrap< wxWizardPage* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxWizardPage>(vwindow, rb_cWXWizardPage);
-}
-
-template <>
-inline RubyWizardPage* wrap< RubyWizardPage* >(const VALUE &vwindow)
-{
-	return unwrapPtr<RubyWizardPage>(vwindow, rb_cWXWizardPage);
-}
 
 #endif
 

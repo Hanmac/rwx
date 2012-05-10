@@ -8,25 +8,19 @@
 #ifndef WXFILEPICKER_HPP_
 #define WXFILEPICKER_HPP_
 
-#include "main.hpp"
+#include "wxEvtHandler.hpp"
 
 extern VALUE rb_cWXFilePicker;
 
 void Init_WXFilePicker(VALUE rb_mWX);
 #if wxUSE_FILEPICKERCTRL
 #include <wx/filepicker.h>
-template <>
-inline VALUE wrap< wxFilePickerCtrl >(wxFilePickerCtrl* window)
-{
-	return wrap(window,rb_cWXFilePicker);
-}
-
 
 template <>
-inline wxFilePickerCtrl* wrap< wxFilePickerCtrl* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxFilePickerCtrl>(vwindow, rb_cWXFilePicker);
-}
+VALUE wrap< wxFilePickerCtrl >(wxFilePickerCtrl* window);
+
+template <>
+wxFilePickerCtrl* wrap< wxFilePickerCtrl* >(const VALUE &vwindow);
 
 #endif
 

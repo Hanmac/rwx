@@ -11,35 +11,6 @@
 #include "wxWindow.hpp"
 
 extern VALUE rb_cWXTopLevel;
-void Init_WXTopLevel(VALUE rb_mWX);
-
-
-#include "wxFrame.hpp"
-#include "wxDialog.hpp"
-
-template <>
-inline VALUE wrap< wxTopLevelWindow >(wxTopLevelWindow* window)
-{
-	if(window==NULL)
-		return Qnil;
-
-	wxFrame *frame = dynamic_cast<wxFrame*>(window);
-	if(frame)
-		return wrap(frame);
-
-	wxDialog *dialog = dynamic_cast<wxDialog*>(window);
-		if(dialog)
-			return wrap(dialog);
-
-	return wrap(window,rb_cWXTopLevel);
-}
-
-
-
-template <>
-inline wxTopLevelWindow* wrap< wxTopLevelWindow* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxTopLevelWindow>(vwindow, rb_cWXTopLevel);
-}
+DLL_LOCAL void Init_WXTopLevel(VALUE rb_mWX);
 
 #endif /* WXTOPLEVEL_HPP_ */

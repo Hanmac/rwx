@@ -6,6 +6,8 @@
  */
 
 #include "wxEvtHandler.hpp"
+#include "wxTimer.hpp"
+#include "wxApp.hpp"
 
 VALUE rb_cWXTimer,rb_cWXTimerEvent;
 #if wxUSE_TIMER
@@ -14,15 +16,7 @@ VALUE rb_cWXTimer,rb_cWXTimerEvent;
 namespace RubyWX {
 namespace Timer {
 
-VALUE _alloc(VALUE self)
-{
-	if(ruby_app_inited)
-		return wrap(new wxTimer,self);
-	else
-		rb_raise(rb_eArgError,"%s is not running.",rb_class2name(rb_cWXApp));
-	return Qnil;
-
-}
+APP_PROTECT(wxTimer)
 
 VALUE _initialize(VALUE self)
 {
@@ -57,7 +51,7 @@ VALUE _setOwner(VALUE self,VALUE val)
 
 #endif
 
-void Init_WXTimer(VALUE rb_mWX)
+DLL_LOCAL void Init_WXTimer(VALUE rb_mWX)
 {
 #if wxUSE_TIMER
 	using namespace RubyWX::Timer;
@@ -80,6 +74,7 @@ void Init_WXTimer(VALUE rb_mWX)
 	//rb_define_attr_method(rb_cWXFileDirPickerEvent,"path",
 	//		Event::_getPath,Event::_setPath);
 
+	registerType<wxTimer>(rb_cWXTimer);
 #endif
 }
 

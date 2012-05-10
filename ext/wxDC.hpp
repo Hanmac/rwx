@@ -15,20 +15,4 @@
 extern VALUE rb_cWXDC;
 void Init_WXDC(VALUE rb_mWX);
 
-template <>
-inline VALUE wrap< wxDC >(wxDC* window)
-{
-	if(window==NULL)
-		return Qnil;
-
-	return wrap(window,rb_cWXDC);
-}
-
-
-template <>
-inline wxDC* wrap< wxDC* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxDC>(vwindow, rb_cWXDC);
-}
-
 #endif /* WXDC_HPP_ */

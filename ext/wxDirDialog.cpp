@@ -6,19 +6,17 @@
  */
 
 
-#include "wxEvtHandler.hpp"
+#include "wxDirDialog.hpp"
+#include "wxPoint.hpp"
 
 VALUE rb_cWXDirDialog;
-#if wxUSE_COLOURDLG
+#if wxUSE_DIRDLG
 #define _self wrap<wxDirDialog*>(self)
 
 namespace RubyWX {
 namespace DirDialog {
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxDirDialog,self);
-}
+APP_PROTECT(wxDirDialog)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -77,7 +75,7 @@ VALUE _getUserDir(int argc,VALUE *argv,VALUE self)
 
 void Init_WXDirDialog(VALUE rb_mWX)
 {
-#if wxUSE_COLOURDLG
+#if wxUSE_DIRDLG
 	using namespace RubyWX::DirDialog;
 	rb_cWXDirDialog = rb_define_class_under(rb_mWX,"DirDialog",rb_cWXDialog);
 	rb_define_alloc_func(rb_cWXDirDialog,_alloc);
@@ -87,5 +85,7 @@ void Init_WXDirDialog(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXDirDialog,"path",_getPath,_setPath);
 
 	rb_define_module_function(rb_mWX,"dir_dialog",RUBY_METHOD_FUNC(_getUserDir),-1);
+
+	registerType<wxDirDialog>(rb_cWXDirDialog);
 #endif
 }

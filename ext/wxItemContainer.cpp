@@ -50,6 +50,8 @@ void Init_WXItemContainer(VALUE rb_mWX)
 	rb_define_method(rb_mWXItemContainer,"<<",RUBY_METHOD_FUNC(_Append),1);
 
 	rb_define_attr_method(rb_mWXItemContainer,"items",_GetStrings,_setItems);
+
+	registerType<wxItemContainer>(rb_mWXItemContainer);
 #endif
 }
 

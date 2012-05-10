@@ -9,23 +9,11 @@
 #define WXPANEL_HPP_
 
 
+#include "wxWindow.hpp"
 #include "wxGrid.hpp"
 #include "wxWizardPage.hpp"
 
 extern VALUE rb_cWXPanel;
-void Init_WXPanel(VALUE rb_mWX);
-
-template <>
-inline VALUE wrap< wxPanel >(wxPanel* window)
-{
-	return wrap(window,rb_cWXPanel);
-}
-
-
-template <>
-inline wxPanel* wrap< wxPanel* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxPanel>(vwindow, rb_cWXPanel);
-}
+DLL_LOCAL void Init_WXPanel(VALUE rb_mWX);
 
 #endif /* WXPANEL_HPP_ */

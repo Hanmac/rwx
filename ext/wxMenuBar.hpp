@@ -12,21 +12,6 @@
 #include "wxWindow.hpp"
 
 extern VALUE rb_cWXMenuBar;
-void Init_WXMenuBar(VALUE rb_mWX);
-
-template <>
-inline VALUE wrap< wxMenuBar >(wxMenuBar* window)
-{
-	return wrap(window,rb_cWXMenuBar);
-}
-
-
-template <>
-inline wxMenuBar* wrap< wxMenuBar* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxMenuBar>(vwindow, rb_cWXMenuBar);
-}
-
-
+DLL_LOCAL void Init_WXMenuBar(VALUE rb_mWX);
 
 #endif /* WXMENUBAR_HPP_ */

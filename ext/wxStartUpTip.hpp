@@ -12,5 +12,5 @@
 #if wxUSE_STARTUP_TIPS
 #include <wx/tipdlg.h>
 #endif
-void Init_ShowTip(VALUE rb_mWX);
+DLL_LOCAL void Init_ShowTip(VALUE rb_mWX);
 #endif /* WXSTARTUPTIP_HPP_ */

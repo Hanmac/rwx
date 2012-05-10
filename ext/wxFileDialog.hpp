@@ -8,25 +8,12 @@
 #ifndef WXFILEDIALOG_HPP_
 #define WXFILEDIALOG_HPP_
 
-#include "main.hpp"
+#include "wxDialog.hpp"
 
 extern VALUE rb_cWXFileDialog;
 
 void Init_WXFileDialog(VALUE rb_mWX);
 #if wxUSE_FILEDLG
 #include <wx/filedlg.h>
-
-template <>
-inline VALUE wrap< wxFileDialog >(wxFileDialog* window)
-{
-	return wrap(window,rb_cWXFileDialog);
-}
-
-
-template <>
-inline wxFileDialog* wrap< wxFileDialog* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxFileDialog>(vwindow, rb_cWXFileDialog);
-}
 #endif
 #endif /* WXFILEDIALOG_HPP_ */

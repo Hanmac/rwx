@@ -14,10 +14,7 @@ VALUE rb_cWXPanel;
 namespace RubyWX {
 namespace Panel {
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxPanel,self);
-}
+APP_PROTECT(wxPanel)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -49,7 +46,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 
-void Init_WXPanel(VALUE rb_mWX)
+DLL_LOCAL void Init_WXPanel(VALUE rb_mWX)
 {
 	using namespace RubyWX::Panel;
 	rb_cWXPanel = rb_define_class_under(rb_mWX,"Panel",rb_cWXWindow);
@@ -57,6 +54,7 @@ void Init_WXPanel(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXPanel,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
+	registerType<wxPanel>(rb_cWXPanel);
 }
 
 

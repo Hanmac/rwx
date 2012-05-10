@@ -5,7 +5,7 @@
  *      Author: hanmac
  */
 
-#include "wxEvtHandler.hpp"
+#include "wxColorDialog.hpp"
 #include "wxColor.hpp"
 
 VALUE rb_cWXColorDialog;
@@ -15,10 +15,7 @@ VALUE rb_cWXColorDialog;
 namespace RubyWX {
 namespace ColourDialog {
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxColourDialog,self);
-}
+APP_PROTECT(wxColourDialog)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -74,5 +71,7 @@ void Init_WXColorDialog(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXColorDialog,"custom_colors",_getCustomColors,_setCustomColors);
 
 	rb_define_module_function(rb_mWX,"color_dialog",RUBY_METHOD_FUNC(_getUserColor),-1);
+
+	registerType<wxColourDialog>(rb_cWXColorDialog);
 #endif
 }

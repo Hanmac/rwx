@@ -9,7 +9,7 @@
 #define WXSTATICBITMAP_HPP_
 
 
-#include "main.hpp"
+#include "wxControl.hpp"
 
 extern VALUE rb_cWXStaticBitmap;
 
@@ -17,20 +17,6 @@ void Init_WXStaticBitmap(VALUE rb_mWX);
 
 #if wxUSE_STATBMP
 #include <wx/statbmp.h>
-
-template <>
-inline VALUE wrap< wxStaticBitmap >(wxStaticBitmap* window)
-{
-	return wrap(window,rb_cWXStaticBitmap);
-}
-
-
-template <>
-inline wxStaticBitmap* wrap< wxStaticBitmap* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxStaticBitmap>(vwindow, rb_cWXStaticBitmap);
-}
-
 #endif
 
 

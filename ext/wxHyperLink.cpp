@@ -6,11 +6,12 @@
  */
 
 
-#include "wxEvtHandler.hpp"
+#include "wxHyperLink.hpp"
+#include "wxColor.hpp"
 
 VALUE rb_cWXHyperLink;
 
-#if wxUSE_GAUGE
+#if wxUSE_HYPERLINKCTRL
 #define _self wrap<wxHyperlinkCtrl*>(self)
 
 namespace RubyWX {
@@ -24,10 +25,7 @@ macro_attr(URL,wxString)
 
 macro_attr(Visited,bool)
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxHyperlinkCtrl(),self);
-}
+APP_PROTECT(wxHyperlinkCtrl)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -73,6 +71,8 @@ void Init_WXHyperLink(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXHyperLink,"url",_getURL,_setURL);
 	rb_define_attr_method(rb_cWXHyperLink,"visited",_getVisited,_setVisited);
+
+	registerType<wxHyperlinkCtrl>(rb_cWXHyperLink);
 #endif
 
 }

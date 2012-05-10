@@ -21,7 +21,7 @@ namespace KeyEvent {
 }
 
 
-void Init_WXKeyEvent(VALUE rb_mWX)
+DLL_LOCAL void Init_WXKeyEvent(VALUE rb_mWX)
 {
 	using namespace RubyWX::KeyEvent;
 	rb_cWXKeyEvent = rb_define_class_under(rb_cWXEvent,"Key",rb_cWXEvent);

@@ -8,7 +8,7 @@
 #ifndef WXHYPERLINK_HPP_
 #define WXHYPERLINK_HPP_
 
-#include "main.hpp"
+#include "wxEvtHandler.hpp"
 
 extern VALUE rb_cWXHyperLink;
 
@@ -16,17 +16,5 @@ void Init_WXHyperLink(VALUE rb_mWX);
 
 #if wxUSE_HYPERLINKCTRL
 #include <wx/hyperlink.h>
-template <>
-inline VALUE wrap< wxHyperlinkCtrl >(wxHyperlinkCtrl* window)
-{
-	return wrap(window,rb_cWXHyperLink);
-}
-
-template <>
-inline wxHyperlinkCtrl* wrap< wxHyperlinkCtrl* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxHyperlinkCtrl>(vwindow, rb_cWXHyperLink);
-}
-
 #endif
 #endif /* WXHYPERLINK_HPP_ */

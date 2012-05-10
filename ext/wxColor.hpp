@@ -15,64 +15,15 @@ void Init_WXColor(VALUE rb_mWX);
 
 
 template <>
-inline VALUE wrap< wxColor >(wxColor *color )
-{
-	return Data_Wrap_Struct(rb_cWXColor, NULL, free, color);
-}
+VALUE wrap< wxColor >(wxColor *color );
 
 template <>
-inline bool is_wrapable< wxColor >(const VALUE &vcolor)
-{
-	if (rb_obj_is_kind_of(vcolor, rb_cWXColor) ||
-		rb_obj_is_kind_of(vcolor, rb_cString)){
-		return true;
-	}else if(rb_respond_to(vcolor,rb_intern("red")) &&
-		rb_respond_to(vcolor,rb_intern("blue")) &&
-		rb_respond_to(vcolor,rb_intern("green")) &&
-		rb_respond_to(vcolor,rb_intern("alpha"))){
-		return true;
-	}else
-		return false;
-}
+bool is_wrapable< wxColor >(const VALUE &vcolor);
 
 template <>
-inline wxColor* wrap< wxColor* >(const VALUE &vcolor)
-{
-	if(rb_obj_is_kind_of(vcolor, rb_cString)){
-		return new wxColour(wrap<wxString>(vcolor));
-	}else if(!rb_obj_is_kind_of(vcolor, rb_cWXColor) &&
-		rb_respond_to(vcolor,rb_intern("red")) &&
-		rb_respond_to(vcolor,rb_intern("blue")) &&
-		rb_respond_to(vcolor,rb_intern("green")) &&
-		rb_respond_to(vcolor,rb_intern("alpha"))){
-		double red,blue,green,alpha;
-		wxColor *color = new wxColor;
-		red = NUM2DBL(rb_funcall(vcolor,rb_intern("red"),0));
-		if(red < 1.0)
-			red *=256;
+wxColor* wrap< wxColor* >(const VALUE &vcolor);
 
-		blue = NUM2DBL(rb_funcall(vcolor,rb_intern("blue"),0));
-		if(blue < 1.0)
-			blue *=256;
-
-		green = NUM2DBL(rb_funcall(vcolor,rb_intern("green"),0));
-		if(green < 1.0)
-			green *=256;
-
-		alpha = NUM2DBL(rb_funcall(vcolor,rb_intern("alpha"),0));
-		if(alpha < 1.0)
-			alpha *=256;
-
-		color->Set(red,blue,green,alpha);
-
-		return color;
-	}else{
-		return unwrapPtr<wxColor>(vcolor, rb_cWXColor);
-	}
-}
 template <>
-inline wxColor wrap< wxColor >(const VALUE &vcolor)
-{
-	return *wrap<wxColor*>(vcolor);
-}
+wxColor wrap< wxColor >(const VALUE &vcolor);
+
 #endif /* WXCOLOR_HPP_ */

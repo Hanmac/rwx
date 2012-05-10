@@ -5,7 +5,7 @@
  *      Author: hanmac
  */
 
-#include "wxEvtHandler.hpp"
+#include "wxStaticLine.hpp"
 
 VALUE rb_cWXStaticLine;
 
@@ -15,10 +15,7 @@ VALUE rb_cWXStaticLine;
 namespace RubyWX {
 namespace StaticLine {
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxStaticLine(),self);
-}
+APP_PROTECT(wxStaticLine)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -42,6 +39,7 @@ void Init_WXStaticLine(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXStaticLine,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
+	registerType<wxStaticLine>(rb_cWXStaticLine);
 #endif
 
 }

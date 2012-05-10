@@ -13,11 +13,7 @@ VALUE rb_cWXFrame;
 namespace RubyWX {
 namespace Frame {
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxFrame(),self);
-}
-
+APP_PROTECT(wxFrame)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -48,16 +44,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 
 #if wxUSE_MENUS
-//macro_attr(MenuBar,wxMenuBar*)
-VALUE _getMenuBar(VALUE self)
-{
-	return wrap(_self->GetMenuBar());
-}
-VALUE _setMenuBar(VALUE self,VALUE obj)
-{
-	_self->SetMenuBar(wrap<wxMenuBar*>(obj));
-	return obj;
-}
+macro_attr(MenuBar,wxMenuBar*)
 #endif // wxUSE_MENUS
 
 #if wxUSE_STATUSBAR
@@ -73,7 +60,7 @@ singlereturn(CreateToolBar)
 }
 }
 
-void Init_WXFrame(VALUE rb_mWX)
+DLL_LOCAL void Init_WXFrame(VALUE rb_mWX)
 {
 	using namespace RubyWX::Frame;
 	rb_cWXFrame = rb_define_class_under(rb_mWX,"Frame",rb_cWXTopLevel);
@@ -85,6 +72,7 @@ void Init_WXFrame(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXFrame,"menuBar",_getMenuBar,_setMenuBar);
 #endif // wxUSE_MENUS
 #if wxUSE_STATUSBAR
+	rb_define_attr_method(rb_cWXFrame,"statusBar",_getStatusBar,_setStatusBar);
 	rb_define_method(rb_cWXFrame,"createStatusBar",RUBY_METHOD_FUNC(_CreateStatusBar),0);
 #endif // wxUSE_STATUSBAR
 #if wxUSE_TOOLBAR
@@ -92,4 +80,5 @@ void Init_WXFrame(VALUE rb_mWX)
 	rb_define_method(rb_cWXFrame,"createToolBar",RUBY_METHOD_FUNC(_CreateToolBar),0);
 #endif // wxUSE_TOOLBAR
 
+	registerType<wxFrame>(rb_cWXFrame);
 }

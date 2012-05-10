@@ -6,7 +6,7 @@
  */
 
 
-#include "wxEvtHandler.hpp"
+#include "wxStaticText.hpp"
 
 VALUE rb_cWXStaticText;
 
@@ -16,10 +16,7 @@ VALUE rb_cWXStaticText;
 namespace RubyWX {
 namespace StaticText {
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxStaticText(),self);
-}
+APP_PROTECT(wxStaticText)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -43,6 +40,7 @@ void Init_WXStaticText(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXStaticText,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
+	registerType<wxStaticText>(rb_cWXStaticText);
 #endif
 
 }

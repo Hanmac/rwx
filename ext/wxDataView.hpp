@@ -8,9 +8,13 @@
 #ifndef WXDATAVIEW_HPP_
 #define WXDATAVIEW_HPP_
 
-#include "wxDataViewList.hpp"
+#include "wxControl.hpp"
 
-#include <map>
+extern VALUE rb_cWXDataView;
+
+void Init_WXDataView(VALUE rb_mWX);
+#if wxUSE_DATAVIEWCTRL
+#include <wx/dataview.h>
 
 class DataViewClientHolder
 {
@@ -33,30 +37,6 @@ public:
 
     void Resort();
 };
-
-extern VALUE rb_cWXDataView;
-
-void Init_WXDataView(VALUE rb_mWX);
-#if wxUSE_DATAVIEWCTRL
-template <>
-inline VALUE wrap< wxDataViewCtrl >(wxDataViewCtrl* window)
-{
-	return wrap(window,rb_cWXDataView);
-}
-
-
-template <>
-inline wxDataViewCtrl* wrap< wxDataViewCtrl* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxDataViewCtrl>(vwindow, rb_cWXDataView);
-}
-
-template <>
-inline VALUE wrap< wxVariant >(const wxVariant &window)
-{
-	return wrapVariant(window);
-}
-
 
 VALUE wrap(wxDataViewModel *model, const wxDataViewItem& item);
 

@@ -16,16 +16,10 @@ extern VALUE rb_cWXAuiManager;
 void Init_WXAuiManager(VALUE rb_mWX);
 #if wxUSE_AUI
 template <>
-inline VALUE wrap< wxAuiManager >(wxAuiManager* window)
-{
-	return wrap(window,rb_cWXAuiManager);
-}
+VALUE wrap< wxAuiManager >(wxAuiManager* window);
 
 template <>
-inline wxAuiManager* wrap< wxAuiManager* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxAuiManager>(vwindow, rb_cWXAuiManager);
-}
+wxAuiManager* wrap< wxAuiManager* >(const VALUE &vwindow);
 
 #endif
 

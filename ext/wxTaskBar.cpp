@@ -5,7 +5,7 @@
  *      Author: hanmac
  */
 
-
+#include "wxTaskBar.hpp"
 #include "wxEvtHandler.hpp"
 #include "wxBitmap.hpp"
 
@@ -38,15 +38,7 @@ void RubyTaskBarIcon::SetToolTip(const wxString& tooltip)
 namespace RubyWX {
 namespace TaskBar {
 
-VALUE _alloc(VALUE self)
-{
-	if(ruby_app_inited)
-		return wrap(new RubyTaskBarIcon,self);
-	else
-		rb_raise(rb_eArgError,"%s is not running.",rb_class2name(rb_cWXApp));
-	return Qnil;
-
-}
+APP_PROTECT(RubyTaskBarIcon)
 
 macro_attr(Menu,wxMenu*)
 macro_attr(Icon,wxIcon)
@@ -57,7 +49,7 @@ macro_attr(ToolTip,wxString)
 
 #endif
 
-void Init_WXTaskBar(VALUE rb_mWX)
+DLL_LOCAL void Init_WXTaskBar(VALUE rb_mWX)
 {
 #if wxUSE_TASKBARICON
 	using namespace RubyWX::TaskBar;
@@ -70,6 +62,9 @@ void Init_WXTaskBar(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXTaskBar,"menu",_getMenu,_setMenu);
 	rb_define_attr_method(rb_cWXTaskBar,"icon",_getIcon,_setIcon);
 	rb_define_attr_method(rb_cWXTaskBar,"tooltip",_getToolTip,_setToolTip);
+
+	registerType<wxTaskBarIcon>(rb_cWXTaskBar);
+	registerType<RubyTaskBarIcon>(rb_cWXTaskBar);
 
 	registerEventType("taskbar_move",wxEVT_TASKBAR_MOVE,rb_cWXEvent);
 	registerEventType("taskbar_left_down",wxEVT_TASKBAR_LEFT_DOWN,rb_cWXEvent);

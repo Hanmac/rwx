@@ -6,20 +6,30 @@
  */
 
 
-#include "wxEvtHandler.hpp"
+#include "wxBookCtrl.hpp"
 
 VALUE rb_cWXAuiNotebook;
 
 #if wxUSE_AUI
 #define _self wrap<wxAuiNotebook*>(self)
 
+template <>
+VALUE wrap< wxAuiNotebook >(wxAuiNotebook* window)
+{
+	return wrap(window,rb_cWXAuiNotebook);
+}
+
+template <>
+wxAuiNotebook* wrap< wxAuiNotebook* >(const VALUE &vwindow)
+{
+	return unwrapPtr<wxAuiNotebook>(vwindow, rb_cWXAuiNotebook);
+}
+
+
 namespace RubyWX {
 namespace AuiNotebook {
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxAuiNotebook(),self);
-}
+APP_PROTECT(wxAuiNotebook)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {

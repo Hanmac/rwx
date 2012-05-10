@@ -4,8 +4,7 @@
  *  Created on: 04.03.2012
  *      Author: hanmac
  */
-
-#include "wxEvtHandler.hpp"
+#include "wxColorPicker.hpp"
 #include "wxColor.hpp"
 
 VALUE rb_cWXColorPicker,rb_cWXColorPickerEvent;
@@ -17,11 +16,7 @@ namespace ColorPicker {
 #define _self wrap<wxColourPickerCtrl*>(self)
 macro_attr(Colour,wxColour)
 
-
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxColourPickerCtrl(),self);
-}
+APP_PROTECT(wxColourPickerCtrl)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -59,6 +54,8 @@ void Init_WXColorPicker(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXColorPickerEvent,"color",
 			Event::_getColour,Event::_setColour);
+
+	registerType<wxColourPickerCtrl>(rb_cWXColorPicker);
 #endif
 
 }

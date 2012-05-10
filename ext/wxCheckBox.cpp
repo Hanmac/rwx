@@ -6,7 +6,7 @@
  */
 
 
-#include "wxEvtHandler.hpp"
+#include "wxControl.hpp"
 
 VALUE rb_cWXCheckBox;
 
@@ -18,11 +18,7 @@ namespace CheckBox {
 
 macro_attr(Value,bool)
 
-
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxCheckBox,self);
-}
+APP_PROTECT(wxCheckBox)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -45,7 +41,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
-void Init_WXCheckBox(VALUE rb_mWX)
+DLL_LOCAL void Init_WXCheckBox(VALUE rb_mWX)
 {
 #if wxUSE_CHECKBOX
 	using namespace RubyWX::CheckBox;
@@ -55,6 +51,8 @@ void Init_WXCheckBox(VALUE rb_mWX)
 	rb_define_method(rb_cWXCheckBox,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_attr_method(rb_cWXCheckBox,"value",_getValue,_setValue);
+
+	registerType<wxCheckBox>(rb_cWXCheckBox);
 #endif
 
 }

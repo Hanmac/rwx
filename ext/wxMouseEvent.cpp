@@ -21,7 +21,7 @@ namespace MouseEvent {
 }
 
 
-void Init_WXMouseEvent(VALUE rb_mWX)
+DLL_LOCAL void Init_WXMouseEvent(VALUE rb_mWX)
 {
 	using namespace RubyWX::MouseEvent;
 	rb_cWXMouseEvent = rb_define_class_under(rb_cWXEvent,"Mouse",rb_cWXEvent);

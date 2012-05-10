@@ -7,6 +7,8 @@
 
 #include "wxAuiPane.hpp"
 #include "wxBitmap.hpp"
+#include "wxSize.hpp"
+#include "wxPoint.hpp"
 
 #define _self wrap<wxAuiPaneInfo*>(self)
 
@@ -16,9 +18,7 @@ VALUE rb_cWXAuiPane;
 namespace RubyWX {
 namespace AuiPane {
 
-VALUE _alloc(VALUE self) {
-	return wrap(new wxAuiPaneInfo);
-}
+APP_PROTECT(wxAuiPaneInfo)
 
 VALUE _getCaption(VALUE self)
 {

@@ -7,9 +7,9 @@
 
 
 #include "wxBitmap.hpp"
-#include "wxImage.hpp"
 #include "wxDC.hpp"
 #include <map>
+#include <wx/artprov.h>
 
 #define _self wrap<wxBitmap*>(self)
 
@@ -28,6 +28,91 @@ void registerArtID(const char * name,const wxArtID& artid,wxWindowID wid = wxID_
 }
 
 
+template <>
+VALUE wrap< wxBitmap >(wxBitmap *bitmap )
+{
+	if(bitmap)
+		return Data_Wrap_Struct(rb_cWXBitmap, NULL, NULL, bitmap);
+	return Qnil;
+}
+
+template <>
+wxBitmap* wrap< wxBitmap* >(const VALUE &vbitmap)
+{
+	if(NIL_P(vbitmap))
+		return &wxNullBitmap;
+	if(rb_obj_is_kind_of(vbitmap,rb_cWXBitmap))
+		return unwrapPtr<wxBitmap>(vbitmap, rb_cWXBitmap);
+#if wxUSE_IMAGE
+	if(rb_obj_is_kind_of(vbitmap,rb_cWXImage))
+		return new wxBitmap(wrap<wxImage>(vbitmap));
+#endif
+	if(is_wrapable<wxSize>(vbitmap))
+		return new wxBitmap(wrap<wxSize>(vbitmap));
+	else
+		return new wxBitmap(wrap<wxString>(vbitmap),wxBITMAP_TYPE_ANY);
+}
+
+template <>
+wxBitmap wrap< wxBitmap >(const VALUE &vbitmap)
+{
+	return *wrap<wxBitmap*>(vbitmap);
+}
+
+template <>
+VALUE wrap< wxIcon >(wxIcon *icon )
+{
+	if(icon == &wxNullIcon)
+		return Qnil;
+	return wrap< wxBitmap >(icon);
+}
+template <>
+VALUE wrap< wxIcon >(const wxIcon &icon )
+{
+	if(&icon == &wxNullIcon)
+		return Qnil;
+	return wrap< wxBitmap >(new wxBitmap(icon));
+}
+
+template <>
+wxIcon* wrap< wxIcon* >(const VALUE &vbitmap)
+{
+	if(NIL_P(vbitmap))
+		return &wxNullIcon;
+	wxIcon *icon = new wxIcon();
+	icon->CopyFromBitmap(wrap<wxBitmap>(vbitmap));
+	return icon;
+}
+
+template <>
+wxIcon wrap< wxIcon >(const VALUE &vbitmap)
+{
+	return *wrap<wxIcon*>(vbitmap);
+}
+
+template <>
+VALUE wrap< wxImageList >(wxImageList *imagelist )
+{
+	VALUE result = rb_ary_new();
+	int count = imagelist->GetImageCount();
+	for(int i = 0;i < count;++i)
+		rb_ary_push(result,wrap(imagelist->GetBitmap(i)));
+	return result;
+}
+
+template <>
+wxImageList* wrap< wxImageList* >(const VALUE &imagelist)
+{
+	wxImageList *result = new wxImageList;
+	VALUE dup = rb_funcall(imagelist,rb_intern("to_a"),0);
+	result->Create();
+	size_t count = RARRAY_LEN(dup);
+	for(size_t i = 0;i < count;++i)
+		result->Add(wrap<wxBitmap>(RARRAY_PTR(dup)[i]));
+	return result;
+}
+
+
 namespace RubyWX {
 namespace Bitmap {
 
@@ -37,7 +122,7 @@ macro_attr(Depth,int)
 
 macro_attr(Mask,wxMask*)
 #if wxUSE_PALETTE
-macro_attr(Palette,wxPalette)
+//macro_attr(Palette,wxPalette)
 #endif
 
 VALUE _alloc(VALUE self) {

@@ -8,24 +8,13 @@
 #ifndef WXTREECTRL_HPP_
 #define WXTREECTRL_HPP_
 
-#include "main.hpp"
+#include "wxControl.hpp"
 
 extern VALUE rb_cWXTreeCtrl;
 
 void Init_WXTreeCtrl(VALUE rb_mWX);
 #if wxUSE_TREECTRL
 #include <wx/treectrl.h>
-template <>
-inline VALUE wrap< wxTreeCtrl >(wxTreeCtrl* window)
-{
-	return wrap(window,rb_cWXTreeCtrl);
-}
-
-template <>
-inline wxTreeCtrl* wrap< wxTreeCtrl* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxTreeCtrl>(vwindow, rb_cWXTreeCtrl);
-}
 
 class RubyTreeCtrlItem : public wxTreeItemData
 {

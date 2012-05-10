@@ -14,14 +14,4 @@ extern VALUE rb_mWXItemContainer;
 
 void Init_WXItemContainer(VALUE rb_mWX);
 
-#if wxUSE_CONTROLS
-
-template <>
-inline wxItemContainer* wrap< wxItemContainer* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxItemContainer>(vwindow, rb_mWXItemContainer);
-}
-#endif
-
-
 #endif /* WXITEMCONTAINER_HPP_ */

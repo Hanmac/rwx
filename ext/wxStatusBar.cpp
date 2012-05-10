@@ -17,22 +17,20 @@ VALUE rb_cWXStatusBar;
 namespace RubyWX {
 namespace StatusBar {
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxStatusBar,self);
-}
+APP_PROTECT(wxStatusBar)
 
 }
 }
 #endif
-void Init_WXStatusBar(VALUE rb_mWX)
+DLL_LOCAL void Init_WXStatusBar(VALUE rb_mWX)
 {
 #if wxUSE_STATUSBAR
 	using namespace RubyWX::StatusBar;
 	rb_cWXStatusBar = rb_define_class_under(rb_mWX,"StatusBar",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXStatusBar,_alloc);
+
+	registerType<wxStatusBar>(rb_cWXStatusBar);
 #endif
-//	rb_define_method(rb_cWXMenu,"each",RUBY_METHOD_FUNC(_each),0);
 
 }
 

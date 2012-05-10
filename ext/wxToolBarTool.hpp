@@ -13,20 +13,4 @@
 extern VALUE rb_cWXToolBarTool;
 void Init_WXToolBarTool(VALUE rb_mWX);
 
-
-template <>
-inline VALUE wrap< wxToolBarToolBase >(wxToolBarToolBase *menu )
-{
-	if(menu)
-		return wrap(menu,rb_cWXToolBarTool);
-	return Qnil;
-}
-
-template <>
-inline wxToolBarToolBase* wrap< wxToolBarToolBase* >(const VALUE &vmenu)
-{
-	return unwrapPtr<wxToolBarToolBase>(vmenu, rb_cWXToolBarTool);
-}
-
-
 #endif /* WXTOOLBARTOOL_HPP_ */

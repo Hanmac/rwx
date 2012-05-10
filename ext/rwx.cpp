@@ -35,6 +35,83 @@
 #include "wxApp.hpp"
 #include "wxWindow.hpp"
 
+#include "wxMenuBar.hpp"
+#include "wxPanel.hpp"
+#include "wxControl.hpp"
+#include "wxToplevel.hpp"
+
+
+#include "wxFrame.hpp"
+#include "wxDialog.hpp"
+
+#include "wxColorDialog.hpp"
+#include "wxFontDialog.hpp"
+
+#include "wxFileDialog.hpp"
+#include "wxDirDialog.hpp"
+#include "wxProgressDialog.hpp"
+
+#include "wxWizard.hpp"
+
+
+#include "wxAui.hpp"
+
+#include "wxAnyButton.hpp"
+
+#include "wxToolBarBase.hpp"
+#include "wxToolBar.hpp"
+
+#include "wxStatusBar.hpp"
+
+#include "wxGauge.hpp"
+
+
+#include "wxCheckBox.hpp"
+#include "wxRadioButton.hpp"
+
+#include "wxStaticLine.hpp"
+#include "wxStaticBitmap.hpp"
+#include "wxStaticText.hpp"
+#include "wxStaticBox.hpp"
+
+#include "wxItemContainer.hpp"
+
+#include "wxChoice.hpp"
+
+#include "wxSlider.hpp"
+
+#include "wxSpinButton.hpp"
+#include "wxSpinCtrl.hpp"
+
+#include "wxTextCtrl.hpp"
+
+#include "wxTimePicker.hpp"
+#include "wxFontPicker.hpp"
+#include "wxColorPicker.hpp"
+#include "wxFilePicker.hpp"
+#include "wxDirPicker.hpp"
+
+#include "wxTreeCtrl.hpp"
+
+#include "wxFileCtrlBase.hpp"
+#include "wxFileCtrl.hpp"
+#include "wxFileCtrlGeneric.hpp"
+
+#include "wxCalendarCtrlBase.hpp"
+#include "wxCalendarCtrl.hpp"
+#include "wxCalendarCtrlGeneric.hpp"
+
+
+#include "wxDataView.hpp"
+#include "wxDataViewList.hpp"
+
+#include "wxHyperLink.hpp"
+
+#include "wxBookCtrl.hpp"
+
+#include "wxSTC.hpp"
+
+
 #include "wxAboutDlg.hpp"
 #include "wxStartUpTip.hpp"
 
@@ -48,6 +125,20 @@
 #include "wxGridTable.hpp"
 #include "wxGridCellRenderer.hpp"
 #include "wxGridCellAttr.hpp"
+
+#include "wxPropertyGrid.hpp"
+#include "wxPropertyGridManager.hpp"
+#include "wxPropertyGridInterface.hpp"
+
+
+#include "wxProperty.hpp"
+#include "wxFileProperty.hpp"
+#include "wxFontProperty.hpp"
+#include "wxStringProperty.hpp"
+#include "wxArrayStringProperty.hpp"
+#include "wxCategoryProperty.hpp"
+
+
 VALUE rb_mWX;
 
 void rb_define_attr_method(VALUE klass,std::string name,VALUE(get)(VALUE),VALUE(set)(VALUE,VALUE))
@@ -125,7 +216,13 @@ extern "C" void Init_rwx()
 	Init_WXFontPicker(rb_mWX);
 	Init_WXFilePicker(rb_mWX);
 
+	Init_WXFileCtrlBase(rb_mWX);
 	Init_WXFileCtrl(rb_mWX);
+	Init_WXFileCtrlGeneric(rb_mWX);
+
+	Init_WXCalendarCtrlBase(rb_mWX);
+	Init_WXCalendarCtrl(rb_mWX);
+	Init_WXCalendarCtrlGeneric(rb_mWX);
 
 	Init_WXDataView(rb_mWX);
 	Init_WXDataViewList(rb_mWX);
@@ -186,4 +283,16 @@ extern "C" void Init_rwx()
 	Init_WXGridTable(rb_mWX);
 	Init_WXGridCellRenderer(rb_mWX);
 	Init_WXGridCellAttr(rb_mWX);
+
+	Init_WXProperty(rb_mWX);
+	Init_WXFileProperty(rb_mWX);
+	Init_WXFontProperty(rb_mWX);
+	Init_WXStringProperty(rb_mWX);
+	Init_WXArrayStringProperty(rb_mWX);
+	Init_WXCategoryProperty(rb_mWX);
+
+
+	Init_WXPropertyGridInterface(rb_mWX);
+	Init_WXPropertyGrid(rb_mWX);
+	Init_WXPropertyGridManager(rb_mWX);
 }

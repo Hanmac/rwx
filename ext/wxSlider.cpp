@@ -6,7 +6,7 @@
  */
 
 
-#include "wxEvtHandler.hpp"
+#include "wxSlider.hpp"
 
 
 VALUE rb_cWXSlider;
@@ -21,10 +21,7 @@ macro_attr(Value,int)
 macro_attr(Max,int)
 macro_attr(Min,int)
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxSlider(),self);
-}
+APP_PROTECT(wxSlider)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -65,6 +62,8 @@ void Init_WXSlider(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXSlider,"value",_getValue,_setValue);
 	rb_define_attr_method(rb_cWXSlider,"min",_getMin,_setMin);
 	rb_define_attr_method(rb_cWXSlider,"max",_getMax,_setMax);
+
+	registerType<wxSlider>(rb_cWXSlider);
 #endif
 
 }

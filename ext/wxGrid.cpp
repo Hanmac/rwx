@@ -6,10 +6,14 @@
  */
 
 
-#include "wxEvtHandler.hpp"
+#include "wxControl.hpp"
+#include "wxGrid.hpp"
 #include "wxGridTable.hpp"
 #include "wxGridCellRenderer.hpp"
 #include "wxGridCellAttr.hpp"
+
+#include "wxColor.hpp"
+#include "wxFont.hpp"
 
 VALUE rb_cWXGrid, rb_cWXGridEvent;
 #if wxUSE_GRID

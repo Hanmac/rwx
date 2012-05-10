@@ -7,7 +7,7 @@
 
 #include "wxBitmap.hpp"
 
-#include "wxWindow.hpp"
+#include "wxToolBarBase.hpp"
 #include "wxToolBarTool.hpp"
 
 #define _self wrap<wxToolBarToolBase*>(self)
@@ -66,7 +66,7 @@ void Init_WXToolBarTool(VALUE rb_mWX)
 {
 	using namespace RubyWX::ToolBarTool;
 	//rb_cWXMenu = rb_define_class_under(rb_mWX,"Menu",rb_cObject);
-	rb_cWXToolBarTool = rb_define_class_under(rb_cWXToolBar,"Tool",rb_cObject);
+	rb_cWXToolBarTool = rb_define_class_under(rb_cWXToolBarBase,"Tool",rb_cObject);
 	rb_define_alloc_func(rb_cWXToolBarTool,_alloc);
 
 	rb_define_method(rb_cWXToolBarTool,"control",RUBY_METHOD_FUNC(_getControl),0);
@@ -84,4 +84,5 @@ void Init_WXToolBarTool(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXToolBarTool,"dropdown_menu",_getDropdownMenu,_setDropdownMenu);
 #endif
 
+	registerType<wxToolBarToolBase>(rb_cWXToolBarTool);
 }

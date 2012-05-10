@@ -13,6 +13,19 @@ VALUE rb_cWXAuiManager;
 #if wxUSE_AUI
 #define _self wrap<wxAuiManager*>(self)
 
+template <>
+VALUE wrap< wxAuiManager >(wxAuiManager* window)
+{
+	return wrap(window,rb_cWXAuiManager);
+}
+
+template <>
+wxAuiManager* wrap< wxAuiManager* >(const VALUE &vwindow)
+{
+	return unwrapPtr<wxAuiManager>(vwindow, rb_cWXAuiManager);
+}
+
+
 namespace RubyWX {
 namespace AuiManager {
 

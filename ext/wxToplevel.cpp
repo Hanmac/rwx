@@ -5,7 +5,7 @@
  *      Author: hanmac
  */
 
-#include "wxEvtHandler.hpp"
+#include "wxWindow.hpp"
 #include "wxBitmap.hpp"
 
 VALUE rb_cWXTopLevel;
@@ -20,12 +20,7 @@ macro_attr(Icon,wxIcon)
 macro_attr(DefaultItem,wxWindow*)
 macro_attr(TmpDefaultItem,wxWindow*)
 
-
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxTopLevelWindow,self);
-}
-
+APP_PROTECT(wxTopLevelWindow)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -71,4 +66,5 @@ void Init_WXTopLevel(VALUE rb_mWX)
 	rb_define_const(rb_cWXTopLevel,"TINY_CAPTION",INT2NUM(wxTINY_CAPTION));
 	rb_define_const(rb_cWXTopLevel,"RESIZE_BORDER",INT2NUM(wxRESIZE_BORDER));
 
+	registerType<wxTopLevelWindow>(rb_cWXTopLevel);
 }

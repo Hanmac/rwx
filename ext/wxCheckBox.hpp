@@ -12,24 +12,6 @@
 
 extern VALUE rb_cWXCheckBox;
 
-void Init_WXCheckBox(VALUE rb_mWX);
-#if wxUSE_CHECKBOX
-
-template <>
-inline VALUE wrap< wxCheckBox >(wxCheckBox* window)
-{
-	return wrap(window,rb_cWXCheckBox);
-}
-
-
-template <>
-inline wxCheckBox* wrap< wxCheckBox* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxCheckBox>(vwindow, rb_cWXCheckBox);
-}
-
-#endif
-
-
+DLL_LOCAL void Init_WXCheckBox(VALUE rb_mWX);
 
 #endif /* WXCHECKBOX_HPP_ */

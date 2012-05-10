@@ -6,11 +6,14 @@
  */
 #include "wxWindow.hpp"
 #include "wxEvtHandler.hpp"
+#include "wxProgressDialog.hpp"
 #include "wxFont.hpp"
 #include "wxColor.hpp"
 #include "wxSizer.hpp"
 #include "wxPoint.hpp"
 #include "wxDC.hpp"
+
+#include "wxCursor.hpp"
 
 #include "wxAui.hpp"
 #define _self wrap<wxWindow*>(self)
@@ -71,6 +74,23 @@ void registerID(const char *name,wxWindowID id)
 	idholder.insert(std::make_pair(rb_intern(name),id));
 }
 
+#if wxUSE_TOOLTIPS
+
+template <>
+VALUE wrap< wxToolTip >(wxToolTip* window)
+{
+	return wrap(window->GetTip());
+}
+
+template <>
+wxToolTip* wrap< wxToolTip* >(const VALUE &vwindow)
+{
+	if(NIL_P(vwindow))
+		return NULL;
+	return new wxToolTip(wrap<wxString>(vwindow));
+}
+#endif
+
 namespace RubyWX {
 namespace Window {
 
@@ -103,10 +123,10 @@ macro_attr(WindowStyleFlag,long)
 macro_attr(ExtraStyle,long)
 
 #if wxUSE_VALIDATORS
-macro_attr(Validator,wxValidator)
+//macro_attr(Validator,wxValidator)
 #endif // wxUSE_VALIDATORS
 #if wxUSE_CARET
-macro_attr(Caret,wxCaret*)
+//macro_attr(Caret,wxCaret*)
 #endif // wxUSE_CARET
 #if wxUSE_HELP
 macro_attr(HelpText,wxString)
@@ -115,7 +135,7 @@ macro_attr(HelpText,wxString)
 macro_attr(ToolTip,wxToolTip*)
 #endif // wxUSE_TOOLTIPS
 #if wxUSE_DRAG_AND_DROP
-macro_attr(DropTarget,wxDropTarget*)
+//macro_attr(DropTarget,wxDropTarget*)
 #endif // wxUSE_DRAG_AND_DROP
 macro_attr(AutoLayout,bool)
 macro_attr(ThemeEnabled,bool)
@@ -177,11 +197,7 @@ VALUE _SetForegroundColour(VALUE self,VALUE val)
 	return val;
 }
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxWindow,self);
-}
-
+APP_PROTECT(wxWindow)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -196,6 +212,9 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		VALUE temp;
+		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("extra_style")))))
+			_self->SetExtraStyle(NUM2INT(temp));
+
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("name")))))
 			_self->SetName(wrap<wxString>(temp));
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("label")))))
@@ -418,6 +437,8 @@ void Init_WXWindow(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXWindow,"client_to_screen",RUBY_METHOD_FUNC(_ClientToScreen),1);
 	rb_define_method(rb_cWXWindow,"screen_to_client",RUBY_METHOD_FUNC(_ScreenToClient),1);
+
+	registerType<wxWindow>(rb_cWXWindow);
 
 	registerID("open",wxID_OPEN);
 	registerID("close",wxID_CLOSE);

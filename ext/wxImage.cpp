@@ -22,6 +22,24 @@
 
 VALUE rb_cWXImage;
 
+template <>
+wxImage* wrap< wxImage* >(const VALUE &vimage)
+{
+	if(rb_obj_is_kind_of(vimage,rb_cWXImage))
+		return unwrapPtr<wxImage>(vimage, rb_cWXImage);
+	if(is_wrapable<wxSize>(vimage))
+		return new wxImage(wrap<wxSize>(vimage));
+	return unwrapPtr<wxImage>(rb_class_new_instance(1,const_cast<VALUE*>(&vimage),rb_cWXImage), rb_cWXImage);
+}
+
+
+template <>
+wxImage wrap< wxImage >(const VALUE &vimage)
+{
+	return *wrap<wxImage*>(vimage);
+}
+
+
 namespace RubyWX {
 namespace Image {
 
@@ -344,7 +362,7 @@ VALUE _to_bitmap(VALUE self)
 
 #endif
 
-void Init_WXImage(VALUE rb_mWX)
+DLL_LOCAL void Init_WXImage(VALUE rb_mWX)
 {
 #if wxUSE_IMAGE
 
@@ -377,6 +395,7 @@ void Init_WXImage(VALUE rb_mWX)
 	rb_define_method(rb_cWXImage,"load",RUBY_METHOD_FUNC(_load),-1);
 	rb_define_method(rb_cWXImage,"save",RUBY_METHOD_FUNC(_save),-1);
 
+	registerType<wxImage>(rb_cWXImage);
 #endif
 
 }

@@ -5,7 +5,7 @@
  *      Author: hanmac
  */
 
-#include "wxEvtHandler.hpp"
+#include "wxTextCtrl.hpp"
 
 VALUE rb_cWXTextCtrl;
 
@@ -15,10 +15,7 @@ VALUE rb_cWXTextCtrl;
 namespace RubyWX {
 namespace TextCtrl {
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxTextCtrl(),self);
-}
+APP_PROTECT(wxTextCtrl)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -42,6 +39,7 @@ void Init_WXTextCtrl(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXTextCtrl,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
+	registerType<wxTextCtrl>(rb_cWXTextCtrl);
 #endif
 
 }

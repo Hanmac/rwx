@@ -15,10 +15,8 @@ VALUE rb_cWXDialog;
 namespace RubyWX {
 namespace Dialog {
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxDialog,self);
-}
+APP_PROTECT(wxDialog)
+
 macro_attr_with_func(EscapeId,wrapID,unwrapID)
 macro_attr_with_func(ReturnCode,wrapID,unwrapID)
 macro_attr_with_func(AffirmativeId,wrapID,unwrapID)
@@ -124,4 +122,7 @@ void Init_WXDialog(VALUE rb_mWX)
 	rb_define_method(rb_cWXDialog,"create_text_sizer",RUBY_METHOD_FUNC(_CreateTextSizer),1);
 #endif
 	rb_define_const(rb_cWXDialog,"DEFAULT_STYLE",INT2NUM(wxDEFAULT_DIALOG_STYLE));
+
+
+	registerType<wxDialog>(rb_cWXDialog);
 }

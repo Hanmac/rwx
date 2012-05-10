@@ -15,23 +15,11 @@
 extern VALUE rb_cWXEvent;
 void Init_WXEvent(VALUE rb_mWX);
 
-extern std::map<wxEventType,VALUE> evttypeclassholder;
+template <>
+VALUE wrap< wxEvent >(wxEvent *event );
 
 template <>
-inline VALUE wrap< wxEvent >(wxEvent *event )
-{
-	VALUE klass = rb_cWXEvent;
-	std::map<wxEventType,VALUE>::iterator it = evttypeclassholder.find(event->GetEventType());
-	if(it != evttypeclassholder.end())
-		klass = it->second;
-	return wrap(event,klass);
-}
-
-template <>
-inline wxEvent* wrap< wxEvent* >(const VALUE &vcolor)
-{
-	return unwrapPtr<wxEvent>(vcolor, rb_cWXEvent);
-}
+wxEvent* wrap< wxEvent* >(const VALUE &vcolor);
 
 
 #endif /* WXEVENT_HPP_ */

@@ -8,28 +8,10 @@
 #ifndef WXSTATUSBAR_HPP_
 #define WXSTATUSBAR_HPP_
 
-
-#include "main.hpp"
+#include "wxControl.hpp"
 
 extern VALUE rb_cWXStatusBar;
 
-void Init_WXStatusBar(VALUE rb_mWX);
-
-
-template <>
-inline VALUE wrap< wxStatusBar >(wxStatusBar* window)
-{
-	return wrap(window,rb_cWXStatusBar);
-}
-
-
-template <>
-inline wxStatusBar* wrap< wxStatusBar* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxStatusBar>(vwindow, rb_cWXStatusBar);
-}
-
-
-
+DLL_LOCAL void Init_WXStatusBar(VALUE rb_mWX);
 
 #endif /* WXSTATUSBAR_HPP_ */

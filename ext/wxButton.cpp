@@ -6,10 +6,11 @@
  */
 
 
-#include "wxEvtHandler.hpp"
+#include "wxAnyButton.hpp"
+#include "wxButton.hpp"
 
 VALUE rb_cWXButton;
-
+#if wxUSE_BUTTON
 #define _self wrap<wxButton*>(self)
 
 namespace RubyWX {
@@ -17,10 +18,7 @@ namespace Button {
 
 macro_attr(AuthNeeded,bool)
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxButton,self);
-}
+APP_PROTECT(wxButton)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -45,8 +43,11 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 
+#endif
+
 void Init_WXButton(VALUE rb_mWX)
 {
+#if wxUSE_BUTTON
 	using namespace RubyWX::Button;
 	rb_cWXButton = rb_define_class_under(rb_mWX,"Button",rb_cWXAnyButton);
 	rb_define_alloc_func(rb_cWXButton,_alloc);
@@ -55,4 +56,6 @@ void Init_WXButton(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXButton,"auth_needed",_getAuthNeeded,_setAuthNeeded);
 
+	registerType<wxButton>(rb_cWXButton);
+#endif
 }

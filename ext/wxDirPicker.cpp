@@ -5,23 +5,19 @@
  *      Author: hanmac
  */
 
-#include "wxEvtHandler.hpp"
+#include "wxDirPicker.hpp"
 
 VALUE rb_cWXDirPicker;
 static VALUE rb_cWXFileDirPickerEvent;
 
-#if wxUSE_FILEPICKERCTRL
+#if wxUSE_DIRPICKERCTRL
 
 namespace RubyWX {
 namespace DirPicker {
 #define _self wrap<wxDirPickerCtrl*>(self)
 macro_attr(Path,wxString)
 
-
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxDirPickerCtrl(),self);
-}
+APP_PROTECT(wxDirPickerCtrl)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -45,7 +41,7 @@ macro_attr(Path,wxString)
 #endif
 void Init_WXDirPicker(VALUE rb_mWX)
 {
-#if wxUSE_FILEPICKERCTRL
+#if wxUSE_DIRPICKERCTRL
 	using namespace RubyWX::DirPicker;
 	rb_cWXDirPicker = rb_define_class_under(rb_mWX,"DirPicker",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXDirPicker,_alloc);
@@ -59,6 +55,8 @@ void Init_WXDirPicker(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXFileDirPickerEvent,"path",
 			Event::_getPath,Event::_setPath);
+
+	registerType<wxDirPickerCtrl>(rb_cWXDirPicker);
 #endif
 
 }

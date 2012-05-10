@@ -5,7 +5,8 @@
  *      Author: hanmac
  */
 
-#include "wxEvtHandler.hpp"
+#include "wxApp.hpp"
+#include "wxStaticBitmap.hpp"
 #include "wxBitmap.hpp"
 
 VALUE rb_cWXStaticBitmap;
@@ -18,11 +19,7 @@ namespace StaticBitmap {
 
 macro_attr(Bitmap,wxBitmap)
 
-
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxStaticBitmap(),self);
-}
+APP_PROTECT(wxStaticBitmap)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -37,7 +34,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
-void Init_WXStaticBitmap(VALUE rb_mWX)
+DLL_LOCAL void Init_WXStaticBitmap(VALUE rb_mWX)
 {
 #if wxUSE_STATBMP
 	using namespace RubyWX::StaticBitmap;
@@ -48,6 +45,7 @@ void Init_WXStaticBitmap(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXStaticBitmap,"bitmap",_getBitmap,_setBitmap);
 
+	registerType<wxStaticBitmap>(rb_cWXStaticBitmap);
 #endif
 
 }

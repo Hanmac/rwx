@@ -17,10 +17,7 @@ VALUE rb_cWXChoice;
 namespace RubyWX {
 namespace Choice {
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxChoice,self);
-}
+APP_PROTECT(wxChoice)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -54,6 +51,7 @@ void Init_WXChoice(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXChoice,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
+	registerType<wxChoice>(rb_cWXChoice);
 #endif
 
 }

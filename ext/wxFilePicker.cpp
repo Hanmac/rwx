@@ -5,23 +5,31 @@
  *      Author: hanmac
  */
 
-#include "wxEvtHandler.hpp"
+#include "wxFilePicker.hpp"
 
 VALUE rb_cWXFilePicker;
 static VALUE rb_cWXFileDirPickerEvent;
 
 #if wxUSE_FILEPICKERCTRL
 
+template <>
+VALUE wrap< wxFilePickerCtrl >(wxFilePickerCtrl* window)
+{
+	return wrap(window,rb_cWXFilePicker);
+}
+
+template <>
+wxFilePickerCtrl* wrap< wxFilePickerCtrl* >(const VALUE &vwindow)
+{
+	return unwrapPtr<wxFilePickerCtrl>(vwindow, rb_cWXFilePicker);
+}
+
 namespace RubyWX {
 namespace FilePicker {
 #define _self wrap<wxFilePickerCtrl*>(self)
 macro_attr(Path,wxString)
 
-
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxFilePickerCtrl(),self);
-}
+APP_PROTECT(wxFilePickerCtrl)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {

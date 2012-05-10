@@ -5,9 +5,12 @@
  *      Author: hanmac
  */
 
-#include "wxEvtHandler.hpp"
+#include "wxTreeCtrl.hpp"
 #include "wxFont.hpp"
 #include "wxColor.hpp"
+#include "wxBitmap.hpp"
+
+#include "wxPoint.hpp"
 
 VALUE rb_cWXTreeCtrl,rb_cWXTreeCtrlItem,rb_cWXTreeCtrlEvent;
 #if wxUSE_TREECTRL
@@ -25,11 +28,7 @@ macro_attr(ImageList,wxImageList*)
 macro_attr(StateImageList,wxImageList*)
 
 
-
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxTreeCtrl(),self);
-}
+APP_PROTECT(wxTreeCtrl)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -354,6 +353,7 @@ void Init_WXTreeCtrl(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXTreeCtrl,"selection",_getSelection,_setSelection);
 
 
+	registerType<wxTreeCtrl>(rb_cWXTreeCtrl);
 
 	rb_cWXTreeCtrlItem = rb_define_class_under(rb_cWXTreeCtrl,"Item",rb_cObject);
 	rb_undef_alloc_func(rb_cWXTreeCtrlItem);

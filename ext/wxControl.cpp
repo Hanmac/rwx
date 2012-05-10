@@ -16,11 +16,7 @@ namespace Control {
 
 macro_attr(LabelText,wxString)
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxControl,self);
-}
-
+APP_PROTECT(wxControl)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -50,5 +46,7 @@ DLL_LOCAL void Init_WXControl(VALUE rb_mWX)
 	rb_define_method(rb_cWXControl,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_attr_method(rb_cWXControl,"label_text",_getLabelText,_setLabelText);
+
+	registerType<wxControl>(rb_cWXControl);
 #endif
 }

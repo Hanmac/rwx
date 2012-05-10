@@ -8,7 +8,7 @@
 #ifndef WXAUI_HPP_
 #define WXAUI_HPP_
 
-#include "main.hpp"
+#include "wxEvtHandler.hpp"
 #if wxUSE_AUI
 #include <wx/aui/aui.h>
 #endif

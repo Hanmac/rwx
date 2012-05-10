@@ -12,22 +12,6 @@
 #include "main.hpp"
 
 extern VALUE rb_cWXMenuItem;
-void Init_WXMenuItem(VALUE rb_mWX);
-
-
-template <>
-inline VALUE wrap< wxMenuItem >(wxMenuItem *menu )
-{
-	if(menu)
-		return wrap(menu,rb_cWXMenuItem);
-	return Qnil;
-}
-
-template <>
-inline wxMenuItem* wrap< wxMenuItem* >(const VALUE &vmenu)
-{
-	return unwrapPtr<wxMenuItem>(vmenu, rb_cWXMenuItem);
-}
-
+DLL_LOCAL void Init_WXMenuItem(VALUE rb_mWX);
 
 #endif /* WXMENUITEM_HPP_ */

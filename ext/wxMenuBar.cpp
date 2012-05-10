@@ -17,17 +17,7 @@ VALUE rb_cWXMenuBar;
 namespace RubyWX {
 namespace MenuBar {
 
-VALUE _alloc(VALUE self)
-{
-	if(ruby_app_inited)
-		return wrap(new wxMenuBar,self);
-	else
-		rb_raise(rb_eArgError,"%s is not running.",rb_class2name(rb_cWXApp));
-	return Qnil;
-
-}
-
-
+APP_PROTECT(wxMenuBar)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -76,7 +66,7 @@ singlereturn(GetFrame);
 }
 }
 
-void Init_WXMenuBar(VALUE rb_mWX)
+DLL_LOCAL void Init_WXMenuBar(VALUE rb_mWX)
 {
 	using namespace RubyWX::MenuBar;
 	rb_cWXMenuBar = rb_define_class_under(rb_cWXMenu,"Bar",rb_cWXWindow);
@@ -91,4 +81,6 @@ void Init_WXMenuBar(VALUE rb_mWX)
 	rb_define_method(rb_cWXMenuBar,"append",RUBY_METHOD_FUNC(_append),1);
 
 	rb_define_method(rb_cWXMenuBar,"frame",RUBY_METHOD_FUNC(_GetFrame),0);
+
+	registerType<wxMenuBar>(rb_cWXMenuBar);
 }

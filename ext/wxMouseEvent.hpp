@@ -11,6 +11,6 @@
 #include "main.hpp"
 
 extern VALUE rb_cWXMouseEvent;
-void Init_WXMouseEvent(VALUE rb_mWX);
+DLL_LOCAL void Init_WXMouseEvent(VALUE rb_mWX);
 
 #endif /* WXMOUSEEVENT_HPP_ */
