@@ -7,7 +7,6 @@
 
 #include "wxApp.hpp"
 #include "wxStaticBitmap.hpp"
-#include "wxBitmap.hpp"
 
 VALUE rb_cWXStaticBitmap;
 
@@ -16,8 +15,6 @@ VALUE rb_cWXStaticBitmap;
 
 namespace RubyWX {
 namespace StaticBitmap {
-
-macro_attr(Bitmap,wxBitmap)
 
 APP_PROTECT(wxStaticBitmap)
 
@@ -38,12 +35,10 @@ DLL_LOCAL void Init_WXStaticBitmap(VALUE rb_mWX)
 {
 #if wxUSE_STATBMP
 	using namespace RubyWX::StaticBitmap;
-	rb_cWXStaticBitmap = rb_define_class_under(rb_mWX,"StaticBitmap",rb_cWXControl);
+	rb_cWXStaticBitmap = rb_define_class_under(rb_mWX,"StaticBitmap",rb_cWXStaticBitmapBase);
 	rb_define_alloc_func(rb_cWXStaticBitmap,_alloc);
 
 	rb_define_method(rb_cWXStaticBitmap,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
-
-	rb_define_attr_method(rb_cWXStaticBitmap,"bitmap",_getBitmap,_setBitmap);
 
 	registerType<wxStaticBitmap>(rb_cWXStaticBitmap);
 #endif

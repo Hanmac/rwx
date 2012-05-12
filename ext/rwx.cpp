@@ -69,8 +69,11 @@
 #include "wxCheckBox.hpp"
 #include "wxRadioButton.hpp"
 
-#include "wxStaticLine.hpp"
 #include "wxStaticBitmap.hpp"
+#include "wxStaticBitmapGeneric.hpp"
+
+#include "wxStaticLine.hpp"
+
 #include "wxStaticText.hpp"
 #include "wxStaticBox.hpp"
 
@@ -233,7 +236,10 @@ extern "C" void Init_rwx()
 
 	Init_WXHyperLink(rb_mWX);
 
+	Init_WXStaticBitmapBase(rb_mWX);
 	Init_WXStaticBitmap(rb_mWX);
+	Init_WXStaticBitmapGeneric(rb_mWX);
+
 	Init_WXStaticLine(rb_mWX);
 	Init_WXStaticText(rb_mWX);
 	Init_WXStaticBox(rb_mWX);
