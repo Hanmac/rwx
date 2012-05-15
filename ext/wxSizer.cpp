@@ -12,6 +12,39 @@
 
 VALUE rb_cWXSizer;
 
+template <>
+wxSizerFlags wrap< wxSizerFlags >(const VALUE &hash)
+{
+	wxSizerFlags result;
+	if(!rb_obj_is_kind_of(hash,rb_cHash))
+		return result;
+	VALUE val;
+
+	if(RTEST(rb_hash_aref(hash,ID2SYM(rb_intern("expand")))))
+		result.Expand();
+	if(!NIL_P(val=rb_hash_aref(hash,ID2SYM(rb_intern("proportion")))))
+			result.Proportion(NUM2INT(val));
+	if(!NIL_P(val=rb_hash_aref(hash,ID2SYM(rb_intern("align")))))
+	{
+		if(SYMBOL_P(val))
+		{
+			if(SYM2ID(val) == rb_intern("left"))
+				result.Left();
+			if(SYM2ID(val) == rb_intern("right"))
+				result.Right();
+			if(SYM2ID(val) == rb_intern("bottom"))
+				result.Bottom();
+			if(SYM2ID(val) == rb_intern("top"))
+				result.Top();
+			if(SYM2ID(val) == rb_intern("center"))
+				result.Center();
+
+		}
+	}
+
+	return result;
+}
+
 namespace RubyWX {
 namespace Sizer {
 
@@ -110,5 +143,7 @@ void Init_WXSizer(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXSizer,"each",RUBY_METHOD_FUNC(_each),0);
 	rb_include_module(rb_cWXSizer,rb_mEnumerable);
+
+	registerInfo<wxSizer>(rb_cWXSizer);
 }
 

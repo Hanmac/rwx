@@ -14,6 +14,8 @@
 
 VALUE rb_cWXToolBarTool;
 
+//need that for register
+struct wxToolBarTool;
 
 namespace RubyWX {
 namespace ToolBarTool {
@@ -84,5 +86,6 @@ void Init_WXToolBarTool(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXToolBarTool,"dropdown_menu",_getDropdownMenu,_setDropdownMenu);
 #endif
 
-	registerType<wxToolBarToolBase>(rb_cWXToolBarTool);
+	registerInfo<wxToolBarToolBase>(rb_cWXToolBarTool);
+//	registerInfo<wxToolBarTool>(rb_cWXToolBarTool);
 }

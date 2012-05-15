@@ -45,6 +45,28 @@ wxFontWeight wrap< wxFontWeight >(const VALUE &vmenu)
 }
 
 template <>
+VALUE wrap< wxFontStyle >(const wxFontStyle &style)
+{
+	ID id;
+	switch(style) {
+	case wxFONTSTYLE_NORMAL:
+		id = rb_intern("normal");
+		break;
+	case wxFONTSTYLE_ITALIC:
+		id = rb_intern("italic");
+		break;
+	case wxFONTSTYLE_SLANT:
+		id = rb_intern("slant");
+		break;
+	default:
+		id = rb_intern("normal");
+		break;
+	}
+	return ID2SYM(id);
+}
+
+
+template <>
 wxFontStyle wrap< wxFontStyle >(const VALUE &vmenu)
 {
 	if(NIL_P(vmenu))
@@ -57,6 +79,12 @@ wxFontStyle wrap< wxFontStyle >(const VALUE &vmenu)
 	if(id == rb_intern("slant"))
 		return wxFONTSTYLE_SLANT;
 	return wxFONTSTYLE_NORMAL;
+}
+
+template <>
+VALUE wrap< wxFontFamily >(const wxFontFamily &style)
+{
+	return Qnil;
 }
 
 template <>
@@ -132,5 +160,5 @@ DLL_LOCAL void Init_WXFont(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXFont,"weight",_getWeight,_setWeight);
 	rb_define_attr_method(rb_cWXFont,"faceName",_getFaceName,_setFaceName);
 
-	registerType<wxFont>(rb_cWXFont);
+	registerInfo<wxFont>(rb_cWXFont);
 }

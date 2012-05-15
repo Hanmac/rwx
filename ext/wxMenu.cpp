@@ -152,8 +152,8 @@ DLL_LOCAL void Init_WXMenu(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXMenu,"menubar",RUBY_METHOD_FUNC(_GetMenuBar),0);
 
-	registerEventType("menu_selected",wxEVT_COMMAND_MENU_SELECTED,rb_cWXEvent);
+	registerEventType("menu_selected",wxEVT_COMMAND_MENU_SELECTED);
 
-	registerType<wxMenu>(rb_cWXMenu);
+	registerInfo<wxMenu>(rb_cWXMenu);
 #endif
 }

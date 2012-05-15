@@ -31,7 +31,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
-DLL_LOCAL void Init_WXStaticBitmap(VALUE rb_mWX)
+DLL_LOCAL void Init_WXStaticBitmapGeneric(VALUE rb_mWX)
 {
 #if wxUSE_STATBMP
 	using namespace RubyWX::StaticBitmapGeneric;
@@ -40,7 +40,7 @@ DLL_LOCAL void Init_WXStaticBitmap(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXStaticBitmapGeneric,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-	registerType<wxGenericStaticBitmap>(rb_cWXStaticBitmapGeneric);
+	registerInfo<wxGenericStaticBitmap>(rb_cWXStaticBitmapGeneric);
 #endif
 
 }

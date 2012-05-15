@@ -39,7 +39,7 @@ void Init_WXCalendarCtrlGeneric(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXCalendarCtrlGeneric,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-	registerType<wxGenericCalendarCtrl>(rb_cWXCalendarCtrlGeneric);
+	registerInfo<wxGenericCalendarCtrl>(rb_cWXCalendarCtrlGeneric);
 #else
 	rb_define_const(rb_mWX,"CalendarCtrlGeneric",rb_cWXCalendarCtrl);
 #endif

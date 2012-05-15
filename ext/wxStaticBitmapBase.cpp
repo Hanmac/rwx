@@ -13,7 +13,7 @@
 VALUE rb_cWXStaticBitmapBase;
 
 #if wxUSE_STATBMP
-#define _self wrap<wxStaticBitmapBase*>(self)
+#define _self unwrapPtr<wxStaticBitmapBase>(self,rb_cWXStaticBitmapBase)
 
 namespace RubyWX {
 namespace StaticBitmapBase {
@@ -31,7 +31,6 @@ DLL_LOCAL void Init_WXStaticBitmapBase(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXStaticBitmapBase,"bitmap",_getBitmap,_setBitmap);
 
-	registerType<wxStaticBitmapBase>(rb_cWXStaticBitmapBase);
 #endif
 
 }

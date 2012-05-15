@@ -74,7 +74,7 @@ void Init_WXSTC(VALUE rb_mWX)
 
 	rb_define_const(rb_cWXSTC,"Version",wrap(wxStyledTextCtrl::GetLibraryVersionInfo().GetVersionString()));
 
-	registerType<wxStyledTextCtrl>(rb_cWXSTC);
+	registerInfo<wxStyledTextCtrl>(rb_cWXSTC);
 #endif
 
 }

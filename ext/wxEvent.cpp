@@ -14,26 +14,6 @@
 
 VALUE rb_cWXEvent;
 
-extern std::map<wxEventType,VALUE> evttypeclassholder;
-
-
-template <>
-VALUE wrap< wxEvent >(wxEvent *event )
-{
-	VALUE klass = rb_cWXEvent;
-	std::map<wxEventType,VALUE>::iterator it = evttypeclassholder.find(event->GetEventType());
-	if(it != evttypeclassholder.end())
-		klass = it->second;
-	return wrap(event,klass);
-}
-
-template <>
-wxEvent* wrap< wxEvent* >(const VALUE &vcolor)
-{
-	return unwrapPtr<wxEvent>(vcolor, rb_cWXEvent);
-}
-
-
 namespace RubyWX {
 namespace Event {
 
@@ -51,6 +31,8 @@ void Init_WXEvent(VALUE rb_mWX)
 	rb_undef_alloc_func(rb_cWXEvent);
 	rb_define_attr_method(rb_cWXEvent,"id",_getId,_setId);
 	rb_define_attr_method(rb_cWXEvent,"timestamp",_getTimestamp,_setTimestamp);
+
+	registerInfo<wxEvent>(rb_cWXEvent);
 }
 
 

@@ -86,6 +86,6 @@ void Init_WXDirDialog(VALUE rb_mWX)
 
 	rb_define_module_function(rb_mWX,"dir_dialog",RUBY_METHOD_FUNC(_getUserDir),-1);
 
-	registerType<wxDirDialog>(rb_cWXDirDialog);
+	registerInfo<wxDirDialog>(rb_cWXDirDialog);
 #endif
 }

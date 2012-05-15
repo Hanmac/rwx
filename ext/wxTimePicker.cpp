@@ -44,7 +44,7 @@ void Init_WXTimePicker(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXTimePicker,"value",_getValue,_setValue);
 
-	registerType<wxTimePickerCtrl>(rb_cWXTimePicker);
+	registerInfo<wxTimePickerCtrl>(rb_cWXTimePicker);
 #endif
 
 }

@@ -52,7 +52,7 @@ void Init_WXStaticBox(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXStaticBox,"containing_sizer",RUBY_METHOD_FUNC(_GetContainingSizer),0);// :nodoc:
 
-	registerType<wxStaticBox>(rb_cWXStaticBox);
+	registerInfo<wxStaticBox>(rb_cWXStaticBox);
 #endif
 
 }

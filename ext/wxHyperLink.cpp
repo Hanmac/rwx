@@ -72,7 +72,7 @@ void Init_WXHyperLink(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXHyperLink,"url",_getURL,_setURL);
 	rb_define_attr_method(rb_cWXHyperLink,"visited",_getVisited,_setVisited);
 
-	registerType<wxHyperlinkCtrl>(rb_cWXHyperLink);
+	registerInfo<wxHyperlinkCtrl>(rb_cWXHyperLink);
 #endif
 
 }

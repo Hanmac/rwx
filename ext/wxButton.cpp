@@ -5,8 +5,6 @@
  *      Author: hanmac
  */
 
-
-#include "wxAnyButton.hpp"
 #include "wxButton.hpp"
 
 VALUE rb_cWXButton;
@@ -56,6 +54,6 @@ void Init_WXButton(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXButton,"auth_needed",_getAuthNeeded,_setAuthNeeded);
 
-	registerType<wxButton>(rb_cWXButton);
+	registerInfo<wxButton>(rb_cWXButton);
 #endif
 }

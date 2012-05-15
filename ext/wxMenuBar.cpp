@@ -82,5 +82,5 @@ DLL_LOCAL void Init_WXMenuBar(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXMenuBar,"frame",RUBY_METHOD_FUNC(_GetFrame),0);
 
-	registerType<wxMenuBar>(rb_cWXMenuBar);
+	registerInfo<wxMenuBar>(rb_cWXMenuBar);
 }

@@ -56,7 +56,7 @@ DLL_LOCAL void Init_WXPropertyGridManager(VALUE rb_mWX)
 
 	rb_define_const(rb_cWXPropertyGridManager,"EX_MODE_BUTTONS",INT2NUM(wxPG_EX_MODE_BUTTONS));
 
-	registerType<wxPropertyGridManager>(rb_cWXPropertyGridManager);
+	registerInfo<wxPropertyGridManager>(rb_cWXPropertyGridManager);
 #endif
 
 }

@@ -66,5 +66,5 @@ void Init_WXTopLevel(VALUE rb_mWX)
 	rb_define_const(rb_cWXTopLevel,"TINY_CAPTION",INT2NUM(wxTINY_CAPTION));
 	rb_define_const(rb_cWXTopLevel,"RESIZE_BORDER",INT2NUM(wxRESIZE_BORDER));
 
-	registerType<wxTopLevelWindow>(rb_cWXTopLevel);
+	registerInfo<wxTopLevelWindow>(rb_cWXTopLevel);
 }

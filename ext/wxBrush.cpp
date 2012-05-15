@@ -18,14 +18,17 @@ template <>
 wxBrush nullPtr<wxBrush>(){ return wxNullBrush;}
 
 template <>
+wxBrushStyle wrap< wxBrushStyle >(const VALUE &style )
+{
+	return wxBRUSHSTYLE_INVALID;
+}
+
+template <>
 VALUE wrap< wxBrushStyle >(const wxBrushStyle &style )
 {
 	ID id;
 	switch(style)
 	{
-	case wxBRUSHSTYLE_INVALID:
-		return Qnil;
-		break;
 	case wxBRUSHSTYLE_SOLID:
 		id = rb_intern("solid");
 		break;
@@ -95,7 +98,7 @@ void Init_WXBrush(VALUE rb_mWX)
 //	rb_define_method(rb_cWXBrush,"to_s",RUBY_METHOD_FUNC(_tos),0);
 //	rb_define_method(rb_cWXBrush,"inspect",RUBY_METHOD_FUNC(_inspect),0);
 
-	registerType<wxBrush>(rb_cWXBrush);
+	registerInfo<wxBrush>(rb_cWXBrush);
 }
 
 

@@ -39,7 +39,7 @@ void Init_WXFileCtrl(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXFileCtrl,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-	registerType<wxFileCtrl>(rb_cWXFileCtrl);
+	registerInfo<wxFileCtrl>(rb_cWXFileCtrl);
 #endif
 
 }

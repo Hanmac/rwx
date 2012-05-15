@@ -77,7 +77,7 @@ DLL_LOCAL void Init_WXSpinCtrl(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXSpinCtrl,"min",_GetMin,_setMin);
 	rb_define_attr_method(rb_cWXSpinCtrl,"max",_GetMax,_setMax);
 
-	registerType<wxSpinCtrl>(rb_cWXSpinCtrl);
+	registerInfo<wxSpinCtrl>(rb_cWXSpinCtrl);
 #endif
 
 }

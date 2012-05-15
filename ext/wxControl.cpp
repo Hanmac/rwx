@@ -47,6 +47,6 @@ DLL_LOCAL void Init_WXControl(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXControl,"label_text",_getLabelText,_setLabelText);
 
-	registerType<wxControl>(rb_cWXControl);
+	registerInfo<wxControl>(rb_cWXControl);
 #endif
 }

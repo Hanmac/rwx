@@ -45,7 +45,7 @@ void Init_WXFileCtrlGeneric(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXFileCtrlGeneric,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-	registerType<wxGenericFileCtrl>(rb_cWXFileCtrlGeneric);
+	registerInfo<wxGenericFileCtrl>(rb_cWXFileCtrlGeneric);
 #else
 	rb_define_const(rb_mWX,"FileCtrlGeneric",rb_cWXFileCtrl);
 #endif

@@ -40,7 +40,7 @@ DLL_LOCAL void Init_WXStaticBitmap(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXStaticBitmap,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-	registerType<wxStaticBitmap>(rb_cWXStaticBitmap);
+	registerInfo<wxStaticBitmap>(rb_cWXStaticBitmap);
 #endif
 
 }

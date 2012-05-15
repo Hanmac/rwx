@@ -8,6 +8,7 @@
 #include "wxDC.hpp"
 #include "wxRect.hpp"
 #include "wxBitmap.hpp"
+#include "wxPoint.hpp"
 #include "wxPen.hpp"
 #include "wxBrush.hpp"
 #include "wxColor.hpp"
@@ -95,7 +96,7 @@ void Init_WXDC(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXDC,"pen",_getPen,_setPen);
 	rb_define_attr_method(rb_cWXDC,"brush",_getBrush,_setBrush);
 
-	registerType<wxDC>(rb_cWXDC);
+	registerInfo<wxDC>(rb_cWXDC);
 }
 
 

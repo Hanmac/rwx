@@ -21,8 +21,6 @@ std::map<VALUE,wxEvtHandler*> evthandlerholder;
 
 std::map<ID,wxEventType> evttypeholder;
 
-std::map<wxEventType,VALUE> evttypeclassholder;
-
 template <>
 wxEvtHandler* wrap< wxEvtHandler* >(const VALUE &vhandler)
 {
@@ -81,11 +79,16 @@ wxEventType unwrapEventType(VALUE type)
 	return wxEVT_NULL;
 }
 
-void registerEventType(const char *sym, wxEventType type,VALUE klass)
+void registerEventType(const char *sym, wxEventType type)
 {
 	evttypeholder.insert(std::make_pair(rb_intern(sym),type));
-	evttypeclassholder.insert(std::make_pair(type,klass));
 }
+#ifndef wxHAS_EVENT_BIND
+void registerEventType(const char *sym, wxEventType type,VALUE klass)
+{
+	registerEventType(sym,type);
+}
+#endif
 
 RubyClientData::RubyClientData(VALUE obj) : wxClientData(), mRuby(obj),created(false)
 {
@@ -117,13 +120,13 @@ void RubyFunctor::operator()( wxEvent & event )
 #if wxUSE_GUI
 void RubyFunctor::operator()( wxCommandEvent & event )
 {
-	rb_funcall(ptr->get(),rb_intern("call"),1,wrap<wxEvent>(&event));
+	rb_funcall(ptr->get(),rb_intern("call"),1,wrap(&event));
 }
 #endif
 #if wxUSE_TIMER
 void RubyFunctor::operator()( wxTimerEvent & event )
 {
-	rb_funcall(ptr->get(),rb_intern("call"),1,wrap<wxEvent>(&event));
+	rb_funcall(ptr->get(),rb_intern("call"),1,wrap(&event));
 }
 #endif
 namespace RubyWX {
@@ -170,7 +173,7 @@ void Init_WXEvtHandler(VALUE rb_mWX)
 	rb_global_variable(&global_evthandler);
 
 	//because only Evthandler are created different
-	registerType<wxEvtHandler>(Qnil);
+	registerInfo<wxEvtHandler>(Qnil);
 }
 
 

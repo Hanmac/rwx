@@ -31,14 +31,17 @@ VALUE wrap< wxPen >(const wxPen &bitmap )
 }
 
 template <>
+wxPenStyle wrap< wxPenStyle >(const VALUE &style )
+{
+	return wxPENSTYLE_INVALID;
+}
+
+template <>
 VALUE wrap< wxPenStyle >(const wxPenStyle &style )
 {
 	ID id;
 	switch(style)
 	{
-	case wxPENSTYLE_INVALID:
-		return Qnil;
-		break;
 	case wxPENSTYLE_SOLID:
 		id = rb_intern("solid");
 		break;

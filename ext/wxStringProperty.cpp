@@ -29,7 +29,7 @@ DLL_LOCAL void Init_WXStringProperty(VALUE rb_mWX)
 	rb_cWXStringProperty = rb_define_class_under(rb_mWX,"StringProperty",rb_cWXProperty);
 	rb_define_alloc_func(rb_cWXStringProperty,_alloc);
 
-	registerType<wxStringProperty>(rb_cWXStringProperty);
+	registerInfo<wxStringProperty>(rb_cWXStringProperty);
 #endif
 }
 

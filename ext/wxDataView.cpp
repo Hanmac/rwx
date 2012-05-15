@@ -92,7 +92,7 @@ VALUE _getSelection(VALUE self)
 
 VALUE _setSelection(VALUE self,VALUE item)
 {
-	_self->Select(wrap<wxDataViewItem>(item));
+	//_self->Select(wrap<wxDataViewItem>(item));
 	return self;
 }
 
@@ -158,7 +158,7 @@ void Init_WXDataView(VALUE rb_mWX)
 	rb_cWXDataViewItem = rb_define_class_under(rb_cWXDataView,"Item",rb_cObject);
 	rb_undef_alloc_func(rb_cWXDataViewItem);
 
-	registerType<wxDataViewCtrl>(rb_cWXDataView);
+	registerInfo<wxDataViewCtrl>(rb_cWXDataView);
 #endif
 
 }

@@ -14,12 +14,4 @@
 
 extern VALUE rb_cWXEvent;
 void Init_WXEvent(VALUE rb_mWX);
-
-template <>
-VALUE wrap< wxEvent >(wxEvent *event );
-
-template <>
-wxEvent* wrap< wxEvent* >(const VALUE &vcolor);
-
-
 #endif /* WXEVENT_HPP_ */

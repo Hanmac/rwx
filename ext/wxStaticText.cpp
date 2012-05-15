@@ -40,7 +40,7 @@ void Init_WXStaticText(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXStaticText,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-	registerType<wxStaticText>(rb_cWXStaticText);
+	registerInfo<wxStaticText>(rb_cWXStaticText);
 #endif
 
 }

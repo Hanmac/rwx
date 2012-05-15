@@ -64,7 +64,7 @@ DLL_LOCAL void Init_WXPropertyGrid(VALUE rb_mWX)
 
 
 
-	registerType<wxPropertyGrid>(rb_cWXPropertyGrid);
+	registerInfo<wxPropertyGrid>(rb_cWXPropertyGrid);
 #endif
 
 }

@@ -162,7 +162,7 @@ void Init_WXDataViewList(VALUE rb_mWX)
 
 //	rb_define_attr_method(rb_cWXDataView,"path",_getPath,_setPath);
 
-	registerType< wxDataViewListCtrl >(rb_cWXDataViewList);
+	registerInfo< wxDataViewListCtrl >(rb_cWXDataViewList);
 
 #endif
 

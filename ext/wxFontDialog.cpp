@@ -57,6 +57,6 @@ void Init_WXFontDialog(VALUE rb_mWX)
 
 	rb_define_module_function(rb_mWX,"font_dialog",RUBY_METHOD_FUNC(_getUserFont),-1);
 
-	registerType<wxFontDialog>(rb_cWXFontDialog);
+	registerInfo<wxFontDialog>(rb_cWXFontDialog);
 #endif
 }

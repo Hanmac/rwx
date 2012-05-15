@@ -43,4 +43,6 @@ void Init_WXBoxSizer(VALUE rb_mWX)
 	rb_define_alloc_func(rb_cWXBoxSizer,_alloc);
 
 	rb_define_attr_method(rb_cWXBoxSizer,"orientation",_getOrientation,_setOrientation);
+
+	registerInfo<wxBoxSizer>(rb_cWXBoxSizer);
 }

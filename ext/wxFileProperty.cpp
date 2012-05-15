@@ -29,6 +29,6 @@ DLL_LOCAL void Init_WXFileProperty(VALUE rb_mWX)
 	rb_cWXFileProperty = rb_define_class_under(rb_mWX,"FileProperty",rb_cWXProperty);
 	rb_define_alloc_func(rb_cWXFileProperty,_alloc);
 
-	registerType<wxFileProperty>(rb_cWXFileProperty);
+	registerInfo<wxFileProperty>(rb_cWXFileProperty);
 #endif
 }

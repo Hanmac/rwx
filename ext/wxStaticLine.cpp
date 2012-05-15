@@ -39,7 +39,7 @@ void Init_WXStaticLine(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXStaticLine,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-	registerType<wxStaticLine>(rb_cWXStaticLine);
+	registerInfo<wxStaticLine>(rb_cWXStaticLine);
 #endif
 
 }

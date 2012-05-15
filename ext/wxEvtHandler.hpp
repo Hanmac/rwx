@@ -23,7 +23,19 @@
 
 #include <wx/sharedptr.h>
 
+void registerEventType(const char *sym, wxEventType type);
+
+
+#ifdef wxHAS_EVENT_BIND
+template<typename T>
+void registerEventType(const char *sym, wxEventTypeTag<T> type,VALUE klass)
+{
+	registerEventType(sym,type);
+	registerInfo<T>(klass);
+}
+#else
 void registerEventType(const char *sym, wxEventType type,VALUE klass);
+#endif
 
 class RubyFunctorPtr
 {

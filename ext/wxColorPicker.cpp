@@ -55,7 +55,7 @@ void Init_WXColorPicker(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXColorPickerEvent,"color",
 			Event::_getColour,Event::_setColour);
 
-	registerType<wxColourPickerCtrl>(rb_cWXColorPicker);
+	registerInfo<wxColourPickerCtrl>(rb_cWXColorPicker);
 #endif
 
 }

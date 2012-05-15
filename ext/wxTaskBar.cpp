@@ -63,18 +63,18 @@ DLL_LOCAL void Init_WXTaskBar(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXTaskBar,"icon",_getIcon,_setIcon);
 	rb_define_attr_method(rb_cWXTaskBar,"tooltip",_getToolTip,_setToolTip);
 
-	registerType<wxTaskBarIcon>(rb_cWXTaskBar);
-	registerType<RubyTaskBarIcon>(rb_cWXTaskBar);
+	registerInfo<wxTaskBarIcon>(rb_cWXTaskBar);
+	registerInfo<RubyTaskBarIcon>(rb_cWXTaskBar);
 
-	registerEventType("taskbar_move",wxEVT_TASKBAR_MOVE,rb_cWXEvent);
-	registerEventType("taskbar_left_down",wxEVT_TASKBAR_LEFT_DOWN,rb_cWXEvent);
-	registerEventType("taskbar_left_up",wxEVT_TASKBAR_LEFT_UP,rb_cWXEvent);
-	registerEventType("taskbar_right_down",wxEVT_TASKBAR_RIGHT_DOWN,rb_cWXEvent);
-	registerEventType("taskbar_right_up",wxEVT_TASKBAR_RIGHT_UP,rb_cWXEvent);
-	registerEventType("taskbar_left_dclick",wxEVT_TASKBAR_LEFT_DCLICK,rb_cWXEvent);
-	registerEventType("taskbar_right_dclick",wxEVT_TASKBAR_RIGHT_DCLICK,rb_cWXEvent);
-	registerEventType("taskbar_balloon_timeout",wxEVT_TASKBAR_BALLOON_TIMEOUT,rb_cWXEvent);
-	registerEventType("taskbar_balloon_click",wxEVT_TASKBAR_BALLOON_CLICK,rb_cWXEvent);
+	registerEventType("taskbar_move",wxEVT_TASKBAR_MOVE);
+	registerEventType("taskbar_left_down",wxEVT_TASKBAR_LEFT_DOWN);
+	registerEventType("taskbar_left_up",wxEVT_TASKBAR_LEFT_UP);
+	registerEventType("taskbar_right_down",wxEVT_TASKBAR_RIGHT_DOWN);
+	registerEventType("taskbar_right_up",wxEVT_TASKBAR_RIGHT_UP);
+	registerEventType("taskbar_left_dclick",wxEVT_TASKBAR_LEFT_DCLICK);
+	registerEventType("taskbar_right_dclick",wxEVT_TASKBAR_RIGHT_DCLICK);
+	registerEventType("taskbar_balloon_timeout",wxEVT_TASKBAR_BALLOON_TIMEOUT);
+	registerEventType("taskbar_balloon_click",wxEVT_TASKBAR_BALLOON_CLICK);
 
 #endif
 }

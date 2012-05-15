@@ -353,7 +353,7 @@ void Init_WXTreeCtrl(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXTreeCtrl,"selection",_getSelection,_setSelection);
 
 
-	registerType<wxTreeCtrl>(rb_cWXTreeCtrl);
+	registerInfo<wxTreeCtrl>(rb_cWXTreeCtrl);
 
 	rb_cWXTreeCtrlItem = rb_define_class_under(rb_cWXTreeCtrl,"Item",rb_cObject);
 	rb_undef_alloc_func(rb_cWXTreeCtrlItem);

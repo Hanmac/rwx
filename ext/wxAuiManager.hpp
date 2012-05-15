@@ -14,13 +14,5 @@
 extern VALUE rb_cWXAuiManager;
 
 void Init_WXAuiManager(VALUE rb_mWX);
-#if wxUSE_AUI
-template <>
-VALUE wrap< wxAuiManager >(wxAuiManager* window);
-
-template <>
-wxAuiManager* wrap< wxAuiManager* >(const VALUE &vwindow);
-
-#endif
 
 #endif /* WXAUIMANAGER_HPP_ */

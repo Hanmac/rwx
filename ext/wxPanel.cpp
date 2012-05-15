@@ -54,7 +54,7 @@ DLL_LOCAL void Init_WXPanel(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXPanel,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-	registerType<wxPanel>(rb_cWXPanel);
+	registerInfo<wxPanel>(rb_cWXPanel);
 }
 
 

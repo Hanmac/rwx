@@ -109,7 +109,7 @@ void Init_WXFileDialog(VALUE rb_mWX)
 	rb_define_module_function(rb_mWX,"load_dialog",RUBY_METHOD_FUNC(_loadFileSelector),-1);
 	rb_define_module_function(rb_mWX,"save_dialog",RUBY_METHOD_FUNC(_saveFileSelector),-1);
 
-	registerType<wxFileDialog>(rb_cWXFileDialog);
+	registerInfo<wxFileDialog>(rb_cWXFileDialog);
 #endif
 }
 

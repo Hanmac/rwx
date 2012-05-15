@@ -34,7 +34,6 @@ void Init_WXScrollEvent(VALUE rb_mWX)
 	registerEventType("scroll_thumbrelease", wxEVT_SCROLL_THUMBRELEASE, rb_cWXScrollEvent);
 	registerEventType("scroll_changed", wxEVT_SCROLL_CHANGED, rb_cWXScrollEvent);
 
-
 	rb_define_attr_method(rb_cWXScrollEvent,"position",_getPosition,_setPosition);
 
 }

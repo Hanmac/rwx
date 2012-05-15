@@ -7,7 +7,18 @@
 
 #include "main.hpp"
 
-std::map<std::string,VALUE> klassholder;
+infoholdertype infoklassholder;
+typeholdertype typeklassholder;
+
+VALUE wrapClass(const wxClassInfo * info)
+{
+	infoholdertype::iterator it = infoklassholder.find(info);
+	if(it != infoklassholder.end())
+		return it->second;
+	if(const wxClassInfo *base = info->GetBaseClass1())
+		return wrapClass(base);
+	return Qnil;
+}
 
 VALUE wrap(void *arg,VALUE klass)
 {
@@ -39,6 +50,30 @@ template <>
 VALUE wrap< int >(const int &st )
 {
 	return INT2NUM(st);
+}
+
+template <>
+long int wrap< long int >(const VALUE &val )
+{
+	return NUM2LONG(val);
+}
+
+template <>
+VALUE wrap< long int >(const long int &st )
+{
+	return LONG2NUM(st);
+}
+
+template <>
+unsigned int wrap< unsigned int >(const VALUE &val )
+{
+	return NUM2UINT(val);
+}
+
+template <>
+VALUE wrap< unsigned int >(const unsigned int &st )
+{
+	return UINT2NUM(st);
 }
 
 

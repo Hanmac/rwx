@@ -101,6 +101,6 @@ DLL_LOCAL void Init_WXWizard(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXWizard,"chainPages",RUBY_METHOD_FUNC(_chainPages),-1);
 
-	registerType<wxWizard>(rb_cWXWizard);
+	registerInfo<wxWizard>(rb_cWXWizard);
 #endif
 }

@@ -39,7 +39,7 @@ void Init_WXToolBar(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXToolBar,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-	registerType<wxToolBar>(rb_cWXToolBar);
+	registerInfo<wxToolBar>(rb_cWXToolBar);
 }
 
 

@@ -11,23 +11,16 @@
 
 namespace RubyWX {
 namespace AboutDlg {
+
 #if wxUSE_ABOUTDLG
-VALUE _aboutBox(int argc,VALUE *argv,VALUE self)
+
+wxAboutDialogInfo toInto(VALUE hash)
 {
-	VALUE hash,value,parent;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
-
-	if(!ruby_app_inited)
-		rb_raise(rb_eArgError,"%s is not running.",rb_class2name(rb_cWXApp));
-
-
-	if(NIL_P(hash)){
-		hash = parent;
-		parent = Qnil;
-	}
 	wxAboutDialogInfo info;
+	if(NIL_P(hash))
+		return info;
 
-	value = rb_hash_aref(hash,ID2SYM(rb_intern("name")));
+	VALUE value = rb_hash_aref(hash,ID2SYM(rb_intern("name")));
 	if(!NIL_P(value))
 		info.SetName(wrap<wxString>(value));
 
@@ -74,12 +67,49 @@ VALUE _aboutBox(int argc,VALUE *argv,VALUE self)
 	value = rb_hash_aref(hash,ID2SYM(rb_intern("translators")));
 	if(!NIL_P(value))
 		info.SetTranslators(wrap<wxArrayString>(value));
+	return info;
+}
 
-	wxAboutBox(info,wrap<wxWindow*>(parent));
+VALUE _aboutBox(int argc,VALUE *argv,VALUE self)
+{
+	VALUE hash,parent;
+	rb_scan_args(argc, argv, "11",&parent,&hash);
+
+	if(!ruby_app_inited)
+		rb_raise(rb_eArgError,"%s is not running.",rb_class2name(rb_cWXApp));
+
+	if(NIL_P(hash))
+	{
+		hash = parent;
+		parent = Qnil;
+	}
+
+	wxAboutBox(toInto(hash),wrap<wxWindow*>(parent));
 
 
 	return self;
 }
+
+VALUE _genericaboutBox(int argc,VALUE *argv,VALUE self)
+{
+	VALUE hash,parent;
+	rb_scan_args(argc, argv, "11",&parent,&hash);
+
+	if(!ruby_app_inited)
+		rb_raise(rb_eArgError,"%s is not running.",rb_class2name(rb_cWXApp));
+
+	if(NIL_P(hash))
+	{
+		hash = parent;
+		parent = Qnil;
+	}
+
+	wxGenericAboutBox(toInto(hash),wrap<wxWindow*>(parent));
+
+
+	return self;
+}
+
 #endif
 }
 }
@@ -89,6 +119,7 @@ void Init_WXAboutDlg(VALUE rb_mWX)
 #if wxUSE_ABOUTDLG
 	using namespace RubyWX::AboutDlg;
 	rb_define_module_function(rb_mWX,"about_box",RUBY_METHOD_FUNC(_aboutBox),-1);
+	rb_define_module_function(rb_mWX,"generic_about_box",RUBY_METHOD_FUNC(_genericaboutBox),-1);
 #endif
 
 }

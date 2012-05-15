@@ -96,8 +96,8 @@ namespace Window {
 
 macro_attr(Label,wxString)
 macro_attr(Name,wxString)
-macro_attr(WindowVariant,wxWindowVariant)
-macro_attr(LayoutDirection,wxLayoutDirection)
+//macro_attr(WindowVariant,wxWindowVariant)
+//macro_attr(LayoutDirection,wxLayoutDirection)
 
 macro_attr_with_func(Id,wrapID,unwrapID)
 
@@ -114,7 +114,7 @@ macro_attr(MinClientSize,wxSize)
 macro_attr(MaxSize,wxSize)
 macro_attr(MaxClientSize,wxSize)
 
-macro_attr(BackgroundStyle,wxBackgroundStyle)
+//macro_attr(BackgroundStyle,wxBackgroundStyle)
 
 macro_attr(Font,wxFont)
 macro_attr(Cursor,wxCursor)
@@ -438,7 +438,7 @@ void Init_WXWindow(VALUE rb_mWX)
 	rb_define_method(rb_cWXWindow,"client_to_screen",RUBY_METHOD_FUNC(_ClientToScreen),1);
 	rb_define_method(rb_cWXWindow,"screen_to_client",RUBY_METHOD_FUNC(_ScreenToClient),1);
 
-	registerType<wxWindow>(rb_cWXWindow);
+	registerInfo<wxWindow>(rb_cWXWindow);
 
 	registerID("open",wxID_OPEN);
 	registerID("close",wxID_CLOSE);
@@ -569,5 +569,5 @@ void Init_WXWindow(VALUE rb_mWX)
 	registerID("iconize_frame",wxID_ICONIZE_FRAME);
 	registerID("restore_frame",wxID_RESTORE_FRAME);
 
-	registerEventType("paint",wxEVT_PAINT,rb_cWXEvent);
+	registerEventType("paint",wxEVT_PAINT);
 }

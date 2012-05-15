@@ -13,19 +13,6 @@ VALUE rb_cWXAuiNotebook;
 #if wxUSE_AUI
 #define _self wrap<wxAuiNotebook*>(self)
 
-template <>
-VALUE wrap< wxAuiNotebook >(wxAuiNotebook* window)
-{
-	return wrap(window,rb_cWXAuiNotebook);
-}
-
-template <>
-wxAuiNotebook* wrap< wxAuiNotebook* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxAuiNotebook>(vwindow, rb_cWXAuiNotebook);
-}
-
-
 namespace RubyWX {
 namespace AuiNotebook {
 
@@ -74,6 +61,7 @@ void Init_WXAuiNoteBookCtrl(VALUE rb_mWX)
 	rb_define_method(rb_cWXAuiNotebook,"each_page",RUBY_METHOD_FUNC(_each),0);
 	rb_define_method(rb_cWXAuiNotebook,"page",RUBY_METHOD_FUNC(_page),1);
 
+	registerInfo<wxAuiNotebook>(rb_cWXAuiNotebook);
 
 	registerEventType("auinotebook_page_close", wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE,rb_cWXBookCtrlEvent);
 	registerEventType("auinotebook_page_changed", wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGED,rb_cWXBookCtrlEvent);

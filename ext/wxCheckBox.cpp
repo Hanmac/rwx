@@ -52,7 +52,7 @@ DLL_LOCAL void Init_WXCheckBox(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXCheckBox,"value",_getValue,_setValue);
 
-	registerType<wxCheckBox>(rb_cWXCheckBox);
+	registerInfo<wxCheckBox>(rb_cWXCheckBox);
 #endif
 
 }

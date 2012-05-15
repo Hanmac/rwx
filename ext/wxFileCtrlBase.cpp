@@ -25,7 +25,7 @@ macro_attr(FilterIndex,int)
 namespace Event
 {
 #undef _self
-#define _self unwrapPtr<wxFileCtrlEvent>(self,rb_cWXFileCtrlEvent)
+#define _self wrap<wxFileCtrlEvent*>(self)
 
 macro_attr(Directory,wxString)
 macro_attr(Files,wxArrayString)

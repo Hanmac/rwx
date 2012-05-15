@@ -29,7 +29,7 @@ DLL_LOCAL void Init_WXStatusBar(VALUE rb_mWX)
 	rb_cWXStatusBar = rb_define_class_under(rb_mWX,"StatusBar",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXStatusBar,_alloc);
 
-	registerType<wxStatusBar>(rb_cWXStatusBar);
+	registerInfo<wxStatusBar>(rb_cWXStatusBar);
 #endif
 
 }

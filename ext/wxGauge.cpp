@@ -49,7 +49,7 @@ DLL_LOCAL void Init_WXGauge(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXGauge,"pulse",RUBY_METHOD_FUNC(_Pulse),0);
 
-	registerType<wxGauge>(rb_cWXGauge);
+	registerInfo<wxGauge>(rb_cWXGauge);
 #endif
 
 }

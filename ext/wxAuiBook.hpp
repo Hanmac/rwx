@@ -16,11 +16,6 @@ void Init_WXAuiNoteBookCtrl(VALUE rb_mWX);
 
 #if wxUSE_AUI
 #include <wx/aui/auibook.h>
-template <>
-VALUE wrap< wxAuiNotebook >(wxAuiNotebook* window);
-
-template <>
-wxAuiNotebook* wrap< wxAuiNotebook* >(const VALUE &vwindow);
 #endif
 
 #endif /* WXAUIBOOK_HPP_ */

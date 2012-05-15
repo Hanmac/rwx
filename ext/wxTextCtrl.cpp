@@ -9,7 +9,7 @@
 
 VALUE rb_cWXTextCtrl;
 
-#if wxUSE_STATLINE
+#if wxUSE_TEXTCTRL
 #define _self wrap<wxTextCtrl*>(self)
 
 namespace RubyWX {
@@ -32,18 +32,14 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 #endif
 void Init_WXTextCtrl(VALUE rb_mWX)
 {
-#if wxUSE_STATLINE
+#if wxUSE_TEXTCTRL
 	using namespace RubyWX::TextCtrl;
 	rb_cWXTextCtrl = rb_define_class_under(rb_mWX,"TextCtrl",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXTextCtrl,_alloc);
 
 	rb_define_method(rb_cWXTextCtrl,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-	registerType<wxTextCtrl>(rb_cWXTextCtrl);
+	registerInfo<wxTextCtrl>(rb_cWXTextCtrl);
 #endif
 
 }
-
-
-
-

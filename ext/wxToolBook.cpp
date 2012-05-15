@@ -44,7 +44,7 @@ void Init_WXToolBookCtrl(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXToolbook,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-	registerType<wxToolbook>(rb_cWXToolbook);
+	registerInfo<wxToolbook>(rb_cWXToolbook);
 #endif
 
 }

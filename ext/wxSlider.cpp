@@ -63,7 +63,7 @@ void Init_WXSlider(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXSlider,"min",_getMin,_setMin);
 	rb_define_attr_method(rb_cWXSlider,"max",_getMax,_setMax);
 
-	registerType<wxSlider>(rb_cWXSlider);
+	registerInfo<wxSlider>(rb_cWXSlider);
 #endif
 
 }

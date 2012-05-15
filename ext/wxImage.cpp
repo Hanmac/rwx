@@ -84,7 +84,7 @@ VALUE _load(int argc,VALUE *argv,VALUE self)
 		if(NIL_P(mime)){
 			result = _self->LoadFile(file.GetFullPath());
 		}else if(SYMBOL_P(mime) || FIXNUM_P(mime)){
-			result = _self->LoadFile(file.GetFullPath(),wrap<wxBitmapType>(mime),NUM2INT(nr));
+//			result = _self->LoadFile(file.GetFullPath(),wrap<wxBitmapType>(mime),NUM2INT(nr));
 		}else
 			result = _self->LoadFile(file.GetFullPath(),wrap<wxString>(mime),NUM2INT(nr));
 #if wxUSE_STREAMS
@@ -94,7 +94,7 @@ VALUE _load(int argc,VALUE *argv,VALUE self)
 		if(NIL_P(mime)){
 			result = _self->LoadFile(st);
 		}else if(SYMBOL_P(mime) || FIXNUM_P(mime)){
-			result = _self->LoadFile(st,wrap<wxBitmapType>(mime),NUM2INT(nr));
+//			result = _self->LoadFile(st,wrap<wxBitmapType>(mime),NUM2INT(nr));
 		}else
 			result = _self->LoadFile(st,wrap<wxString>(mime),NUM2INT(nr));
 	}
@@ -335,7 +335,7 @@ VALUE _save(int argc,VALUE *argv,VALUE self)
 		result = _self->SaveFile(file.GetFullPath());
 	}else if(SYMBOL_P(mime) || FIXNUM_P(mime)){
 //		if(wxImage::FindHandler(wrap<wxBitmapType>(mime)))
-			result = _self->SaveFile(file.GetFullPath(),wrap<wxBitmapType>(mime));
+//			result = _self->SaveFile(file.GetFullPath(),wrap<wxBitmapType>(mime));
 //		else
 //			rb_raise(rb_eArgError,"%s type not known",rb_id2name(SYM2ID(mime)));
 	}else{
@@ -395,7 +395,7 @@ DLL_LOCAL void Init_WXImage(VALUE rb_mWX)
 	rb_define_method(rb_cWXImage,"load",RUBY_METHOD_FUNC(_load),-1);
 	rb_define_method(rb_cWXImage,"save",RUBY_METHOD_FUNC(_save),-1);
 
-	registerType<wxImage>(rb_cWXImage);
+	registerInfo<wxImage>(rb_cWXImage);
 #endif
 
 }

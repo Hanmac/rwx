@@ -12,7 +12,7 @@
 
 VALUE rb_cWXToolBarBase;
 
-#define _self wrap<wxToolBarBase*>(self)
+#define _self unwrapPtr<wxToolBarBase>(self,rb_cWXToolBarBase)
 
 namespace RubyWX {
 namespace ToolBarBase {
@@ -154,5 +154,4 @@ void Init_WXToolBarBase(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXToolBarBase,"each_tool",RUBY_METHOD_FUNC(_each),0);
 
-	registerType<wxToolBarBase>(rb_cWXToolBarBase);
 }

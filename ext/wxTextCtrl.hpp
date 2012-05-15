@@ -18,5 +18,4 @@ void Init_WXTextCtrl(VALUE rb_mWX);
 #include <wx/textctrl.h>
 #endif
 
-
 #endif /* WXTEXTCTRL_HPP_ */

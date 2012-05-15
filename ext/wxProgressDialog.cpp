@@ -104,7 +104,7 @@ DLL_LOCAL void Init_WXProgressDialog(VALUE rb_mWX)
 	rb_define_method(rb_cWXProgressDialog,"update",RUBY_METHOD_FUNC(_update),-1);
 	rb_define_method(rb_cWXProgressDialog,"pulse",RUBY_METHOD_FUNC(_pulse),-1);
 
-	registerType<wxProgressDialog>(rb_cWXProgressDialog);
-	registerType<RubyProgressDialog>(rb_cWXProgressDialog);
+	registerInfo<wxProgressDialog>(rb_cWXProgressDialog);
+	registerInfo<RubyProgressDialog>(rb_cWXProgressDialog);
 #endif
 }

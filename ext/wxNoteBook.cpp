@@ -47,7 +47,7 @@ void Init_WXNoteBookCtrl(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXNotebook,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-	registerType<wxNotebook>(rb_cWXNotebook);
+	registerInfo<wxNotebook>(rb_cWXNotebook);
 #endif
 
 }

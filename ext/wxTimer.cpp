@@ -74,7 +74,7 @@ DLL_LOCAL void Init_WXTimer(VALUE rb_mWX)
 	//rb_define_attr_method(rb_cWXFileDirPickerEvent,"path",
 	//		Event::_getPath,Event::_setPath);
 
-	registerType<wxTimer>(rb_cWXTimer);
+	registerInfo<wxTimer>(rb_cWXTimer);
 #endif
 }
 

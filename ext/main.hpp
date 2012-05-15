@@ -71,8 +71,12 @@ struct is_pointer< T* >{
   static const bool value = true;
 };
 
-typedef std::map<std::string,VALUE> klassholdertype;
-extern klassholdertype klassholder;
+//typedef std::map<std::string,VALUE> klassholdertype;
+typedef std::map<const wxClassInfo*,VALUE> infoholdertype;
+extern infoholdertype infoklassholder;
+typedef std::map<std::string,VALUE> typeholdertype;
+extern typeholdertype typeklassholder;
+
 
 
 VALUE wrap(void *arg,VALUE klass);
@@ -88,22 +92,30 @@ VALUE wrap(wxPGProperty *sizer,VALUE klass);
 template <typename T>
 void registerType(VALUE klass)
 {
-	klassholder[typeid(T).name()]=klass;
-	klassholder[typeid(T*).name()]=klass;
+	typeklassholder[typeid(T*).name()]=klass;
 }
+
+template <typename T>
+void registerInfo(VALUE klass)
+{
+	infoklassholder[wxCLASSINFO(T)]=klass;
+	typeklassholder[typeid(T*).name()]=klass;
+}
+
+VALUE wrapClass(const wxClassInfo * info);
 
 template <typename T>
 VALUE wrap(T *arg)
 {
 	if(!arg)
 		return Qnil;
-	typedef typename remove_pointer<T>::type rtype;
-	klassholdertype::iterator it = klassholder.find(typeid(T).name());
-	if(it != klassholder.end())
+	wxClassInfo *info = arg->GetClassInfo();
+	VALUE klass = wrapClass(info);
+	if(!NIL_P(klass))
 	{
-		return wrap(arg,it->second);
+		return wrap(arg,klass);
 	}
-	rb_warn("%s type unknown",typeid(T).name());
+	rb_warn("%s type unknown",wxString(info->GetClassName()).c_str().AsChar());
 	return Qnil;
 }
 
@@ -114,7 +126,7 @@ T* unwrapPtr(const VALUE &obj,const VALUE &klass)
 		return NULL;
 
 	if(rb_obj_is_instance_of(obj,rb_cClass) && rb_class_inherited(obj,klass)) {
-		return unwrapPtr<T>(rb_class_new_instance(0,NULL,klass),klass);
+		return unwrapPtr<T>(rb_class_new_instance(0,NULL,obj),klass);
 	}else if (rb_obj_is_kind_of(obj, klass)){
 		T *temp;
 		Data_Get_Struct( obj, T, temp);
@@ -156,12 +168,12 @@ T wrap(const VALUE &arg)
 		return nullPtr<T>();
 	typedef typename remove_pointer<T>::type rtype;
 
-	klassholdertype::iterator it = klassholder.find(std::string(typeid(rtype).name()));
-	if(it != klassholder.end())
+	typeholdertype::iterator it = typeklassholder.find(typeid(rtype*).name());
+	if(it != typeklassholder.end())
 	{
 		return WrapReturn<rtype>(unwrapPtr<rtype>(arg,it->second));
 	}
-	rb_raise(rb_eTypeError,"%s type unknown",typeid(rtype).name());
+	rb_raise(rb_eTypeError,"%s type unknown",typeid(rtype*).name());
 	return nullPtr<T>();
 }
 
@@ -182,6 +194,17 @@ template <>
 int wrap< int >(const VALUE &val );
 template <>
 VALUE wrap< int >(const int &st );
+
+template <>
+long int wrap< long int >(const VALUE &val );
+template <>
+VALUE wrap< long int >(const long int &st );
+
+template <>
+unsigned int wrap< unsigned int >(const VALUE &val );
+template <>
+VALUE wrap< unsigned int >(const unsigned int &st );
+
 
 template <>
 VALUE wrap< wxString >(const wxString &st );

@@ -28,6 +28,6 @@ DLL_LOCAL void Init_WXArrayStringProperty(VALUE rb_mWX)
 	rb_cWXArrayStringProperty = rb_define_class_under(rb_mWX,"ArrayStringProperty",rb_cWXProperty);
 	rb_define_alloc_func(rb_cWXArrayStringProperty,_alloc);
 
-	registerType<wxArrayStringProperty>(rb_cWXArrayStringProperty);
+	registerInfo<wxArrayStringProperty>(rb_cWXArrayStringProperty);
 #endif
 }

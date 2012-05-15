@@ -96,7 +96,7 @@ DLL_LOCAL void Init_WXProperty(VALUE rb_mWX)
 	rb_define_method(rb_cWXProperty,"[]",RUBY_METHOD_FUNC(_getAttribute),1);
 	rb_define_method(rb_cWXProperty,"[]=",RUBY_METHOD_FUNC(_setAttribute),2);
 
-	registerType<wxPGProperty>(rb_cWXProperty);
+	registerInfo<wxPGProperty>(rb_cWXProperty);
 #endif
 }
 

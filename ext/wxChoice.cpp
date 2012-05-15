@@ -51,7 +51,7 @@ void Init_WXChoice(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXChoice,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-	registerType<wxChoice>(rb_cWXChoice);
+	registerInfo<wxChoice>(rb_cWXChoice);
 #endif
 
 }

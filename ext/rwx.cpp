@@ -57,6 +57,8 @@
 #include "wxAui.hpp"
 
 #include "wxAnyButton.hpp"
+#include "wxButton.hpp"
+#include "wxBitmapButton.hpp"
 
 #include "wxToolBarBase.hpp"
 #include "wxToolBar.hpp"
@@ -87,6 +89,8 @@
 #include "wxSpinCtrl.hpp"
 
 #include "wxTextCtrl.hpp"
+#include "wxSearchCtrl.hpp"
+
 
 #include "wxTimePicker.hpp"
 #include "wxFontPicker.hpp"
@@ -247,15 +251,19 @@ extern "C" void Init_rwx()
 	Init_WXItemContainer(rb_mWX);
 	Init_WXChoice(rb_mWX);
 
-	Init_WXTextCtrl(rb_mWX);
-
-	Init_WXTreeCtrl(rb_mWX);
-
 	Init_WXAnyButton(rb_mWX);
 	Init_WXButton(rb_mWX);
+	Init_WXBitmapButton(rb_mWX);
 
 	Init_WXCheckBox(rb_mWX);
 	Init_WXRadioButton(rb_mWX);
+
+
+	Init_WXTextCtrl(rb_mWX);
+
+	Init_WXSearchCtrl(rb_mWX);
+
+	Init_WXTreeCtrl(rb_mWX);
 	Init_WXStatusBar(rb_mWX);
 
 	Init_WXGauge(rb_mWX);
@@ -301,4 +309,9 @@ extern "C" void Init_rwx()
 	Init_WXPropertyGridInterface(rb_mWX);
 	Init_WXPropertyGrid(rb_mWX);
 	Init_WXPropertyGridManager(rb_mWX);
+
+//	for(klassholdertype::iterator it = klassholder.begin();
+//			it != klassholder.end();++it)
+//		std::cout << it->first << std::endl;
+
 }

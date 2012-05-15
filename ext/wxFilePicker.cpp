@@ -12,18 +12,6 @@ static VALUE rb_cWXFileDirPickerEvent;
 
 #if wxUSE_FILEPICKERCTRL
 
-template <>
-VALUE wrap< wxFilePickerCtrl >(wxFilePickerCtrl* window)
-{
-	return wrap(window,rb_cWXFilePicker);
-}
-
-template <>
-wxFilePickerCtrl* wrap< wxFilePickerCtrl* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxFilePickerCtrl>(vwindow, rb_cWXFilePicker);
-}
-
 namespace RubyWX {
 namespace FilePicker {
 #define _self wrap<wxFilePickerCtrl*>(self)
@@ -66,6 +54,8 @@ void Init_WXFilePicker(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXFileDirPickerEvent,"path",
 			Event::_getPath,Event::_setPath);
+
+	registerInfo<wxFilePickerCtrl>(rb_cWXFilePicker);
 #endif
 
 }

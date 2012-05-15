@@ -72,6 +72,6 @@ void Init_WXColorDialog(VALUE rb_mWX)
 
 	rb_define_module_function(rb_mWX,"color_dialog",RUBY_METHOD_FUNC(_getUserColor),-1);
 
-	registerType<wxColourDialog>(rb_cWXColorDialog);
+	registerInfo<wxColourDialog>(rb_cWXColorDialog);
 #endif
 }

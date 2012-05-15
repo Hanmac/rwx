@@ -14,19 +14,6 @@ VALUE rb_cWXChoicebook;
 #if wxUSE_CHOICEBOOK
 #define _self wrap<wxChoicebook*>(self)
 
-template <>
-VALUE wrap< wxChoicebook >(wxChoicebook* window)
-{
-	return wrap(window,rb_cWXChoicebook);
-}
-
-template <>
-wxChoicebook* wrap< wxChoicebook* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxChoicebook>(vwindow, rb_cWXChoicebook);
-}
-
-
 namespace RubyWX {
 namespace Choicebook {
 
@@ -58,6 +45,7 @@ void Init_WXChoiceBookCtrl(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXChoicebook,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
+	registerInfo<wxChoicebook>(rb_cWXChoicebook);
 #endif
 
 }

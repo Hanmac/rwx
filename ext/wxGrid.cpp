@@ -43,7 +43,7 @@ macro_attr(ColMinimalAcceptableWidth,int)
 macro_attr(RowMinimalAcceptableHeight,int)
 
 
-macro_attr(SelectionMode,wxGrid::wxGridSelectionModes)
+//macro_attr(SelectionMode,wxGrid::wxGridSelectionModes)
 
 macro_attr(SelectionBackground,wxColour)
 macro_attr(SelectionForeground,wxColour)
@@ -54,7 +54,7 @@ macro_attr(DefaultCellFont,wxFont)
 macro_attr(DefaultCellOverflow,bool)
 
 macro_attr(DefaultRenderer,wxGridCellRenderer*)
-macro_attr(DefaultEditor,wxGridCellEditor*)
+//macro_attr(DefaultEditor,wxGridCellEditor*)
 
 singlereturn(GetSelectedCells)
 singlereturn(GetSelectedRows)

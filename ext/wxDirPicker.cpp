@@ -56,7 +56,7 @@ void Init_WXDirPicker(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXFileDirPickerEvent,"path",
 			Event::_getPath,Event::_setPath);
 
-	registerType<wxDirPickerCtrl>(rb_cWXDirPicker);
+	registerInfo<wxDirPickerCtrl>(rb_cWXDirPicker);
 #endif
 
 }

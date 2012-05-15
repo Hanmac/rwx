@@ -8,7 +8,7 @@
 #ifndef WXBUTTON_HPP_
 #define WXBUTTON_HPP_
 
-#include "wxEvtHandler.hpp"
+#include "wxAnyButton.hpp"
 
 extern VALUE rb_cWXButton;
 

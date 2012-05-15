@@ -70,6 +70,12 @@ inline wxAuiPaneInfo wrap< wxAuiPaneInfo >(const VALUE &vinfo)
 		return *unwrapPtr<wxAuiPaneInfo>(vinfo, rb_cWXAuiPane);
 }
 
+template <>
+inline wxAuiPaneInfo* wrap< wxAuiPaneInfo* >(const VALUE &vinfo)
+{
+	return unwrapPtr<wxAuiPaneInfo>(vinfo, rb_cWXAuiPane);
+}
+
 #endif
 
 #endif /* WXAUIPANE_HPP_ */

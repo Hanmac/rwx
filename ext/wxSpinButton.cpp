@@ -48,7 +48,7 @@ void Init_WXSpinButton(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXSpinButton,"min",_getMin,_setMin);
 	rb_define_attr_method(rb_cWXSpinButton,"max",_getMax,_setMax);
 
-	registerType<wxSpinButton>(rb_cWXSpinButton);
+	registerInfo<wxSpinButton>(rb_cWXSpinButton);
 #endif
 
 }

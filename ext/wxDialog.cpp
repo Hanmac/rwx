@@ -124,5 +124,5 @@ void Init_WXDialog(VALUE rb_mWX)
 	rb_define_const(rb_cWXDialog,"DEFAULT_STYLE",INT2NUM(wxDEFAULT_DIALOG_STYLE));
 
 
-	registerType<wxDialog>(rb_cWXDialog);
+	registerInfo<wxDialog>(rb_cWXDialog);
 }

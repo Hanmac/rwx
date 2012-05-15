@@ -29,7 +29,7 @@ DLL_LOCAL void Init_WXFontProperty(VALUE rb_mWX)
 	rb_cWXFontProperty = rb_define_class_under(rb_mWX,"FontProperty",rb_cWXProperty);
 	rb_define_alloc_func(rb_cWXFontProperty,_alloc);
 
-	registerType<wxFontProperty>(rb_cWXFontProperty);
+	registerInfo<wxFontProperty>(rb_cWXFontProperty);
 #endif
 }
 

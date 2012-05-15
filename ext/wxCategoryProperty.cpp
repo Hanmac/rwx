@@ -30,7 +30,7 @@ DLL_LOCAL void Init_WXCategoryProperty(VALUE rb_mWX)
 	rb_cWXCategoryProperty = rb_define_class_under(rb_mWX,"CategoryProperty",rb_cWXProperty);
 	rb_define_alloc_func(rb_cWXCategoryProperty,_alloc);
 
-	registerType<wxPropertyCategory>(rb_cWXCategoryProperty);
+	registerInfo<wxPropertyCategory>(rb_cWXCategoryProperty);
 #endif
 }
 

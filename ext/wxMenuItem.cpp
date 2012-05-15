@@ -24,7 +24,7 @@ APP_PROTECT(wxMenuItem)
 macro_attr(Menu,wxMenu*)
 macro_attr(ItemLabel,wxString)
 macro_attr_with_func(Id,wrapID,unwrapID)
-macro_attr(Kind,wxItemKind)
+//macro_attr(Kind,wxItemKind)
 macro_attr(SubMenu,wxMenu*)
 
 macro_attr(Help,wxString)
@@ -56,5 +56,5 @@ DLL_LOCAL void Init_WXMenuItem(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXMenuItem,"bitmap",_GetBitmap,_SetBitmap);
 
-	registerType<wxMenuItem>(rb_cWXMenuItem);
+	registerInfo<wxMenuItem>(rb_cWXMenuItem);
 }

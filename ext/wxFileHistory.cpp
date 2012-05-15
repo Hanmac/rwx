@@ -129,6 +129,6 @@ void Init_WXFileHistory(VALUE rb_mWX)
 	rb_define_method(rb_cWXFileHistory,"<<",RUBY_METHOD_FUNC(_shiftleft),1);
 	rb_define_method(rb_cWXFileHistory,">>",RUBY_METHOD_FUNC(_shiftright),1);
 
-	registerType<wxFileHistory>(rb_cWXFileHistory);
+	registerInfo<wxFileHistory>(rb_cWXFileHistory);
 #endif
 }

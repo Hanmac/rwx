@@ -33,7 +33,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 namespace Event
 {
 #undef _self
-#define _self unwrapPtr<wxFontPickerEvent>(self,rb_cWXFontPickerEvent)
+#define _self wrap<wxFontPickerEvent*>(self)
 macro_attr(Font,wxFont)
 }
 
@@ -55,8 +55,7 @@ void Init_WXFontPicker(VALUE rb_mWX)
 	registerEventType("fontpicker_changed",wxEVT_COMMAND_FONTPICKER_CHANGED,rb_cWXFontPickerEvent);
 	rb_define_attr_method(rb_cWXFontPickerEvent,"font",Event::_getFont,Event::_setFont);
 
-	registerType<wxFontPickerCtrl>(rb_cWXFontPicker);
-	registerType<wxFontPickerEvent>(rb_cWXFontPickerEvent);
+	registerInfo<wxFontPickerCtrl>(rb_cWXFontPicker);
 #endif
 
 }

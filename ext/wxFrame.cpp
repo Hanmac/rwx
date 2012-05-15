@@ -80,5 +80,5 @@ DLL_LOCAL void Init_WXFrame(VALUE rb_mWX)
 	rb_define_method(rb_cWXFrame,"createToolBar",RUBY_METHOD_FUNC(_CreateToolBar),0);
 #endif // wxUSE_TOOLBAR
 
-	registerType<wxFrame>(rb_cWXFrame);
+	registerInfo<wxFrame>(rb_cWXFrame);
 }

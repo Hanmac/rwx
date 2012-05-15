@@ -6,31 +6,11 @@
  */
 
 
-
-#include "wxWindow.hpp"
+#include "wxAnyButton.hpp"
 
 VALUE rb_cWXAnyButton;
 
 #define _self wrap<wxAnyButton*>(self)
-
-template <>
-VALUE wrap< wxAnyButton >(wxAnyButton* window)
-{
-#if wxUSE_BUTTON
-	if(wxButton *button = dynamic_cast<wxButton*>(window))
-		return wrap(button);
-#endif
-
-	return wrap(window,rb_cWXAnyButton);
-}
-
-
-template <>
-wxAnyButton* wrap< wxAnyButton* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxAnyButton>(vwindow, rb_cWXAnyButton);
-}
-
 
 namespace RubyWX {
 namespace AnyButton {

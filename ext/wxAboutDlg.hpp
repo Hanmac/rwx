@@ -12,6 +12,7 @@
 
 #if wxUSE_ABOUTDLG
 #include <wx/aboutdlg.h>
+#include <wx/generic/aboutdlgg.h>
 #endif
 void Init_WXAboutDlg(VALUE rb_mWX);
 
