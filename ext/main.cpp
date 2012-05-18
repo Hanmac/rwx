@@ -53,18 +53,6 @@ VALUE wrap< int >(const int &st )
 }
 
 template <>
-long int wrap< long int >(const VALUE &val )
-{
-	return NUM2LONG(val);
-}
-
-template <>
-VALUE wrap< long int >(const long int &st )
-{
-	return LONG2NUM(st);
-}
-
-template <>
 unsigned int wrap< unsigned int >(const VALUE &val )
 {
 	return NUM2UINT(val);

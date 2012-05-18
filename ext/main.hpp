@@ -196,11 +196,6 @@ template <>
 VALUE wrap< int >(const int &st );
 
 template <>
-long int wrap< long int >(const VALUE &val );
-template <>
-VALUE wrap< long int >(const long int &st );
-
-template <>
 unsigned int wrap< unsigned int >(const VALUE &val );
 template <>
 VALUE wrap< unsigned int >(const unsigned int &st );

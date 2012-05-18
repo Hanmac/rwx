@@ -119,8 +119,8 @@ macro_attr(MaxClientSize,wxSize)
 macro_attr(Font,wxFont)
 macro_attr(Cursor,wxCursor)
 
-macro_attr(WindowStyleFlag,long)
-macro_attr(ExtraStyle,long)
+macro_attr_with_func(WindowStyleFlag,LONG2NUM,NUM2LONG)
+macro_attr_with_func(ExtraStyle,LONG2NUM,NUM2LONG)
 
 #if wxUSE_VALIDATORS
 //macro_attr(Validator,wxValidator)
