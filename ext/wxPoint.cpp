@@ -39,8 +39,12 @@ wxPoint* wrap< wxPoint* >(const VALUE &vpoint)
 template <>
 wxPoint wrap< wxPoint >(const VALUE &vpoint)
 {
-
-	if(!rb_obj_is_kind_of(vpoint, rb_cWXPoint) &&
+	if(!rb_obj_is_kind_of(vpoint, rb_cArray)){
+		wxPoint point;
+		point.x = NUM2INT(rb_ary_entry(vpoint,0));
+		point.y = NUM2INT(rb_ary_entry(vpoint,1));
+		return point;
+	}else if(!rb_obj_is_kind_of(vpoint, rb_cWXPoint) &&
 		rb_respond_to(vpoint,rb_intern("x")) &&
 		rb_respond_to(vpoint,rb_intern("y"))){
 		wxPoint point;
@@ -139,7 +143,7 @@ DLL_LOCAL void Init_WXPoint(VALUE rb_mWX)
 
 	rb_define_alloc_func(rb_cWXPoint,_alloc);
 
-	rb_define_method(rb_cWXPoint,"initialize",RUBY_METHOD_FUNC(_initialize),4);
+	rb_define_method(rb_cWXPoint,"initialize",RUBY_METHOD_FUNC(_initialize),2);
 	rb_define_private_method(rb_cWXPoint,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),1);
 
 	rb_define_attr_method(rb_cWXPoint,"x",_getX,_setX);
