@@ -65,9 +65,9 @@ VALUE _load(int argc,VALUE *argv,VALUE self)
 		wxFileName file(wrap<wxString>(name));
 		file.MakeAbsolute(wxGetCwd());
 
-		if(dir.Exists())
+		if(dir.DirExists())
 		{
-			if(file.Exists()){
+			if(file.FileExists()){
 				if(!file.IsFileReadable())
 					err = EACCES;
 			}else
@@ -314,9 +314,9 @@ VALUE _save(int argc,VALUE *argv,VALUE self)
 
 	wxFileName file(wrap<wxString>(name));
 	file.MakeAbsolute(wxGetCwd());
-	if(dir.Exists())
+	if(dir.DirExists())
 	{
-		if(file.Exists() && !file.IsFileWritable())
+		if(file.FileExists() && !file.IsFileWritable())
 			err = EACCES;
 		else if(!dir.IsDirWritable())
 			err = EACCES;
