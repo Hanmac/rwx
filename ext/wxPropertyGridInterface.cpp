@@ -47,7 +47,6 @@ DLL_LOCAL void Init_WXPropertyGridInterface(VALUE rb_mWX)
 	rb_define_method(rb_mWXPropertyGridInterface,"append",RUBY_METHOD_FUNC(_append),1);
 
 	wxPropertyGrid::InitAllTypeHandlers();
-	wxPropertyGrid::RegisterAdditionalEditors();
 #endif
 
 }

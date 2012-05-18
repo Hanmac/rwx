@@ -32,25 +32,37 @@ bool is_wrapable< wxPoint >(const VALUE &vpoint)
 template <>
 wxPoint* wrap< wxPoint* >(const VALUE &vpoint)
 {
-	if(!rb_obj_is_kind_of(vpoint, rb_cWXPoint) &&
-		rb_respond_to(vpoint,rb_intern("x")) &&
-		rb_respond_to(vpoint,rb_intern("y"))){
-		wxPoint *point = new wxPoint;
-		point->x = NUM2INT(rb_funcall(vpoint,rb_intern("x"),0));
-		point->y = NUM2INT(rb_funcall(vpoint,rb_intern("y"),0));
-		return point;
-	}else{
-		return unwrapPtr<wxPoint>(vpoint, rb_cWXPoint);
-	}
+	return unwrapPtr<wxPoint>(vpoint, rb_cWXPoint);
 }
 
 
 template <>
 wxPoint wrap< wxPoint >(const VALUE &vpoint)
 {
-	return *wrap<wxPoint*>(vpoint);
+
+	if(!rb_obj_is_kind_of(vpoint, rb_cWXPoint) &&
+		rb_respond_to(vpoint,rb_intern("x")) &&
+		rb_respond_to(vpoint,rb_intern("y"))){
+		wxPoint point;
+		point.x = NUM2INT(rb_funcall(vpoint,rb_intern("x"),0));
+		point.y = NUM2INT(rb_funcall(vpoint,rb_intern("y"),0));
+		return point;
+	}else{
+		return *wrap<wxPoint*>(vpoint);
+	}
+
 }
 
+template <>
+wxPointList* wrap< wxPointList* >(const VALUE &val)
+{
+	wxPointList *result = new wxPointList;
+	VALUE dp = rb_funcall(val,rb_intern("to_a"),0);
+	size_t length = RARRAY_LEN(dp);
+	for(size_t i = 0; i < length; ++i)
+		result->Append(new wxPoint(wrap<wxPoint>(RARRAY_PTR(dp)[i])));
+	return result;
+}
 
 namespace RubyWX {
 namespace Point {

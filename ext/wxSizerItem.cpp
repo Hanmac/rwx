@@ -29,6 +29,8 @@ void Init_WXSizerItem(VALUE rb_mWX)
 	rb_undef_alloc_func(rb_cWXSizerItem);
 
 	//rb_define_attr_method(rb_cWXSizerItem,"orientation",_getOrientation,_setOrientation);
+
+	registerInfo<wxSizerItem>(rb_cWXSizerItem);
 }
 
 

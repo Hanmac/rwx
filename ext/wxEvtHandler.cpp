@@ -81,7 +81,7 @@ wxEventType unwrapEventType(VALUE type)
 
 void registerEventType(const char *sym, wxEventType type)
 {
-	evttypeholder.insert(std::make_pair(rb_intern(sym),type));
+	evttypeholder[rb_intern(sym)]=type;
 }
 #ifndef wxHAS_EVENT_BIND
 void registerEventType(const char *sym, wxEventType type,VALUE klass)

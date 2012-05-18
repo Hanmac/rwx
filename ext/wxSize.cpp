@@ -10,6 +10,47 @@ VALUE rb_cWXSize;
 
 #define _self wrap<wxSize*>(self)
 
+template <>
+VALUE wrap< wxSize >(wxSize *size )
+{
+	return Data_Wrap_Struct(rb_cWXSize, NULL, free, size);
+}
+
+template <>
+bool is_wrapable< wxSize >(const VALUE &vsize)
+{
+	if (rb_obj_is_kind_of(vsize, rb_cWXSize)){
+		return true;
+	}else if(rb_respond_to(vsize,rb_intern("width")) &&
+		rb_respond_to(vsize,rb_intern("height"))){
+		return true;
+	}else
+		return false;
+}
+
+template <>
+wxSize* wrap< wxSize* >(const VALUE &vsize)
+{
+	return unwrapPtr<wxSize>(vsize, rb_cWXSize);
+}
+
+
+template <>
+wxSize wrap< wxSize >(const VALUE &vsize)
+{
+	if(!rb_obj_is_kind_of(vsize, rb_cWXSize) &&
+		rb_respond_to(vsize,rb_intern("width")) &&
+		rb_respond_to(vsize,rb_intern("height"))){
+		wxSize size;
+		size.SetWidth(NUM2INT(rb_funcall(vsize,rb_intern("width"),0)));
+		size.SetHeight(NUM2INT(rb_funcall(vsize,rb_intern("height"),0)));
+		return size;
+	}else{
+		return *wrap<wxSize*>(vsize);
+	}
+}
+
+
 namespace RubyWX {
 namespace Size {
 

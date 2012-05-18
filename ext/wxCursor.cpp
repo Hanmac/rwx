@@ -56,6 +56,8 @@ wxCursor* wrap< wxCursor* >(const VALUE &vbitmap)
 template <>
 wxCursor wrap< wxCursor >(const VALUE &vbitmap)
 {
+	if(NIL_P(vbitmap))
+		return wxNullCursor;
 	return *wrap< wxCursor* >(vbitmap);
 }
 

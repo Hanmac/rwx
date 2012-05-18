@@ -46,7 +46,7 @@ macro_attr(Message,wxString)
 VALUE _getUserDir(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
-	rb_scan_args(argc, argv, "03",&parent,&hash);
+	rb_scan_args(argc, argv, "02",&parent,&hash);
 	wxString message = wxDirSelectorPromptStr;
 	wxString defaultPath = wxEmptyString;
 	long style = wxDD_DEFAULT_STYLE;

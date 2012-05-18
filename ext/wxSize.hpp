@@ -15,43 +15,15 @@ void Init_WXSize(VALUE rb_mWX);
 
 
 template <>
-inline VALUE wrap< wxSize >(wxSize *size )
-{
-	return Data_Wrap_Struct(rb_cWXSize, NULL, free, size);
-}
+VALUE wrap< wxSize >(wxSize *size );
 
 template <>
-inline bool is_wrapable< wxSize >(const VALUE &vsize)
-{
-	if (rb_obj_is_kind_of(vsize, rb_cWXSize)){
-		return true;
-	}else if(rb_respond_to(vsize,rb_intern("width")) &&
-		rb_respond_to(vsize,rb_intern("height"))){
-		return true;
-	}else
-		return false;
-}
+bool is_wrapable< wxSize >(const VALUE &vsize);
 
 template <>
-inline wxSize* wrap< wxSize* >(const VALUE &vsize)
-{
-	if(!rb_obj_is_kind_of(vsize, rb_cWXSize) &&
-		rb_respond_to(vsize,rb_intern("width")) &&
-		rb_respond_to(vsize,rb_intern("height"))){
-		wxSize *size = new wxSize;
-		size->SetWidth(NUM2INT(rb_funcall(vsize,rb_intern("width"),0)));
-		size->SetHeight(NUM2INT(rb_funcall(vsize,rb_intern("height"),0)));
-		return size;
-	}else{
-		return unwrapPtr<wxSize>(vsize, rb_cWXSize);
-	}
-}
-
+wxSize* wrap< wxSize* >(const VALUE &vsize);
 
 template <>
-inline wxSize wrap< wxSize >(const VALUE &vsize)
-{
-	return *wrap<wxSize*>(vsize);
-}
+wxSize wrap< wxSize >(const VALUE &vsize);
 
 #endif /* WXSIZE_HPP_ */

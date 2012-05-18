@@ -31,9 +31,17 @@ singlereturn(PrependSeparator)
 
 APP_PROTECT(wxMenu)
 
-VALUE _initialize(VALUE self,VALUE title)
+VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	_setTitle(self,title);
+	VALUE title;
+	rb_scan_args(argc, argv, "01",&title);
+
+	if(NIL_P(title))
+		_self->SetTitle("");
+	else if(SYMBOL_P(title))
+		_self->SetTitle(wxGetStockLabel(unwrapID(title)));
+	else
+		_setTitle(self,title);
 	if(rb_block_given_p()){
 		rb_yield(self);
 	}

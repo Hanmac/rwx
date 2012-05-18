@@ -10,7 +10,7 @@
 
 VALUE rb_mWXItemContainer;
 #if wxUSE_CONTROLS
-#define _self unwrapPtr<wxItemContainer>(self,rb_mWXItemContainer)
+#define _self wrap<wxItemContainer*>(self)
 
 namespace RubyWX {
 namespace ItemContainer {
@@ -51,7 +51,7 @@ void Init_WXItemContainer(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_mWXItemContainer,"items",_GetStrings,_setItems);
 
-	//registerInfo<wxItemContainer>(rb_mWXItemContainer);
+	registerType<wxItemContainer>(rb_mWXItemContainer);
 #endif
 }
 

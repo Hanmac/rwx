@@ -35,15 +35,21 @@ bool is_wrapable< wxColor >(const VALUE &vcolor)
 template <>
 wxColor* wrap< wxColor* >(const VALUE &vcolor)
 {
+	return unwrapPtr<wxColor>(vcolor, rb_cWXColor);
+}
+
+template <>
+wxColor wrap< wxColor >(const VALUE &vcolor)
+{
 	if(rb_obj_is_kind_of(vcolor, rb_cString)){
-		return new wxColour(wrap<wxString>(vcolor));
+		return wxColour(wrap<wxString>(vcolor));
 	}else if(!rb_obj_is_kind_of(vcolor, rb_cWXColor) &&
 		rb_respond_to(vcolor,rb_intern("red")) &&
 		rb_respond_to(vcolor,rb_intern("blue")) &&
 		rb_respond_to(vcolor,rb_intern("green")) &&
 		rb_respond_to(vcolor,rb_intern("alpha"))){
 		double red,blue,green,alpha;
-		wxColor *color = new wxColor;
+		wxColor color;
 		red = NUM2DBL(rb_funcall(vcolor,rb_intern("red"),0));
 		if(red < 1.0)
 			red *=256;
@@ -60,17 +66,14 @@ wxColor* wrap< wxColor* >(const VALUE &vcolor)
 		if(alpha < 1.0)
 			alpha *=256;
 
-		color->Set(red,blue,green,alpha);
+		color.Set(red,blue,green,alpha);
 
 		return color;
 	}else{
-		return unwrapPtr<wxColor>(vcolor, rb_cWXColor);
+		return *wrap<wxColor*>(vcolor);
 	}
-}
-template <>
-wxColor wrap< wxColor >(const VALUE &vcolor)
-{
-	return *wrap<wxColor*>(vcolor);
+
+
 }
 
 namespace RubyWX {

@@ -6,6 +6,7 @@
  */
 
 #include "wxApp.hpp"
+#include "wxPropertyGrid.hpp"
 
 #define _self wrap<wxApp*>(self)
 VALUE rb_cWXApp;
@@ -27,6 +28,9 @@ bool RubyApp::OnInit()
 #ifdef __LINUX__
 	mLocale->AddCatalog("fileutils");
 #endif
+#endif
+#if wxUSE_PROPGRID
+	wxPropertyGrid::RegisterAdditionalEditors();
 #endif
 
 	ruby_app_inited = true;

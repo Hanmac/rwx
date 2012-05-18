@@ -26,5 +26,8 @@ wxPoint* wrap< wxPoint* >(const VALUE &vpoint);
 template <>
 wxPoint wrap< wxPoint >(const VALUE &vpoint);
 
+template <>
+wxPointList* wrap< wxPointList* >(const VALUE &vpoint);
+
 
 #endif /* WXPOINT_HPP_ */
