@@ -9,7 +9,7 @@
 #include "wxPen.hpp"
 #include "wxColor.hpp"
 
-#define _self wrap<wxPen*>(self)
+#define _self unwrap<wxPen*>(self)
 
 VALUE rb_cWXPen;
 
@@ -18,7 +18,7 @@ template <>
 VALUE wrap< wxPen >(wxPen *bitmap )
 {
 	if(bitmap->IsOk())
-		return wrap(bitmap,rb_cWXPen);
+		return wrapPtr(bitmap,rb_cWXPen);
 	return Qnil;
 }
 
@@ -26,12 +26,12 @@ template <>
 VALUE wrap< wxPen >(const wxPen &bitmap )
 {
 	if(bitmap.IsOk())
-		return wrap(const_cast<wxPen*>(&bitmap),rb_cWXPen);
+		return wrapPtr(const_cast<wxPen*>(&bitmap),rb_cWXPen);
 	return Qnil;
 }
 
 template <>
-wxPenStyle wrap< wxPenStyle >(const VALUE &style )
+wxPenStyle unwrap< wxPenStyle >(const VALUE &style )
 {
 	return wxPENSTYLE_INVALID;
 }
@@ -98,7 +98,7 @@ VALUE wrap< wxPenStyle >(const wxPenStyle &style )
 
 
 template <>
-wxPen* wrap< wxPen* >(const VALUE &vbitmap)
+wxPen* unwrap< wxPen* >(const VALUE &vbitmap)
 {
 	if(NIL_P(vbitmap))
 		return &wxNullPen;
@@ -106,11 +106,11 @@ wxPen* wrap< wxPen* >(const VALUE &vbitmap)
 }
 
 template <>
-wxPen wrap< wxPen >(const VALUE &vbitmap)
+wxPen unwrap< wxPen >(const VALUE &vbitmap)
 {
 	if(NIL_P(vbitmap))
 		return wxNullPen;
-	return *wrap<wxPen*>(vbitmap);
+	return *unwrap<wxPen*>(vbitmap);
 }
 
 

@@ -14,7 +14,7 @@
 #include "wxColor.hpp"
 #include "wxFont.hpp"
 
-#define _self wrap<wxDC*>(self)
+#define _self unwrap<wxDC*>(self)
 
 VALUE rb_cWXDC;
 
@@ -36,21 +36,21 @@ singlereturn(GetDeviceOrigin)
 
 DLL_LOCAL VALUE _setLogicalOrigin(VALUE self,VALUE val)
 {
-	wxPoint *p = wrap<wxPoint*>(val);
+	wxPoint *p = unwrap<wxPoint*>(val);
 	_self->SetLogicalOrigin(p->x,p->y);
 	return val;
 }
 
 DLL_LOCAL VALUE _setDeviceOrigin(VALUE self,VALUE val)
 {
-	wxPoint *p = wrap<wxPoint*>(val);
+	wxPoint *p = unwrap<wxPoint*>(val);
 	_self->SetDeviceOrigin(p->x,p->y);
 	return val;
 }
 
 DLL_LOCAL VALUE _doc(VALUE self,VALUE message)
 {
-	_self->StartDoc(wrap<wxString>(message));
+	_self->StartDoc(unwrap<wxString>(message));
 	rb_yield(self);
 	_self->EndDoc();
 	return self;
@@ -66,19 +66,19 @@ DLL_LOCAL VALUE _page(VALUE self)
 
 DLL_LOCAL VALUE _DrawRectangle(VALUE self,VALUE rect)
 {
-	_self->DrawRectangle(wrap<wxRect>(rect));
+	_self->DrawRectangle(unwrap<wxRect>(rect));
 	return self;
 }
 
 DLL_LOCAL VALUE _DrawEllipse(VALUE self,VALUE rect)
 {
-	_self->DrawEllipse(wrap<wxRect>(rect));
+	_self->DrawEllipse(unwrap<wxRect>(rect));
 	return self;
 }
 
 DLL_LOCAL VALUE _DrawCheckMark(VALUE self,VALUE rect)
 {
-	_self->DrawCheckMark(wrap<wxRect>(rect));
+	_self->DrawCheckMark(unwrap<wxRect>(rect));
 	return self;
 }
 
@@ -86,7 +86,7 @@ DLL_LOCAL VALUE _DrawCheckMark(VALUE self,VALUE rect)
 DLL_LOCAL VALUE _DrawBitmap(VALUE self,VALUE bitmap,VALUE x,VALUE y)
 {
 
-	_self->DrawBitmap(wrap<wxBitmap>(bitmap),NUM2INT(x),NUM2INT(y));
+	_self->DrawBitmap(unwrap<wxBitmap>(bitmap),NUM2INT(x),NUM2INT(y));
 	return self;
 }
 
@@ -95,7 +95,7 @@ DLL_LOCAL VALUE _DrawLines(int argc,VALUE *argv,VALUE self)
 {
 	VALUE x,y,points;
 	rb_scan_args(argc, argv, "2*",&x,&y,&points);
-	_self->DrawLines(wrap<wxPointList*>(points),NUM2INT(x),NUM2INT(y));
+	_self->DrawLines(unwrap<wxPointList*>(points),NUM2INT(x),NUM2INT(y));
 	return self;
 }
 

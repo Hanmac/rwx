@@ -9,7 +9,7 @@
 
 VALUE rb_cWXWizard;
 #if wxUSE_WIZARDDLG
-#define _self wrap<wxWizard*>(self)
+#define _self unwrap<wxWizard*>(self)
 
 namespace RubyWX {
 namespace Wizard {
@@ -27,7 +27,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 	if(!_created)
-		_self->Create(wrap<wxWindow*>(parent),wxID_ANY,"");
+		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,"");
 	_created = true;
 	rb_call_super(argc,argv);
 	return self;
@@ -37,12 +37,12 @@ VALUE _showPage(int argc,VALUE *argv,VALUE self)
 {
 	VALUE page,goingForward;
 	rb_scan_args(argc, argv, "11",&page,&goingForward);
-	return wrap(_self->ShowPage(wrap<wxWizardPage*>(page),RTEST(goingForward)));
+	return wrap(_self->ShowPage(unwrap<wxWizardPage*>(page),RTEST(goingForward)));
 }
 
 VALUE _runWizard(VALUE self,VALUE page)
 {
-	return wrap(_self->RunWizard(wrap<wxWizardPage*>(page)));
+	return wrap(_self->RunWizard(unwrap<wxWizardPage*>(page)));
 }
 
 VALUE _addPage(int argc,VALUE *argv,VALUE self)
@@ -68,8 +68,8 @@ VALUE _chainPages(int argc,VALUE *argv,VALUE self)
 	for(int i = 0; i < argc - 1; ++i)
 	{
 		wxWizardPageSimple::Chain(
-			wrap<RubyWizardPage*>(argv[i]),
-			wrap<RubyWizardPage*>(argv[i+1])
+			unwrap<RubyWizardPage*>(argv[i]),
+			unwrap<RubyWizardPage*>(argv[i+1])
 		);
 	}
 

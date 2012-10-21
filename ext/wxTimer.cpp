@@ -11,7 +11,7 @@
 
 VALUE rb_cWXTimer,rb_cWXTimerEvent;
 #if wxUSE_TIMER
-#define _self wrap<wxTimer*>(self)
+#define _self unwrap<wxTimer*>(self)
 
 namespace RubyWX {
 namespace Timer {
@@ -42,7 +42,7 @@ singlereturn(GetOwner)
 
 VALUE _setOwner(VALUE self,VALUE val)
 {
-	_self->SetOwner(wrap<wxEvtHandler*>(val),_self->GetId());
+	_self->SetOwner(unwrap<wxEvtHandler*>(val),_self->GetId());
 	return val;
 }
 

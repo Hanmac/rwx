@@ -19,7 +19,7 @@ VALUE rb_cWXTreeCtrl,rb_cWXTreeCtrlItem,rb_cWXTreeCtrlEvent;
 namespace RubyWX {
 namespace TreeCtrl {
 
-#define _self wrap<wxTreeCtrl*>(self)
+#define _self unwrap<wxTreeCtrl*>(self)
 
 macro_attr(Indent,unsigned int)
 macro_attr(Spacing,unsigned int)
@@ -36,10 +36,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 	if(!_created)
 	{
-		wxWindow *wnd =wrap<wxWindow*>(parent);
-		if(wnd == NULL)
-			rb_raise(rb_eTypeError,"what?");
-		_self->Create(wnd,wxID_ANY);
+		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 		_created = true;
 	}
 	rb_call_super(argc,argv);
@@ -57,7 +54,7 @@ VALUE _root(int argc,VALUE *argv,VALUE self)
 		cid = NUM2INT(id);
 	if(!NIL_P(selid))
 		cid = NUM2INT(selid);
-	VALUE result = wrap(_self,_self->AddRoot(wrap<wxString>(str),cid,cselid));
+	VALUE result = wrap(_self,_self->AddRoot(unwrap<wxString>(str),cid,cselid));
 	if(rb_block_given_p())
 		rb_yield(result);
 	return result;
@@ -71,7 +68,7 @@ VALUE _getSelection(VALUE self)
 }
 VALUE _setSelection(VALUE self,VALUE item)
 {
-	_self->SelectItem(wrap<wxTreeItemId>(item));
+	_self->SelectItem(unwrap<wxTreeItemId>(item));
 	return item;
 }
 
@@ -97,7 +94,7 @@ VALUE _AppendItem(int argc,VALUE *argv,VALUE self)
 		cid = NUM2INT(id);
 	if(!NIL_P(selid))
 		cid = NUM2INT(selid);
-	VALUE result = _self->AppendItem(wrap<wxString>(str),cid,cselid);
+	VALUE result = _self->AppendItem(unwrap<wxString>(str),cid,cselid);
 
 	if(rb_block_given_p())
 		rb_yield(result);
@@ -114,7 +111,7 @@ VALUE _PrependItem(int argc,VALUE *argv,VALUE self)
 		cid = NUM2INT(id);
 	if(!NIL_P(selid))
 		cid = NUM2INT(selid);
-	VALUE result = _self->PrependItem(wrap<wxString>(str),cid,cselid);
+	VALUE result = _self->PrependItem(unwrap<wxString>(str),cid,cselid);
 
 	if(rb_block_given_p())
 		rb_yield(result);
@@ -163,7 +160,7 @@ VALUE _GetItem(VALUE self)
 }
 VALUE _SetItem(VALUE self,VALUE val)
 {
-	_self->SetItem(wrap< wxTreeItemId >(val));
+	_self->SetItem(unwrap< wxTreeItemId >(val));
 	return val;
 }
 VALUE _GetOldItem(VALUE self)
@@ -172,7 +169,7 @@ VALUE _GetOldItem(VALUE self)
 }
 VALUE _SetOldItem(VALUE self,VALUE val)
 {
-	_self->SetOldItem(wrap< wxTreeItemId >(val));
+	_self->SetOldItem(unwrap< wxTreeItemId >(val));
 	return val;
 }
 
@@ -182,7 +179,7 @@ VALUE _SetOldItem(VALUE self,VALUE val)
 }
 
 RubyTreeCtrlItem::RubyTreeCtrlItem(wxTreeCtrl* tree,wxTreeItemId id) : wxTreeItemData(),
-		mRuby(wrap(this,rb_cWXTreeCtrlItem)), mTree(tree)
+		mRuby(wrapPtr(this,rb_cWXTreeCtrlItem)), mTree(tree)
 {
 	SetId(id);
 	tree->SetItemData(id,this);

@@ -11,7 +11,7 @@
 
 VALUE rb_cWXFileProperty;
 #if wxUSE_PROPGRID
-#define _self wrap<wxFileProperty*>(self)
+#define _self unwrap<wxFileProperty*>(self)
 
 namespace RubyWX {
 namespace FileProperty {

@@ -11,7 +11,7 @@
 VALUE rb_cWXSpinButton;
 
 #if wxUSE_SPINBTN
-#define _self wrap<wxSpinButton*>(self)
+#define _self unwrap<wxSpinButton*>(self)
 
 namespace RubyWX {
 namespace SpinButton {
@@ -26,7 +26,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 	_created = true;
 	rb_call_super(argc,argv);
 	return self;

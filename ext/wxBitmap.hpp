@@ -19,10 +19,10 @@ template <>
 VALUE wrap< wxBitmap >(wxBitmap *bitmap );
 
 template <>
-wxBitmap* wrap< wxBitmap* >(const VALUE &vbitmap);
+wxBitmap* unwrap< wxBitmap* >(const VALUE &vbitmap);
 
 template <>
-wxBitmap wrap< wxBitmap >(const VALUE &vbitmap);
+wxBitmap unwrap< wxBitmap >(const VALUE &vbitmap);
 
 wxBitmap wrapBitmap(const VALUE &vbitmap,wxWindowID id,bool disabled,const wxArtClient &type);
 
@@ -33,15 +33,15 @@ template <>
 VALUE wrap< wxIcon >(const wxIcon &icon );
 
 template <>
-wxIcon* wrap< wxIcon* >(const VALUE &vbitmap);
+wxIcon* unwrap< wxIcon* >(const VALUE &vbitmap);
 
 template <>
-wxIcon wrap< wxIcon >(const VALUE &vbitmap);
+wxIcon unwrap< wxIcon >(const VALUE &vbitmap);
 
 template <>
 VALUE wrap< wxImageList >(wxImageList *imagelist );
 
 template <>
-wxImageList* wrap< wxImageList* >(const VALUE &imagelist);
+wxImageList* unwrap< wxImageList* >(const VALUE &imagelist);
 
 #endif /* WXBITMAP_HPP_ */

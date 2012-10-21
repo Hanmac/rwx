@@ -9,7 +9,7 @@
 VALUE rb_cWXCalendarCtrlGeneric;
 
 #if wxUSE_CALENDARCTRL
-#define _self wrap<wxGenericCalendarCtrl*>(self)
+#define _self unwrap<wxGenericCalendarCtrl*>(self)
 
 namespace RubyWX {
 namespace GenericCalendarCtrl {
@@ -20,7 +20,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 	rb_call_super(argc,argv);
 	return self;
 }

@@ -10,7 +10,7 @@
 #include "wxEvent.hpp"
 #include "wxWindow.hpp"
 
-#define _self wrap<wxEvent*>(self)
+#define _self unwrap<wxEvent*>(self)
 
 VALUE rb_cWXEvent;
 

@@ -1,0 +1,9 @@
+# Ignore compilation products
+*.o
+*.so
+
+# Ignore mkmf-generated files
+ext/Makefile
+ext/mkmf.log
+
+

@@ -11,7 +11,7 @@
 VALUE rb_cWXStaticBox;
 
 #if wxUSE_STATBOX
-#define _self wrap<wxStaticBox*>(self)
+#define _self unwrap<wxStaticBox*>(self)
 
 namespace RubyWX {
 namespace StaticBox {
@@ -22,7 +22,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY,wxEmptyString);
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxEmptyString);
 	_created = true;
 	rb_call_super(argc,argv);
 	return self;

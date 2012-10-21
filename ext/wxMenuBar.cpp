@@ -12,7 +12,7 @@
 
 VALUE rb_cWXMenuBar;
 
-#define _self wrap<wxMenuBar*>(self)
+#define _self unwrap<wxMenuBar*>(self)
 
 namespace RubyWX {
 namespace MenuBar {
@@ -39,7 +39,7 @@ VALUE _each(VALUE self)
 
 VALUE _appendShift(VALUE self,VALUE menu)
 {
-	wxMenu *m = wrap<wxMenu*>(menu);
+	wxMenu *m = unwrap<wxMenu*>(menu);
 	if(m->GetTitle() == wxEmptyString)
 		rb_raise(rb_eTypeError,"menu must have a title to be append.");
 	_self->Append(m,m->GetTitle());
@@ -56,7 +56,7 @@ VALUE _append(VALUE self,VALUE menu)
 	if(rb_block_given_p())
 		rb_yield(wrap(m));
 
-	_self->Append(m,wrap<wxString>(menu));
+	_self->Append(m,unwrap<wxString>(menu));
 	return self;
 }
 

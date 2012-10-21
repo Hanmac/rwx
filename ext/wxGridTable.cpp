@@ -13,7 +13,7 @@ VALUE rb_cWXGridTable;
 #if wxUSE_GRID
 RubyGridTable::RubyGridTable(VALUE klass) : wxGridTableBase()
 {
-	this->SetClientObject(new RubyClientData(wrap((void*)this,klass)));
+	this->SetClientObject(new RubyClientData(wrapPtr((void*)this,klass)));
 }
 
 int RubyGridTable::GetNumberRows()
@@ -27,7 +27,7 @@ int RubyGridTable::GetNumberCols()
 
 wxString RubyGridTable::GetValue( int row, int col )
 {
-	return wrap<wxString>(rb_funcall(mRuby,rb_intern("[]"),2,INT2NUM(row),INT2NUM(col)));
+	return unwrap<wxString>(rb_funcall(mRuby,rb_intern("[]"),2,INT2NUM(row),INT2NUM(col)));
 }
 
 void RubyGridTable::SetValue( int row, int col, const wxString& value )
@@ -39,7 +39,7 @@ void RubyGridTable::SetValue( int row, int col, const wxString& value )
 
 wxString RubyGridTable::GetTypeName( int row, int col )
 {
-	return wrap<wxString>(rb_funcall(mRuby,rb_intern("typename"),2,INT2NUM(row),INT2NUM(col)));
+	return unwrap<wxString>(rb_funcall(mRuby,rb_intern("typename"),2,INT2NUM(row),INT2NUM(col)));
 }
 
 void RubyGridTable::Clear()
@@ -77,13 +77,13 @@ bool RubyGridTable::DeleteCols( size_t pos, size_t numCols)
 
 namespace RubyWX {
 namespace GridTable {
-#define _self wrap<wxGridTableBase*>(self)
+#define _self unwrap<wxGridTableBase*>(self)
 //macro_attr(Path,wxString)
 
 
 VALUE _alloc(VALUE self)
 {
-	return wrap(new RubyGridTable(self),self);
+	return wrapPtr(new RubyGridTable(self),self);
 }
 
 }
@@ -97,6 +97,8 @@ void Init_WXGridTable(VALUE rb_mWX)
 	using namespace RubyWX::GridTable;
 	rb_cWXGridTable = rb_define_class_under(rb_mWX,"GridTable",rb_cObject);
 	rb_define_alloc_func(rb_cWXGridTable,_alloc);
+
+	registerInfo<wxGridTableBase>(rb_cWXGridTable);
 #endif
 }
 

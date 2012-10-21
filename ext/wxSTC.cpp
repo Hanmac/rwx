@@ -11,7 +11,7 @@
 VALUE rb_cWXSTC;
 
 #if wxUSE_STC
-#define _self wrap<wxStyledTextCtrl*>(self)
+#define _self unwrap<wxStyledTextCtrl*>(self)
 
 namespace RubyWX {
 namespace STC {
@@ -31,7 +31,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 	_created = true;
 	_self->StyleClearAll();
 	rb_call_super(argc,argv);

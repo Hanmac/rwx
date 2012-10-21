@@ -11,7 +11,7 @@
 
 #include <map>
 
-#define _self wrap<wxEvtHandler*>(self)
+#define _self unwrap<wxEvtHandler*>(self)
 
 VALUE rb_mWXEvtHandler;
 
@@ -22,7 +22,7 @@ std::map<VALUE,wxEvtHandler*> evthandlerholder;
 std::map<ID,wxEventType> evttypeholder;
 
 template <>
-wxEvtHandler* wrap< wxEvtHandler* >(const VALUE &vhandler)
+wxEvtHandler* unwrap< wxEvtHandler* >(const VALUE &vhandler)
 {
 	if(rb_type_p(vhandler,T_DATA))
 		return unwrapPtr<wxEvtHandler>(vhandler,rb_mWXEvtHandler);
@@ -41,7 +41,7 @@ wxEvtHandler* wrap< wxEvtHandler* >(const VALUE &vhandler)
 
 
 #define rubyclientdata(T) \
-VALUE wrap(T *handler,VALUE klass)\
+VALUE wrapPtr(T *handler,VALUE klass)\
 {\
 	if(!handler)\
 		return Qnil;\
@@ -51,7 +51,7 @@ VALUE wrap(T *handler,VALUE klass)\
 	{\
 		if(NIL_P(klass))\
 			return Qnil;\
-		handler->SetClientObject(rcd = new RubyClientData(wrap((void*)handler,klass)));\
+		handler->SetClientObject(rcd = new RubyClientData(wrapPtr((void*)handler,klass)));\
 	}\
 	if(rcd)\
 		return rcd->mRuby;\

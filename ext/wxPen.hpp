@@ -23,9 +23,9 @@ template <>
 VALUE wrap< wxPenStyle >(const wxPenStyle &style );
 
 template <>
-wxPen* wrap< wxPen* >(const VALUE &vbitmap);
+wxPen* unwrap< wxPen* >(const VALUE &vbitmap);
 
 template <>
-wxPen wrap< wxPen >(const VALUE &vbitmap);
+wxPen unwrap< wxPen >(const VALUE &vbitmap);
 
 #endif /* WXPEN_HPP_ */

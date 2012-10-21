@@ -18,25 +18,25 @@
 
 #if wxUSE_IMAGE
 
-#define _self wrap<wxImage*>(self)
+#define _self unwrap<wxImage*>(self)
 
 VALUE rb_cWXImage;
 
 template <>
-wxImage* wrap< wxImage* >(const VALUE &vimage)
+wxImage* unwrap< wxImage* >(const VALUE &vimage)
 {
 	if(rb_obj_is_kind_of(vimage,rb_cWXImage))
 		return unwrapPtr<wxImage>(vimage, rb_cWXImage);
 	if(is_wrapable<wxSize>(vimage))
-		return new wxImage(wrap<wxSize>(vimage));
+		return new wxImage(unwrap<wxSize>(vimage));
 	return unwrapPtr<wxImage>(rb_class_new_instance(1,const_cast<VALUE*>(&vimage),rb_cWXImage), rb_cWXImage);
 }
 
 
 template <>
-wxImage wrap< wxImage >(const VALUE &vimage)
+wxImage unwrap< wxImage >(const VALUE &vimage)
 {
-	return *wrap<wxImage*>(vimage);
+	return *unwrap<wxImage*>(vimage);
 }
 
 
@@ -59,10 +59,10 @@ VALUE _load(int argc,VALUE *argv,VALUE self)
 	if(!rb_respond_to(name,rb_intern("read")))
 	{
 #endif
-		wxFileName dir(wxPathOnly(wrap<wxString>(name)));
+		wxFileName dir(wxPathOnly(unwrap<wxString>(name)));
 		dir.MakeAbsolute(wxGetCwd());
 
-		wxFileName file(wrap<wxString>(name));
+		wxFileName file(unwrap<wxString>(name));
 		file.MakeAbsolute(wxGetCwd());
 
 		if(dir.DirExists())
@@ -77,16 +77,16 @@ VALUE _load(int argc,VALUE *argv,VALUE self)
 
 		if(err)
 		{
-			rb_syserr_fail(err,wrap< char* >(name));
+			rb_syserr_fail(err,unwrap< char* >(name));
 			return Qfalse;
 		}
 
 		if(NIL_P(mime)){
 			result = _self->LoadFile(file.GetFullPath());
 		}else if(SYMBOL_P(mime) || FIXNUM_P(mime)){
-//			result = _self->LoadFile(file.GetFullPath(),wrap<wxBitmapType>(mime),NUM2INT(nr));
+//			result = _self->LoadFile(file.GetFullPath(),unwrap<wxBitmapType>(mime),NUM2INT(nr));
 		}else
-			result = _self->LoadFile(file.GetFullPath(),wrap<wxString>(mime),NUM2INT(nr));
+			result = _self->LoadFile(file.GetFullPath(),unwrap<wxString>(mime),NUM2INT(nr));
 #if wxUSE_STREAMS
 	}else{
 		RubyInputStream st(name);
@@ -94,9 +94,9 @@ VALUE _load(int argc,VALUE *argv,VALUE self)
 		if(NIL_P(mime)){
 			result = _self->LoadFile(st);
 		}else if(SYMBOL_P(mime) || FIXNUM_P(mime)){
-//			result = _self->LoadFile(st,wrap<wxBitmapType>(mime),NUM2INT(nr));
+//			result = _self->LoadFile(st,unwrap<wxBitmapType>(mime),NUM2INT(nr));
 		}else
-			result = _self->LoadFile(st,wrap<wxString>(mime),NUM2INT(nr));
+			result = _self->LoadFile(st,unwrap<wxString>(mime),NUM2INT(nr));
 	}
 #endif
 	return wrap(result);
@@ -120,7 +120,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "12",&width,&height,&arg1);
 	if(rb_obj_is_kind_of(width, rb_cWXSize))
 	{
-		_self->Create(wrap<wxSize>(width));
+		_self->Create(unwrap<wxSize>(width));
 	} else if(! rb_obj_is_kind_of(width, rb_cNumeric) || NIL_P(height) || !NIL_P(arg1))
 		_load(argc,argv,self);
 	else
@@ -133,8 +133,8 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 VALUE _initialize_copy(VALUE self, VALUE other)
 {
 	VALUE result = rb_call_super(1,&other);
-	_self->SetData(wrap<wxImage*>(other)->GetData());
-	_self->SetAlpha(wrap<wxImage*>(other)->GetAlpha());
+	_self->SetData(unwrap<wxImage*>(other)->GetData());
+	_self->SetAlpha(unwrap<wxImage*>(other)->GetAlpha());
 	return result;
 }
 
@@ -160,7 +160,7 @@ VALUE _get(int argc,VALUE *argv,VALUE self)
 	{
 		if(NIL_P(vy))
 		{
-			return wrap(_self->GetSubImage(wrap<wxRect>(vx)));
+			return wrap(_self->GetSubImage(unwrap<wxRect>(vx)));
 		}
 
 		int x,y;
@@ -196,10 +196,10 @@ VALUE _set(int argc,VALUE *argv,VALUE self)
 		if(y < 0 || x < 0 || x >= _self->GetWidth() || y >= _self->GetHeight())
 			return value;
 
-		wxColor *c = wrap<wxColor*>(value);
-		_self->SetRGB(x,y,c->Red(),c->Green(),c->Blue());
+		wxColor c(unwrap<wxColor>(value));
+		_self->SetRGB(x,y,c.Red(),c.Green(),c.Blue());
 		if(_self->HasAlpha())
-			_self->SetAlpha(x,y,c->Alpha());
+			_self->SetAlpha(x,y,c.Alpha());
 	}
 
 	return value;
@@ -255,7 +255,7 @@ VALUE _mal(VALUE self,VALUE obj)
 
 	}else
 	{
-		wxColor c(wrap<wxColor>(obj));
+		wxColor c(unwrap<wxColor>(obj));
 		for(int x = 0; x < result->GetWidth();++x)
 			for(int y = 0; y < result->GetHeight();++y)
 			{
@@ -294,8 +294,8 @@ VALUE _setMask(VALUE self,VALUE val)
 		_self->SetMask(false);
 	else
 	{
-		wxColor* c = wrap<wxColor*>(val);
-		_self->SetMaskColour(c->Red(),c->Green(),c->Blue());
+		wxColor c(wrap<wxColor>(val));
+		_self->SetMaskColour(c.Red(),c.Green(),c.Blue());
 	}
 	return val;
 }
@@ -309,10 +309,10 @@ VALUE _save(int argc,VALUE *argv,VALUE self)
 		return Qfalse;
 	int err = 0;
 
-	wxFileName dir(wxPathOnly(wrap<wxString>(name)));
+	wxFileName dir(wxPathOnly(unwrap<wxString>(name)));
 	dir.MakeAbsolute(wxGetCwd());
 
-	wxFileName file(wrap<wxString>(name));
+	wxFileName file(unwrap<wxString>(name));
 	file.MakeAbsolute(wxGetCwd());
 	if(dir.DirExists())
 	{
@@ -325,7 +325,7 @@ VALUE _save(int argc,VALUE *argv,VALUE self)
 
 	if(err)
 	{
-		rb_syserr_fail(err,wrap< char* >(name));
+		rb_syserr_fail(err,unwrap< char* >(name));
 		return Qfalse;
 	}
 
@@ -334,15 +334,15 @@ VALUE _save(int argc,VALUE *argv,VALUE self)
 	if(NIL_P(mime)){
 		result = _self->SaveFile(file.GetFullPath());
 	}else if(SYMBOL_P(mime) || FIXNUM_P(mime)){
-//		if(wxImage::FindHandler(wrap<wxBitmapType>(mime)))
-//			result = _self->SaveFile(file.GetFullPath(),wrap<wxBitmapType>(mime));
+//		if(wxImage::FindHandler(unwrap<wxBitmapType>(mime)))
+//			result = _self->SaveFile(file.GetFullPath(),unwrap<wxBitmapType>(mime));
 //		else
 //			rb_raise(rb_eArgError,"%s type not known",rb_id2name(SYM2ID(mime)));
 	}else{
-//	if(wxImage::FindHandlerMime(wrap<wxString>(mime)))
-		result = _self->SaveFile(file.GetFullPath(),wrap<wxString>(mime));
+//	if(wxImage::FindHandlerMime(unwrap<wxString>(mime)))
+		result = _self->SaveFile(file.GetFullPath(),unwrap<wxString>(mime));
 //		else
-//			rb_raise(rb_eArgError,"%s mime not known",wrap<wxString>(mime).c_str().AsChar());
+//			rb_raise(rb_eArgError,"%s mime not known",unwrap<wxString>(mime).c_str().AsChar());
 	}
 	return wrap(result);
 }
@@ -354,7 +354,7 @@ VALUE _to_image(VALUE self)
 }
 VALUE _to_bitmap(VALUE self)
 {
-	return wrap(wrap<wxBitmap*>(self));
+	return wrap(unwrap<wxBitmap*>(self));
 }
 
 }

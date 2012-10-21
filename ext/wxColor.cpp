@@ -7,7 +7,7 @@
 
 #include "wxColor.hpp"
 
-#define _self wrap<wxColor*>(self)
+#define _self unwrap<wxColor*>(self)
 
 VALUE rb_cWXColor;
 
@@ -33,16 +33,16 @@ bool is_wrapable< wxColor >(const VALUE &vcolor)
 }
 
 template <>
-wxColor* wrap< wxColor* >(const VALUE &vcolor)
+wxColor* unwrap< wxColor* >(const VALUE &vcolor)
 {
 	return unwrapPtr<wxColor>(vcolor, rb_cWXColor);
 }
 
 template <>
-wxColor wrap< wxColor >(const VALUE &vcolor)
+wxColor unwrap< wxColor >(const VALUE &vcolor)
 {
 	if(rb_obj_is_kind_of(vcolor, rb_cString)){
-		return wxColour(wrap<wxString>(vcolor));
+		return wxColour(unwrap<wxString>(vcolor));
 	}else if(!rb_obj_is_kind_of(vcolor, rb_cWXColor) &&
 		rb_respond_to(vcolor,rb_intern("red")) &&
 		rb_respond_to(vcolor,rb_intern("blue")) &&
@@ -70,7 +70,7 @@ wxColor wrap< wxColor >(const VALUE &vcolor)
 
 		return color;
 	}else{
-		return *wrap<wxColor*>(vcolor);
+		return *unwrap<wxColor*>(vcolor);
 	}
 
 

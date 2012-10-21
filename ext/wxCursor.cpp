@@ -9,24 +9,6 @@
 
 VALUE rb_cWXCursor;
 
-wxStockCursor toStockCursor(ID id)
-{
-	if(id == rb_intern("cross"))
-		return wxCURSOR_CROSS;
-	else if(id == rb_intern("hand"))
-	    return wxCURSOR_HAND;
-	else if(id == rb_intern("spraycan"))
-	    return wxCURSOR_SPRAYCAN;
-	else if(id == rb_intern("wait"))
-	    return wxCURSOR_WAIT;
-	else if(id == rb_intern("watch"))
-	    return wxCURSOR_WATCH;
-	else if(id == rb_intern("blank"))
-	    return wxCURSOR_BLANK;
-	return wxCURSOR_ARROW;
-}
-
-
 template <>
 VALUE wrap< wxCursor >(wxCursor *bitmap )
 {
@@ -36,29 +18,29 @@ VALUE wrap< wxCursor >(wxCursor *bitmap )
 }
 
 template <>
-wxCursor* wrap< wxCursor* >(const VALUE &vbitmap)
+wxCursor* unwrap< wxCursor* >(const VALUE &vbitmap)
 {
 	if(NIL_P(vbitmap))
 		return &wxNullCursor;
 	if(SYMBOL_P(vbitmap))
 	{
-		return new wxCursor(toStockCursor(SYM2ID(vbitmap)));
+		return new wxCursor(unwrapenum<wxStockCursor>(vbitmap));
 	}else if(rb_obj_is_kind_of(vbitmap,rb_cWXCursor))
 		return unwrapPtr<wxCursor>(vbitmap, rb_cWXCursor);
 	else
 #if wxUSE_IMAGE
-	return new wxCursor(wrap<wxImage>(vbitmap));
+	return new wxCursor(unwrap<wxImage>(vbitmap));
 #else
 	return &wxNullCursor;
 #endif
 }
 
 template <>
-wxCursor wrap< wxCursor >(const VALUE &vbitmap)
+wxCursor unwrap< wxCursor >(const VALUE &vbitmap)
 {
 	if(NIL_P(vbitmap))
 		return wxNullCursor;
-	return *wrap< wxCursor* >(vbitmap);
+	return *unwrap< wxCursor* >(vbitmap);
 }
 
 
@@ -69,7 +51,7 @@ VALUE _busy(int argc,VALUE *argv,VALUE self)
 	if(NIL_P(cursor))
 		cursor = ID2SYM(rb_intern("wait"));
 
-	wxBeginBusyCursor(wrap<wxCursor*>(cursor));
+	wxBeginBusyCursor(unwrap<wxCursor*>(cursor));
 	rb_yield(Qnil);
 	wxEndBusyCursor();
 	return self;
@@ -87,4 +69,35 @@ void Init_WXCursor(VALUE rb_mWX)
 
 	rb_define_module_function(rb_mWX,"busy",RUBY_METHOD_FUNC(_busy),-1);
 	rb_define_module_function(rb_mWX,"busy?",RUBY_METHOD_FUNC(_isBusy),0);
+
+
+	registerEnum<wxStockCursor>("WX::StockCursor")
+		.add(wxCURSOR_NONE,"none")
+		.add(wxCURSOR_ARROW,"arrow")
+		.add(wxCURSOR_RIGHT_ARROW,"right_arrow")
+		.add(wxCURSOR_BULLSEYE,"bullseye")
+		.add(wxCURSOR_CHAR,"char")
+		.add(wxCURSOR_CROSS,"cross")
+		.add(wxCURSOR_HAND,"hand")
+		.add(wxCURSOR_IBEAM,"ibeam")
+		.add(wxCURSOR_LEFT_BUTTON,"left_button")
+		.add(wxCURSOR_MAGNIFIER,"magnifier")
+		.add(wxCURSOR_MIDDLE_BUTTON,"middle_button")
+		.add(wxCURSOR_NO_ENTRY,"no_entry")
+		.add(wxCURSOR_PAINT_BRUSH,"paint_brush")
+		.add(wxCURSOR_PENCIL,"pencil")
+		.add(wxCURSOR_POINT_LEFT,"point_left")
+		.add(wxCURSOR_POINT_RIGHT,"point_right")
+		.add(wxCURSOR_QUESTION_ARROW,"question_arrow")
+		.add(wxCURSOR_RIGHT_BUTTON,"right_button")
+		.add(wxCURSOR_SIZENESW,"sizenesw")
+		.add(wxCURSOR_SIZENS,"sizens")
+		.add(wxCURSOR_SIZENWSE,"sizenwse")
+		.add(wxCURSOR_SIZEWE,"sizenewe")
+		.add(wxCURSOR_SIZING,"sizeneng")
+		.add(wxCURSOR_SPRAYCAN,"spraycan")
+		.add(wxCURSOR_WAIT,"wait")
+		.add(wxCURSOR_WATCH,"watch")
+		.add(wxCURSOR_BLANK,"blank");
+
 }

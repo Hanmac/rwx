@@ -17,12 +17,6 @@ void Init_WXChoiceBookCtrl(VALUE rb_mWX);
 #if wxUSE_CHOICEBOOK
 #include <wx/choicebk.h>
 
-template <>
-VALUE wrap< wxChoicebook >(wxChoicebook* window);
-
-template <>
-wxChoicebook* wrap< wxChoicebook* >(const VALUE &vwindow);
-
 #endif
 
 

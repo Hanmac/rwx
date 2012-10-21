@@ -10,7 +10,7 @@
 VALUE rb_cWXStaticLine;
 
 #if wxUSE_STATLINE
-#define _self wrap<wxStaticLine*>(self)
+#define _self unwrap<wxStaticLine*>(self)
 
 namespace RubyWX {
 namespace StaticLine {
@@ -21,7 +21,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 	_created = true;
 	rb_call_super(argc,argv);
 	return self;

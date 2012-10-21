@@ -11,7 +11,7 @@
 VALUE rb_cWXRadioButton;
 
 #if wxUSE_RADIOBTN
-#define _self wrap<wxRadioButton*>(self)
+#define _self unwrap<wxRadioButton*>(self)
 
 namespace RubyWX {
 namespace RadioButton {
@@ -34,7 +34,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			style |= wxRB_GROUP;
 	}
 
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,style);
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,style);
 	_created = true;
 	rb_call_super(argc,argv);
 	return self;

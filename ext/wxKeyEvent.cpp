@@ -10,7 +10,7 @@
 
 #include "wxEvtHandler.hpp"
 
-#define _self wrap<wxKeyEvent*>(self)
+#define _self unwrap<wxKeyEvent*>(self)
 
 VALUE rb_cWXKeyEvent;
 

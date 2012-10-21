@@ -10,7 +10,7 @@
 
 VALUE rb_cWXAnyButton;
 
-#define _self wrap<wxAnyButton*>(self)
+#define _self unwrap<wxAnyButton*>(self)
 
 namespace RubyWX {
 namespace AnyButton {
@@ -29,10 +29,7 @@ macro_attr(BitmapMargins,wxSize)
 
 singlereturn(GetBitmap)
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxAnyButton,self);
-}
+APP_PROTECT(wxAnyButton)
 
 }
 }

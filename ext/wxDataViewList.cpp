@@ -24,7 +24,7 @@ public:
 
 namespace RubyWX {
 namespace DataViewList {
-#define _self wrap<wxDataViewListCtrl*>(self)
+#define _self unwrap<wxDataViewListCtrl*>(self)
 //macro_attr(Path,wxString)
 
 APP_PROTECT(wxDataViewListCtrl)
@@ -33,7 +33,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 	_self->AssociateModel(new RubyDataViewListStore);
 	_created = true;
 	rb_call_super(argc,argv);
@@ -47,7 +47,7 @@ VALUE _AppendTextColumn(int argc,VALUE *argv,VALUE self)
 	VALUE label;
 	rb_scan_args(argc, argv, "11",&label);
 
-	_self->AppendTextColumn(wrap<wxString>(label));
+	_self->AppendTextColumn(unwrap<wxString>(label));
 	return self;
 }
 
@@ -56,7 +56,7 @@ VALUE _AppendToggleColumn(int argc,VALUE *argv,VALUE self)
 	VALUE label;
 	rb_scan_args(argc, argv, "11",&label);
 
-	_self->AppendToggleColumn(wrap<wxString>(label));
+	_self->AppendToggleColumn(unwrap<wxString>(label));
 	return self;
 }
 
@@ -65,7 +65,7 @@ VALUE _AppendIconTextColumn(int argc,VALUE *argv,VALUE self)
 	VALUE label;
 	rb_scan_args(argc, argv, "11",&label);
 
-	_self->AppendIconTextColumn(wrap<wxString>(label));
+	_self->AppendIconTextColumn(unwrap<wxString>(label));
 	return self;
 }
 
@@ -74,7 +74,7 @@ VALUE _AppendProgressColumn(int argc,VALUE *argv,VALUE self)
 	VALUE label;
 	rb_scan_args(argc, argv, "11",&label);
 
-	_self->AppendProgressColumn(wrap<wxString>(label));
+	_self->AppendProgressColumn(unwrap<wxString>(label));
 	return self;
 }
 
@@ -92,7 +92,7 @@ VALUE _AppendItem(int argc,VALUE *argv,VALUE self)
 
 	for(size_t i = 0; i < count;++i)
 		vecvar.push_back(unwrapVariant(RARRAY_PTR(arg)[i],_self->GetModel()->GetColumnType(i)));
-	_self->AppendItem(vecvar);
+	_self->AppendItem(vecvar,0);
 	return wrap(_self->GetModel(),_self->GetStore()->GetItem(_self->GetStore()->GetCount() - 1));
 }
 
@@ -109,7 +109,7 @@ VALUE _PrependItem(int argc,VALUE *argv,VALUE self)
 
 	for(size_t i = 0; i < count;++i)
 		vecvar.push_back(unwrapVariant(RARRAY_PTR(arg)[i],_self->GetModel()->GetColumnType(i)));
-	_self->PrependItem(vecvar);
+	_self->PrependItem(vecvar,0);
 	return wrap(_self->GetModel(),_self->GetStore()->GetItem(0));
 }
 
@@ -126,7 +126,7 @@ VALUE _InsertItem(int argc,VALUE *argv,VALUE self)
 
 	for(size_t i = 0; i < count;++i)
 		vecvar.push_back(unwrapVariant(RARRAY_PTR(arg)[i],_self->GetModel()->GetColumnType(i)));
-	_self->InsertItem(NUM2INT(index),vecvar);
+	_self->InsertItem(NUM2INT(index),vecvar,0);
 	return wrap(_self->GetModel(),_self->GetStore()->GetItem(index));
 }
 

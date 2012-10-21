@@ -9,7 +9,7 @@
 
 VALUE rb_cWXBitmapButton;
 #if wxUSE_BMPBUTTON
-#define _self wrap<wxBitmapButton*>(self)
+#define _self unwrap<wxBitmapButton*>(self)
 
 namespace RubyWX {
 namespace BitmapButton {
@@ -28,7 +28,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	}
 
 	if(!_created) {
-		_self->Create(wrap<wxWindow*>(parent),id,wxNullBitmap);
+		_self->Create(unwrap<wxWindow*>(parent),id,wxNullBitmap);
 		_created = true;
 	}
 

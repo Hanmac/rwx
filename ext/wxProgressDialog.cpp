@@ -9,7 +9,7 @@
 
 VALUE rb_cWXProgressDialog;
 #if wxUSE_PROGRESSDLG
-#define _self wrap<RubyProgressDialog*>(self)
+#define _self unwrap<RubyProgressDialog*>(self)
 
 #if wxUSE_TIMER
 void RubyProgressDialog::onTimer(wxTimerEvent &evt)
@@ -50,7 +50,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 	if(!NIL_P(parent))
-		_self->Reparent(wrap<wxWindow*>(parent));
+		_self->Reparent(unwrap<wxWindow*>(parent));
 	_created = true;
 	rb_call_super(argc,argv);
 #if wxUSE_TIMER
@@ -78,7 +78,7 @@ VALUE _update(int argc,VALUE *argv,VALUE self)
 	if(!_self->mTimer && NUM2INT(val) >= _self->GetRange())
 		_self->mTimer->Stop();
 #endif
-	return wrap(_self->Update(NUM2INT(val),wrap<wxString>(message)));
+	return wrap(_self->Update(NUM2INT(val),unwrap<wxString>(message)));
 }
 
 VALUE _pulse(int argc,VALUE *argv,VALUE self)
@@ -86,7 +86,7 @@ VALUE _pulse(int argc,VALUE *argv,VALUE self)
 	VALUE message;
 	rb_scan_args(argc, argv, "01",&message);
 
-	return wrap(_self->Pulse(wrap<wxString>(message)));
+	return wrap(_self->Pulse(unwrap<wxString>(message)));
 }
 
 #endif

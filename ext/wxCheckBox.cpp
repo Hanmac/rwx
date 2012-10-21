@@ -11,7 +11,7 @@
 VALUE rb_cWXCheckBox;
 
 #if wxUSE_CHECKBOX
-#define _self wrap<wxCheckBox*>(self)
+#define _self unwrap<wxCheckBox*>(self)
 
 namespace RubyWX {
 namespace CheckBox {
@@ -32,7 +32,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			style = NUM2INT(temp);
 	}
 
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,style);
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,style);
 	_created = true;
 	rb_call_super(argc,argv);
 	return self;

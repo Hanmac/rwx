@@ -14,7 +14,7 @@ VALUE rb_cWXAuiToolBar;
 #undef wxUSE_AUI
 
 #if wxUSE_AUI
-#define _self wrap<wxAuiToolBar*>(self)
+#define _self unwrap<wxAuiToolBar*>(self)
 
 namespace RubyWX {
 namespace AuiToolBar {
@@ -25,7 +25,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 	_created = true;
 	rb_call_super(argc,argv);
 	return self;

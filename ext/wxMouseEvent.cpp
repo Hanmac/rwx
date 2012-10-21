@@ -10,7 +10,7 @@
 
 #include "wxEvtHandler.hpp"
 
-#define _self wrap<wxMouseEvent*>(self)
+#define _self unwrap<wxMouseEvent*>(self)
 
 VALUE rb_cWXMouseEvent;
 

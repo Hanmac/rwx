@@ -29,7 +29,7 @@ void registerID(const char *name,wxWindowID id);
 template <>
 VALUE wrap< wxToolTip >(wxToolTip* window);
 template <>
-wxToolTip* wrap< wxToolTip* >(const VALUE &vwindow);
+wxToolTip* unwrap< wxToolTip* >(const VALUE &vwindow);
 
 #endif
 #endif /* WXWINDOW_HPP_ */

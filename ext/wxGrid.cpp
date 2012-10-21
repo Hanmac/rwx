@@ -18,7 +18,7 @@
 VALUE rb_cWXGrid, rb_cWXGridEvent;
 #if wxUSE_GRID
 
-#define _self wrap<wxGrid*>(self)
+#define _self unwrap<wxGrid*>(self)
 
 namespace RubyWX {
 namespace Grid {
@@ -67,10 +67,7 @@ singlereturn(IsSelection)
 
 singlefunc(AutoSize)
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxGrid,self);
-}
+APP_PROTECT(wxGrid)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -80,12 +77,12 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	if(!_created) {
 #if wxUSE_XRC
 		if(rb_obj_is_kind_of(name,rb_cString)){
-			wxXmlResource::Get()->LoadPanel(_self,wrap<wxWindow*>(parent),wrap<wxString>(name));
-			rb_raise(rb_eNameError,"Named Grid '%s' is not found.",wrap<char*>(name));
+			wxXmlResource::Get()->LoadPanel(_self,unwrap<wxWindow*>(parent),unwrap<wxString>(name));
+			rb_raise(rb_eNameError,"Named Grid '%s' is not found.",unwrap<char*>(name));
 		}
 		else
 #endif
-		_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 		_self->SetMargins(0,0);
 		_created = true;
 	}
@@ -209,7 +206,7 @@ void Init_WXGrid(VALUE rb_mWX)
 	registerEventType("grid_col_move", wxEVT_GRID_COL_MOVE, rb_cWXGridEvent );
 	registerEventType("grid_col_sort", wxEVT_GRID_COL_SORT, rb_cWXGridEvent );
 
-
+	registerInfo<wxGrid>(rb_cWXGrid);
 
 #endif
 }

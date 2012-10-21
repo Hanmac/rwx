@@ -14,24 +14,24 @@ VALUE rb_mWXPropertyGridInterface;
 #if wxUSE_PROPGRID
 // i need this because if i try to access the interface directly it fails
 template <>
-wxPropertyGridInterface* wrap< wxPropertyGridInterface* >(const VALUE &obj)
+wxPropertyGridInterface* unwrap< wxPropertyGridInterface* >(const VALUE &obj)
 {
  if(rb_obj_is_kind_of(obj,rb_cWXPropertyGrid))
-	 return wrap<wxPropertyGrid*>(obj);
+	 return unwrap<wxPropertyGrid*>(obj);
  if(rb_obj_is_kind_of(obj,rb_cWXPropertyGridManager))
-	 return wrap<wxPropertyGridManager*>(obj);
+	 return unwrap<wxPropertyGridManager*>(obj);
 
  return NULL;
 }
 
-#define _self wrap<wxPropertyGridInterface*>(self)
+#define _self unwrap<wxPropertyGridInterface*>(self)
 
 namespace RubyWX {
 namespace PropertyGridInterface {
 
 VALUE _append(VALUE self,VALUE val)
 {
-	return wrap(_self->Append(wrap<wxPGProperty*>(val)));
+	return wrap(_self->Append(unwrap<wxPGProperty*>(val)));
 }
 
 }

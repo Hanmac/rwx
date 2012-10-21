@@ -12,7 +12,7 @@
 VALUE rb_cWXChoice;
 
 #if wxUSE_CHOICE
-#define _self wrap<wxChoice*>(self)
+#define _self unwrap<wxChoice*>(self)
 
 namespace RubyWX {
 namespace Choice {
@@ -23,14 +23,14 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 	_created = true;
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		VALUE temp;
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("items")))))
-			_self->Set(wrap<wxArrayString>(temp));
+			_self->Set(unwrap<wxArrayString>(temp));
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("select")))))
 					_self->SetSelection(NUM2INT(temp));
 

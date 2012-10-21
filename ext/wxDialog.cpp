@@ -10,7 +10,7 @@
 
 VALUE rb_cWXDialog;
 
-#define _self wrap<wxDialog*>(self)
+#define _self unwrap<wxDialog*>(self)
 
 namespace RubyWX {
 namespace Dialog {
@@ -32,8 +32,8 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	if(!_created) {
 #if wxUSE_XRC
 		if(rb_obj_is_kind_of(name,rb_cString)){
-			if(!(wxXmlResource::Get()->LoadDialog(_self,wrap<wxWindow*>(parent),wrap<wxString>(name))))
-				rb_raise(rb_eNameError,"Named Dialog '%s' is not found.",wrap<char*>(name));
+			if(!(wxXmlResource::Get()->LoadDialog(_self,unwrap<wxWindow*>(parent),unwrap<wxString>(name))))
+				rb_raise(rb_eNameError,"Named Dialog '%s' is not found.",unwrap<char*>(name));
 
 		}
 		else
@@ -46,7 +46,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 					style = NUM2INT(temp);
 			}
 
-			_self->Create(wrap<wxWindow*>(parent),wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,style);
+			_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,style);
 		}
 		_created = true;
 	}
@@ -100,7 +100,7 @@ VALUE _CreateButtonSizer(int argc,VALUE *argv,VALUE self)
 
 VALUE _CreateTextSizer(VALUE self,VALUE text)
 {
-	return wrap(_self->CreateTextSizer(wrap<wxString>(text)));
+	return wrap(_self->CreateTextSizer(unwrap<wxString>(text)));
 }
 #endif
 

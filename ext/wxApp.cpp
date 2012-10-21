@@ -8,14 +8,14 @@
 #include "wxApp.hpp"
 #include "wxPropertyGrid.hpp"
 
-#define _self wrap<wxApp*>(self)
+#define _self unwrap<wxApp*>(self)
 VALUE rb_cWXApp;
 
 bool ruby_app_inited;
 
 RubyApp::RubyApp(VALUE klass)
 {
-	mRuby = wrap(this,klass);
+	mRuby = wrapPtr(this,klass);
 }
 bool RubyApp::OnInit()
 {

@@ -10,7 +10,7 @@
 #include "wxToolBarBase.hpp"
 #include "wxToolBarTool.hpp"
 
-#define _self wrap<wxToolBarToolBase*>(self)
+#define _self unwrap<wxToolBarToolBase*>(self)
 
 VALUE rb_cWXToolBarTool;
 

@@ -12,7 +12,7 @@
 
 VALUE rb_cWXProperty;
 #if wxUSE_PROPGRID
-#define _self wrap<wxPGProperty*>(self)
+#define _self unwrap<wxPGProperty*>(self)
 
 namespace RubyWX {
 namespace Property {
@@ -46,18 +46,18 @@ VALUE _setDefaultValue(VALUE self,VALUE val)
 
 VALUE _setValueImage(VALUE self,VALUE val)
 {
-	_self->SetValueImage(*wrap<wxBitmap*>(val));
+	_self->SetValueImage(*unwrap<wxBitmap*>(val));
 	return val;
 }
 
 VALUE _getAttribute(VALUE self,VALUE name)
 {
-	return wrap(_self->GetAttribute(wrap<wxString>(name)));
+	return wrap(_self->GetAttribute(unwrap<wxString>(name)));
 }
 
 VALUE _setAttribute(VALUE self,VALUE name,VALUE val)
 {
-	_self->SetAttribute(wrap<wxString>(name),unwrapVariant(val,_self->GetAttribute(wrap<wxString>(name)).GetType()));
+	_self->SetAttribute(unwrap<wxString>(name),unwrapVariant(val,_self->GetAttribute(unwrap<wxString>(name)).GetType()));
 	return val;
 }
 

@@ -15,6 +15,13 @@
 VALUE rb_cWXGridCellRenderer;
 
 #if wxUSE_GRID
+
+template <>
+VALUE wrap< wxGridCellRenderer >(wxGridCellRenderer* window)
+{
+	return wrapPtr(window,rb_cWXGridCellRenderer);
+}
+
 class RubyGridCellRenderer : public wxGridCellRenderer
 {
 public :
@@ -26,7 +33,7 @@ public :
 
 	wxSize GetBestSize(wxGrid& grid, wxGridCellAttr& attr, wxDC& dc, int row, int col)
 	{
-		return wrap<wxSize>(rb_funcall(mRuby,rb_intern("best_size"),5,wrap(&grid),wrap(&attr),wrap(&dc),INT2NUM(row),INT2NUM(col)));
+		return unwrap<wxSize>(rb_funcall(mRuby,rb_intern("best_size"),5,wrap(&grid),wrap(&attr),wrap(&dc),INT2NUM(row),INT2NUM(col)));
 	}
 	wxGridCellRenderer *Clone() const
 	{
@@ -59,7 +66,7 @@ public :\
 		if(!rubycall && rb_funcall(rb_obj_method(self,ID2SYM(rb_intern("best_size"))),rb_intern("owner"),0) != klass)\
 		{\
 			rubycall = true;\
-			wxSize size(wrap<wxSize>(rb_funcall(self,rb_intern("best_size"),7,wrap(&grid),wrap(&attr),wrap(&dc),INT2NUM(row),INT2NUM(col))));\
+			wxSize size(unwrap<wxSize>(rb_funcall(self,rb_intern("best_size"),7,wrap(&grid),wrap(&attr),wrap(&dc),INT2NUM(row),INT2NUM(col))));\
 			rubycall = false;\
 			return size;\
 		}else\
@@ -86,11 +93,7 @@ namespace RubyWX {
 namespace GridCellRenderer {
 //macro_attr(Path,wxString)
 
-
-VALUE _alloc(VALUE self)
-{
-	return wrap(new RubyGridCellRenderer,self);
-}
+APP_PROTECT(RubyGridCellRenderer);
 
 }
 }
@@ -103,6 +106,8 @@ void Init_WXGridCellRenderer(VALUE rb_mWX)
 	using namespace RubyWX::GridCellRenderer;
 	rb_cWXGridCellRenderer = rb_define_class_under(rb_mWX,"GridCellRenderer",rb_cObject);
 	rb_define_alloc_func(rb_cWXGridCellRenderer,_alloc);
+
+	registerType<wxGridCellRenderer>(rb_cWXGridCellRenderer);
 #endif
 }
 

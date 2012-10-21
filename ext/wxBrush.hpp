@@ -14,25 +14,6 @@
 extern VALUE rb_cWXBrush;
 void Init_WXBrush(VALUE rb_mWX);
 
-//template <>
-//inline VALUE wrap< wxBrush >(wxBrush *bitmap )
-//{
-//	if(bitmap->IsOk())
-//		return wrap(bitmap,rb_cWXBrush);
-//	return Qnil;
-//}
-//
-//template <>
-//inline VALUE wrap< wxBrush >(const wxBrush &bitmap )
-//{
-//	if(bitmap.IsOk())
-//		return wrap(const_cast<wxBrush*>(&bitmap),rb_cWXBrush);
-//	return Qnil;
-//}
-
-template <>
-VALUE wrap< wxBrushStyle >(const wxBrushStyle &style );
-
 template <>
 wxBrush* nullPtr<wxBrush*>();
 template <>

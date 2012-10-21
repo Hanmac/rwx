@@ -7,10 +7,11 @@
 
 #include "wxFontDialog.hpp"
 #include "wxFont.hpp"
+#include "wxColor.hpp"
 
 VALUE rb_cWXFontDialog;
 #if wxUSE_FONTDLG
-#define _self wrap<wxFontDialog*>(self)
+#define _self unwrap<wxFontDialog*>(self)
 
 namespace RubyWX {
 namespace FontDialog {
@@ -22,20 +23,50 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 
-	_self->Create(wrap<wxWindow*>(parent));
+	_self->Create(unwrap<wxWindow*>(parent));
 	_created = true;
 	rb_call_super(argc,argv);
 	return self;
 }
 
-macro_attr_pre(InitialFont,GetFontData,wxFont)
-macro_attr_pre(ChosenFont,GetFontData,wxFont)
+VALUE _getColour(VALUE self)
+{
+	return wrap(_self->GetFontData().GetColour());
+}
+
+VALUE _setColour(VALUE self,VALUE val)
+{
+	_self->GetFontData().SetColour(unwrap<wxColour>(val));
+	return val;
+}
+
+VALUE _getInitialFont(VALUE self)
+{
+	return wrap(_self->GetFontData().GetInitialFont());
+}
+
+VALUE _setInitialFont(VALUE self,VALUE val)
+{
+	_self->GetFontData().SetInitialFont(unwrap<wxFont>(val));
+	return val;
+}
+
+VALUE _getChosenFont(VALUE self)
+{
+	return wrap(_self->GetFontData().GetChosenFont());
+}
+
+VALUE _setChosenFont(VALUE self,VALUE val)
+{
+	_self->GetFontData().SetChosenFont(unwrap<wxFont>(val));
+	return val;
+}
 
 VALUE _getUserFont(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,caption;
 	rb_scan_args(argc, argv, "11",&parent,&caption);
-	wxFont col = wxGetFontFromUser(wrap<wxWindow*>(parent),wxNullFont,wrap<wxString>(caption));
+	wxFont col = wxGetFontFromUser(unwrap<wxWindow*>(parent),wxNullFont,unwrap<wxString>(caption));
 	return col.IsOk() ? wrap(col) : Qnil;
 }
 
@@ -54,6 +85,8 @@ void Init_WXFontDialog(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXFontDialog,"initial_font",_getInitialFont,_setInitialFont);
 	rb_define_attr_method(rb_cWXFontDialog,"chosen_font",_getChosenFont,_setChosenFont);
+
+	rb_define_attr_method(rb_cWXFontDialog,"colour",_getColour,_setColour);
 
 	rb_define_module_function(rb_mWX,"font_dialog",RUBY_METHOD_FUNC(_getUserFont),-1);
 

@@ -7,7 +7,7 @@
 
 #include "wxSizer.hpp"
 
-#define _self wrap<wxBoxSizer*>(self)
+#define _self unwrap<wxBoxSizer*>(self)
 
 VALUE rb_cWXBoxSizer;
 
@@ -16,7 +16,7 @@ namespace BoxSizer {
 
 VALUE _alloc(VALUE self)
 {
-	return wrap(new wxBoxSizer(wxHORIZONTAL),self);
+	return wrapPtr(new wxBoxSizer(wxHORIZONTAL),self);
 }
 
 VALUE _getOrientation(VALUE self)

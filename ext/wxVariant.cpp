@@ -33,19 +33,19 @@ wxVariant unwrapVariant(VALUE obj,const wxString &type)
 {
 	wxVariant result;
 	if(type == "string")
-		result = wrap<wxString>(obj);
+		result = unwrap<wxString>(obj);
 	else if(type == "arrstring")
-		result = wrap<wxArrayString>(obj);
+		result = unwrap<wxArrayString>(obj);
 	else if(type == "bool")
-		result = wrap<bool>(obj);
+		result = RTEST(obj);
 	else if(type == "long")
 		result = NUM2LONG(obj);
 	else if(type == "wxFont")
-		result = wxVariant(wrap<wxFont>(obj));
+		result = wxVariant(unwrap<wxFont>(obj));
 #if wxUSE_DATAVIEWCTRL
 	else if(type == "wxDataViewIconText")
 	{
-		result = wxVariant(wxDataViewIconText(wxEmptyString,wrap<wxIcon>(obj)));
+		result = wxVariant(wxDataViewIconText(wxEmptyString,unwrap<wxIcon>(obj)));
 	}
 #endif
 	else

@@ -10,85 +10,51 @@
 #include "wxSize.hpp"
 #include "wxPoint.hpp"
 
-#define _self wrap<wxAuiPaneInfo*>(self)
+#define _self unwrap<wxAuiPaneInfo*>(self)
 
 VALUE rb_cWXAuiPane;
 
+template <>
+VALUE wrap< wxAuiPaneInfo >(wxAuiPaneInfo *vinfo)
+{
+	return wrapPtr(vinfo,rb_cWXAuiPane);
+}
+
+template <>
+wxAuiPaneInfo unwrap< wxAuiPaneInfo >(const VALUE &vinfo)
+{
+	if(NIL_P(vinfo))
+		return wxAuiPaneInfo();
+	else if(rb_obj_is_kind_of(vinfo,rb_cHash))
+	{
+		wxAuiPaneInfo info;
+		VALUE temp;
+		if(!NIL_P(temp=rb_hash_aref(vinfo,ID2SYM(rb_intern("caption")))))
+			info.caption = unwrap<wxString>(temp);
+		if(!NIL_P(temp=rb_hash_aref(vinfo,ID2SYM(rb_intern("name")))))
+			info.name = unwrap<wxString>(temp);
+		if(!NIL_P(temp=rb_hash_aref(vinfo,ID2SYM(rb_intern("icon")))))
+			info.icon = unwrap<wxBitmap>(temp);
+		if(!NIL_P(temp=rb_hash_aref(vinfo,ID2SYM(rb_intern("direction")))))
+			info.Direction(unwrapenum< wxAuiManagerDock >(temp));
+		return info;
+	}else
+		return *unwrapPtr<wxAuiPaneInfo>(vinfo, rb_cWXAuiPane);
+}
 
 namespace RubyWX {
 namespace AuiPane {
 
 APP_PROTECT(wxAuiPaneInfo)
 
-VALUE _getCaption(VALUE self)
-{
-	return wrap(_self->caption);
-}
+macro_attr_prop(caption,wxString)
+macro_attr_prop(name,wxString)
+macro_attr_prop(icon,wxIcon)
 
-VALUE _setCaption(VALUE self,VALUE val)
-{
-	_self->caption = wrap<wxString>(val);
-	return val;
-}
+macro_attr_prop(floating_pos,wxPoint)
+macro_attr_prop(floating_size,wxSize)
 
-VALUE _getName(VALUE self)
-{
-	return wrap(_self->name);
-}
-
-VALUE _setName(VALUE self,VALUE val)
-{
-	_self->name = wrap<wxString>(val);
-	return val;
-}
-
-
-VALUE _getIcon(VALUE self)
-{
-	return wrap(_self->icon);
-}
-
-VALUE _setIcon(VALUE self,VALUE val)
-{
-	_self->icon = wrap<wxBitmap>(val);
-	return val;
-}
-
-VALUE _getDirection(VALUE self)
-{
-	return wrap<wxAuiManagerDock>(_self->dock_direction);
-}
-
-VALUE _setDirection(VALUE self,VALUE val)
-{
-	_self->dock_direction = wrap< wxAuiManagerDock >(val);
-	return val;
-}
-
-
-
-VALUE _getFloatingPos(VALUE self)
-{
-	return wrap(_self->floating_pos);
-}
-
-VALUE _setFloatingPos(VALUE self,VALUE val)
-{
-	_self->floating_pos = wrap<wxPoint>(val);
-	return val;
-}
-
-
-VALUE _getFloatingSize(VALUE self)
-{
-	return wrap(_self->floating_size);
-}
-
-VALUE _setFloatingSize(VALUE self,VALUE val)
-{
-	_self->floating_size = wrap<wxSize>(val);
-	return val;
-}
+macro_attr_prop_enum(dock_direction,wxAuiManagerDock)
 
 }
 }
@@ -101,13 +67,25 @@ void Init_WXAuiPane(VALUE rb_mWX)
 	rb_define_alloc_func(rb_cWXAuiPane,_alloc);
 	//rb_define_method(rb_cWXAuiManager,"[]=",RUBY_METHOD_FUNC(_set),2);
 
-	rb_define_attr_method(rb_cWXAuiPane,"caption",_getCaption,_setCaption);
-	rb_define_attr_method(rb_cWXAuiPane,"name",_getName,_setName);
-	rb_define_attr_method(rb_cWXAuiPane,"icon",_getIcon,_setIcon);
-	rb_define_attr_method(rb_cWXAuiPane,"direction",_getDirection,_setDirection);
+	rb_define_attr_method(rb_cWXAuiPane,"caption",_get_caption,_set_caption);
+	rb_define_attr_method(rb_cWXAuiPane,"name",_get_name,_set_name);
+	rb_define_attr_method(rb_cWXAuiPane,"icon",_get_icon,_set_icon);
+	rb_define_attr_method(rb_cWXAuiPane,"direction",_get_dock_direction,_set_dock_direction);
 
-	rb_define_attr_method(rb_cWXAuiPane,"floating_pos",_getFloatingPos,_setFloatingPos);
-	rb_define_attr_method(rb_cWXAuiPane,"floating_size",_getFloatingSize,_setFloatingSize);
+	rb_define_attr_method(rb_cWXAuiPane,"floating_pos",_get_floating_pos,_set_floating_pos);
+	rb_define_attr_method(rb_cWXAuiPane,"floating_size",_get_floating_size,_set_floating_size);
+
+
+	registerType<wxAuiPaneInfo>(rb_cWXAuiPane);
+
+	registerEnum<wxAuiManagerDock>("WX::AuiManagerDock")
+		.add(wxAUI_DOCK_NONE,"none")
+		.add(wxAUI_DOCK_TOP,"top")
+		.add(wxAUI_DOCK_RIGHT,"right")
+		.add(wxAUI_DOCK_BOTTOM,"bottom")
+		.add(wxAUI_DOCK_LEFT,"left")
+		.add(wxAUI_DOCK_CENTER,"center");
+
 #endif
 
 }

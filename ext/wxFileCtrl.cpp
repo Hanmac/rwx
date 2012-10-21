@@ -10,7 +10,7 @@
 VALUE rb_cWXFileCtrl;
 
 #if wxUSE_FILECTRL
-#define _self wrap<wxFileCtrl*>(self)
+#define _self unwrap<wxFileCtrl*>(self)
 
 namespace RubyWX {
 namespace FileCtrl {
@@ -21,7 +21,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 	rb_call_super(argc,argv);
 	return self;
 }

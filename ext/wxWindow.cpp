@@ -16,7 +16,7 @@
 #include "wxCursor.hpp"
 
 #include "wxAui.hpp"
-#define _self wrap<wxWindow*>(self)
+#define _self unwrap<wxWindow*>(self)
 
 VALUE rb_cWXWindow;
 
@@ -83,11 +83,11 @@ VALUE wrap< wxToolTip >(wxToolTip* window)
 }
 
 template <>
-wxToolTip* wrap< wxToolTip* >(const VALUE &vwindow)
+wxToolTip* unwrap< wxToolTip* >(const VALUE &vwindow)
 {
 	if(NIL_P(vwindow))
 		return NULL;
-	return new wxToolTip(wrap<wxString>(vwindow));
+	return new wxToolTip(unwrap<wxString>(vwindow));
 }
 #endif
 
@@ -180,20 +180,20 @@ singlereturn(PageDown)
 
 VALUE _SetParent(VALUE self,VALUE parent)
 {
-	_self->Reparent(wrap<wxWindow*>(parent));
+	_self->Reparent(unwrap<wxWindow*>(parent));
 	return parent;
 }
 
 
 VALUE _SetBackgroundColour(VALUE self,VALUE val)
 {
-	_self->SetBackgroundColour(wrap<wxColor>(val));
+	_self->SetBackgroundColour(unwrap<wxColor>(val));
 	return val;
 }
 
 VALUE _SetForegroundColour(VALUE self,VALUE val)
 {
-	_self->SetForegroundColour(wrap<wxColor>(val));
+	_self->SetForegroundColour(unwrap<wxColor>(val));
 	return val;
 }
 
@@ -205,7 +205,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 
 	if(!_created) {
-		_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 		_created = true;
 	}
 
@@ -216,21 +216,21 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			_self->SetExtraStyle(NUM2INT(temp));
 
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("name")))))
-			_self->SetName(wrap<wxString>(temp));
+			_self->SetName(unwrap<wxString>(temp));
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("label")))))
-			_self->SetLabel(wrap<wxString>(temp));
+			_self->SetLabel(unwrap<wxString>(temp));
 #if wxUSE_HELP
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("help_text")))))
-			_self->SetHelpText(wrap<wxString>(temp));
+			_self->SetHelpText(unwrap<wxString>(temp));
 #endif // wxUSE_HELP
 
 
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("id")))))
 			_self->SetId(unwrapID(temp));
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("size")))))
-			_self->SetSize(wrap<wxSize>(temp));
+			_self->SetSize(unwrap<wxSize>(temp));
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("position")))))
-			_self->SetPosition(wrap<wxPoint>(temp));
+			_self->SetPosition(unwrap<wxPoint>(temp));
 
 		if(RTEST(rb_hash_aref(hash,ID2SYM(rb_intern("disabled")))))
 			_self->Disable();
@@ -304,10 +304,10 @@ VALUE _popupmenu(int argc,VALUE *argv,VALUE self)
 	if(NIL_P(pos))
 		cpoint = wxDefaultPosition;
 	else
-		cpoint = wrap<wxPoint>(pos);
+		cpoint = unwrap<wxPoint>(pos);
 
 
-	return wrap(_self->PopupMenu(wrap<wxMenu*>(menu),cpoint));
+	return wrap(_self->PopupMenu(unwrap<wxMenu*>(menu),cpoint));
 }
 #endif
 
@@ -346,12 +346,12 @@ VALUE _GetMousePosition(VALUE self)
 
 VALUE _ClientToScreen(VALUE self,VALUE point)
 {
-	return wrap(_self->ClientToScreen(wrap<wxPoint>(point)));
+	return wrap(_self->ClientToScreen(unwrap<wxPoint>(point)));
 }
 
 VALUE _ScreenToClient(VALUE self,VALUE point)
 {
-	return wrap(_self->ScreenToClient(wrap<wxPoint>(point)));
+	return wrap(_self->ScreenToClient(unwrap<wxPoint>(point)));
 }
 
 }

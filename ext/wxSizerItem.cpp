@@ -9,7 +9,7 @@
 #include "wxSizer.hpp"
 #include "wxSizerItem.hpp"
 
-#define _self wrap<wxSizerItem*>(self)
+#define _self unwrap<wxSizerItem*>(self)
 
 VALUE rb_cWXSizerItem;
 

@@ -12,7 +12,7 @@
 VALUE rb_cWXSpinCtrl;
 
 #if wxUSE_SPINCTRL
-#define _self wrap<wxSpinCtrl*>(self)
+#define _self unwrap<wxSpinCtrl*>(self)
 
 namespace RubyWX {
 namespace SpinCtrl {
@@ -40,7 +40,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 	_created = true;
 
 

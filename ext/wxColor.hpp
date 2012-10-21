@@ -21,9 +21,9 @@ template <>
 bool is_wrapable< wxColor >(const VALUE &vcolor);
 
 template <>
-wxColor* wrap< wxColor* >(const VALUE &vcolor);
+wxColor* unwrap< wxColor* >(const VALUE &vcolor);
 
 template <>
-wxColor wrap< wxColor >(const VALUE &vcolor);
+wxColor unwrap< wxColor >(const VALUE &vcolor);
 
 #endif /* WXCOLOR_HPP_ */

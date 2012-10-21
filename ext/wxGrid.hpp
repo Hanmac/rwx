@@ -17,19 +17,6 @@ void Init_WXGrid(VALUE rb_mWX);
 #include <wx/grid.h>
 
 template <>
-inline VALUE wrap< wxGrid >(wxGrid* window)
-{
-	return wrap(window,rb_cWXGrid);
-}
-
-
-template <>
-inline wxGrid* wrap< wxGrid* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxGrid>(vwindow, rb_cWXGrid);
-}
-
-template <>
 inline VALUE wrap< wxGridCellCoords >(const wxGridCellCoords& coord)
 {
 	VALUE result = rb_ary_new();

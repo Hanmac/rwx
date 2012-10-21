@@ -5,21 +5,26 @@
  *      Author: hanmac
  */
 
+#include "wxApp.hpp"
 #include "wxGridCellAttr.hpp"
 
 VALUE rb_cWXGridCellAttr;
 
 #if wxUSE_GRID
 
+template <>
+VALUE wrap< wxGridCellAttr >(wxGridCellAttr* window)
+{
+	return wrapPtr(window,rb_cWXGridCellAttr);
+}
+
+
 namespace RubyWX {
 namespace GridCellAttr {
 //macro_attr(Path,wxString)
 
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxGridCellAttr(),self);
-}
+APP_PROTECT(wxGridCellAttr)
 
 }
 }
@@ -32,5 +37,7 @@ void Init_WXGridCellAttr(VALUE rb_mWX)
 	using namespace RubyWX::GridCellAttr;
 	rb_cWXGridCellAttr = rb_define_class_under(rb_mWX,"GridCellAttr",rb_cObject);
 	rb_define_alloc_func(rb_cWXGridCellAttr,_alloc);
+
+	registerType<wxGridCellAttr>(rb_cWXGridCellAttr);
 #endif
 }

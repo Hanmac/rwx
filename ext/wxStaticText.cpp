@@ -11,7 +11,7 @@
 VALUE rb_cWXStaticText;
 
 #if wxUSE_STATLINE
-#define _self wrap<wxStaticText*>(self)
+#define _self unwrap<wxStaticText*>(self)
 
 namespace RubyWX {
 namespace StaticText {
@@ -22,7 +22,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY,wxEmptyString);
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxEmptyString);
 	_created = true;
 	rb_call_super(argc,argv);
 	return self;

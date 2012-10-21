@@ -12,7 +12,7 @@
 
 VALUE rb_cWXCategoryProperty;
 #if wxUSE_PROPGRID
-#define _self wrap<wxPropertyCategory*>(self)
+#define _self unwrap<wxPropertyCategory*>(self)
 
 namespace RubyWX {
 namespace CategoryProperty {

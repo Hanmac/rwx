@@ -11,7 +11,7 @@
 VALUE rb_cWXAuiManager;
 
 #if wxUSE_AUI
-#define _self wrap<wxAuiManager*>(self)
+#define _self unwrap<wxAuiManager*>(self)
 
 namespace RubyWX {
 namespace AuiManager {
@@ -19,18 +19,18 @@ namespace AuiManager {
 VALUE _get(VALUE self,VALUE key)
 {
 	if(rb_obj_is_kind_of(key,rb_cWXWindow))
-		return wrap(_self->GetPane(wrap<wxWindow*>(key)));
+		return wrap(_self->GetPane(unwrap<wxWindow*>(key)));
 	else
-		return wrap(_self->GetPane(wrap<wxString>(key)));
+		return wrap(_self->GetPane(unwrap<wxString>(key)));
 }
 
 VALUE _set(VALUE self,VALUE key,VALUE val)
 {
-	wxAuiPaneInfo inf(_self->GetPane(wrap<wxString>(key)));
+	wxAuiPaneInfo inf(_self->GetPane(unwrap<wxString>(key)));
 	if(inf.IsOk())
-		inf.Window(wrap<wxWindow*>(val));
+		inf.Window(unwrap<wxWindow*>(val));
 	else{
-		_self->AddPane(wrap<wxWindow*>(val),wxAuiPaneInfo().Name(wrap<wxString>(key)));
+		_self->AddPane(unwrap<wxWindow*>(val),wxAuiPaneInfo().Name(unwrap<wxString>(key)));
 		_self->Update();
 	}
 	return val;
@@ -40,7 +40,7 @@ VALUE _addPane(int argc,VALUE *argv,VALUE self)
 {
 	VALUE window,hash;
 	rb_scan_args(argc, argv, "11",&window,&hash);
-	VALUE result = wrap(_self->AddPane(wrap<wxWindow*>(window),wrap<wxAuiPaneInfo>(hash)));
+	VALUE result = wrap(_self->AddPane(unwrap<wxWindow*>(window),unwrap<wxAuiPaneInfo>(hash)));
 	_self->Update();
 	return result;
 }

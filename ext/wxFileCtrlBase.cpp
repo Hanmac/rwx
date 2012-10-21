@@ -10,7 +10,7 @@
 VALUE rb_cWXFileCtrlBase,rb_cWXFileCtrlEvent;
 
 #if wxUSE_FILECTRL
-#define _self wrap<wxFileCtrlBase*>(self)
+#define _self unwrap<wxFileCtrlBase*>(self)
 
 namespace RubyWX {
 namespace FileCtrlBase {
@@ -25,7 +25,7 @@ macro_attr(FilterIndex,int)
 namespace Event
 {
 #undef _self
-#define _self wrap<wxFileCtrlEvent*>(self)
+#define _self unwrap<wxFileCtrlEvent*>(self)
 
 macro_attr(Directory,wxString)
 macro_attr(Files,wxArrayString)

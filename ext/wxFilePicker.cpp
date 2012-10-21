@@ -14,7 +14,7 @@ static VALUE rb_cWXFileDirPickerEvent;
 
 namespace RubyWX {
 namespace FilePicker {
-#define _self wrap<wxFilePickerCtrl*>(self)
+#define _self unwrap<wxFilePickerCtrl*>(self)
 macro_attr(Path,wxString)
 
 APP_PROTECT(wxFilePickerCtrl)
@@ -23,7 +23,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 	rb_call_super(argc,argv);
 	return self;
 }

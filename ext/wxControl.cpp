@@ -9,7 +9,7 @@
 
 #if wxUSE_CONTROLS
 VALUE rb_cWXControl;
-#define _self wrap<wxControl*>(self)
+#define _self unwrap<wxControl*>(self)
 
 namespace RubyWX {
 namespace Control {
@@ -24,7 +24,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 
 	if(!_created) {
-		_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 		_created = true;
 	}
 	rb_call_super(argc,argv);

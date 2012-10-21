@@ -8,7 +8,7 @@
 #include "wxSize.hpp"
 VALUE rb_cWXSize;
 
-#define _self wrap<wxSize*>(self)
+#define _self unwrap<wxSize*>(self)
 
 template <>
 VALUE wrap< wxSize >(wxSize *size )
@@ -29,16 +29,14 @@ bool is_wrapable< wxSize >(const VALUE &vsize)
 }
 
 template <>
-wxSize* wrap< wxSize* >(const VALUE &vsize)
+wxSize unwrap< wxSize >(const VALUE &vsize)
 {
-	return unwrapPtr<wxSize>(vsize, rb_cWXSize);
-}
-
-
-template <>
-wxSize wrap< wxSize >(const VALUE &vsize)
-{
-	if(!rb_obj_is_kind_of(vsize, rb_cWXSize) &&
+	if(rb_obj_is_kind_of(vsize, rb_cArray)){
+			wxSize size;
+			size.SetWidth(NUM2INT(rb_ary_entry(vsize,0)));
+			size.SetHeight(NUM2INT(rb_ary_entry(vsize,1)));
+			return size;
+	}else if(!rb_obj_is_kind_of(vsize, rb_cWXSize) &&
 		rb_respond_to(vsize,rb_intern("width")) &&
 		rb_respond_to(vsize,rb_intern("height"))){
 		wxSize size;
@@ -46,7 +44,7 @@ wxSize wrap< wxSize >(const VALUE &vsize)
 		size.SetHeight(NUM2INT(rb_funcall(vsize,rb_intern("height"),0)));
 		return size;
 	}else{
-		return *wrap<wxSize*>(vsize);
+		return *unwrap<wxSize*>(vsize);
 	}
 }
 
@@ -113,4 +111,5 @@ void Init_WXSize(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXSize,"inspect",RUBY_METHOD_FUNC(_inspect),0);
 
+	registerType<wxSize>(rb_cWXSize);
 }

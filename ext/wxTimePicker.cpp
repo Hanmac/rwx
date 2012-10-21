@@ -11,7 +11,7 @@
 VALUE rb_cWXTimePicker;
 
 #if wxUSE_TIMEPICKCTRL
-#define _self wrap<wxTimePickerCtrl*>(self)
+#define _self unwrap<wxTimePickerCtrl*>(self)
 
 namespace RubyWX {
 namespace TimePicker {
@@ -24,7 +24,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 	_created = true;
 	rb_call_super(argc,argv);
 	return self;

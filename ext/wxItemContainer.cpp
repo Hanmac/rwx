@@ -10,7 +10,7 @@
 
 VALUE rb_mWXItemContainer;
 #if wxUSE_CONTROLS
-#define _self wrap<wxItemContainer*>(self)
+#define _self unwrap<wxItemContainer*>(self)
 
 namespace RubyWX {
 namespace ItemContainer {
@@ -24,13 +24,13 @@ singlefunc(GetStrings)
 
 VALUE _Append(VALUE self,VALUE items)
 {
-	_self->Append(wrap<wxArrayString>(items));
+	_self->Append(unwrap<wxArrayString>(items));
 	return self;
 }
 
 VALUE _setItems(VALUE self,VALUE items)
 {
-	_self->Set(wrap<wxArrayString>(items));
+	_self->Set(unwrap<wxArrayString>(items));
 	return items;
 }
 

@@ -10,7 +10,7 @@
 VALUE rb_cWXGauge;
 
 #if wxUSE_GAUGE
-#define _self wrap<wxGauge*>(self)
+#define _self unwrap<wxGauge*>(self)
 
 namespace RubyWX {
 namespace Gauge {
@@ -24,7 +24,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY,0);
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,0);
 	_created = true;
 	rb_call_super(argc,argv);
 	return self;

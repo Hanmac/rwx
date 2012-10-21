@@ -17,17 +17,7 @@ void Init_WXGridCellAttr(VALUE rb_mWX);
 #include <wx/grid.h>
 
 template <>
-inline VALUE wrap< wxGridCellAttr >(wxGridCellAttr* window)
-{
-	return wrap(window,rb_cWXGridCellAttr);
-}
-
-
-template <>
-inline wxGridCellAttr* wrap< wxGridCellAttr* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxGridCellAttr>(vwindow, rb_cWXGridCellAttr);
-}
+VALUE wrap< wxGridCellAttr >(wxGridCellAttr* window);
 
 #endif
 

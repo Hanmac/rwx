@@ -12,7 +12,7 @@
 VALUE rb_cWXChoicebook;
 
 #if wxUSE_CHOICEBOOK
-#define _self wrap<wxChoicebook*>(self)
+#define _self unwrap<wxChoicebook*>(self)
 
 namespace RubyWX {
 namespace Choicebook {
@@ -26,7 +26,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	if(!_created)
 	{
-		_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 		_created = true;
 	}
 	rb_call_super(argc,argv);

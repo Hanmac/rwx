@@ -11,7 +11,7 @@
 VALUE rb_cWXFileDialog;
 
 #if wxUSE_FILEDLG
-#define _self wrap<wxFileDialog*>(self)
+#define _self unwrap<wxFileDialog*>(self)
 
 namespace RubyWX {
 namespace FileDialog {
@@ -23,7 +23,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 
-	_self->Create(wrap<wxWindow*>(parent));
+	_self->Create(unwrap<wxWindow*>(parent));
 	_created = true;
 	rb_call_super(argc,argv);
 
@@ -31,15 +31,15 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	{
 		VALUE temp;
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("wildcard")))))
-			_self->SetWildcard(wrap<wxString>(temp));
+			_self->SetWildcard(unwrap<wxString>(temp));
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("message")))))
-			_self->SetMessage(wrap<wxString>(temp));
+			_self->SetMessage(unwrap<wxString>(temp));
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("directory")))))
-			_self->SetDirectory(wrap<wxString>(temp));
+			_self->SetDirectory(unwrap<wxString>(temp));
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("filename")))))
-			_self->SetFilename(wrap<wxString>(temp));
+			_self->SetFilename(unwrap<wxString>(temp));
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("path")))))
-			_self->SetPath(wrap<wxString>(temp));
+			_self->SetPath(unwrap<wxString>(temp));
 
 	}
 
@@ -71,19 +71,19 @@ VALUE _saveFileSelector(int argc,VALUE *argv,VALUE self)
 {
 	VALUE what,extension,default_name,parent;
 	rb_scan_args(argc, argv, "22",&what,&extension,&default_name,&parent);
-	return wrap(wxSaveFileSelector(wrap<wxString>(what),
-			wrap<wxString>(extension),
-			wrap<wxString>(default_name),
-			wrap<wxWindow*>(parent)));
+	return wrap(wxSaveFileSelector(unwrap<wxString>(what),
+			unwrap<wxString>(extension),
+			unwrap<wxString>(default_name),
+			unwrap<wxWindow*>(parent)));
 }
 VALUE _loadFileSelector(int argc,VALUE *argv,VALUE self)
 {
 	VALUE what,extension,default_name,parent;
 	rb_scan_args(argc, argv, "22",&what,&extension,&default_name,&parent);
-	return wrap(wxLoadFileSelector(wrap<wxString>(what),
-			wrap<wxString>(extension),
-			wrap<wxString>(default_name),
-			wrap<wxWindow*>(parent)));
+	return wrap(wxLoadFileSelector(unwrap<wxString>(what),
+			unwrap<wxString>(extension),
+			unwrap<wxString>(default_name),
+			unwrap<wxWindow*>(parent)));
 }
 
 }

@@ -11,7 +11,7 @@
 VALUE rb_cWXPropertyGrid;
 
 #if wxUSE_PROPGRID
-#define _self wrap<wxPropertyGrid*>(self)
+#define _self unwrap<wxPropertyGrid*>(self)
 
 namespace RubyWX {
 namespace PropertyGrid {
@@ -30,14 +30,14 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			style = NUM2INT(temp);
 	}
 
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY,wxDefaultPosition,wxDefaultSize,style);
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxDefaultPosition,wxDefaultSize,style);
 	_created = true;
 	rb_call_super(argc,argv);
 	return self;
 }
 VALUE _append(VALUE self,VALUE val)
 {
-	return wrap(_self->Append(wrap<wxPGProperty*>(val)));
+	return wrap(_self->Append(unwrap<wxPGProperty*>(val)));
 }
 
 }

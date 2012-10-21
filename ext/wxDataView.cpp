@@ -32,7 +32,7 @@ void DataViewClientHolder::setClientValue( const wxDataViewItem& item, wxClientD
 
 bool RubyDataViewNotifier::ItemAdded( const wxDataViewItem &parent, const wxDataViewItem &item )
 {
-	dynamic_cast<DataViewClientHolder*>(this->GetOwner())->setClientValue(item,new RubyClientData(wrap((void*)(&item),rb_cWXDataViewItem)));
+	dynamic_cast<DataViewClientHolder*>(this->GetOwner())->setClientValue(item,new RubyClientData(wrapPtr((void*)(&item),rb_cWXDataViewItem)));
 	return true;
 }
 bool RubyDataViewNotifier::ItemDeleted( const wxDataViewItem &parent, const wxDataViewItem &item )
@@ -70,7 +70,7 @@ VALUE wrap(wxDataViewModel *model, const wxDataViewItem& item)
 
 namespace RubyWX {
 namespace DataView {
-#define _self wrap<wxDataViewCtrl*>(self)
+#define _self unwrap<wxDataViewCtrl*>(self)
 //macro_attr(Path,wxString)
 
 APP_PROTECT(wxDataViewCtrl)
@@ -79,7 +79,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-	//_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+	//_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 	//_created = true;
 	rb_call_super(argc,argv);
 	return self;
@@ -92,7 +92,7 @@ VALUE _getSelection(VALUE self)
 
 VALUE _setSelection(VALUE self,VALUE item)
 {
-	//_self->Select(wrap<wxDataViewItem>(item));
+	//_self->Select(unwrap<wxDataViewItem>(item));
 	return self;
 }
 

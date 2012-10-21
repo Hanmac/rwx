@@ -15,10 +15,10 @@ DLL_LOCAL void Init_WXImage(VALUE rb_mWX);
 
 #if wxUSE_IMAGE
 template <>
-wxImage* wrap< wxImage* >(const VALUE &vimage);
+wxImage* unwrap< wxImage* >(const VALUE &vimage);
 
 
 template <>
-wxImage wrap< wxImage >(const VALUE &vimage);
+wxImage unwrap< wxImage >(const VALUE &vimage);
 #endif
 #endif /* WXIMAGE_HPP_ */

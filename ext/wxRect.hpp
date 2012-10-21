@@ -35,7 +35,7 @@ inline bool is_wrapable< wxRect >(const VALUE &vsize)
 }
 
 template <>
-inline wxRect* wrap< wxRect* >(const VALUE &vsize)
+inline wxRect* unwrap< wxRect* >(const VALUE &vsize)
 {
 	if(!rb_obj_is_kind_of(vsize, rb_cWXRect) &&
 		rb_respond_to(vsize,rb_intern("x")) &&
@@ -56,9 +56,9 @@ inline wxRect* wrap< wxRect* >(const VALUE &vsize)
 
 
 template <>
-inline wxRect wrap< wxRect >(const VALUE &vsize)
+inline wxRect unwrap< wxRect >(const VALUE &vsize)
 {
-	return *wrap<wxRect*>(vsize);
+	return *unwrap<wxRect*>(vsize);
 }
 
 #endif /* WXRECT_HPP_ */

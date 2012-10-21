@@ -17,9 +17,9 @@ public:
 
 			if(m_currentTip >= NUM2UINT(rb_funcall(mRuby,rb_intern("size"),0)))
 				m_currentTip = 0;
-			return wrap<wxString>(rb_funcall(mRuby,rb_intern("[]"),1,UINT2NUM(m_currentTip++)));
+			return unwrap<wxString>(rb_funcall(mRuby,rb_intern("[]"),1,UINT2NUM(m_currentTip++)));
 		}else
-			return wrap<wxString>(mRuby);
+			return unwrap<wxString>(mRuby);
 	}
 
 private:
@@ -33,7 +33,7 @@ VALUE _showTip(int argc,VALUE *argv,VALUE self)
 	RubyTipProvider tip(obj,i);
 	if(NIL_P(show))
 		show = Qtrue;
-	return wrap(wxShowTip(wrap<wxWindow*>(parent),&tip,RTEST(show)));
+	return wrap(wxShowTip(unwrap<wxWindow*>(parent),&tip,RTEST(show)));
 }
 #endif
 DLL_LOCAL void Init_ShowTip(VALUE rb_mWX)

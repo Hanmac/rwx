@@ -12,7 +12,7 @@
 VALUE rb_cWXStatusBar;
 
 #if wxUSE_STATUSBAR
-#define _self wrap<wxStatusBar*>(self)
+#define _self unwrap<wxStatusBar*>(self)
 
 namespace RubyWX {
 namespace StatusBar {

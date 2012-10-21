@@ -11,7 +11,7 @@
 
 VALUE rb_cWXDirDialog;
 #if wxUSE_DIRDLG
-#define _self wrap<wxDirDialog*>(self)
+#define _self unwrap<wxDirDialog*>(self)
 
 namespace RubyWX {
 namespace DirDialog {
@@ -22,7 +22,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(wrap<wxWindow*>(parent));
+	_self->Create(unwrap<wxWindow*>(parent));
 	_created = true;
 	rb_call_super(argc,argv);
 
@@ -30,9 +30,9 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	{
 		VALUE temp;
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("message")))))
-			_self->SetMessage(wrap<wxString>(temp));
+			_self->SetMessage(unwrap<wxString>(temp));
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("path")))))
-			_self->SetPath(wrap<wxString>(temp));
+			_self->SetPath(unwrap<wxString>(temp));
 
 	}
 
@@ -56,18 +56,18 @@ VALUE _getUserDir(int argc,VALUE *argv,VALUE self)
 	{
 		VALUE temp;
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("message")))))
-			message = wrap<wxString>(temp);
+			message = unwrap<wxString>(temp);
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("path")))))
-			defaultPath =wrap<wxString>(temp);
+			defaultPath =unwrap<wxString>(temp);
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("style")))))
 			style = NUM2LONG(temp);
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("pos")))))
-			pos =wrap<wxPoint>(temp);
+			pos =unwrap<wxPoint>(temp);
 	}
 
 	return wrap(wxDirSelector(message,
 			defaultPath,style,pos,
-			wrap<wxWindow*>(parent)));
+			unwrap<wxWindow*>(parent)));
 }
 #endif
 }

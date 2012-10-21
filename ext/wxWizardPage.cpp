@@ -10,7 +10,7 @@
 
 VALUE rb_cWXWizardPage;
 
-#define _self wrap<RubyWizardPage*>(self)
+#define _self unwrap<RubyWizardPage*>(self)
 
 
 RubyWizardPage::RubyWizardPage() : wxWizardPageSimple(),rubycall(false)
@@ -23,7 +23,7 @@ wxWizardPage* RubyWizardPage::GetPrev() const
 	if(!rubycall && rb_funcall(rb_obj_method(self,ID2SYM(rb_intern("prev"))),rb_intern("owner"),0) != rb_cWXWizardPage)
 	{
 		rubycall = true;
-		wxWizardPage* result = wrap<wxWizardPage*>(rb_funcall(self,rb_intern("prev"),0));
+		wxWizardPage* result = unwrap<wxWizardPage*>(rb_funcall(self,rb_intern("prev"),0));
 		rubycall = false;
 		return result;
 	}
@@ -36,7 +36,7 @@ wxWizardPage* RubyWizardPage::GetNext() const
 	if(!rubycall && rb_funcall(rb_obj_method(self,ID2SYM(rb_intern("next"))),rb_intern("owner"),0) != rb_cWXWizardPage)
 	{
 		rubycall = true;
-		wxWizardPage* result = wrap<wxWizardPage*>(rb_funcall(self,rb_intern("next"),0));
+		wxWizardPage* result = unwrap<wxWizardPage*>(rb_funcall(self,rb_intern("next"),0));
 		rubycall = false;
 		return result;
 	}
@@ -58,7 +58,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 	if(!_created)
-		_self->Create(wrap<wxWizard*>(parent));
+		_self->Create(unwrap<wxWizard*>(parent));
 	_created = true;
 	rb_call_super(argc,argv);
 	return self;

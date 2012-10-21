@@ -11,7 +11,7 @@
 #include "wxMenuItem.hpp"
 #include "wxBitmap.hpp"
 
-#define _self wrap<wxMenuItem*>(self)
+#define _self unwrap<wxMenuItem*>(self)
 
 VALUE rb_cWXMenuItem;
 

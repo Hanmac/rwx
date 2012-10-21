@@ -11,7 +11,7 @@
 VALUE rb_cWXAuiNotebook;
 
 #if wxUSE_AUI
-#define _self wrap<wxAuiNotebook*>(self)
+#define _self unwrap<wxAuiNotebook*>(self)
 
 namespace RubyWX {
 namespace AuiNotebook {
@@ -23,7 +23,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY,
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,
 		wxDefaultPosition,wxDefaultSize,wxAUI_NB_DEFAULT_STYLE
 	);
 	_created = true;

@@ -11,7 +11,7 @@
 #include <map>
 #include <wx/artprov.h>
 
-#define _self wrap<wxBitmap*>(self)
+#define _self unwrap<wxBitmap*>(self)
 
 VALUE rb_cWXBitmap;
 
@@ -37,7 +37,7 @@ VALUE wrap< wxBitmap >(wxBitmap *bitmap )
 }
 
 template <>
-wxBitmap* wrap< wxBitmap* >(const VALUE &vbitmap)
+wxBitmap* unwrap< wxBitmap* >(const VALUE &vbitmap)
 {
 	if(NIL_P(vbitmap))
 		return &wxNullBitmap;
@@ -45,18 +45,18 @@ wxBitmap* wrap< wxBitmap* >(const VALUE &vbitmap)
 		return unwrapPtr<wxBitmap>(vbitmap, rb_cWXBitmap);
 #if wxUSE_IMAGE
 	if(rb_obj_is_kind_of(vbitmap,rb_cWXImage))
-		return new wxBitmap(wrap<wxImage>(vbitmap));
+		return new wxBitmap(unwrap<wxImage>(vbitmap));
 #endif
 	if(is_wrapable<wxSize>(vbitmap))
-		return new wxBitmap(wrap<wxSize>(vbitmap));
+		return new wxBitmap(unwrap<wxSize>(vbitmap));
 	else
-		return new wxBitmap(wrap<wxString>(vbitmap),wxBITMAP_TYPE_ANY);
+		return new wxBitmap(unwrap<wxString>(vbitmap),wxBITMAP_TYPE_ANY);
 }
 
 template <>
-wxBitmap wrap< wxBitmap >(const VALUE &vbitmap)
+wxBitmap unwrap< wxBitmap >(const VALUE &vbitmap)
 {
-	return *wrap<wxBitmap*>(vbitmap);
+	return *unwrap<wxBitmap*>(vbitmap);
 }
 
 template <>
@@ -75,19 +75,19 @@ VALUE wrap< wxIcon >(const wxIcon &icon )
 }
 
 template <>
-wxIcon* wrap< wxIcon* >(const VALUE &vbitmap)
+wxIcon* unwrap< wxIcon* >(const VALUE &vbitmap)
 {
 	if(NIL_P(vbitmap))
 		return &wxNullIcon;
 	wxIcon *icon = new wxIcon();
-	icon->CopyFromBitmap(wrap<wxBitmap>(vbitmap));
+	icon->CopyFromBitmap(unwrap<wxBitmap>(vbitmap));
 	return icon;
 }
 
 template <>
-wxIcon wrap< wxIcon >(const VALUE &vbitmap)
+wxIcon unwrap< wxIcon >(const VALUE &vbitmap)
 {
-	return *wrap<wxIcon*>(vbitmap);
+	return *unwrap<wxIcon*>(vbitmap);
 }
 
 template <>
@@ -101,14 +101,14 @@ VALUE wrap< wxImageList >(wxImageList *imagelist )
 }
 
 template <>
-wxImageList* wrap< wxImageList* >(const VALUE &imagelist)
+wxImageList* unwrap< wxImageList* >(const VALUE &imagelist)
 {
 	wxImageList *result = new wxImageList;
 	VALUE dup = rb_funcall(imagelist,rb_intern("to_a"),0);
 	result->Create();
 	size_t count = RARRAY_LEN(dup);
 	for(size_t i = 0;i < count;++i)
-		result->Add(wrap<wxBitmap>(RARRAY_PTR(dup)[i]));
+		result->Add(unwrap<wxBitmap>(RARRAY_PTR(dup)[i]));
 	return result;
 }
 
@@ -192,10 +192,10 @@ wxBitmap wrapBitmap(const VALUE &vbitmap,wxWindowID id,bool disabled,const wxArt
 				rb_raise(rb_eArgError,"need an valid bitmap");
 		return wxArtProvider::GetBitmap(it->second,type);
 	}
-	wxBitmap temp = wxArtProvider::GetBitmap(wrap<wxString>(vbitmap),type);
+	wxBitmap temp = wxArtProvider::GetBitmap(unwrap<wxString>(vbitmap),type);
 	if(temp.IsOk())
 		return temp;
-	return *wrap<wxBitmap*>(vbitmap);
+	return *unwrap<wxBitmap*>(vbitmap);
 }
 
 

@@ -12,7 +12,7 @@
 VALUE rb_cWXSlider;
 
 #if wxUSE_SLIDER
-#define _self wrap<wxSlider*>(self)
+#define _self unwrap<wxSlider*>(self)
 
 namespace RubyWX {
 namespace Slider {
@@ -28,7 +28,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY,0,0,0);
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,0,0,0);
 	_created = true;
 
 

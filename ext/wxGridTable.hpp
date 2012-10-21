@@ -39,19 +39,6 @@ public:
 
 };
 
-template <>
-inline VALUE wrap< wxGridTableBase >(wxGridTableBase* window)
-{
-	return wrap(window,rb_cWXGridTable);
-}
-
-
-template <>
-inline wxGridTableBase* wrap< wxGridTableBase* >(const VALUE &vwindow)
-{
-	return unwrapPtr<wxGridTableBase>(vwindow, rb_cWXGridTable);
-}
-
 #endif
 
 #endif /* WXGRIDTABLE_HPP_ */

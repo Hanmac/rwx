@@ -13,7 +13,7 @@
 VALUE rb_cWXBookCtrlBase,rb_cWXBookCtrlEvent;
 
 #if wxUSE_BOOKCTRL
-#define _self wrap<wxBookCtrlBase*>(self)
+#define _self unwrap<wxBookCtrlBase*>(self)
 
 namespace RubyWX {
 namespace BookCtrl {
@@ -32,7 +32,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 	if(!_created)
 	{
-		_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 		_created = true;
 	}
 	rb_call_super(argc,argv);
@@ -73,14 +73,14 @@ VALUE _addPage(int argc,VALUE *argv,VALUE self)
 
 	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
 		VALUE argv2[] = {self, hash };
-		w = wrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
+		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
 	}else
 	{
-		w = wrap<wxWindow*>(window);
+		w = unwrap<wxWindow*>(window);
 //		if(w->GetParent() != _self)
-//			rb_raise(rb_eArgError, "%s has wrong parent.",wrap<char*>(window));
+//			rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(window));
 	}
-	return wrap(_self->AddPage(w,wrap<wxString>(text),sel,iid));
+	return wrap(_self->AddPage(w,unwrap<wxString>(text),sel,iid));
 }
 
 VALUE _insertPage(int argc,VALUE *argv,VALUE self)
@@ -100,14 +100,14 @@ VALUE _insertPage(int argc,VALUE *argv,VALUE self)
 		iid = NUM2INT(imageid);
 
 	if(rb_obj_is_kind_of(window,rb_cWXWindow)){
-		w = wrap<wxWindow*>(window);
+		w = unwrap<wxWindow*>(window);
 //		if(w->GetParent() != _self)
-//			rb_raise(rb_eArgError, "%s has wrong parent.",wrap<char*>(window));
+//			rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(window));
 	}else if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
 		VALUE argv2[] = {self, hash };
-		w = wrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
+		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
 	}
-	return wrap(_self->InsertPage(NUM2INT(n),w,wrap<wxString>(text),sel,iid));
+	return wrap(_self->InsertPage(NUM2INT(n),w,unwrap<wxString>(text),sel,iid));
 }
 
 singlefunc(DeleteAllPages)

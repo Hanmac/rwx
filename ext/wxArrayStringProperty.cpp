@@ -10,7 +10,7 @@
 
 VALUE rb_cWXArrayStringProperty;
 #if wxUSE_PROPGRID
-#define _self wrap<wxArrayStringProperty*>(self)
+#define _self unwrap<wxArrayStringProperty*>(self)
 
 namespace RubyWX {
 namespace ArrayStringProperty {

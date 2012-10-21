@@ -11,15 +11,12 @@
 VALUE rb_cWXNotebook;
 
 #if wxUSE_NOTEBOOK
-#define _self wrap<wxNotebook*>(self)
+#define _self unwrap<wxNotebook*>(self)
 
 namespace RubyWX {
 namespace Notebook {
 
-VALUE _alloc(VALUE self)
-{
-	return wrap(new wxNotebook(),self);
-}
+APP_PROTECT(wxNotebook)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -28,7 +25,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	if(!_created)
 	{
-		_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 		_created = true;
 	}
 	rb_call_super(argc,argv);

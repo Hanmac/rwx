@@ -13,7 +13,7 @@
 VALUE rb_cWXTaskBar;
 #if wxUSE_TASKBARICON
 
-#define _self wrap<RubyTaskBarIcon*>(self)
+#define _self unwrap<RubyTaskBarIcon*>(self)
 
 
 const wxIcon& RubyTaskBarIcon::GetIcon() const {return *mIcon;}

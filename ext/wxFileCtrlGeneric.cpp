@@ -12,7 +12,7 @@ VALUE rb_cWXFileCtrlGeneric;
 
 #if wxUSE_FILECTRL
 #if defined(__WXGTK20__) && !defined(__WXUNIVERSAL__)
-#define _self wrap<wxGenericFileCtrl*>(self)
+#define _self unwrap<wxGenericFileCtrl*>(self)
 
 namespace RubyWX {
 namespace FileCtrlGeneric {
@@ -23,7 +23,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 	rb_call_super(argc,argv);
 	return self;
 }

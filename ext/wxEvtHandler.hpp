@@ -59,6 +59,7 @@ class RubyFunctor
 public:
 	RubyFunctor(VALUE obj);
 
+
 	void operator()( wxEvent & event );
 #if wxUSE_GUI
 	void operator()( wxCommandEvent & event );
@@ -84,7 +85,7 @@ extern VALUE rb_mWXEvtHandler;
 void Init_WXEvtHandler(VALUE rb_mWX);
 
 template <>
-wxEvtHandler* wrap< wxEvtHandler* >(const VALUE &vhandler);
+wxEvtHandler* unwrap< wxEvtHandler* >(const VALUE &vhandler);
 
 #define _created static_cast<RubyClientData*>(_self->GetClientObject())->created
 

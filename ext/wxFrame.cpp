@@ -8,7 +8,7 @@
 #include "wxEvtHandler.hpp"
 VALUE rb_cWXFrame;
 
-#define _self wrap<wxFrame*>(self)
+#define _self unwrap<wxFrame*>(self)
 
 namespace RubyWX {
 namespace Frame {
@@ -23,12 +23,12 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	if(!_created) {
 #if wxUSE_XRC
 		if(rb_obj_is_kind_of(name,rb_cString)){
-			if(!wxXmlResource::Get()->LoadFrame(_self,wrap<wxWindow*>(parent),wrap<wxString>(name)))
-				rb_raise(rb_eNameError,"Named Frame '%s' is not found.",wrap<char*>(name));
+			if(!wxXmlResource::Get()->LoadFrame(_self,unwrap<wxWindow*>(parent),unwrap<wxString>(name)))
+				rb_raise(rb_eNameError,"Named Frame '%s' is not found.",unwrap<char*>(name));
 		}
 		else
 #endif
-		_self->Create(wrap<wxWindow*>(parent),wxID_ANY,wxEmptyString);
+		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxEmptyString);
 		_created = true;
 	}
 	if(rb_obj_is_kind_of(name,rb_cString)){

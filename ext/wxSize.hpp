@@ -21,9 +21,6 @@ template <>
 bool is_wrapable< wxSize >(const VALUE &vsize);
 
 template <>
-wxSize* wrap< wxSize* >(const VALUE &vsize);
-
-template <>
-wxSize wrap< wxSize >(const VALUE &vsize);
+wxSize unwrap< wxSize >(const VALUE &vsize);
 
 #endif /* WXSIZE_HPP_ */

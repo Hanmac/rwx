@@ -38,23 +38,23 @@ VALUE _addNormal(int argc,VALUE *argv,VALUE self)
 	wxControl *c = NULL;
 	rb_scan_args(argc, argv, "11*",&id,&text,&arg);
 	if(rb_obj_is_kind_of(id,rb_cWXControl)){
-		c = wrap<wxControl*>(id);
+		c = unwrap<wxControl*>(id);
 		if(c->GetParent() != _self)
-			rb_raise(rb_eArgError, "%s has wrong parent.",wrap<char*>(id));
+			rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(id));
 	}else if(rb_obj_is_kind_of(id,rb_cClass) && rb_class_inherited(id,rb_cWXControl)) {
 		rb_scan_args(argc, argv, "11",&id,&arg);
 		VALUE argv2[] = {self, arg };
-		c = wrap<wxControl*>(rb_class_new_instance(2,argv2,id));
+		c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,id));
 	}else {
 		rb_scan_args(argc, argv, "24",&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
 		wxWindowID wxid = unwrapID(id);
-		tool = _self->AddTool(wxid, wrap<wxString>(text),
+		tool = _self->AddTool(wxid, unwrap<wxString>(text),
 				wrapBitmap(bitmap,wxid,false,wxART_TOOLBAR),
 				wrapBitmap(bmpDisabled,wxid,true,wxART_TOOLBAR),wxITEM_NORMAL,
-				wrap<wxString>(shorthelp), wrap<wxString>(longhelp));
+				unwrap<wxString>(shorthelp), unwrap<wxString>(longhelp));
 	}
 	if(c)
-		tool = _self->AddControl(c,wrap<wxString>(text));
+		tool = _self->AddControl(c,unwrap<wxString>(text));
 
 	if(rb_block_given_p() && !c){
 		VALUE proc = rb_block_proc();
@@ -74,10 +74,10 @@ VALUE _addCheck(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "24",&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
 	wxWindowID wxid = unwrapID(id);
 
-	wxToolBarToolBase *tool = _self->AddCheckTool(unwrapID(id), wrap<wxString>(text),
+	wxToolBarToolBase *tool = _self->AddCheckTool(unwrapID(id), unwrap<wxString>(text),
 				wrapBitmap(bitmap,wxid,false,wxART_TOOLBAR),
 				wrapBitmap(bmpDisabled,wxid,true,wxART_TOOLBAR),
-				wrap<wxString>(shorthelp), wrap<wxString>(longhelp));
+				unwrap<wxString>(shorthelp), unwrap<wxString>(longhelp));
 
 	if(rb_block_given_p()){
 		VALUE proc = rb_block_proc();
@@ -97,10 +97,10 @@ VALUE _addRadio(int argc,VALUE *argv,VALUE self)
 	VALUE id,text,bitmap,bmpDisabled,shorthelp,longhelp;
 	rb_scan_args(argc, argv, "24",&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
 	wxWindowID wxid = unwrapID(id);
-	wxToolBarToolBase *tool = _self->AddRadioTool(unwrapID(id), wrap<wxString>(text),
+	wxToolBarToolBase *tool = _self->AddRadioTool(unwrapID(id), unwrap<wxString>(text),
 			wrapBitmap(bitmap,wxid,false,wxART_TOOLBAR),
 			wrapBitmap(bmpDisabled,wxid,true,wxART_TOOLBAR),
-			wrap<wxString>(shorthelp), wrap<wxString>(longhelp));
+			unwrap<wxString>(shorthelp), unwrap<wxString>(longhelp));
 
 	if(rb_block_given_p()){
 		VALUE proc = rb_block_proc();

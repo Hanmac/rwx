@@ -20,7 +20,7 @@ VALUE wrapClass(const wxClassInfo * info)
 	return Qnil;
 }
 
-VALUE wrap(void *arg,VALUE klass)
+VALUE wrapPtr(void *arg,VALUE klass)
 {
 	if(arg)
 		return Data_Wrap_Struct(klass, 0, 0, arg);
@@ -29,7 +29,7 @@ VALUE wrap(void *arg,VALUE klass)
 
 
 template <>
-bool wrap< bool >(const VALUE &val )
+bool unwrap< bool >(const VALUE &val )
 {
 	return RTEST(val);
 }
@@ -41,7 +41,7 @@ VALUE wrap< bool >(const bool &st )
 }
 
 template <>
-int wrap< int >(const VALUE &val )
+int unwrap< int >(const VALUE &val )
 {
 	return NUM2INT(val);
 }
@@ -53,7 +53,7 @@ VALUE wrap< int >(const int &st )
 }
 
 template <>
-unsigned int wrap< unsigned int >(const VALUE &val )
+unsigned int unwrap< unsigned int >(const VALUE &val )
 {
 	return NUM2UINT(val);
 }
@@ -81,7 +81,7 @@ VALUE wrap< wxChar >(const wxChar &c )
 }
 
 template <>
-char* wrap< char* >(const VALUE &val )
+char* unwrap< char* >(const VALUE &val )
 {
 	if(NIL_P(val))
 		return NULL;
@@ -89,16 +89,16 @@ char* wrap< char* >(const VALUE &val )
 		return RSTRING_PTR(val);
 	}
 	else
-		return wrap< char* >(rb_funcall(val,rb_intern("to_s"),0));
+		return unwrap< char* >(rb_funcall(val,rb_intern("to_s"),0));
 }
 
 template <>
-wxString wrap< wxString >(const VALUE &val )
+wxString unwrap< wxString >(const VALUE &val )
 {
 	if(NIL_P(val))
 		return wxEmptyString;
 	else
-		return wxString(wrap< char* >(val));
+		return wxString(unwrap< char* >(val));
 }
 template <>
 VALUE wrap< wxArrayString >(const wxArrayString &st )
@@ -119,7 +119,7 @@ VALUE wrap< wxArrayInt >(const wxArrayInt &st )
 }
 
 template <>
-wxArrayString wrap< wxArrayString >(const VALUE &val )
+wxArrayString unwrap< wxArrayString >(const VALUE &val )
 {
 	wxArrayString arry;
 	if(NIL_P(val))
@@ -128,9 +128,9 @@ wxArrayString wrap< wxArrayString >(const VALUE &val )
 		VALUE dp = rb_funcall(val,rb_intern("to_a"),0);
 		size_t length = RARRAY_LEN(dp);
 		for(size_t i = 0; i < length; ++i)
-			arry.Add(wrap<wxString>(RARRAY_PTR(dp)[i]));
+			arry.Add(unwrap<wxString>(RARRAY_PTR(dp)[i]));
 	}else{
-		arry.Add(wrap<wxString>(val));
+		arry.Add(unwrap<wxString>(val));
 	}
 	return arry;
 }
@@ -142,7 +142,7 @@ VALUE wrap< wxDateTime >(const wxDateTime &st )
 }
 
 template <>
-wxDateTime wrap< wxDateTime >(const VALUE &val )
+wxDateTime unwrap< wxDateTime >(const VALUE &val )
 {
 	wxDateTime result;
 	result.SetToCurrent();

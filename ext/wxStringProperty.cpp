@@ -11,7 +11,7 @@
 
 VALUE rb_cWXStringProperty;
 #if wxUSE_PROPGRID
-#define _self wrap<wxStringProperty*>(self)
+#define _self unwrap<wxStringProperty*>(self)
 
 namespace RubyWX {
 namespace StringProperty {

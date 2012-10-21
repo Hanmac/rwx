@@ -17,9 +17,9 @@ template <>
 VALUE wrap< wxCursor >(wxCursor *bitmap );
 
 template <>
-wxCursor* wrap< wxCursor* >(const VALUE &vbitmap);
+wxCursor* unwrap< wxCursor* >(const VALUE &vbitmap);
 
 template <>
-wxCursor wrap< wxCursor >(const VALUE &vbitmap);
+wxCursor unwrap< wxCursor >(const VALUE &vbitmap);
 
 #endif /* WXCURSOR_HPP_ */

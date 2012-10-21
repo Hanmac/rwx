@@ -11,7 +11,7 @@
 VALUE rb_cWXToolbook;
 
 #if wxUSE_TOOLBOOK
-#define _self wrap<wxToolbook*>(self)
+#define _self unwrap<wxToolbook*>(self)
 
 namespace RubyWX {
 namespace Toolbook {
@@ -25,7 +25,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	if(!_created)
 	{
-		_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 		_created = true;
 	}
 	rb_call_super(argc,argv);

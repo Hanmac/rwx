@@ -8,12 +8,12 @@
 #include "wxSizerItem.hpp"
 #include "wxWindow.hpp"
 
-#define _self wrap<wxSizer*>(self)
+#define _self unwrap<wxSizer*>(self)
 
 VALUE rb_cWXSizer;
 
 template <>
-wxSizerFlags wrap< wxSizerFlags >(const VALUE &hash)
+wxSizerFlags unwrap< wxSizerFlags >(const VALUE &hash)
 {
 	wxSizerFlags result;
 	if(!rb_obj_is_kind_of(hash,rb_cHash))
@@ -67,13 +67,13 @@ VALUE _add(int argc,VALUE *argv,VALUE self)
 
 	if(rb_obj_is_kind_of(obj, rb_cWXWindow))
 	{
-		return wrap(_self->Add(wrap<wxWindow*>(obj),wrap<wxSizerFlags>(hash)));
+		return wrap(_self->Add(unwrap<wxWindow*>(obj),unwrap<wxSizerFlags>(hash)));
 	}else if(rb_obj_is_kind_of(obj, rb_cWXSizer))
 	{
-		return wrap(_self->Add(wrap<wxSizer*>(obj),wrap<wxSizerFlags>(hash)));
+		return wrap(_self->Add(unwrap<wxSizer*>(obj),unwrap<wxSizerFlags>(hash)));
 	}else {
-		wxSize *size = wrap<wxSize*>(obj);
-		return wrap(_self->Add(size->GetWidth(),size->GetHeight(),wrap<wxSizerFlags>(hash)));
+		const wxSize &size = unwrap<wxSize>(obj);
+		return wrap(_self->Add(size.GetWidth(),size.GetHeight(),unwrap<wxSizerFlags>(hash)));
 	}
 }
 
@@ -84,12 +84,12 @@ VALUE _insert(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "21",&index,&obj,&hash);
 
 	if(rb_obj_is_kind_of(obj, rb_cWXWindow))
-		return wrap(_self->Insert(NUM2INT(index),wrap<wxWindow*>(obj),wrap<wxSizerFlags>(hash)));
+		return wrap(_self->Insert(NUM2INT(index),unwrap<wxWindow*>(obj),unwrap<wxSizerFlags>(hash)));
 	else if(rb_obj_is_kind_of(obj, rb_cWXSizer))
-		return wrap(_self->Insert(NUM2INT(index),wrap<wxSizer*>(obj),wrap<wxSizerFlags>(hash)));
+		return wrap(_self->Insert(NUM2INT(index),unwrap<wxSizer*>(obj),unwrap<wxSizerFlags>(hash)));
 	else {
-		wxSize *size = wrap<wxSize*>(obj);
-		return wrap(_self->Insert(NUM2INT(index),size->GetWidth(),size->GetHeight(),wrap<wxSizerFlags>(hash)));
+		const wxSize &size = unwrap<wxSize>(obj);
+		return wrap(_self->Insert(NUM2INT(index),size.GetWidth(),size.GetHeight(),unwrap<wxSizerFlags>(hash)));
 	}
 }
 
@@ -100,12 +100,12 @@ VALUE _prepend(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "11",&obj,&hash);
 
 	if(rb_obj_is_kind_of(obj, rb_cWXWindow))
-		return wrap(_self->Prepend(wrap<wxWindow*>(obj),wrap<wxSizerFlags>(hash)));
+		return wrap(_self->Prepend(unwrap<wxWindow*>(obj),unwrap<wxSizerFlags>(hash)));
 	else if(rb_obj_is_kind_of(obj, rb_cWXSizer))
-		return wrap(_self->Prepend(wrap<wxSizer*>(obj),wrap<wxSizerFlags>(hash)));
+		return wrap(_self->Prepend(unwrap<wxSizer*>(obj),unwrap<wxSizerFlags>(hash)));
 	else {
-		wxSize *size = wrap<wxSize*>(obj);
-		return wrap(_self->Prepend(size->GetWidth(),size->GetHeight(),wrap<wxSizerFlags>(hash)));
+		const wxSize &size = unwrap<wxSize>(obj);
+		return wrap(_self->Prepend(size.GetWidth(),size.GetHeight(),unwrap<wxSizerFlags>(hash)));
 	}
 }
 

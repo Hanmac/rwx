@@ -79,14 +79,44 @@ extern typeholdertype typeklassholder;
 
 
 
-VALUE wrap(void *arg,VALUE klass);
-VALUE wrap(wxEvtHandler *handler,VALUE klass);
-VALUE wrap(wxClientDataContainer *sizer,VALUE klass);
-VALUE wrap(wxSizer *sizer,VALUE klass);
+VALUE wrapPtr(void *arg,VALUE klass);
+VALUE wrapPtr(wxEvtHandler *handler,VALUE klass);
+VALUE wrapPtr(wxClientDataContainer *sizer,VALUE klass);
+VALUE wrapPtr(wxSizer *sizer,VALUE klass);
 
 #if wxUSE_PROPGRID
-VALUE wrap(wxPGProperty *sizer,VALUE klass);
+VALUE wrapPtr(wxPGProperty *sizer,VALUE klass);
 #endif
+
+
+struct enumtype
+{
+	std::string name;
+	typedef std::map<int,ID> value_type;
+	value_type values;
+
+	int defaults;
+
+	enumtype& add(int enumo,const char* sym)
+	{
+		values.insert(std::make_pair(enumo,rb_intern(sym)));
+		return *this;
+	}
+};
+//typedef std::map<int,ID > enumtype;
+typedef std::map<std::string,enumtype > enumregistertype;
+
+extern enumregistertype enumregister;
+
+
+template <typename T>
+enumtype& registerEnum(const char* name,int def = 0)
+{
+	enumtype &type = enumregister[std::string(typeid(T).name())];
+	type.name = std::string(name);
+	type.defaults = def;
+	return type;
+}
 
 
 template <typename T>
@@ -113,7 +143,7 @@ VALUE wrap(T *arg)
 	VALUE klass = wrapClass(info);
 	if(!NIL_P(klass))
 	{
-		return wrap(arg,klass);
+		return wrapPtr(arg,klass);
 	}
 	rb_warn("%s type unknown",wxString(info->GetClassName()).c_str().AsChar());
 	return Qnil;
@@ -162,7 +192,7 @@ T nullPtr(){
 
 
 template <typename T>
-T wrap(const VALUE &arg)
+T unwrap(const VALUE &arg)
 {
 	if(NIL_P(arg))
 		return nullPtr<T>();
@@ -186,17 +216,57 @@ template <typename T>
 bool is_wrapable(const VALUE &arg);
 
 
+
+template <typename T>
+VALUE wrapenum(const T &arg){
+	enumtype::value_type &enummap = enumregister[std::string(typeid(T).name())].values;
+	enumtype::value_type::iterator it = enummap.find((int)arg);
+	if(it != enummap.end())
+		return ID2SYM(it->second);
+	return Qnil;
+}
+template <typename T>
+VALUE wrapenum(int arg){
+	return wrapenum((T)arg);
+}
+
+template <typename T>
+T unwrapenum(const VALUE &arg){
+	enumregistertype::iterator it = enumregister.find(typeid(T).name());
+	if(it != enumregister.end())
+	{
+		if(NIL_P(arg))
+			return (T)it->second.defaults;
+		else if(SYMBOL_P(arg))
+		{
+			ID id = SYM2ID(arg);
+
+			for(enumtype::value_type::iterator it2 = it->second.values.begin();
+					it2 != it->second.values.end();
+					++it2)
+			{
+				if(it2->second == id)
+					return (T)it2->first;
+			}
+			rb_raise(rb_eTypeError,"%s is not a %s-Enum.",rb_id2name(id),it->second.name.c_str());
+		}else
+			return (T)NUM2INT(arg);
+	}
+	return (T)0;
+}
+
+
 template <>
-bool wrap< bool >(const VALUE &val );
+bool unwrap< bool >(const VALUE &val );
 template <>
 VALUE wrap< bool >(const bool &st );
 template <>
-int wrap< int >(const VALUE &val );
+int unwrap< int >(const VALUE &val );
 template <>
 VALUE wrap< int >(const int &st );
 
 template <>
-unsigned int wrap< unsigned int >(const VALUE &val );
+unsigned int unwrap< unsigned int >(const VALUE &val );
 template <>
 VALUE wrap< unsigned int >(const unsigned int &st );
 
@@ -208,10 +278,10 @@ template <>
 VALUE wrap< wxChar >(const wxChar &c );
 
 template <>
-char* wrap< char* >(const VALUE &val );
+char* unwrap< char* >(const VALUE &val );
 
 template <>
-wxString wrap< wxString >(const VALUE &val );
+wxString unwrap< wxString >(const VALUE &val );
 
 template <>
 VALUE wrap< wxArrayString >(const wxArrayString &st );
@@ -220,37 +290,37 @@ template <>
 VALUE wrap< wxArrayInt >(const wxArrayInt &st );
 
 template <>
-wxArrayString wrap< wxArrayString >(const VALUE &val );
+wxArrayString unwrap< wxArrayString >(const VALUE &val );
 
 template <>
 VALUE wrap< wxDateTime >(const wxDateTime &st );
 
 template <>
-wxDateTime wrap< wxDateTime >(const VALUE &val );
+wxDateTime unwrap< wxDateTime >(const VALUE &val );
 
-#define macro_attr_with_func(attr,get,set) \
+#define macro_attr_func(attr,funcget,funcset,wrapget,wrapset) \
 DLL_LOCAL VALUE _get##attr(VALUE self)\
-{return get(_self->Get##attr());}\
+{ \
+	return wrapget(_self->funcget);\
+}\
 \
 DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
 {\
-	_self->Set##attr(set(other));\
-	return other;\
-}
-
-#define macro_attr_pre_with_func(attr,pre,get,set) \
-DLL_LOCAL VALUE _get##attr(VALUE self)\
-{return get(_self->pre().Get##attr());}\
-\
-DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
-{\
-	_self->pre().Set##attr(set(other));\
+	_self->funcset(wrapset(other));\
 	return other;\
 }
 
 
-#define macro_attr(attr,type) macro_attr_with_func(attr,wrap,wrap<type>)
-#define macro_attr_pre(attr,pre,type) macro_attr_pre_with_func(attr,pre,wrap,wrap<type>)
+
+
+#define macro_attr(attr,type) macro_attr_func(attr,Get##attr(),Set##attr,wrap,unwrap<type>)
+#define macro_attr_enum(attr,type) macro_attr_func(attr,Get##attr(),Set##attr,wrapenum<type>,unwrapenum<type>)
+#define macro_attr_with_func(attr,getf,setf) macro_attr_func(attr,Get##attr(),Set##attr,getf,setf)
+
+//*/
+#define macro_attr_prop(attr,type) macro_attr_func(_##attr,attr,attr = ,wrap,unwrap<type>)
+#define macro_attr_prop_enum(attr,type) macro_attr_func(_##attr,attr,attr = ,wrapenum<type>,unwrapenum<type>)
+#define macro_attr_prop_with_func(attr,getf,setf) macro_attr_func(_##attr,attr,attr = ,getf,setf)
 
 
 DLL_LOCAL void rb_define_attr_method(VALUE klass,std::string name,VALUE(get)(VALUE),VALUE(set)(VALUE,VALUE));

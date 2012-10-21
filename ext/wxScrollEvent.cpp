@@ -6,7 +6,7 @@
  */
 #include "wxScrollEvent.hpp"
 #include "wxEvtHandler.hpp"
-#define _self wrap< wxScrollEvent* >(self)
+#define _self unwrap< wxScrollEvent* >(self)
 
 VALUE rb_cWXScrollEvent;
 
@@ -36,4 +36,5 @@ void Init_WXScrollEvent(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXScrollEvent,"position",_getPosition,_setPosition);
 
+	registerType<wxScrollEvent>(rb_cWXScrollEvent);
 }

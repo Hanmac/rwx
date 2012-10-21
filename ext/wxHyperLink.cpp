@@ -12,7 +12,7 @@
 VALUE rb_cWXHyperLink;
 
 #if wxUSE_HYPERLINKCTRL
-#define _self wrap<wxHyperlinkCtrl*>(self)
+#define _self unwrap<wxHyperlinkCtrl*>(self)
 
 namespace RubyWX {
 namespace HyperLink {
@@ -36,9 +36,9 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		label = wrap<wxString>(rb_hash_aref(hash,ID2SYM(rb_intern("label"))));
+		label = unwrap<wxString>(rb_hash_aref(hash,ID2SYM(rb_intern("label"))));
 	}
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY,
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,
 			label,wxEmptyString);
 	_created = true;
 	rb_call_super(argc,argv);
@@ -46,7 +46,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	{
 		VALUE temp;
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("url")))))
-			_self->SetURL(wrap<wxString>(temp));
+			_self->SetURL(unwrap<wxString>(temp));
 	}
 
 	return self;

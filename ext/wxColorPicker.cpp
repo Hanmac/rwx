@@ -13,7 +13,7 @@ VALUE rb_cWXColorPicker,rb_cWXColorPickerEvent;
 
 namespace RubyWX {
 namespace ColorPicker {
-#define _self wrap<wxColourPickerCtrl*>(self)
+#define _self unwrap<wxColourPickerCtrl*>(self)
 macro_attr(Colour,wxColour)
 
 APP_PROTECT(wxColourPickerCtrl)
@@ -22,7 +22,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 	_created = true;
 	rb_call_super(argc,argv);
 	return self;

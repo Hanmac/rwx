@@ -12,7 +12,7 @@
 VALUE rb_cWXFontPicker,rb_cWXFontPickerEvent;
 
 #if wxUSE_FONTPICKERCTRL
-#define _self wrap<wxFontPickerCtrl*>(self)
+#define _self unwrap<wxFontPickerCtrl*>(self)
 
 namespace RubyWX {
 namespace FontPicker {
@@ -25,7 +25,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 	rb_call_super(argc,argv);
 	return self;
 }
@@ -33,7 +33,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 namespace Event
 {
 #undef _self
-#define _self wrap<wxFontPickerEvent*>(self)
+#define _self unwrap<wxFontPickerEvent*>(self)
 macro_attr(Font,wxFont)
 }
 

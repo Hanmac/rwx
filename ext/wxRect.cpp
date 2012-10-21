@@ -11,7 +11,7 @@
 
 VALUE rb_cWXRect;
 
-#define _self wrap<wxRect*>(self)
+#define _self unwrap<wxRect*>(self)
 
 
 namespace RubyWX {

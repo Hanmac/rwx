@@ -15,18 +15,6 @@ DLL_LOCAL void Init_WXFont(VALUE rb_mWX);
 
 
 template <>
-VALUE wrap< wxFontWeight >(const wxFontWeight &vmenu);
-
-template <>
-wxFontWeight wrap< wxFontWeight >(const VALUE &vmenu);
-
-template <>
-wxFontStyle wrap< wxFontStyle >(const VALUE &vmenu);
-
-template <>
-wxFontFamily wrap< wxFontFamily >(const VALUE &vmenu);
-
-template <>
 wxFont nullPtr<wxFont>();
 
 #endif /* WXFONT_HPP_ */

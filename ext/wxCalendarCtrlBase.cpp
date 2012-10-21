@@ -10,7 +10,7 @@
 VALUE rb_cWXCalendarCtrlBase;
 
 #if wxUSE_TIMEPICKCTRL
-#define _self wrap<wxCalendarCtrlBase*>(self)
+#define _self unwrap<wxCalendarCtrlBase*>(self)
 
 namespace RubyWX {
 namespace CalendarCtrlBase {

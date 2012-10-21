@@ -11,7 +11,7 @@
 
 VALUE rb_cWXFontProperty;
 #if wxUSE_PROPGRID
-#define _self wrap<wxFontProperty*>(self)
+#define _self unwrap<wxFontProperty*>(self)
 
 namespace RubyWX {
 namespace FontProperty {

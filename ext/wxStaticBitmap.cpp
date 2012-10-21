@@ -11,7 +11,7 @@
 VALUE rb_cWXStaticBitmap;
 
 #if wxUSE_STATBMP
-#define _self wrap<wxStaticBitmap*>(self)
+#define _self unwrap<wxStaticBitmap*>(self)
 
 namespace RubyWX {
 namespace StaticBitmap {
@@ -22,7 +22,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(wrap<wxWindow*>(parent),wxID_ANY,wxNullBitmap);
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxNullBitmap);
 	_created = true;
 	rb_call_super(argc,argv);
 	return self;

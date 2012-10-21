@@ -16,7 +16,7 @@ VALUE rb_cWXMenu;
 
 #if wxUSE_MENUS
 
-#define _self wrap<wxMenu*>(self)
+#define _self unwrap<wxMenu*>(self)
 
 namespace RubyWX {
 namespace Menu {
@@ -69,13 +69,13 @@ VALUE _appendNormalItem(int argc,VALUE *argv,VALUE self)
 		rb_scan_args(argc, argv, "11",&text,&help);
 		wxMenu *m = new wxMenu;
 		rb_yield(wrap(m));
-		return wrap(_self->AppendSubMenu(m,wrap<wxString>(text),wrap<wxString>(help)));
+		return wrap(_self->AppendSubMenu(m,unwrap<wxString>(text),unwrap<wxString>(help)));
 	}else{
 		rb_scan_args(argc, argv, "12",&id,&text,&help);
 		wxWindowID wid = unwrapID(id);
 		if(!wxIsStockID(wid) && NIL_P(text))
 			rb_raise(rb_eArgError,"id %d needs an text",wid);
-		wxMenuItem *item = _self->Append(wid,wrap<wxString>(text),wrap<wxString>(help));
+		wxMenuItem *item = _self->Append(wid,unwrap<wxString>(text),unwrap<wxString>(help));
 		if(rb_block_given_p()){
 			VALUE proc = rb_block_proc();
 #ifdef wxHAS_EVENT_BIND
@@ -93,7 +93,7 @@ VALUE _appendCheckItem(int argc,VALUE *argv,VALUE self)
 {
 	VALUE id,text,help;
 	rb_scan_args(argc, argv, "12",&id,&text,&help);
-	wxMenuItem *item = _self->AppendCheckItem(unwrapID(id),wrap<wxString>(text),wrap<wxString>(help));
+	wxMenuItem *item = _self->AppendCheckItem(unwrapID(id),unwrap<wxString>(text),unwrap<wxString>(help));
 	if(rb_block_given_p()){
 		VALUE proc = rb_block_proc();
 #ifdef wxHAS_EVENT_BIND
@@ -109,7 +109,7 @@ VALUE _appendRadioItem(int argc,VALUE *argv,VALUE self)
 {
 	VALUE id,text,help;
 	rb_scan_args(argc, argv, "12",&id,&text,&help);
-	wxMenuItem *item = _self->AppendRadioItem(unwrapID(id),wrap<wxString>(text),wrap<wxString>(help));
+	wxMenuItem *item = _self->AppendRadioItem(unwrapID(id),unwrap<wxString>(text),unwrap<wxString>(help));
 	if(rb_block_given_p()){
 		VALUE proc = rb_block_proc();
 #ifdef wxHAS_EVENT_BIND
@@ -125,7 +125,7 @@ VALUE _appendShift(VALUE self,VALUE val)
 {
 	wxWindowID id = unwrapID(val);
 	if(!wxIsStockID(id))
-		rb_raise(rb_eArgError,"id \"%s\" cant be fast added",wrap<char*>(val));
+		rb_raise(rb_eArgError,"id \"%s\" cant be fast added",unwrap<char*>(val));
 	_self->Append(id);
 	return self;
 }

@@ -12,7 +12,7 @@
 
 VALUE rb_cWXFileHistory;
 #if wxUSE_FILE_HISTORY
-#define _self wrap<wxFileHistory*>(self)
+#define _self unwrap<wxFileHistory*>(self)
 
 namespace RubyWX
 {
@@ -40,7 +40,7 @@ VALUE _load(int argc,VALUE *argv,VALUE self)
 	if(NIL_P(config))
 		cconf = wxConfig::Get();
 	else
-		cconf = wrap<wxConfig*>(config);
+		cconf = unwrap<wxConfig*>(config);
 	_self->Load(*cconf);
 	return self;
 }
@@ -53,7 +53,7 @@ VALUE _save(int argc,VALUE *argv,VALUE self)
 	if(NIL_P(config))
 		cconf = wxConfig::Get();
 	else
-		cconf = wrap<wxConfig*>(config);
+		cconf = unwrap<wxConfig*>(config);
 	_self->Save(*cconf);
 	return self;
 }
@@ -64,10 +64,10 @@ VALUE _shiftleft(VALUE self,VALUE val)
 {
 #if wxUSE_CONFIG
 	if(rb_obj_is_kind_of(val,rb_cWXConfig))
-		_self->Load(*wrap<wxConfig*>(val));
+		_self->Load(*unwrap<wxConfig*>(val));
 	else
 #endif // wxUSE_CONFIG
-		_self->AddFileToHistory(wrap<wxString>(val));
+		_self->AddFileToHistory(unwrap<wxString>(val));
 	return self;
 }
 
@@ -75,10 +75,10 @@ VALUE _shiftright(VALUE self,VALUE val)
 {
 #if wxUSE_CONFIG
 	if(rb_obj_is_kind_of(val,rb_cWXConfig))
-		_self->Save(*wrap<wxConfig*>(val));
+		_self->Save(*unwrap<wxConfig*>(val));
 	else
 #endif // wxUSE_CONFIG
-		_self->AddFilesToMenu(wrap<wxMenu*>(val));
+		_self->AddFilesToMenu(unwrap<wxMenu*>(val));
 	return self;
 }
 
@@ -86,7 +86,7 @@ VALUE _shiftright(VALUE self,VALUE val)
 VALUE _add(VALUE self,VALUE val)
 {
 
-	_self->AddFileToHistory(wrap<wxString>(val));
+	_self->AddFileToHistory(unwrap<wxString>(val));
 	return self;
 }
 
@@ -97,7 +97,7 @@ VALUE _add_files(int argc,VALUE *argv,VALUE self)
 	if(NIL_P(menu))
 		_self->AddFilesToMenu();
 	else
-		_self->AddFilesToMenu(wrap<wxMenu*>(menu));
+		_self->AddFilesToMenu(unwrap<wxMenu*>(menu));
 
 	return self;
 }

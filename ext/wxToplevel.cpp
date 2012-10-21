@@ -10,7 +10,7 @@
 
 VALUE rb_cWXTopLevel;
 
-#define _self wrap<wxTopLevelWindow*>(self)
+#define _self unwrap<wxTopLevelWindow*>(self)
 
 namespace RubyWX {
 namespace TopLevel {
@@ -30,7 +30,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	{
 		VALUE temp;
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("title")))))
-			_self->SetTitle(wrap<wxString>(temp));
+			_self->SetTitle(unwrap<wxString>(temp));
 
 	}
 	rb_call_super(argc,argv);

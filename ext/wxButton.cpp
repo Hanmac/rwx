@@ -9,7 +9,7 @@
 
 VALUE rb_cWXButton;
 #if wxUSE_BUTTON
-#define _self wrap<wxButton*>(self)
+#define _self unwrap<wxButton*>(self)
 
 namespace RubyWX {
 namespace Button {
@@ -30,7 +30,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	}
 
 	if(!_created) {
-		_self->Create(wrap<wxWindow*>(parent),id);
+		_self->Create(unwrap<wxWindow*>(parent),id);
 		_created = true;
 	}
 

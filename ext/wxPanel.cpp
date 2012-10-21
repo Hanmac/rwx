@@ -9,7 +9,7 @@
 
 VALUE rb_cWXPanel;
 
-#define _self wrap<wxPanel*>(self)
+#define _self unwrap<wxPanel*>(self)
 
 namespace RubyWX {
 namespace Panel {
@@ -24,12 +24,12 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	if(!_created) {
 #if wxUSE_XRC
 		if(rb_obj_is_kind_of(name,rb_cString)){
-			wxXmlResource::Get()->LoadPanel(_self,wrap<wxWindow*>(parent),wrap<wxString>(name));
-			rb_raise(rb_eNameError,"Named Panel '%s' is not found.",wrap<char*>(name));
+			wxXmlResource::Get()->LoadPanel(_self,unwrap<wxWindow*>(parent),unwrap<wxString>(name));
+			rb_raise(rb_eNameError,"Named Panel '%s' is not found.",unwrap<char*>(name));
 		}
 		else
 #endif
-		_self->Create(wrap<wxWindow*>(parent),wxID_ANY);
+		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 		_created = true;
 	}
 	if(rb_obj_is_kind_of(name,rb_cString)){
