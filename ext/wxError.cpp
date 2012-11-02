@@ -8,6 +8,15 @@
 
 VALUE rb_eWXError;
 
+void wxrubyAssert(const wxString& file,
+                                  int line,
+                                  const wxString& func,
+                                  const wxString& cond,
+                                  const wxString& msg)
+{
+	rb_fatal("%s",msg.GetData().AsChar());
+}
+
 class RubyExceptionLog : public wxLog
 {
 protected:
@@ -15,13 +24,28 @@ protected:
 	                             const wxString& msg,
 	                             const wxLogRecordInfo& info)
 	{
-		rb_raise(rb_eWXError,"%s",msg.GetData().AsChar());
+		const char * c = msg.GetData().AsChar();
+		switch(level)
+		{
+		case wxLOG_FatalError:
+			rb_fatal("%s",c);
+			break;
+		case wxLOG_Warning:
+			rb_warn("%s",c);
+		default:
+			rb_raise(rb_eWXError,"%s",c);
+		}
+
+
 	}
 
 };
+
+
 
 void Init_WXError(VALUE rb_mWX)
 {
 	rb_eWXError = rb_define_class_under(rb_mWX,"Error",rb_eException);
 	wxLog::SetActiveTarget(new RubyExceptionLog);
+	wxSetAssertHandler(wxrubyAssert);
 }

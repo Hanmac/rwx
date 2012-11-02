@@ -2,8 +2,11 @@
 *.o
 *.so
 
+#eclipse project files
+.cproject
+.project
+
 # Ignore mkmf-generated files
 ext/Makefile
 ext/mkmf.log
-
 

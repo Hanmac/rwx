@@ -55,5 +55,8 @@ void Init_WXButton(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXButton,"auth_needed",_getAuthNeeded,_setAuthNeeded);
 
 	registerInfo<wxButton>(rb_cWXButton);
+
+	registerEventType<wxCommandEvent>("button_clicked",wxEVT_COMMAND_BUTTON_CLICKED);
+
 #endif
 }

@@ -23,14 +23,6 @@ macro_attr(Margins,wxSize)
 macro_attr(ToolPacking,int)
 macro_attr(ToolSeparation,int)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
-{
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
-	rb_call_super(argc,argv);
-	return self;
-}
-
 VALUE _addNormal(int argc,VALUE *argv,VALUE self)
 {
 	VALUE id,text,bitmap,bmpDisabled,shorthelp,longhelp,arg;
@@ -140,7 +132,7 @@ void Init_WXToolBarBase(VALUE rb_mWX)
 	rb_cWXToolBarBase = rb_define_class_under(rb_mWX,"ToolBarBase",rb_cWXControl);
 	rb_undef_alloc_func(rb_cWXToolBarBase);
 
-	rb_define_method(rb_cWXToolBarBase,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
+//	rb_define_method(rb_cWXToolBarBase,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_method(rb_cWXToolBarBase,"addNormal",RUBY_METHOD_FUNC(_addNormal),-1);
 	rb_define_method(rb_cWXToolBarBase,"addCheck",RUBY_METHOD_FUNC(_addCheck),-1);

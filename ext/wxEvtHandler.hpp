@@ -14,7 +14,7 @@
 #include "wxApp.hpp"
 #include "wxWindow.hpp"
 #include "wxEvent.hpp"
-
+#include "wxCommandEvent.hpp"
 #include "wxTaskBar.hpp"
 
 
@@ -23,19 +23,39 @@
 
 #include <wx/sharedptr.h>
 
-void registerEventType(const char *sym, wxEventType type);
-
+void registerEventType(const char *sym, wxEventType type,wxClassInfo *info);
 
 #ifdef wxHAS_EVENT_BIND
 template<typename T>
 void registerEventType(const char *sym, wxEventTypeTag<T> type,VALUE klass)
 {
-	registerEventType(sym,type);
-	registerInfo<T>(klass);
+	registerEventType(sym,type,wxCLASSINFO(T));
+	if(!NIL_P(klass))
+		registerInfo<T>(klass);
+}
+template<typename T>
+void registerEventType(const char *sym, wxEventTypeTag<T> type)
+{
+	registerEventType(sym,type,Qnil);
 }
 #else
-void registerEventType(const char *sym, wxEventType type,VALUE klass);
+template<typename T>
+void registerEventType(const char *sym, wxEventType type,VALUE klass)
+{
+	registerEventType(sym,type,wxCLASSINFO(T));
+	if(!NIL_P(klass))
+		registerInfo<T>(klass);
+}
+template<typename T>
+void registerEventType(const char *sym, wxEventTypeTag<T> type)
+{
+	registerEventType(sym,type,Qnil);
+}
+
 #endif
+
+wxEventType unwrapEventType(VALUE type);
+VALUE wrapEventType(wxEventType type);
 
 class RubyFunctorPtr
 {
@@ -88,6 +108,11 @@ template <>
 wxEvtHandler* unwrap< wxEvtHandler* >(const VALUE &vhandler);
 
 #define _created static_cast<RubyClientData*>(_self->GetClientObject())->created
+
+
+#if wxUSE_XRC
+bool loadxrc(wxObject *self,VALUE name,wxWindow *parent);
+#endif
 
 
 #endif /* WXEVTHANDLER_HPP_ */

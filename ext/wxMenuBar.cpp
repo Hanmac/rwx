@@ -30,8 +30,8 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 VALUE _each(VALUE self)
 {
 	RETURN_ENUMERATOR(self,0,NULL);
-	int count = _self->GetMenuCount();
-	for(int i = 0;i < count;++i)
+	size_t count = _self->GetMenuCount();
+	for(size_t i = 0;i < count;++i)
 		rb_yield(wrap(_self->GetMenu(i)));
 	return self;
 }

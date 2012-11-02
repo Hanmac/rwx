@@ -19,7 +19,11 @@ VALUE global_evthandler;
 
 std::map<VALUE,wxEvtHandler*> evthandlerholder;
 
-std::map<ID,wxEventType> evttypeholder;
+typedef std::map<ID,wxEventType>  evttypeholdertype;
+typedef std::map<wxEventType,wxClassInfo*>  evttypeclassholdertype;
+
+evttypeholdertype evttypeholder;
+evttypeclassholdertype evttypeclassholder;
 
 template <>
 wxEvtHandler* unwrap< wxEvtHandler* >(const VALUE &vhandler)
@@ -37,8 +41,28 @@ wxEvtHandler* unwrap< wxEvtHandler* >(const VALUE &vhandler)
 	}
 }
 
+#if wxUSE_XRC
+bool loadxrc(wxObject *self,VALUE name,wxWindow *parent)
+{
+	if(rb_obj_is_kind_of(name,rb_cString)){
 
+		wxClassInfo *info = self->GetClassInfo();
+		if(!(wxXmlResource::Get()->LoadObject(self,parent,unwrap<wxString>(name),wxString(info->GetClassName()))))
+			rb_raise(rb_eNameError,"Named %s '%s' is not found.",wxString(info->GetClassName()).GetData().AsChar(),unwrap<char*>(name));
+		return true;
+	}
+	return false;
+}
+#endif
 
+#if !wxUSE_GUI
+class RubyEvent : public wxEvent
+{
+public:
+
+	wxEvent* Clone()const { return new RubyEvent(*this);}
+};
+#endif
 
 #define rubyclientdata(T) \
 VALUE wrapPtr(T *handler,VALUE klass)\
@@ -67,28 +91,58 @@ rubyclientdata(wxSizer)
 rubyclientdata(wxPGProperty)
 #endif
 
+VALUE wrapPtr(wxObject *object,VALUE klass)
+{
+	if(!object)
+		return Qnil;
+
+	if(wxEvtHandler *evt = wxDynamicCast(object,wxEvtHandler))
+		return wrapPtr(evt,klass);
+	if(wxSizer *evt = wxDynamicCast(object,wxSizer))
+		return wrapPtr(evt,klass);
+	if(wxClientDataContainer *evt = dynamic_cast<wxClientDataContainer*>(object))
+		return wrapPtr(evt,klass);
+#if wxUSE_PROPGRID
+	if(wxPGProperty *evt = wxDynamicCast(object,wxPGProperty))
+		return wrapPtr(evt,klass);
+#endif
+
+	return wrapPtr((void*)object,klass);
+}
+
+
 wxEventType unwrapEventType(VALUE type)
 {
+	if(NIL_P(type))
+		return wxEVT_ANY;
+
 	if(!SYMBOL_P(type))
 		return NUM2INT(type);
 
-	std::map<ID,wxEventType>::iterator it = evttypeholder.find(SYM2ID(type));
+	evttypeholdertype::iterator it = evttypeholder.find(SYM2ID(type));
 	if(it != evttypeholder.end())
 		return it->second;
 
-	return wxEVT_NULL;
+	wxEventType evt = wxNewEventType();
+	evttypeholder[SYM2ID(type)] = evt;
+	return evt;
 }
 
-void registerEventType(const char *sym, wxEventType type)
+VALUE wrapEventType(wxEventType type)
+{
+	for(evttypeholdertype::iterator it = evttypeholder.begin();it != evttypeholder.end(); ++it)
+	{
+		if(it->second == type)
+			return ID2SYM(it->first);
+	}
+	return INT2NUM(type);
+}
+
+void registerEventType(const char *sym, wxEventType type,wxClassInfo *info)
 {
 	evttypeholder[rb_intern(sym)]=type;
+	evttypeclassholder[type] = info;
 }
-#ifndef wxHAS_EVENT_BIND
-void registerEventType(const char *sym, wxEventType type,VALUE klass)
-{
-	registerEventType(sym,type);
-}
-#endif
 
 RubyClientData::RubyClientData(VALUE obj) : wxClientData(), mRuby(obj),created(false)
 {
@@ -152,9 +206,34 @@ VALUE _fire(int argc,VALUE *argv,VALUE self)
 	VALUE type,id;
 	rb_scan_args(argc, argv, "11",&type,&id);
 
-	wxMenuEvent e(unwrapEventType(type),unwrapID(id));
-	_self->ProcessEvent(e);
-	return self;
+	wxEvent *evt;
+	wxEventType etype = unwrapEventType(type);
+
+	evttypeclassholdertype::iterator it = evttypeclassholder.find(etype);
+	if(it != evttypeclassholder.end())
+		evt = wxDynamicCast(it->second->CreateObject(),wxEvent);
+	else
+#if wxUSE_GUI
+		evt = new wxCommandEvent;
+#else
+		evt = new RubyEvent;
+#endif
+
+	ID IDid = rb_intern("id");
+	evt->SetEventType(etype);
+	if(!NIL_P(id))
+		evt->SetId(unwrapID(id));
+	else
+	{
+		if(rb_respond_to(self,IDid))
+			evt->SetId(unwrapID(rb_funcall(self,IDid,0)));
+	}
+	evt->SetEventObject(_self);
+
+	if(rb_block_given_p())
+		rb_yield(wrap(evt));
+
+	return wrap(_self->ProcessEvent(*evt));
 
 }
 }

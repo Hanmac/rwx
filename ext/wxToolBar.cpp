@@ -20,12 +20,15 @@ APP_PROTECT(wxToolBar)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
-	_created = true;
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "12",&parent,&name,&hash);
+	if(!rb_obj_is_kind_of(name,rb_cString)){
+		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
+		_created = true;
+	}
 	rb_call_super(argc,argv);
 	return self;
+
 }
 
 }

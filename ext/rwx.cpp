@@ -22,6 +22,7 @@
 #include "wxBitmap.hpp"
 
 #include "wxEvent.hpp"
+#include "wxCommandEvent.hpp"
 #include "wxScrollEvent.hpp"
 #include "wxKeyEvent.hpp"
 #include "wxMouseEvent.hpp"
@@ -180,6 +181,7 @@ extern "C" void Init_rwx()
 	Init_WXPoint(rb_mWX);
 
 	Init_WXEvent(rb_mWX);
+	Init_WXCommandEvent(rb_mWX);
 	Init_WXScrollEvent(rb_mWX);
 
 	Init_WXKeyEvent(rb_mWX);

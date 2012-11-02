@@ -31,6 +31,10 @@ singlereturn(GetValue)
 singlereturn(GetDefaultValue)
 singlereturn(GetValueImage)
 
+singlereturn(GetValueType)
+
+macro_attr(ValueImage,wxBitmap&)
+
 VALUE _setValue(VALUE self,VALUE val)
 {
 	_self->SetValue(unwrapVariant(val,_self->GetValueType()));
@@ -43,13 +47,13 @@ VALUE _setDefaultValue(VALUE self,VALUE val)
 	_self->SetDefaultValue(var);
 	return val;
 }
-
+/*
 VALUE _setValueImage(VALUE self,VALUE val)
 {
 	_self->SetValueImage(*unwrap<wxBitmap*>(val));
 	return val;
 }
-
+*/
 VALUE _getAttribute(VALUE self,VALUE name)
 {
 	return wrap(_self->GetAttribute(unwrap<wxString>(name)));
@@ -59,6 +63,11 @@ VALUE _setAttribute(VALUE self,VALUE name,VALUE val)
 {
 	_self->SetAttribute(unwrap<wxString>(name),unwrapVariant(val,_self->GetAttribute(unwrap<wxString>(name)).GetType()));
 	return val;
+}
+
+VALUE _getClass(VALUE self)
+{
+	return wrap(wxString(_self->GetClassInfo()->GetClassName()));
 }
 
 
@@ -71,6 +80,27 @@ VALUE _each_child(VALUE self)
 	return self;
 }
 
+
+VALUE _each_choices(VALUE self)
+{
+	RETURN_ENUMERATOR(self,0,NULL);
+	const wxPGChoices& choices = (_self->GetChoices());
+
+	if(!choices.IsOk())
+		return self;
+
+	size_t count = choices.GetCount();
+	//return INT2NUM(count);
+	for(size_t i = 0; i < count; ++i)
+	{
+		//choices[i];
+		//
+		rb_yield(wrap(choices[i]));
+	}
+
+
+	return self;
+}
 
 }
 }
@@ -89,9 +119,13 @@ DLL_LOCAL void Init_WXProperty(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXProperty,"value",_GetValue,_setValue);
 	rb_define_attr_method(rb_cWXProperty,"default_value",_GetDefaultValue,_setDefaultValue);
-	rb_define_attr_method(rb_cWXProperty,"value_image",_GetValueImage,_setValueImage);
+	rb_define_attr_method(rb_cWXProperty,"value_image",_getValueImage,_setValueImage);
 
 	rb_define_method(rb_cWXProperty,"each_child",RUBY_METHOD_FUNC(_each_child),0);
+	rb_define_method(rb_cWXProperty,"each_choices",RUBY_METHOD_FUNC(_each_choices),0);
+
+	rb_define_method(rb_cWXProperty,"wxclass",RUBY_METHOD_FUNC(_getClass),0);
+	rb_define_method(rb_cWXProperty,"type",RUBY_METHOD_FUNC(_GetValueType),0);
 
 	rb_define_method(rb_cWXProperty,"[]",RUBY_METHOD_FUNC(_getAttribute),1);
 	rb_define_method(rb_cWXProperty,"[]=",RUBY_METHOD_FUNC(_setAttribute),2);

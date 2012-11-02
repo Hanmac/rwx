@@ -81,5 +81,6 @@ void Init_WXWizardPage(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXWizardPage,"bitmap",_getBitmap,_setBitmap);
 
 	registerInfo<wxWizardPage>(rb_cWXWizardPage);
+	registerInfo<wxWizardPageSimple>(rb_cWXWizardPage);
 	registerInfo<RubyWizardPage>(rb_cWXWizardPage);
 }

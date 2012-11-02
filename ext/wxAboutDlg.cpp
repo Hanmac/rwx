@@ -20,53 +20,41 @@ wxAboutDialogInfo toInto(VALUE hash)
 	if(NIL_P(hash))
 		return info;
 
-	VALUE value = rb_hash_aref(hash,ID2SYM(rb_intern("name")));
-	if(!NIL_P(value))
+	VALUE value;
+
+	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern("name")))))
 		info.SetName(unwrap<wxString>(value));
 
-	value = rb_hash_aref(hash,ID2SYM(rb_intern("version")));
-	if(!NIL_P(value))
+	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern("version")))))
 		info.SetVersion(unwrap<wxString>(value));
 
-
-
-	value = rb_hash_aref(hash,ID2SYM(rb_intern("description")));
-	if(!NIL_P(value))
+	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern("description")))))
 		info.SetDescription(unwrap<wxString>(value));
 
-	value = rb_hash_aref(hash,ID2SYM(rb_intern("copyright")));
-	if(!NIL_P(value))
+	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern("copyright")))))
 		info.SetCopyright(unwrap<wxString>(value));
 
-	value = rb_hash_aref(hash,ID2SYM(rb_intern("licence")));
-	if(!NIL_P(value))
+	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern("licence")))))
 		info.SetLicence(unwrap<wxString>(value));
 
-	value = rb_hash_aref(hash,ID2SYM(rb_intern("web_site")));
-	if(!NIL_P(value))
+	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern("web_site")))))
 		info.SetWebSite(unwrap<wxString>(value));
 
-
-
-	value = rb_hash_aref(hash,ID2SYM(rb_intern("icon")));
-	if(!NIL_P(value))
+	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern("icon")))))
 		info.SetIcon(unwrap<wxIcon>(value));
 
-	value = rb_hash_aref(hash,ID2SYM(rb_intern("developers")));
-	if(!NIL_P(value))
+	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern("developers")))))
 		info.SetDevelopers(unwrap<wxArrayString>(value));
 
-	value = rb_hash_aref(hash,ID2SYM(rb_intern("doc_writers")));
-	if(!NIL_P(value))
+	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern("doc_writers")))))
 		info.SetDocWriters(unwrap<wxArrayString>(value));
 
-	value = rb_hash_aref(hash,ID2SYM(rb_intern("artists")));
-	if(!NIL_P(value))
+	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern("artists")))))
 		info.SetArtists(unwrap<wxArrayString>(value));
 
-	value = rb_hash_aref(hash,ID2SYM(rb_intern("translators")));
-	if(!NIL_P(value))
+	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern("translators")))))
 		info.SetTranslators(unwrap<wxArrayString>(value));
+
 	return info;
 }
 
@@ -79,10 +67,7 @@ VALUE _aboutBox(int argc,VALUE *argv,VALUE self)
 		rb_raise(rb_eArgError,"%s is not running.",rb_class2name(rb_cWXApp));
 
 	if(NIL_P(hash))
-	{
-		hash = parent;
-		parent = Qnil;
-	}
+		std::swap(hash,parent);
 
 	wxAboutBox(toInto(hash),unwrap<wxWindow*>(parent));
 
@@ -99,10 +84,7 @@ VALUE _genericaboutBox(int argc,VALUE *argv,VALUE self)
 		rb_raise(rb_eArgError,"%s is not running.",rb_class2name(rb_cWXApp));
 
 	if(NIL_P(hash))
-	{
-		hash = parent;
-		parent = Qnil;
-	}
+		std::swap(hash,parent);
 
 	wxGenericAboutBox(toInto(hash),unwrap<wxWindow*>(parent));
 

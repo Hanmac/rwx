@@ -35,10 +35,6 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_call_super(argc,argv);
 	return self;
 }
-VALUE _append(VALUE self,VALUE val)
-{
-	return wrap(_self->Append(unwrap<wxPGProperty*>(val)));
-}
 
 }
 }

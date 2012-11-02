@@ -10,6 +10,8 @@
 infoholdertype infoklassholder;
 typeholdertype typeklassholder;
 
+enumregistertype enumregister;
+
 VALUE wrapClass(const wxClassInfo * info)
 {
 	infoholdertype::iterator it = infoklassholder.find(info);
@@ -22,11 +24,11 @@ VALUE wrapClass(const wxClassInfo * info)
 
 VALUE wrapPtr(void *arg,VALUE klass)
 {
+	wxDynamicCast(arg,wxEvtHandler);
 	if(arg)
 		return Data_Wrap_Struct(klass, 0, 0, arg);
 	return Qnil;
 }
-
 
 template <>
 bool unwrap< bool >(const VALUE &val )

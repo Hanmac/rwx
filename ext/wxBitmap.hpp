@@ -24,6 +24,9 @@ wxBitmap* unwrap< wxBitmap* >(const VALUE &vbitmap);
 template <>
 wxBitmap unwrap< wxBitmap >(const VALUE &vbitmap);
 
+template <>
+wxBitmap& unwrap< wxBitmap& >(const VALUE &vbitmap);
+
 wxBitmap wrapBitmap(const VALUE &vbitmap,wxWindowID id,bool disabled,const wxArtClient &type);
 
 template <>

@@ -44,6 +44,7 @@ VALUE wrapID(wxWindowID val)
 #endif
 	return INT2NUM(val);
 }
+
 wxWindowID unwrapID(VALUE val)
 {
 	if(NIL_P(val))
@@ -201,13 +202,20 @@ APP_PROTECT(wxWindow)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "12",&parent,&name,&hash);
 
 	if(!_created) {
+#if wxUSE_XRC
+		if(!loadxrc(_self,name,unwrap<wxWindow*>(parent)))
+#endif
 		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 		_created = true;
 	}
+
+	if(NIL_P(hash))
+		std::swap(name,hash);
+
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
@@ -253,8 +261,7 @@ VALUE _draw(int argc,VALUE *argv,VALUE self)
 	VALUE paint;
 	rb_scan_args(argc, argv, "01",&paint);
 	wxDC *dc;
-if(NIL_P(paint) || RTEST(paint))
-{
+if(NIL_P(paint) || RTEST(paint)) {
 	wxPaintDC *mdc = new wxPaintDC(_self);
 	_self->PrepareDC(*mdc);
 #if wxUSE_GRAPHICS_CONTEXT
@@ -263,8 +270,7 @@ if(NIL_P(paint) || RTEST(paint))
 #else
 	dc = mdc;
 #endif
-}else
-{
+} else {
 	wxClientDC *cdc = new wxClientDC(_self);
 	_self->PrepareDC(*cdc);
 #if wxUSE_GRAPHICS_CONTEXT

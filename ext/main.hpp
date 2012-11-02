@@ -80,6 +80,7 @@ extern typeholdertype typeklassholder;
 
 
 VALUE wrapPtr(void *arg,VALUE klass);
+VALUE wrapPtr(wxObject *object,VALUE klass);
 VALUE wrapPtr(wxEvtHandler *handler,VALUE klass);
 VALUE wrapPtr(wxClientDataContainer *sizer,VALUE klass);
 VALUE wrapPtr(wxSizer *sizer,VALUE klass);

@@ -18,28 +18,13 @@ APP_PROTECT(wxPanel)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash,name;
+	VALUE parent,name,hash;
 	rb_scan_args(argc, argv, "12",&parent,&name,&hash);
-
-	if(!_created) {
-#if wxUSE_XRC
-		if(rb_obj_is_kind_of(name,rb_cString)){
-			wxXmlResource::Get()->LoadPanel(_self,unwrap<wxWindow*>(parent),unwrap<wxString>(name));
-			rb_raise(rb_eNameError,"Named Panel '%s' is not found.",unwrap<char*>(name));
-		}
-		else
-#endif
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString)){
 		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 		_created = true;
 	}
-	if(rb_obj_is_kind_of(name,rb_cString)){
-		VALUE args[] = {parent,hash};
-
-		rb_call_super(2,args);
-	}else {
-		rb_call_super(argc,argv);
-	}
-
+	rb_call_super(argc,argv);
 	return self;
 }
 

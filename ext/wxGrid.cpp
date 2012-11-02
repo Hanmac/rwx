@@ -76,11 +76,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	if(!_created) {
 #if wxUSE_XRC
-		if(rb_obj_is_kind_of(name,rb_cString)){
-			wxXmlResource::Get()->LoadPanel(_self,unwrap<wxWindow*>(parent),unwrap<wxString>(name));
-			rb_raise(rb_eNameError,"Named Grid '%s' is not found.",unwrap<char*>(name));
-		}
-		else
+		if(!loadxrc(_self,name,unwrap<wxWindow*>(parent)))
 #endif
 		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 		_self->SetMargins(0,0);

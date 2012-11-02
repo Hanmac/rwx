@@ -60,6 +60,13 @@ wxBitmap unwrap< wxBitmap >(const VALUE &vbitmap)
 }
 
 template <>
+wxBitmap& unwrap< wxBitmap& >(const VALUE &vbitmap)
+{
+	return *unwrap< wxBitmap* >(vbitmap);
+}
+
+
+template <>
 VALUE wrap< wxIcon >(wxIcon *icon )
 {
 	if(icon == &wxNullIcon)
@@ -132,16 +139,15 @@ VALUE _alloc(VALUE self) {
 VALUE _draw(VALUE self)
 {
 	wxDC *dc;
-	wxMemoryDC mdc;
-	mdc.SelectObject(*_self);
+	wxMemoryDC *mdc = new wxMemoryDC;
+	mdc->SelectObject(*_self);
 #if wxUSE_GRAPHICS_CONTEXT
-	wxGCDC gdc(mdc);
-	dc = &gdc;
+	dc = new wxGCDC(*mdc);
 #else
 	dc = &mdc;
 #endif
 	rb_yield(wrap(dc));
-	mdc.SelectObject(wxNullBitmap);
+	mdc->SelectObject(wxNullBitmap);
 	return self;
 }
 

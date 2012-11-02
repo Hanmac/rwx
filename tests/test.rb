@@ -118,8 +118,16 @@ class TilesetGridRenderer < WX::GridCellRenderer
 	end
 end
 
+class Cat < WX::CategoryProperty 
+	def initialize
+		self.name = "Font1"
+		self.label = "Font2"
+	end
+end
+
 class A < WX::App
 	def on_init
+	
 	
 #	
 #		#f = WX::Font.new(10,:script)
@@ -149,14 +157,16 @@ class A < WX::App
 		@frame.menuBar = WX::Menu::Bar.new(nil) {|m|
 			m.append("Datei") {|menu|
 				menu << :new
-				menu.appendNormal(:open) {
+				menu.appendNormal(:open) {|e|
+				
+					p e.id
 					wiz = WX::Wizard.new(@frame)
 					pages = []
 					pages << wiz.addPage(WX::WizardPage) {|page| }
 					#pages << wiz.addPage(MyPage) {|page| p page}
 					pages << wiz.addPage(WX::WizardPage,:id => :hello) {|page|}
 					wiz.chainPages(*pages)
-					
+#					
 					wiz.showPage(pages[0])
 					wiz.show_modal
 					#wiz.runWizard(pages[0])
@@ -178,9 +188,13 @@ class A < WX::App
 					@frame.close(false)#(true)
 					#WX.exit
 				}
+			@frame.bind(:menu_selected) {|e| p e.id}
 			}
+			
 		}
 #		#i=WX::Image.new("new16x16.png")
+
+
 		t = @frame.createToolBar
 
 #		#t.addNormal(WX::TimePickerCtrl)
@@ -213,6 +227,10 @@ class A < WX::App
 #		#c.label_text = "abc"
 ##		t.addNormal(WX::TimePickerCtrl.new(t))
 #		
+		sc = WX::ColorPicker.new(@frame)
+		
+		sc.each_child {|c| p c}
+		
 		t.addNormal(:new,nil) {|e|
 			MapDialog.new(@frame).show_modal
 		}
@@ -243,8 +261,12 @@ class A < WX::App
 #		
 #		#p t.each_tool.to_a
 		t.realize
+		
+		#p @frame.createStatusBar
 #		popup = WX::Menu.new("") {|menu| menu.appendNormal(:new_menu,"new Map") }
 		doc = File.open("project.xml"){|f| Nokogiri::XML(f) }
+
+#=begin
 
 		@frame.aui {|aui|
 ##		
@@ -498,7 +520,19 @@ class A < WX::App
 ##			#aui['tree'] = @tc
 ##			#aui['tb'] = tb
 		}
+#=end
+#		pg = WX::PropertyGrid.new(@frame,:extra_style => WX::PropertyGrid::EX_HELP_AS_TOOLTIPS)
 
+#		pg = WX::PropertyGridManager.new(@frame,
+#			:style => WX::PropertyGridManager::TOOLBAR,
+#			:extra_style => WX::PropertyGridManager::EX_MODE_BUTTONS
+#		)
+
+#		fp = WX::CategoryProperty.new
+#		fp.name = "Font1"
+#		fp.label = "Font2"
+		
+#		pg.append(Cat)
 =begin
 		map = TiledTmx::Map.load_xml("../../../unbenannt.tmx")
 		grid = WX::Grid.new(@frame)
@@ -532,8 +566,6 @@ class A < WX::App
 #				@map1.draw(0,0,0) { dc }
 #			}
 #		}
-
-
 
 		@frame.show
 #		#p @frame.each.to_

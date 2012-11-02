@@ -24,41 +24,26 @@ macro_attr_with_func(AffirmativeId,wrapID,unwrapID)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash,name;
+	VALUE parent,name,hash;
 	rb_scan_args(argc, argv, "12",&parent,&name,&hash);
 
 	int style = wxDEFAULT_FRAME_STYLE;
 
-	if(!_created) {
-#if wxUSE_XRC
-		if(rb_obj_is_kind_of(name,rb_cString)){
-			if(!(wxXmlResource::Get()->LoadDialog(_self,unwrap<wxWindow*>(parent),unwrap<wxString>(name))))
-				rb_raise(rb_eNameError,"Named Dialog '%s' is not found.",unwrap<char*>(name));
 
-		}
-		else
-#endif
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString)){
+		if(rb_obj_is_kind_of(name,rb_cHash))
 		{
-			if(rb_obj_is_kind_of(hash,rb_cHash))
-			{
-				VALUE temp;
-				if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("style")))))
-					style = NUM2INT(temp);
-			}
-
-			_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,style);
+			VALUE temp;
+			if(!NIL_P(temp=rb_hash_aref(name,ID2SYM(rb_intern("style")))))
+				style = NUM2INT(temp);
 		}
+
+		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,style);
 		_created = true;
 	}
-	if(rb_obj_is_kind_of(name,rb_cString)){
-		VALUE args[] = {parent,hash};
-
-		rb_call_super(2,args);
-	}else {
-		rb_call_super(argc,argv);
-	}
-
+	rb_call_super(argc,argv);
 	return self;
+
 }
 
 VALUE _ShowModal(VALUE self)
