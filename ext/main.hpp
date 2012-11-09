@@ -54,6 +54,9 @@
 #include <wx/propgrid/property.h>
 #endif
 
+#if wxUSE_GRID
+#include <wx/grid.h>
+#endif
 
 template< class T > struct remove_pointer                    {typedef T type;};
 template< class T > struct remove_pointer<T*>                {typedef T type;};
