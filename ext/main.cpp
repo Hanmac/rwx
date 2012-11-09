@@ -139,7 +139,7 @@ wxArrayString unwrap< wxArrayString >(const VALUE &val )
 template <>
 VALUE wrap< wxDateTime >(const wxDateTime &st )
 {
-	return rb_time_nano_new(st.GetTicks(),st.GetMillisecond()*1000);
+	return rb_time_new(st.GetTicks(),st.GetMillisecond() * 10);
 }
 
 template <>

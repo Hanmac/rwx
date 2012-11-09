@@ -89,9 +89,10 @@ VALUE _pulse(int argc,VALUE *argv,VALUE self)
 	return wrap(_self->Pulse(unwrap<wxString>(message)));
 }
 
+
+}
+}
 #endif
-}
-}
 
 DLL_LOCAL void Init_WXProgressDialog(VALUE rb_mWX)
 {

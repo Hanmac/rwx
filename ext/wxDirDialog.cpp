@@ -72,9 +72,11 @@ VALUE _getUserDir(int argc,VALUE *argv,VALUE self)
 			defaultPath,style,pos,
 			unwrap<wxWindow*>(parent)));
 }
+
+}
+}
+
 #endif
-}
-}
 
 void Init_WXDirDialog(VALUE rb_mWX)
 {

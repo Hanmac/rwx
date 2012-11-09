@@ -66,9 +66,11 @@ VALUE _getUserColor(int argc,VALUE *argv,VALUE self)
 	wxColor col = wxGetColourFromUser(unwrap<wxWindow*>(parent),*wxBLACK,unwrap<wxString>(caption));
 	return col.IsOk() ? wrap(col) : Qnil;
 }
+
+}
+}
+
 #endif
-}
-}
 
 void Init_WXColorDialog(VALUE rb_mWX)
 {

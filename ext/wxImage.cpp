@@ -48,7 +48,7 @@ VALUE _load(int argc,VALUE *argv,VALUE self)
 	VALUE name,mime,nr;
 	rb_scan_args(argc, argv, "12",&name,&mime,&nr);
 
-	int err = 0;
+	errno = 0;
 
 	bool result;
 
@@ -69,15 +69,15 @@ VALUE _load(int argc,VALUE *argv,VALUE self)
 		{
 			if(file.FileExists()){
 				if(!file.IsFileReadable())
-					err = EACCES;
+					errno = EACCES;
 			}else
-				err = ENOENT;
+				errno = ENOENT;
 		}else
-			err = ENOENT;
+			errno = ENOENT;
 
-		if(err)
+		if(errno)
 		{
-			rb_syserr_fail(err,unwrap< char* >(name));
+			rb_sys_fail(unwrap< char* >(name));
 			return Qfalse;
 		}
 
@@ -307,7 +307,7 @@ VALUE _save(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "11",&name,&mime);
 	if(!_self->IsOk())
 		return Qfalse;
-	int err = 0;
+	errno = 0;
 
 	wxFileName dir(wxPathOnly(unwrap<wxString>(name)));
 	dir.MakeAbsolute(wxGetCwd());
@@ -317,15 +317,15 @@ VALUE _save(int argc,VALUE *argv,VALUE self)
 	if(dir.DirExists())
 	{
 		if(file.FileExists() && !file.IsFileWritable())
-			err = EACCES;
+			errno = EACCES;
 		else if(!dir.IsDirWritable())
-			err = EACCES;
+			errno = EACCES;
 	}else
-		err = ENOENT;
+		errno = ENOENT;
 
-	if(err)
+	if(errno)
 	{
-		rb_syserr_fail(err,unwrap< char* >(name));
+		rb_sys_fail(unwrap< char* >(name));
 		return Qfalse;
 	}
 

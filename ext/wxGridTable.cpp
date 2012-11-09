@@ -83,7 +83,7 @@ namespace GridTable {
 
 VALUE _alloc(VALUE self)
 {
-	return wrapPtr(new RubyGridTable(self),self);
+	return wrapPtr(static_cast<wxClientDataContainer*>(new RubyGridTable(self)),self);
 }
 
 }

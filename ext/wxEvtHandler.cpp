@@ -28,7 +28,7 @@ evttypeclassholdertype evttypeclassholder;
 template <>
 wxEvtHandler* unwrap< wxEvtHandler* >(const VALUE &vhandler)
 {
-	if(rb_type_p(vhandler,T_DATA))
+	if(TYPE(vhandler) == T_DATA)
 		return unwrapPtr<wxEvtHandler>(vhandler,rb_mWXEvtHandler);
 	std::map<VALUE,wxEvtHandler*>::iterator it = evthandlerholder.find(vhandler);
 	if(it != evthandlerholder.end())
