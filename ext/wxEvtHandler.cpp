@@ -90,6 +90,10 @@ rubyclientdata(wxSizer)
 #if wxUSE_PROPGRID
 rubyclientdata(wxPGProperty)
 #endif
+#if wxUSE_GRID
+rubyclientdata(wxGridTableBase)
+#endif
+
 
 VALUE wrapPtr(wxObject *object,VALUE klass)
 {

@@ -82,11 +82,15 @@ extern typeholdertype typeklassholder;
 VALUE wrapPtr(void *arg,VALUE klass);
 VALUE wrapPtr(wxObject *object,VALUE klass);
 VALUE wrapPtr(wxEvtHandler *handler,VALUE klass);
+
 VALUE wrapPtr(wxClientDataContainer *sizer,VALUE klass);
 VALUE wrapPtr(wxSizer *sizer,VALUE klass);
 
 #if wxUSE_PROPGRID
 VALUE wrapPtr(wxPGProperty *sizer,VALUE klass);
+#endif
+#if wxUSE_GRID
+VALUE wrapPtr(wxGridTableBase *sizer,VALUE klass);
 #endif
 
 
