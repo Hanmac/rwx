@@ -47,7 +47,7 @@ bool loadxrc(wxObject *self,VALUE name,wxWindow *parent)
 	if(rb_obj_is_kind_of(name,rb_cString)){
 
 		wxClassInfo *info = self->GetClassInfo();
-		if(!(wxXmlResource::Get()->LoadObject(self,parent,unwrap<wxString>(name),wxString(info->GetClassName()))))
+		if(!(wxXmlResource::Get()->LoadObjectRecursively(self,parent,unwrap<wxString>(name),wxString(info->GetClassName()))))
 			rb_raise(rb_eNameError,"Named %s '%s' is not found.",wxString(info->GetClassName()).GetData().AsChar(),unwrap<char*>(name));
 		return true;
 	}

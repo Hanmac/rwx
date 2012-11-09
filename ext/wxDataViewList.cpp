@@ -44,8 +44,8 @@ singlefunc(DeleteAllItems);
 
 VALUE _AppendTextColumn(int argc,VALUE *argv,VALUE self)
 {
-	VALUE label;
-	rb_scan_args(argc, argv, "11",&label);
+	VALUE label,hash;
+	rb_scan_args(argc, argv, "10",&label,&hash);
 
 	_self->AppendTextColumn(unwrap<wxString>(label));
 	return self;
@@ -53,8 +53,8 @@ VALUE _AppendTextColumn(int argc,VALUE *argv,VALUE self)
 
 VALUE _AppendToggleColumn(int argc,VALUE *argv,VALUE self)
 {
-	VALUE label;
-	rb_scan_args(argc, argv, "11",&label);
+	VALUE label,hash;
+	rb_scan_args(argc, argv, "11",&label,&hash);
 
 	_self->AppendToggleColumn(unwrap<wxString>(label));
 	return self;
@@ -62,8 +62,8 @@ VALUE _AppendToggleColumn(int argc,VALUE *argv,VALUE self)
 
 VALUE _AppendIconTextColumn(int argc,VALUE *argv,VALUE self)
 {
-	VALUE label;
-	rb_scan_args(argc, argv, "11",&label);
+	VALUE label,hash;
+	rb_scan_args(argc, argv, "11",&label,&hash);
 
 	_self->AppendIconTextColumn(unwrap<wxString>(label));
 	return self;
@@ -71,8 +71,8 @@ VALUE _AppendIconTextColumn(int argc,VALUE *argv,VALUE self)
 
 VALUE _AppendProgressColumn(int argc,VALUE *argv,VALUE self)
 {
-	VALUE label;
-	rb_scan_args(argc, argv, "11",&label);
+	VALUE label,hash;
+	rb_scan_args(argc, argv, "11",&label,&hash);
 
 	_self->AppendProgressColumn(unwrap<wxString>(label));
 	return self;
@@ -107,8 +107,11 @@ VALUE _PrependItem(int argc,VALUE *argv,VALUE self)
 
 	wxVector<wxVariant> vecvar;
 
-	for(size_t i = 0; i < count;++i)
+	for(size_t i = 0; i < count;++i){
+		std::cout << i << ": " << _self->GetModel()->GetColumnType(i) << std::endl;
+
 		vecvar.push_back(unwrapVariant(RARRAY_PTR(arg)[i],_self->GetModel()->GetColumnType(i)));
+	}
 	_self->PrependItem(vecvar,0);
 	return wrap(_self->GetModel(),_self->GetStore()->GetItem(0));
 }
@@ -147,10 +150,10 @@ void Init_WXDataViewList(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXDataViewList,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-	rb_define_method(rb_cWXDataViewList,"append_text_column",RUBY_METHOD_FUNC(_AppendTextColumn),-1);
-	rb_define_method(rb_cWXDataViewList,"append_toggle_column",RUBY_METHOD_FUNC(_AppendToggleColumn),-1);
-	rb_define_method(rb_cWXDataViewList,"append_icontext_column",RUBY_METHOD_FUNC(_AppendIconTextColumn),-1);
-	rb_define_method(rb_cWXDataViewList,"append_progress_column",RUBY_METHOD_FUNC(_AppendProgressColumn),-1);
+//	rb_define_method(rb_cWXDataViewList,"append_text_column",RUBY_METHOD_FUNC(_AppendTextColumn),-1);
+//	rb_define_method(rb_cWXDataViewList,"append_toggle_column",RUBY_METHOD_FUNC(_AppendToggleColumn),-1);
+//	rb_define_method(rb_cWXDataViewList,"append_icontext_column",RUBY_METHOD_FUNC(_AppendIconTextColumn),-1);
+//	rb_define_method(rb_cWXDataViewList,"append_progress_column",RUBY_METHOD_FUNC(_AppendProgressColumn),-1);
 
 
 	rb_define_method(rb_cWXDataViewList,"append_item",RUBY_METHOD_FUNC(_AppendItem),-1);

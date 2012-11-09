@@ -30,9 +30,12 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("style")))))
 			style = NUM2INT(temp);
 	}
+	if(!rb_obj_is_kind_of(hash,rb_cString))
+	{
+		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxDefaultPosition,wxDefaultSize,style);
+		_created = true;
+	}
 
-	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxDefaultPosition,wxDefaultSize,style);
-	_created = true;
 	rb_call_super(argc,argv);
 	return self;
 }

@@ -20,7 +20,7 @@ RubyWizardPage::RubyWizardPage() : wxWizardPageSimple(),rubycall(false)
 wxWizardPage* RubyWizardPage::GetPrev() const
 {
 	VALUE self = static_cast<RubyClientData*>(GetClientObject())->mRuby;
-	if(!rubycall && rb_funcall(rb_obj_method(self,ID2SYM(rb_intern("prev"))),rb_intern("owner"),0) != rb_cWXWizardPage)
+	if(!rubycall)
 	{
 		rubycall = true;
 		wxWizardPage* result = unwrap<wxWizardPage*>(rb_funcall(self,rb_intern("prev"),0));
@@ -33,7 +33,7 @@ wxWizardPage* RubyWizardPage::GetPrev() const
 wxWizardPage* RubyWizardPage::GetNext() const
 {
 	VALUE self = static_cast<RubyClientData*>(GetClientObject())->mRuby;
-	if(!rubycall && rb_funcall(rb_obj_method(self,ID2SYM(rb_intern("next"))),rb_intern("owner"),0) != rb_cWXWizardPage)
+	if(!rubycall)
 	{
 		rubycall = true;
 		wxWizardPage* result = unwrap<wxWizardPage*>(rb_funcall(self,rb_intern("next"),0));

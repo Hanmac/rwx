@@ -11,6 +11,7 @@
 
 VALUE rb_cWXAuiToolBar;
 
+#undef wxUSE_AUI
 #if wxUSE_AUI
 #define _self unwrap<wxAuiToolBar*>(self)
 

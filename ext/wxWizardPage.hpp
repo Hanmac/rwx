@@ -24,6 +24,7 @@ public:
 	wxWizardPage* GetPrev() const;
 	wxWizardPage* GetNext() const;
 
+	wxBitmap GetBitmap() const { return m_bitmap; }
 	void SetBitmap(const wxBitmap& bitmap ) { m_bitmap = bitmap; }
 private:
 	bool mutable rubycall;

@@ -118,7 +118,7 @@
 #include "wxBookCtrl.hpp"
 
 #include "wxSTC.hpp"
-
+#include "wxXRC.hpp"
 
 #include "wxAboutDlg.hpp"
 #include "wxStartUpTip.hpp"
@@ -312,6 +312,8 @@ extern "C" void Init_rwx()
 	Init_WXPropertyGrid(rb_mWX);
 	Init_WXPropertyGridManager(rb_mWX);
 
+
+	Init_WXXRC(rb_mWX);
 //	for(klassholdertype::iterator it = klassholder.begin();
 //			it != klassholder.end();++it)
 //		std::cout << it->first << std::endl;

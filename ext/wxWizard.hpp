@@ -8,7 +8,6 @@
 #ifndef WXWIZARD_HPP_
 #define WXWIZARD_HPP_
 
-
 #include "wxDialog.hpp"
 
 extern VALUE rb_cWXWizard;

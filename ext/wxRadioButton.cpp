@@ -34,8 +34,12 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			style |= wxRB_GROUP;
 	}
 
-	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,style);
-	_created = true;
+	if(!rb_obj_is_kind_of(hash,rb_cString))
+	{
+		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,style);
+		_created = true;
+	}
+
 	rb_call_super(argc,argv);
 	return self;
 }

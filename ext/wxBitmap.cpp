@@ -172,6 +172,12 @@ VALUE _to_bitmap(VALUE self)
 	return self;
 }
 
+VALUE _save_file(int argc,VALUE *argv,VALUE self)
+{
+	VALUE name;
+	rb_scan_args(argc, argv, "10",&name);
+	return wrap(_self->SaveFile(unwrap<wxString>(name),wxBITMAP_TYPE_PNG));
+}
 
 }
 }
@@ -218,6 +224,7 @@ void Init_WXBitmap(VALUE rb_mWX)
 #endif
 	rb_define_method(rb_cWXBitmap,"to_bitmap",RUBY_METHOD_FUNC(_to_bitmap),0);
 
+	rb_define_method(rb_cWXBitmap,"save_file",RUBY_METHOD_FUNC(_save_file),-1);
 
 	registerArtID("new",wxART_NEW,wxID_NEW);
 

@@ -49,7 +49,7 @@ DLL_LOCAL void Init_WXMenuItem(VALUE rb_mWX)
 	rb_define_alloc_func(rb_cWXMenuItem,_alloc);
 
 	rb_define_attr_method(rb_cWXMenuItem,"menu",_getMenu,_setMenu);
-	rb_define_attr_method(rb_cWXMenuItem,"itemLabel",_getItemLabel,_setItemLabel);
+	rb_define_attr_method(rb_cWXMenuItem,"label",_getItemLabel,_setItemLabel);
 	rb_define_attr_method(rb_cWXMenuItem,"id",_getId,_setId);
 
 	rb_define_attr_method(rb_cWXMenuItem,"help",_getHelp,_setHelp);

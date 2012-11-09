@@ -97,6 +97,53 @@ VALUE _setSelection(VALUE self,VALUE item)
 }
 
 
+VALUE _AppendTextColumn(int argc,VALUE *argv,VALUE self)
+{
+	VALUE label,hash;
+	rb_scan_args(argc, argv, "10",&label,&hash);
+
+	_self->AppendTextColumn(unwrap<wxString>(label),_self->GetColumnCount());
+	return self;
+}
+
+VALUE _AppendToggleColumn(int argc,VALUE *argv,VALUE self)
+{
+	VALUE label,hash;
+	rb_scan_args(argc, argv, "11",&label,&hash);
+
+	_self->AppendToggleColumn(unwrap<wxString>(label),_self->GetColumnCount());
+	return self;
+}
+
+VALUE _AppendIconTextColumn(int argc,VALUE *argv,VALUE self)
+{
+	VALUE label,hash;
+	rb_scan_args(argc, argv, "11",&label,&hash);
+
+	_self->AppendIconTextColumn(unwrap<wxString>(label),_self->GetColumnCount());
+	return self;
+}
+
+VALUE _AppendBitmapColumn(int argc,VALUE *argv,VALUE self)
+{
+	VALUE label,hash;
+	rb_scan_args(argc, argv, "11",&label,&hash);
+
+	_self->AppendBitmapColumn(unwrap<wxString>(label),_self->GetColumnCount());
+	return self;
+}
+
+
+VALUE _AppendProgressColumn(int argc,VALUE *argv,VALUE self)
+{
+	VALUE label,hash;
+	rb_scan_args(argc, argv, "11",&label,&hash);
+
+	_self->AppendProgressColumn(unwrap<wxString>(label),_self->GetColumnCount());
+	return self;
+}
+
+
 namespace Event {
 #undef _self
 #define _self unwrapPtr<wxDataViewEvent>(self,rb_cWXDataViewEvent)
@@ -142,6 +189,13 @@ void Init_WXDataView(VALUE rb_mWX)
 	rb_define_method(rb_cWXDataView,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_attr_method(rb_cWXDataView,"selection",_getSelection,_setSelection);
+
+	rb_define_method(rb_cWXDataView,"append_text_column",RUBY_METHOD_FUNC(_AppendTextColumn),-1);
+	rb_define_method(rb_cWXDataView,"append_toggle_column",RUBY_METHOD_FUNC(_AppendToggleColumn),-1);
+	rb_define_method(rb_cWXDataView,"append_icontext_column",RUBY_METHOD_FUNC(_AppendIconTextColumn),-1);
+	rb_define_method(rb_cWXDataView,"append_bitmap_column",RUBY_METHOD_FUNC(_AppendBitmapColumn),-1);
+	rb_define_method(rb_cWXDataView,"append_progress_column",RUBY_METHOD_FUNC(_AppendProgressColumn),-1);
+
 
 	rb_cWXDataViewEvent = rb_define_class_under(rb_cWXEvent,"DataView",rb_cWXEvent);
 	registerEventType("dataview_selection_changed",wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED,rb_cWXDataViewEvent);

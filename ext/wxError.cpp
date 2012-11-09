@@ -14,7 +14,11 @@ void wxrubyAssert(const wxString& file,
                                   const wxString& cond,
                                   const wxString& msg)
 {
-	rb_fatal("%s",msg.GetData().AsChar());
+	rb_fatal("(%s) in %s \n %s",
+		cond.GetData().AsChar(),
+		func.GetData().AsChar(),
+		msg.GetData().AsChar()
+		);
 }
 
 class RubyExceptionLog : public wxLog
@@ -32,6 +36,7 @@ protected:
 			break;
 		case wxLOG_Warning:
 			rb_warn("%s",c);
+			break;
 		default:
 			rb_raise(rb_eWXError,"%s",c);
 		}

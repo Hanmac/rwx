@@ -250,6 +250,12 @@ T unwrapenum(const VALUE &arg){
 					return (T)it2->first;
 			}
 			rb_raise(rb_eTypeError,"%s is not a %s-Enum.",rb_id2name(id),it->second.name.c_str());
+		}else if(rb_obj_is_kind_of(arg,rb_cArray))
+		{
+			int result = 0;
+			size_t count = RARRAY_LEN(arg);
+			for(size_t i = 0; i < count; ++i)
+				result = result || unwrapenum<T>(RARRAY_PTR(arg)[i]);
 		}else
 			return (T)NUM2INT(arg);
 	}

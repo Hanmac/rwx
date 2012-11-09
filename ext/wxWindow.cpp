@@ -433,7 +433,7 @@ void Init_WXWindow(VALUE rb_mWX)
 	rb_define_method(rb_cWXWindow,"close",RUBY_METHOD_FUNC(_Close),-1);
 
 #if wxUSE_MENUS
-	rb_define_method(rb_cWXWindow,"popupmenu",RUBY_METHOD_FUNC(_popupmenu),-1);
+	rb_define_method(rb_cWXWindow,"popup_menu",RUBY_METHOD_FUNC(_popupmenu),-1);
 #endif
 #if wxUSE_AUI
 	rb_define_method(rb_cWXWindow,"aui",RUBY_METHOD_FUNC(_aui),0);

@@ -25,7 +25,7 @@ VALUE wrap< wxVariant >(const wxVariant &var)
 	else if(type == "wxFont")
 		return wrap((wxFont)var);
 	else
-		std::cout << type << std::endl;
+		std::cout << "unknown VariantType: " << type << std::endl;
 	return Qnil;
 }
 
@@ -49,7 +49,7 @@ wxVariant unwrapVariant(VALUE obj,const wxString &type)
 	}
 #endif
 	else
-		std::cout << type << std::endl;
+		std::cout << "unknown VariantType: "  << type << std::endl;
 	return result;
 }
 

@@ -24,7 +24,6 @@ VALUE wrapClass(const wxClassInfo * info)
 
 VALUE wrapPtr(void *arg,VALUE klass)
 {
-	wxDynamicCast(arg,wxEvtHandler);
 	if(arg)
 		return Data_Wrap_Struct(klass, 0, 0, arg);
 	return Qnil;

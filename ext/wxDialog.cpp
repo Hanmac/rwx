@@ -24,10 +24,10 @@ macro_attr_with_func(AffirmativeId,wrapID,unwrapID)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,name,hash;
-	rb_scan_args(argc, argv, "12",&parent,&name,&hash);
+	VALUE parent,name;
+	rb_scan_args(argc, argv, "11",&parent,&name);
 
-	int style = wxDEFAULT_FRAME_STYLE;
+	int style = wxDEFAULT_DIALOG_STYLE;
 
 
 	if(!_created && !rb_obj_is_kind_of(name,rb_cString)){
