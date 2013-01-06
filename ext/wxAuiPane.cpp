@@ -25,6 +25,20 @@ wxAuiPaneInfo unwrap< wxAuiPaneInfo >(const VALUE &vinfo)
 {
 	if(NIL_P(vinfo))
 		return wxAuiPaneInfo();
+	else if(SYMBOL_P(vinfo))
+	{
+		ID id(SYM2ID(vinfo));
+		if(id == rb_intern("default"))
+			return wxAuiPaneInfo().DefaultPane();
+		else if(id == rb_intern("toolbar"))
+			return wxAuiPaneInfo().ToolbarPane();
+		else if(id == rb_intern("center") || id == rb_intern("centre"))
+			return wxAuiPaneInfo().CenterPane();
+		else
+			return wxAuiPaneInfo();
+
+
+	}
 	else if(rb_obj_is_kind_of(vinfo,rb_cHash))
 	{
 		wxAuiPaneInfo info;
@@ -37,6 +51,8 @@ wxAuiPaneInfo unwrap< wxAuiPaneInfo >(const VALUE &vinfo)
 			info.icon = unwrap<wxBitmap>(temp);
 		if(!NIL_P(temp=rb_hash_aref(vinfo,ID2SYM(rb_intern("direction")))))
 			info.Direction(unwrapenum< wxAuiManagerDock >(temp));
+		if(!NIL_P(temp=rb_hash_aref(vinfo,ID2SYM(rb_intern("layer")))))
+			info.Layer(NUM2INT(temp));
 		return info;
 	}else
 		return *unwrapPtr<wxAuiPaneInfo>(vinfo, rb_cWXAuiPane);
@@ -54,8 +70,12 @@ macro_attr_prop(icon,wxIcon)
 macro_attr_prop(floating_pos,wxPoint)
 macro_attr_prop(floating_size,wxSize)
 
+macro_attr_prop(dock_layer,int)
+
 macro_attr_prop_enum(dock_direction,wxAuiManagerDock)
 
+
+singlereturn(IsToolbar)
 }
 }
 
@@ -75,16 +95,18 @@ void Init_WXAuiPane(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXAuiPane,"floating_pos",_get_floating_pos,_set_floating_pos);
 	rb_define_attr_method(rb_cWXAuiPane,"floating_size",_get_floating_size,_set_floating_size);
 
+	rb_define_method(rb_cWXAuiPane,"toolbar?",RUBY_METHOD_FUNC(_IsToolbar),0);
+
 
 	registerType<wxAuiPaneInfo>(rb_cWXAuiPane);
 
 	registerEnum<wxAuiManagerDock>("WX::AuiManagerDock")
-		.add(wxAUI_DOCK_NONE,"none")
-		.add(wxAUI_DOCK_TOP,"top")
-		.add(wxAUI_DOCK_RIGHT,"right")
-		.add(wxAUI_DOCK_BOTTOM,"bottom")
-		.add(wxAUI_DOCK_LEFT,"left")
-		.add(wxAUI_DOCK_CENTER,"center");
+		->add(wxAUI_DOCK_NONE,"none")
+		->add(wxAUI_DOCK_TOP,"top")
+		->add(wxAUI_DOCK_RIGHT,"right")
+		->add(wxAUI_DOCK_BOTTOM,"bottom")
+		->add(wxAUI_DOCK_LEFT,"left")
+		->add(wxAUI_DOCK_CENTER,"center");
 
 #endif
 

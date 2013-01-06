@@ -7,6 +7,7 @@
 
 #include "wxBrush.hpp"
 #include "wxColor.hpp"
+#include "wxBitmap.hpp"
 
 #define _self unwrap<wxBrush*>(self)
 
@@ -25,6 +26,7 @@ VALUE _alloc(VALUE self) {
 
 macro_attr(Colour,wxColour)
 macro_attr_enum(Style,wxBrushStyle)
+macro_attr(Stipple,wxBitmap)
 
 }
 }
@@ -40,25 +42,26 @@ void Init_WXBrush(VALUE rb_mWX)
 //
 //
 	rb_define_attr_method(rb_cWXBrush,"color",_getColour,_setColour);
-
 	rb_define_attr_method(rb_cWXBrush,"style",_getStyle,_setStyle);
+	rb_define_attr_method(rb_cWXBrush,"stipple",_getStipple,_setStipple);
+
 //
 //	rb_define_method(rb_cWXBrush,"to_s",RUBY_METHOD_FUNC(_tos),0);
 //	rb_define_method(rb_cWXBrush,"inspect",RUBY_METHOD_FUNC(_inspect),0);
 
 	registerInfo<wxBrush>(rb_cWXBrush);
 	registerEnum<wxBrushStyle>("WX::BrushStyle",wxBRUSHSTYLE_TRANSPARENT)
-		.add(wxBRUSHSTYLE_SOLID,"solid")
-		.add(wxBRUSHSTYLE_TRANSPARENT,"transparent")
-		.add(wxBRUSHSTYLE_STIPPLE_MASK_OPAQUE,"stipple_mask_opaque")
-		.add(wxBRUSHSTYLE_STIPPLE_MASK,"stipple_mask")
-		.add(wxBRUSHSTYLE_STIPPLE,"stipple")
-		.add(wxBRUSHSTYLE_BDIAGONAL_HATCH,"bdiagona_hatch")
-		.add(wxBRUSHSTYLE_CROSSDIAG_HATCH,"crossdiag_hatch")
-		.add(wxBRUSHSTYLE_FDIAGONAL_HATCH,"fdiagonal_hatch")
-		.add(wxBRUSHSTYLE_CROSS_HATCH,"cross_hatch")
-		.add(wxBRUSHSTYLE_HORIZONTAL_HATCH,"horizontal_hatch")
-		.add(wxBRUSHSTYLE_VERTICAL_HATCH,"vertical_hatch");
+		->add(wxBRUSHSTYLE_SOLID,"solid")
+		->add(wxBRUSHSTYLE_TRANSPARENT,"transparent")
+		->add(wxBRUSHSTYLE_STIPPLE_MASK_OPAQUE,"stipple_mask_opaque")
+		->add(wxBRUSHSTYLE_STIPPLE_MASK,"stipple_mask")
+		->add(wxBRUSHSTYLE_STIPPLE,"stipple")
+		->add(wxBRUSHSTYLE_BDIAGONAL_HATCH,"bdiagona_hatch")
+		->add(wxBRUSHSTYLE_CROSSDIAG_HATCH,"crossdiag_hatch")
+		->add(wxBRUSHSTYLE_FDIAGONAL_HATCH,"fdiagonal_hatch")
+		->add(wxBRUSHSTYLE_CROSS_HATCH,"cross_hatch")
+		->add(wxBRUSHSTYLE_HORIZONTAL_HATCH,"horizontal_hatch")
+		->add(wxBRUSHSTYLE_VERTICAL_HATCH,"vertical_hatch");
 
 }
 

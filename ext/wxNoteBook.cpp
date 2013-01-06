@@ -45,6 +45,9 @@ void Init_WXNoteBookCtrl(VALUE rb_mWX)
 	rb_define_method(rb_cWXNotebook,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	registerInfo<wxNotebook>(rb_cWXNotebook);
+
+	registerEventType<wxBookCtrlEvent>("notebook_page_changed",wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED);
+	registerEventType<wxBookCtrlEvent>("notebook_page_changing",wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGING);
 #endif
 
 }

@@ -53,6 +53,16 @@ VALUE _test_style(VALUE self)
 	return self;
 }
 
+VALUE _UndoAction(VALUE self)
+{
+	_self->BeginUndoAction();
+	rb_yield(Qnil);
+	_self->EndUndoAction();
+	return self;
+}
+
+
+
 }
 }
 #endif

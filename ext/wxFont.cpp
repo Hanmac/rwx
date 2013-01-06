@@ -66,20 +66,20 @@ DLL_LOCAL void Init_WXFont(VALUE rb_mWX)
 	registerInfo<wxFont>(rb_cWXFont);
 
 	registerEnum<wxFontWeight>("WX::FontWeight",wxFONTWEIGHT_NORMAL)
-		.add(wxFONTWEIGHT_NORMAL,"normal")
-		.add(wxFONTWEIGHT_LIGHT,"light")
-		.add(wxFONTWEIGHT_BOLD,"bold");
+		->add(wxFONTWEIGHT_NORMAL,"normal")
+		->add(wxFONTWEIGHT_LIGHT,"light")
+		->add(wxFONTWEIGHT_BOLD,"bold");
 	registerEnum<wxFontStyle>("WX::FontStyle",wxFONTSTYLE_NORMAL)
-		.add(wxFONTSTYLE_NORMAL,"normal")
-		.add(wxFONTSTYLE_ITALIC,"italic")
-		.add(wxFONTSTYLE_SLANT,"slant");
+		->add(wxFONTSTYLE_NORMAL,"normal")
+		->add(wxFONTSTYLE_ITALIC,"italic")
+		->add(wxFONTSTYLE_SLANT,"slant");
 	registerEnum<wxFontFamily>("WX::FontStyle",wxFONTFAMILY_DEFAULT)
-		.add(wxFONTFAMILY_DEFAULT,"default")
-		.add(wxFONTFAMILY_DECORATIVE,"decorative")
-		.add(wxFONTFAMILY_ROMAN,"roman")
-		.add(wxFONTFAMILY_SCRIPT,"script")
-		.add(wxFONTFAMILY_SWISS,"swiss")
-		.add(wxFONTFAMILY_MODERN,"modern")
-		.add(wxFONTFAMILY_TELETYPE,"teletype");
+		->add(wxFONTFAMILY_DEFAULT,"default")
+		->add(wxFONTFAMILY_DECORATIVE,"decorative")
+		->add(wxFONTFAMILY_ROMAN,"roman")
+		->add(wxFONTFAMILY_SCRIPT,"script")
+		->add(wxFONTFAMILY_SWISS,"swiss")
+		->add(wxFONTFAMILY_MODERN,"modern")
+		->add(wxFONTFAMILY_TELETYPE,"teletype");
 
 }

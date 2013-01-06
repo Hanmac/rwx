@@ -47,9 +47,9 @@ void registerEventType(const char *sym, wxEventType type,VALUE klass)
 		registerInfo<T>(klass);
 }
 template<typename T>
-void registerEventType(const char *sym, wxEventTypeTag<T> type)
+void registerEventType(const char *sym, wxEventType type)
 {
-	registerEventType(sym,type,Qnil);
+	registerEventType<T>(sym,type,Qnil);
 }
 
 #endif

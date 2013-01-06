@@ -51,11 +51,17 @@ VALUE _ShowModal(VALUE self)
 	return wrapID(_self->ShowModal());
 }
 
-VALUE _CreateButtonSizer(int argc,VALUE *argv,VALUE self)
+VALUE _EndModal(VALUE self,VALUE id)
 {
-	VALUE flags;
+	_self->EndModal(unwrapID(id));
+	return self;
+}
+
+
+VALUE _CreateButtonSizer(VALUE self,VALUE flags)
+{
 	int flag = 0;
-	rb_scan_args(argc, argv, "*",&flags);
+
 	for(int i= 0; i < RARRAY_LEN(flags);++i)
 	{
 		VALUE val = RARRAY_PTR(flags)[i];
@@ -78,6 +84,7 @@ VALUE _CreateButtonSizer(int argc,VALUE *argv,VALUE self)
 				flag |= wxHELP;
 		}
 	}
+
 	return wrap(_self->CreateButtonSizer(flag));
 }
 
@@ -100,9 +107,12 @@ void Init_WXDialog(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXDialog,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-	rb_define_method(rb_cWXDialog,"show_modal",RUBY_METHOD_FUNC(_ShowModal),0);
+	rb_define_attr_method(rb_cWXDialog, "return_code",_getReturnCode,_setReturnCode);
 
-	rb_define_method(rb_cWXDialog,"create_button_sizer",RUBY_METHOD_FUNC(_CreateButtonSizer),-1);
+	rb_define_method(rb_cWXDialog,"show_modal",RUBY_METHOD_FUNC(_ShowModal),0);
+	rb_define_method(rb_cWXDialog,"end_modal",RUBY_METHOD_FUNC(_EndModal),1);
+
+	rb_define_method(rb_cWXDialog,"create_button_sizer",RUBY_METHOD_FUNC(_CreateButtonSizer),-2);
 #if wxUSE_STATTEXT
 	rb_define_method(rb_cWXDialog,"create_text_sizer",RUBY_METHOD_FUNC(_CreateTextSizer),1);
 #endif

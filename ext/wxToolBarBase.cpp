@@ -25,30 +25,14 @@ macro_attr(ToolSeparation,int)
 
 VALUE _addNormal(int argc,VALUE *argv,VALUE self)
 {
-	VALUE id,text,bitmap,bmpDisabled,shorthelp,longhelp,arg;
-	wxToolBarToolBase *tool = NULL;
-	wxControl *c = NULL;
-	rb_scan_args(argc, argv, "11*",&id,&text,&arg);
-	if(rb_obj_is_kind_of(id,rb_cWXControl)){
-		c = unwrap<wxControl*>(id);
-		if(c->GetParent() != _self)
-			rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(id));
-	}else if(rb_obj_is_kind_of(id,rb_cClass) && rb_class_inherited(id,rb_cWXControl)) {
-		rb_scan_args(argc, argv, "11",&id,&arg);
-		VALUE argv2[] = {self, arg };
-		c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,id));
-	}else {
-		rb_scan_args(argc, argv, "24",&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
-		wxWindowID wxid = unwrapID(id);
-		tool = _self->AddTool(wxid, unwrap<wxString>(text),
+	VALUE id,text,bitmap,bmpDisabled,shorthelp,longhelp;
+	rb_scan_args(argc, argv, "24",&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
+	wxWindowID wxid = unwrapID(id);
+	wxToolBarToolBase *tool = _self->AddTool(wxid, unwrap<wxString>(text),
 				wrapBitmap(bitmap,wxid,false,wxART_TOOLBAR),
 				wrapBitmap(bmpDisabled,wxid,true,wxART_TOOLBAR),wxITEM_NORMAL,
 				unwrap<wxString>(shorthelp), unwrap<wxString>(longhelp));
-	}
-	if(c)
-		tool = _self->AddControl(c,unwrap<wxString>(text));
-
-	if(rb_block_given_p() && !c){
+	if(rb_block_given_p()){
 		VALUE proc = rb_block_proc();
 #ifdef wxHAS_EVENT_BIND
 		_self->Bind(wxEVT_COMMAND_MENU_SELECTED,RubyFunctor(proc),tool->GetId());
@@ -59,6 +43,25 @@ VALUE _addNormal(int argc,VALUE *argv,VALUE self)
 	return wrap(tool);
 }
 
+VALUE _addControl(int argc,VALUE *argv,VALUE self)
+{
+	VALUE id,text,arg;
+	wxControl *c = NULL;
+	rb_scan_args(argc, argv, "11*",&id,&text,&arg);
+	if(rb_obj_is_kind_of(id,rb_cClass) && rb_class_inherited(id,rb_cWXControl)) {
+		rb_scan_args(argc, argv, "11",&id,&arg);
+		VALUE argv2[] = {self, arg };
+		c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,id));
+	}else
+	{
+		c = unwrap<wxControl*>(id);
+		if(c->GetParent() != _self)
+			rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(id));
+	}
+
+	return wrap( _self->AddControl(c,unwrap<wxString>(text)));
+}
+
 
 VALUE _addCheck(int argc,VALUE *argv,VALUE self)
 {
@@ -66,7 +69,7 @@ VALUE _addCheck(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "24",&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
 	wxWindowID wxid = unwrapID(id);
 
-	wxToolBarToolBase *tool = _self->AddCheckTool(unwrapID(id), unwrap<wxString>(text),
+	wxToolBarToolBase *tool = _self->AddCheckTool(wxid, unwrap<wxString>(text),
 				wrapBitmap(bitmap,wxid,false,wxART_TOOLBAR),
 				wrapBitmap(bmpDisabled,wxid,true,wxART_TOOLBAR),
 				unwrap<wxString>(shorthelp), unwrap<wxString>(longhelp));
@@ -89,7 +92,7 @@ VALUE _addRadio(int argc,VALUE *argv,VALUE self)
 	VALUE id,text,bitmap,bmpDisabled,shorthelp,longhelp;
 	rb_scan_args(argc, argv, "24",&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
 	wxWindowID wxid = unwrapID(id);
-	wxToolBarToolBase *tool = _self->AddRadioTool(unwrapID(id), unwrap<wxString>(text),
+	wxToolBarToolBase *tool = _self->AddRadioTool(wxid, unwrap<wxString>(text),
 			wrapBitmap(bitmap,wxid,false,wxART_TOOLBAR),
 			wrapBitmap(bmpDisabled,wxid,true,wxART_TOOLBAR),
 			unwrap<wxString>(shorthelp), unwrap<wxString>(longhelp));
@@ -134,9 +137,10 @@ void Init_WXToolBarBase(VALUE rb_mWX)
 
 //	rb_define_method(rb_cWXToolBarBase,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-	rb_define_method(rb_cWXToolBarBase,"addNormal",RUBY_METHOD_FUNC(_addNormal),-1);
-	rb_define_method(rb_cWXToolBarBase,"addCheck",RUBY_METHOD_FUNC(_addCheck),-1);
-	rb_define_method(rb_cWXToolBarBase,"addRadio",RUBY_METHOD_FUNC(_addRadio),-1);
+	rb_define_method(rb_cWXToolBarBase,"add_normal",RUBY_METHOD_FUNC(_addNormal),-1);
+	rb_define_method(rb_cWXToolBarBase,"add_control",RUBY_METHOD_FUNC(_addNormal),-1);
+	rb_define_method(rb_cWXToolBarBase,"add_check",RUBY_METHOD_FUNC(_addCheck),-1);
+	rb_define_method(rb_cWXToolBarBase,"add_radio",RUBY_METHOD_FUNC(_addRadio),-1);
 
 	rb_define_method(rb_cWXToolBarBase,"addSeparator",RUBY_METHOD_FUNC(_AddSeparator),0);
 	rb_define_method(rb_cWXToolBarBase,"addStretchableSpace",RUBY_METHOD_FUNC(_AddStretchableSpace),0);

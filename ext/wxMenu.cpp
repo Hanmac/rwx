@@ -152,9 +152,9 @@ DLL_LOCAL void Init_WXMenu(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXMenu,"parent",_getParent,_setParent);
 
 	rb_define_method(rb_cWXMenu,"each",RUBY_METHOD_FUNC(_each),0);
-	rb_define_method(rb_cWXMenu,"appendNormal",RUBY_METHOD_FUNC(_appendNormalItem),-1);
-	rb_define_method(rb_cWXMenu,"appendCheck",RUBY_METHOD_FUNC(_appendCheckItem),-1);
-	rb_define_method(rb_cWXMenu,"appendRadio",RUBY_METHOD_FUNC(_appendRadioItem),-1);
+	rb_define_method(rb_cWXMenu,"append_normal",RUBY_METHOD_FUNC(_appendNormalItem),-1);
+	rb_define_method(rb_cWXMenu,"append_check",RUBY_METHOD_FUNC(_appendCheckItem),-1);
+	rb_define_method(rb_cWXMenu,"append_radio",RUBY_METHOD_FUNC(_appendRadioItem),-1);
 
 	rb_define_method(rb_cWXMenu,"<<",RUBY_METHOD_FUNC(_appendShift),1);
 

@@ -9,14 +9,7 @@
 
 VALUE rb_cWXProgressDialog;
 #if wxUSE_PROGRESSDLG
-#define _self unwrap<RubyProgressDialog*>(self)
-
-#if wxUSE_TIMER
-void RubyProgressDialog::onTimer(wxTimerEvent &evt)
-{
-	rb_thread_schedule();
-}
-#endif
+#define _self unwrap<wxProgressDialog*>(self)
 
 namespace RubyWX {
 namespace ProgressDialog {
@@ -26,24 +19,14 @@ macro_attr(Range,int)
 singlereturn(GetValue)
 singlereturn(GetMessage)
 
-APP_PROTECT(RubyProgressDialog)
-
-#if wxUSE_TIMER
-struct rt_holder
+DLL_LOCAL VALUE _alloc(VALUE self)
 {
-	rt_holder(VALUE b,VALUE p) : block(b),pd(p) {};
-	VALUE block;
-	VALUE pd;
-};
-
-VALUE thread_code(rt_holder *val)
-{
-	rb_gc_disable();
-	rb_funcall(val->block,rb_intern("call"),1,val->pd);
-	rb_gc_enable();
+	if(ruby_app_inited)
+		return wrapPtr(new wxProgressDialog(wxEmptyString,wxEmptyString),self);
+	else
+		rb_raise(rb_eArgError,"%s is not running.",rb_class2name(rb_cWXApp));
 	return Qnil;
 }
-#endif
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -53,19 +36,6 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		_self->Reparent(unwrap<wxWindow*>(parent));
 	_created = true;
 	rb_call_super(argc,argv);
-#if wxUSE_TIMER
-	if(rb_block_given_p())
-	{
-		_self->mTimer = new wxTimer;
-#ifdef wxHAS_EVENT_BIND
-		_self->mTimer->Bind(wxEVT_TIMER,wxTimerEventHandler(RubyProgressDialog::onTimer),_self,_self->mTimer->GetId());
-#else
-		_self->mTimer->Connect(_self->mTimer->GetId(),wxEVT_TIMER,wxTimerEventHandler(RubyProgressDialog::onTimer),NULL,_self);
-#endif
-		_self->mTimer->Start(10);
-		rb_thread_create((VALUE (*)(ANYARGS))&thread_code,new rt_holder(rb_block_proc(),self));
-	}
-#endif
 	return self;
 }
 
@@ -73,11 +43,6 @@ VALUE _update(int argc,VALUE *argv,VALUE self)
 {
 	VALUE val,message;
 	rb_scan_args(argc, argv, "11",&val,&message);
-#if wxUSE_TIMER
-
-	if(!_self->mTimer && NUM2INT(val) >= _self->GetRange())
-		_self->mTimer->Stop();
-#endif
 	return wrap(_self->Update(NUM2INT(val),unwrap<wxString>(message)));
 }
 
@@ -106,6 +71,5 @@ DLL_LOCAL void Init_WXProgressDialog(VALUE rb_mWX)
 	rb_define_method(rb_cWXProgressDialog,"pulse",RUBY_METHOD_FUNC(_pulse),-1);
 
 	registerInfo<wxProgressDialog>(rb_cWXProgressDialog);
-	registerInfo<RubyProgressDialog>(rb_cWXProgressDialog);
 #endif
 }

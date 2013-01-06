@@ -23,9 +23,12 @@
 
 #include "wxEvent.hpp"
 #include "wxCommandEvent.hpp"
+#include "wxNotifyEvent.hpp"
 #include "wxScrollEvent.hpp"
 #include "wxKeyEvent.hpp"
 #include "wxMouseEvent.hpp"
+
+
 #include "wxEvtHandler.hpp"
 
 #include "wxMenu.hpp"
@@ -51,6 +54,8 @@
 #include "wxFileDialog.hpp"
 #include "wxDirDialog.hpp"
 #include "wxProgressDialog.hpp"
+
+#include "wxMessageDialogBase.hpp"
 
 #include "wxWizard.hpp"
 
@@ -184,6 +189,8 @@ extern "C" void Init_rwx()
 	Init_WXCommandEvent(rb_mWX);
 	Init_WXScrollEvent(rb_mWX);
 
+	Init_WXNotifyEvent(rb_mWX);
+
 	Init_WXKeyEvent(rb_mWX);
 	Init_WXMouseEvent(rb_mWX);
 
@@ -212,6 +219,8 @@ extern "C" void Init_rwx()
 	Init_WXProgressDialog(rb_mWX);
 	Init_WXWizard(rb_mWX);
 	Init_WXWizardPage(rb_mWX);
+
+	Init_WXMessageDialogBase(rb_mWX);
 
 	Init_WXMenuBar(rb_mWX);
 
@@ -284,6 +293,8 @@ extern "C" void Init_rwx()
 	Init_WXSizerItem(rb_mWX);
 
 	Init_WXAuiManager(rb_mWX);
+	Init_WXAuiPane(rb_mWX);
+
 
 	Init_WXBookCtrl(rb_mWX);
 	Init_WXChoiceBookCtrl(rb_mWX);

@@ -29,18 +29,8 @@ protected:
 #endif
 };
 
-
 template <>
-inline VALUE wrap< RubyApp >(RubyApp *app )
-{
-	return app->mRuby;
-}
-
-template <>
-inline wxApp* unwrap< wxApp* >(const VALUE &vapp)
-{
-	return unwrapPtr<RubyApp>(vapp, rb_cWXApp);
-}
+wxApp* unwrap< wxApp* >(const VALUE &vapp);
 
 
 #define APP_PROTECT(type) DLL_LOCAL VALUE _alloc(VALUE self)\

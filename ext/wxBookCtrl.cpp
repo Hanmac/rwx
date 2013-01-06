@@ -8,6 +8,7 @@
 
 
 #include "wxEvtHandler.hpp"
+#include "wxNotifyEvent.hpp"
 #include "wxSizer.hpp"
 
 VALUE rb_cWXBookCtrlBase,rb_cWXBookCtrlEvent;
@@ -99,13 +100,13 @@ VALUE _insertPage(int argc,VALUE *argv,VALUE self)
 	else if(!NIL_P(select))
 		iid = NUM2INT(imageid);
 
-	if(rb_obj_is_kind_of(window,rb_cWXWindow)){
-		w = unwrap<wxWindow*>(window);
-//		if(w->GetParent() != _self)
-//			rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(window));
-	}else if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
+	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
 		VALUE argv2[] = {self, hash };
 		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
+	}else {
+		w = unwrap<wxWindow*>(window);
+	//		if(w->GetParent() != _self)
+	//			rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(window));
 	}
 	return wrap(_self->InsertPage(NUM2INT(n),w,unwrap<wxString>(text),sel,iid));
 }
@@ -143,12 +144,13 @@ void Init_WXBookCtrl(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXBookCtrlBase,"delete_all_pages",RUBY_METHOD_FUNC(_DeleteAllPages),0);
 
-	rb_cWXBookCtrlEvent = rb_define_class_under(rb_cWXEvent,"BookCtrl",rb_cWXEvent);
+	rb_cWXBookCtrlEvent = rb_define_class_under(rb_cWXEvent,"BookCtrl",rb_cWXNotifyEvent);
 
 	rb_define_attr_method(rb_cWXBookCtrlEvent,"selection",Event::_getSelection,Event::_setSelection);
 	rb_define_attr_method(rb_cWXBookCtrlEvent,"old_selection",Event::_getOldSelection,Event::_setOldSelection);
 
 	registerInfo<wxBookCtrlBase>(rb_cWXBookCtrlBase);
+	registerInfo<wxBookCtrlEvent>(rb_cWXBookCtrlEvent);
 #endif
 
 }

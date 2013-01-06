@@ -1,0 +1,39 @@
+/*
+ * wxNotifyEvent.cpp
+ *
+ *  Created on: 08.11.2012
+ *      Author: hanmac
+ */
+
+#include "wxEvent.hpp"
+#include "wxWindow.hpp"
+
+#define _self unwrap<wxNotifyEvent*>(self)
+
+VALUE rb_cWXNotifyEvent;
+
+namespace RubyWX {
+namespace NotifyEvent {
+
+singlefunc(IsAllowed)
+singlefunc(Allow)
+singlefunc(Veto)
+
+}
+}
+
+
+void Init_WXNotifyEvent(VALUE rb_mWX)
+{
+	using namespace RubyWX::NotifyEvent;
+
+	rb_cWXNotifyEvent = rb_define_class_under(rb_cWXEvent,"Notify",rb_cWXCommandEvent);
+
+	rb_define_method(rb_cWXNotifyEvent,"allowed?",RUBY_METHOD_FUNC(_IsAllowed),0);
+	rb_define_method(rb_cWXNotifyEvent,"allow",RUBY_METHOD_FUNC(_Allow),0);
+	rb_define_method(rb_cWXNotifyEvent,"veto",RUBY_METHOD_FUNC(_Veto),0);
+
+	registerInfo<wxNotifyEvent>(rb_cWXNotifyEvent);
+}
+
+

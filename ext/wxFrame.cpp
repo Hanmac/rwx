@@ -24,8 +24,15 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 #if wxUSE_XRC
 		if(!loadxrc(_self,name,unwrap<wxWindow*>(parent)))
 #endif
-		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxEmptyString);
-		_created = true;
+		{
+			wxString title = wxEmptyString;
+			if(!wxTheApp->GetTopWindow())
+				title = wxTheApp->GetAppName();
+
+			_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,title);
+
+			_created = true;
+		}
 	}
 	if(rb_obj_is_kind_of(name,rb_cString)){
 		VALUE args[] = {parent,hash};
@@ -65,15 +72,15 @@ DLL_LOCAL void Init_WXFrame(VALUE rb_mWX)
 	rb_define_method(rb_cWXFrame,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 #if wxUSE_MENUS
-	rb_define_attr_method(rb_cWXFrame,"menuBar",_getMenuBar,_setMenuBar);
+	rb_define_attr_method(rb_cWXFrame,"menubar",_getMenuBar,_setMenuBar);
 #endif // wxUSE_MENUS
 #if wxUSE_STATUSBAR
-	rb_define_attr_method(rb_cWXFrame,"statusBar",_getStatusBar,_setStatusBar);
-	rb_define_method(rb_cWXFrame,"createStatusBar",RUBY_METHOD_FUNC(_CreateStatusBar),0);
+	rb_define_attr_method(rb_cWXFrame,"statusbar",_getStatusBar,_setStatusBar);
+	rb_define_method(rb_cWXFrame,"create_statusbar",RUBY_METHOD_FUNC(_CreateStatusBar),0);
 #endif // wxUSE_STATUSBAR
 #if wxUSE_TOOLBAR
-	rb_define_attr_method(rb_cWXFrame,"toolBar",_getToolBar,_setToolBar);
-	rb_define_method(rb_cWXFrame,"createToolBar",RUBY_METHOD_FUNC(_CreateToolBar),0);
+	rb_define_attr_method(rb_cWXFrame,"toolbar",_getToolBar,_setToolBar);
+	rb_define_method(rb_cWXFrame,"create_toolbar",RUBY_METHOD_FUNC(_CreateToolBar),0);
 #endif // wxUSE_TOOLBAR
 
 	registerInfo<wxFrame>(rb_cWXFrame);

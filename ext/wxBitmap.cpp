@@ -226,7 +226,6 @@ void Init_WXBitmap(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXBitmap,"save_file",RUBY_METHOD_FUNC(_save_file),-1);
 
-	registerArtID("new",wxART_NEW,wxID_NEW);
 
 	registerArtID("folder",wxART_FOLDER);
 
@@ -240,13 +239,19 @@ void Init_WXBitmap(VALUE rb_mWX)
 	registerArtID("copy",wxART_COPY,wxID_COPY);
 	registerArtID("cut",wxART_CUT,wxID_CUT);
 	registerArtID("paste",wxART_PASTE,wxID_PASTE);
+	registerArtID("delete",wxART_DELETE,wxID_DELETE);
+	registerArtID("new",wxART_NEW,wxID_NEW);
 
 	registerArtID("undo",wxART_UNDO,wxID_UNDO);
 	registerArtID("redo",wxART_REDO,wxID_REDO);
 
+	registerArtID("plus",wxART_PLUS);
+	registerArtID("minus",wxART_MINUS);
+
+
 	registerArtID("print",wxART_PRINT,wxID_PRINT);
 
-	registerArtID("delete",wxART_DELETE,wxID_DELETE);
+
 
 	registerArtID("help",wxART_HELP,wxID_HELP);
 	registerArtID("tip",wxART_TIP);
@@ -262,5 +267,10 @@ void Init_WXBitmap(VALUE rb_mWX)
 	registerArtID("floppy",wxART_FLOPPY,wxID_FLOPPY);
 	registerArtID("cdrom",wxART_CDROM,wxID_CDROM);
 
+
+	registerArtID("question",wxART_QUESTION);
+	registerArtID("warning",wxART_WARNING);
+	registerArtID("information",wxART_INFORMATION);
+	registerArtID("error",wxART_ERROR);
 
 }

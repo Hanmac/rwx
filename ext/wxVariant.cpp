@@ -24,6 +24,10 @@ VALUE wrap< wxVariant >(const wxVariant &var)
 		return LONG2NUM(var.GetLong());
 	else if(type == "wxFont")
 		return wrap((wxFont)var);
+	else if(type == "wxBitmap")
+		return wrap((wxBitmap)var);
+	else if(type == "wxIcon")
+		return wrap((wxIcon)var);
 	else
 		std::cout << "unknown VariantType: " << type << std::endl;
 	return Qnil;
@@ -48,6 +52,10 @@ wxVariant unwrapVariant(VALUE obj,const wxString &type)
 		result = wxVariant(wxDataViewIconText(wxEmptyString,unwrap<wxIcon>(obj)));
 	}
 #endif
+	else if(type == "wxBitmap")
+		result = wxVariant(unwrap<wxBitmap>(obj));
+	else if(type == "wxIcon")
+		result = wxVariant(unwrap<wxIcon>(obj));
 	else
 		std::cout << "unknown VariantType: "  << type << std::endl;
 	return result;

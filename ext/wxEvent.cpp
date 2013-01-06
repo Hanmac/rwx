@@ -23,6 +23,9 @@ macro_attr_with_func(Timestamp,LONG2NUM,NUM2LONG)
 
 macro_attr(EventObject,wxObject*)
 
+singlefunc(Skip)
+
+
 }
 }
 
@@ -36,6 +39,8 @@ void Init_WXEvent(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXEvent,"event_object",_getEventObject,_setEventObject);
 	rb_define_attr_method(rb_cWXEvent,"id",_getId,_setId);
 	rb_define_attr_method(rb_cWXEvent,"timestamp",_getTimestamp,_setTimestamp);
+
+	rb_define_method(rb_cWXEvent,"skip",RUBY_METHOD_FUNC(_Skip),0);
 
 	registerInfo<wxEvent>(rb_cWXEvent);
 }

@@ -105,24 +105,25 @@ struct enumtype
 
 	int defaults;
 
-	enumtype& add(int enumo,const char* sym)
+	enumtype* add(int enumo,const char* sym)
 	{
 		values.insert(std::make_pair(enumo,rb_intern(sym)));
-		return *this;
+		return this;
 	}
 };
 //typedef std::map<int,ID > enumtype;
-typedef std::map<std::string,enumtype > enumregistertype;
+typedef std::map<std::string,enumtype* > enumregistertype;
 
 extern enumregistertype enumregister;
 
 
 template <typename T>
-enumtype& registerEnum(const char* name,int def = 0)
+enumtype* registerEnum(const char* name,int def = 0)
 {
-	enumtype &type = enumregister[std::string(typeid(T).name())];
-	type.name = std::string(name);
-	type.defaults = def;
+	enumtype *type = new enumtype;
+	enumregister.insert(std::make_pair(std::string(typeid(T).name()),type));
+	type->name = std::string(name);
+	type->defaults = def;
 	return type;
 }
 
@@ -227,7 +228,7 @@ bool is_wrapable(const VALUE &arg);
 
 template <typename T>
 VALUE wrapenum(const T &arg){
-	enumtype::value_type &enummap = enumregister[std::string(typeid(T).name())].values;
+	enumtype::value_type &enummap = enumregister[std::string(typeid(T).name())]->values;
 	enumtype::value_type::iterator it = enummap.find((int)arg);
 	if(it != enummap.end())
 		return ID2SYM(it->second);
@@ -244,19 +245,19 @@ T unwrapenum(const VALUE &arg){
 	if(it != enumregister.end())
 	{
 		if(NIL_P(arg))
-			return (T)it->second.defaults;
+			return (T)it->second->defaults;
 		else if(SYMBOL_P(arg))
 		{
 			ID id = SYM2ID(arg);
 
-			for(enumtype::value_type::iterator it2 = it->second.values.begin();
-					it2 != it->second.values.end();
+			for(enumtype::value_type::iterator it2 = it->second->values.begin();
+					it2 != it->second->values.end();
 					++it2)
 			{
 				if(it2->second == id)
 					return (T)it2->first;
 			}
-			rb_raise(rb_eTypeError,"%s is not a %s-Enum.",rb_id2name(id),it->second.name.c_str());
+			rb_raise(rb_eTypeError,"%s is not a %s-Enum.",rb_id2name(id),it->second->name.c_str());
 		}else if(rb_obj_is_kind_of(arg,rb_cArray))
 		{
 			int result = 0;

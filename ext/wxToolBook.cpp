@@ -45,6 +45,9 @@ void Init_WXToolBookCtrl(VALUE rb_mWX)
 	rb_define_method(rb_cWXToolbook,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	registerInfo<wxToolbook>(rb_cWXToolbook);
+
+	registerEventType<wxBookCtrlEvent>("toolbook_page_changed",wxEVT_COMMAND_TOOLBOOK_PAGE_CHANGED);
+	registerEventType<wxBookCtrlEvent>("toolbook_page_changing",wxEVT_COMMAND_TOOLBOOK_PAGE_CHANGING);
 #endif
 
 }

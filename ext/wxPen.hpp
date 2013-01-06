@@ -20,9 +20,6 @@ template <>
 VALUE wrap< wxPen >(const wxPen &bitmap );
 
 template <>
-VALUE wrap< wxPenStyle >(const wxPenStyle &style );
-
-template <>
 wxPen* unwrap< wxPen* >(const VALUE &vbitmap);
 
 template <>

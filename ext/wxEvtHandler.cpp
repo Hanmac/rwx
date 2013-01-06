@@ -5,7 +5,6 @@
  *      Author: hanmac
  */
 
-
 #include "wxEvtHandler.hpp"
 #include "wxEvent.hpp"
 
@@ -17,11 +16,11 @@ VALUE rb_mWXEvtHandler;
 
 VALUE global_evthandler;
 
-std::map<VALUE,wxEvtHandler*> evthandlerholder;
-
+typedef std::map<VALUE,wxEvtHandler*> evthandlerholdertype;
 typedef std::map<ID,wxEventType>  evttypeholdertype;
 typedef std::map<wxEventType,wxClassInfo*>  evttypeclassholdertype;
 
+evthandlerholdertype evthandlerholder;
 evttypeholdertype evttypeholder;
 evttypeclassholdertype evttypeclassholder;
 
@@ -30,7 +29,7 @@ wxEvtHandler* unwrap< wxEvtHandler* >(const VALUE &vhandler)
 {
 	if(TYPE(vhandler) == T_DATA)
 		return unwrapPtr<wxEvtHandler>(vhandler,rb_mWXEvtHandler);
-	std::map<VALUE,wxEvtHandler*>::iterator it = evthandlerholder.find(vhandler);
+	evthandlerholdertype::iterator it = evthandlerholder.find(vhandler);
 	if(it != evthandlerholder.end())
 		return it->second;
 	else
@@ -148,6 +147,23 @@ void registerEventType(const char *sym, wxEventType type,wxClassInfo *info)
 	evttypeclassholder[type] = info;
 }
 
+#ifdef wxHAS_CALL_AFTER
+class RubyCallAfter : public wxObject
+{
+public:
+	RubyCallAfter(VALUE val) : mVal(val){};
+
+	void call()
+	{
+		rb_funcall(mVal,rb_intern("call"),0);
+	}
+
+private:
+	VALUE mVal;
+};
+#endif
+
+
 RubyClientData::RubyClientData(VALUE obj) : wxClientData(), mRuby(obj),created(false)
 {
 	rb_hash_aset(global_evthandler,INT2NUM(obj),obj);
@@ -205,7 +221,7 @@ VALUE _bind(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _fire(int argc,VALUE *argv,VALUE self)
+VALUE _call(int argc,VALUE *argv,VALUE self)
 {
 	VALUE type,id;
 	rb_scan_args(argc, argv, "11",&type,&id);
@@ -240,6 +256,28 @@ VALUE _fire(int argc,VALUE *argv,VALUE self)
 	return wrap(_self->ProcessEvent(*evt));
 
 }
+
+VALUE _callafter(int argc,VALUE *argv,VALUE self)
+{
+#ifdef wxHAS_CALL_AFTER
+	//for some reason new does not work with
+	//wxAsyncMethodCallEvent1<RubyCallAfter,VALUE> in eclipse
+
+	wxAsyncMethodCallEvent0<RubyCallAfter> evnt(
+		new RubyCallAfter(rb_block_proc()), &RubyCallAfter::call
+	);
+	_self->QueueEvent(evnt.Clone());
+
+//	_self->QueueEvent(new wxAsyncMethodCallEvent0<RubyCallAfter>(
+//			new RubyCallAfter(rb_block_proc()), &RubyCallAfter::call
+//		));
+#else
+
+#endif
+	return Qnil;
+
+}
+
 }
 }
 
@@ -250,7 +288,9 @@ void Init_WXEvtHandler(VALUE rb_mWX)
 	rb_mWXEvtHandler = rb_define_module_under(rb_mWX,"EvtHandler");
 
 	rb_define_method(rb_mWXEvtHandler,"bind",RUBY_METHOD_FUNC(_bind),-1);
-	rb_define_method(rb_mWXEvtHandler,"call",RUBY_METHOD_FUNC(_fire),-1);
+	rb_define_method(rb_mWXEvtHandler,"call",RUBY_METHOD_FUNC(_call),-1);
+
+	rb_define_method(rb_mWXEvtHandler,"call_after",RUBY_METHOD_FUNC(_callafter),-1);
 
 	global_evthandler = rb_hash_new();
 	rb_global_variable(&global_evthandler);

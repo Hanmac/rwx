@@ -39,10 +39,18 @@ VALUE _set(VALUE self,VALUE key,VALUE val)
 VALUE _addPane(int argc,VALUE *argv,VALUE self)
 {
 	VALUE window,hash;
+	wxWindow* w = NULL;
 	rb_scan_args(argc, argv, "11",&window,&hash);
-	VALUE result = wrap(_self->AddPane(unwrap<wxWindow*>(window),unwrap<wxAuiPaneInfo>(hash)));
+	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow))
+	{
+		VALUE argv2[] = {wrap(_self->GetManagedWindow()) };
+		w = unwrap<wxWindow*>(rb_class_new_instance(1,argv2,window));
+	}else
+		w = unwrap<wxWindow*>(window);
+	_self->AddPane(w,unwrap<wxAuiPaneInfo>(hash));
+
 	_self->Update();
-	return result;
+	return wrap(w);
 }
 
 }

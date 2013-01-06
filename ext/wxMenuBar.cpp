@@ -40,7 +40,7 @@ VALUE _each(VALUE self)
 VALUE _appendShift(VALUE self,VALUE menu)
 {
 	wxMenu *m = unwrap<wxMenu*>(menu);
-	if(m->GetTitle() == wxEmptyString)
+	if(m->GetTitle().IsEmpty())
 		rb_raise(rb_eTypeError,"menu must have a title to be append.");
 	_self->Append(m,m->GetTitle());
 	return self;
@@ -69,7 +69,7 @@ singlereturn(GetFrame);
 DLL_LOCAL void Init_WXMenuBar(VALUE rb_mWX)
 {
 	using namespace RubyWX::MenuBar;
-	rb_cWXMenuBar = rb_define_class_under(rb_cWXMenu,"Bar",rb_cWXWindow);
+	rb_cWXMenuBar = rb_define_class_under(rb_mWX,"MenuBar",rb_cWXWindow);
 	rb_define_alloc_func(rb_cWXMenuBar,_alloc);
 
 	rb_define_method(rb_cWXMenuBar,"initialize",RUBY_METHOD_FUNC(_initialize),-1);

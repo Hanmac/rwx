@@ -16,6 +16,15 @@
 #include "wxCursor.hpp"
 
 #include "wxAui.hpp"
+
+#ifdef __WXGTK__
+#include <sstream>
+#include <gdk/gdk.h>
+#include <gtk/gtk.h>
+#include <gdk/gdkx.h>
+#include <GL/glx.h>
+#endif
+
 #define _self unwrap<wxWindow*>(self)
 
 VALUE rb_cWXWindow;
@@ -202,20 +211,16 @@ APP_PROTECT(wxWindow)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,name,hash;
-	rb_scan_args(argc, argv, "12",&parent,&name,&hash);
+	VALUE parent,hash;
+	rb_scan_args(argc, argv, "11",&parent,&hash);
 
 	if(!_created) {
 #if wxUSE_XRC
-		if(!loadxrc(_self,name,unwrap<wxWindow*>(parent)))
+		if(!loadxrc(_self,hash,unwrap<wxWindow*>(parent)))
 #endif
 		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 		_created = true;
 	}
-
-	if(NIL_P(hash))
-		std::swap(name,hash);
-
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
@@ -245,7 +250,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	}
 
-	if(rb_block_given_p() && !(wxUSE_PROGRESSDLG && wxUSE_TIMER && rb_obj_is_kind_of(self,rb_cWXProgressDialog)))
+	if(rb_block_given_p())
 		rb_yield(self);
 	return self;
 }
@@ -254,6 +259,33 @@ VALUE _getchild(VALUE self,VALUE id)
 {
 	return wrap(_self->FindWindow(unwrapID(id)));
 }
+
+VALUE _GetHandle(VALUE self)
+{
+	std::stringstream handleStream;
+#if defined(__WXMSW__)
+	handleStream << (size_t)((HWND)_self->GetHandle());
+#elif defined(__WXGTK__)
+	GtkWidget* widget = _self->GetHandle();
+    gtk_widget_realize( widget );
+	GdkWindow *window = gtk_widget_get_window(widget);
+	if(!window)
+		return Qnil;
+	Display* display = GDK_WINDOW_XDISPLAY( window );
+	if(!display)
+		return Qnil;
+	::Window wid = GDK_WINDOW_XID(window);
+    // Window is a typedef for XID, which is a typedef for unsigned int
+	/* Get the right display (DisplayString() returns ":display.screen") */
+	std::string displayStr(DisplayString( display ));
+	displayStr = displayStr.substr( 1, ( displayStr.find( ".", 0 ) - 1 ) );
+	/* Put all together */
+	handleStream << displayStr << ':' << DefaultScreen( display ) << ':' << wid;
+
+#endif
+	return wrap(wxString(handleStream.str()));
+}
+
 
 
 VALUE _draw(int argc,VALUE *argv,VALUE self)
@@ -292,6 +324,12 @@ VALUE _Close(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "01",&force);
 	return wrap(_self->Close(RTEST(force)));
 }
+
+VALUE _wxClass(VALUE self)
+{
+	return wrap(wxString(_self->GetClassInfo()->GetClassName()));
+}
+
 
 
 #if wxUSE_MENUS
@@ -421,6 +459,8 @@ void Init_WXWindow(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXWindow,"[]",RUBY_METHOD_FUNC(_getchild),1);
 
+	rb_define_method(rb_cWXWindow,"wx_class",RUBY_METHOD_FUNC(_wxClass),0);
+
 	rb_define_method(rb_cWXWindow,"each_child",RUBY_METHOD_FUNC(_each),0);
 
 	rb_define_method(rb_cWXWindow,"fit",RUBY_METHOD_FUNC(_Fit),0);
@@ -428,6 +468,8 @@ void Init_WXWindow(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXWindow,"update",RUBY_METHOD_FUNC(_Update),0);
 	rb_define_method(rb_cWXWindow,"refresh",RUBY_METHOD_FUNC(_Refresh),0);
+
+	rb_define_method(rb_cWXWindow,"handle",RUBY_METHOD_FUNC(_GetHandle),0);
 
 	rb_define_method(rb_cWXWindow,"draw",RUBY_METHOD_FUNC(_draw),-1);
 	rb_define_method(rb_cWXWindow,"close",RUBY_METHOD_FUNC(_Close),-1);
@@ -576,4 +618,10 @@ void Init_WXWindow(VALUE rb_mWX)
 	registerID("restore_frame",wxID_RESTORE_FRAME);
 
 	registerEventType("paint",wxEVT_PAINT);
+	registerEventType("erase_background",wxEVT_ERASE_BACKGROUND);
+
+
+	registerEventType("move",wxEVT_MOVE);
+	registerEventType("size",wxEVT_SIZE);
+	registerEventType("sizing",wxEVT_SIZING);
 }

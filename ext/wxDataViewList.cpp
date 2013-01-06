@@ -91,7 +91,7 @@ VALUE _AppendItem(int argc,VALUE *argv,VALUE self)
 	wxVector<wxVariant> vecvar;
 
 	for(size_t i = 0; i < count;++i)
-		vecvar.push_back(unwrapVariant(RARRAY_PTR(arg)[i],_self->GetModel()->GetColumnType(i)));
+		vecvar.push_back(unwrapVariant(RARRAY_PTR(arg)[i],_self->GetColumn(i)->GetRenderer()->GetVariantType()));
 	_self->AppendItem(vecvar,0);
 	return wrap(_self->GetModel(),_self->GetStore()->GetItem(_self->GetStore()->GetCount() - 1));
 }
@@ -108,9 +108,7 @@ VALUE _PrependItem(int argc,VALUE *argv,VALUE self)
 	wxVector<wxVariant> vecvar;
 
 	for(size_t i = 0; i < count;++i){
-		std::cout << i << ": " << _self->GetModel()->GetColumnType(i) << std::endl;
-
-		vecvar.push_back(unwrapVariant(RARRAY_PTR(arg)[i],_self->GetModel()->GetColumnType(i)));
+		vecvar.push_back(unwrapVariant(RARRAY_PTR(arg)[i],_self->GetColumn(i)->GetRenderer()->GetVariantType()));
 	}
 	_self->PrependItem(vecvar,0);
 	return wrap(_self->GetModel(),_self->GetStore()->GetItem(0));
