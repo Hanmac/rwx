@@ -9,7 +9,7 @@
 #include "wxWindow.hpp"
 
 
-VALUE rb_cWXStatusBar;
+VALUE rb_cWXStatusBar,rb_cWXStatusBarPane;
 
 #if wxUSE_STATUSBAR
 #define _self unwrap<wxStatusBar*>(self)
@@ -79,7 +79,15 @@ VALUE _popStatusText(int argc,VALUE *argv,VALUE self)
 	return Qnil;
 }
 
+//TODO Fix the bad Reference
+VALUE _each(VALUE self)
+{
+	size_t s = _self->GetFieldsCount();
 
+	for(size_t i = 0 ; i < s; ++i)
+		rb_yield(wrapPtr(&const_cast<wxStatusBarPane&>(_self->GetField(i)),rb_cWXStatusBarPane));
+	return self;
+}
 
 namespace Pane
 {
@@ -121,6 +129,19 @@ DLL_LOCAL void Init_WXStatusBar(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXStatusBar,"push_status_text",RUBY_METHOD_FUNC(_pushStatusText),-1);
 	rb_define_method(rb_cWXStatusBar,"pop_status_text",RUBY_METHOD_FUNC(_popStatusText),-1);
+
+	rb_define_method(rb_cWXStatusBar,"each_statuspane",RUBY_METHOD_FUNC(_each),0);
+
+	rb_cWXStatusBarPane = rb_define_class_under(rb_cWXStatusBar,"Pane",rb_cObject);
+	rb_undef_alloc_func(rb_cWXStatusBarPane);
+
+	using namespace Pane;
+	rb_define_attr_method(rb_cWXStatusBarPane,"width",_getWidth,_setWidth);
+	rb_define_attr_method(rb_cWXStatusBarPane,"style",_getStyle,_setStyle);
+	rb_define_attr_method(rb_cWXStatusBarPane,"text",_getText,_setText);
+
+	rb_define_method(rb_cWXStatusBar,"push_text",RUBY_METHOD_FUNC(_pushText),1);
+	rb_define_method(rb_cWXStatusBar,"pop_text",RUBY_METHOD_FUNC(_PopText),0);
 
 
 	registerInfo<wxStatusBar>(rb_cWXStatusBar);
