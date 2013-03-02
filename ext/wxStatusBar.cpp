@@ -14,6 +14,8 @@ VALUE rb_cWXStatusBar,rb_cWXStatusBarPane;
 #if wxUSE_STATUSBAR
 #define _self unwrap<wxStatusBar*>(self)
 
+
+
 namespace RubyWX {
 namespace StatusBar {
 
@@ -82,6 +84,7 @@ VALUE _popStatusText(int argc,VALUE *argv,VALUE self)
 //TODO Fix the bad Reference
 VALUE _each(VALUE self)
 {
+	RETURN_ENUMERATOR(self,0,NULL);
 	size_t s = _self->GetFieldsCount();
 
 	for(size_t i = 0 ; i < s; ++i)
@@ -92,7 +95,7 @@ VALUE _each(VALUE self)
 namespace Pane
 {
 #undef _self
-#define _self unwrap<wxStatusBarPane*>(self)
+#define _self unwrapPtr<wxStatusBarPane>(self,rb_cWXStatusBarPane)
 
 macro_attr(Width,int)
 macro_attr(Style,int)
@@ -140,11 +143,12 @@ DLL_LOCAL void Init_WXStatusBar(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXStatusBarPane,"style",_getStyle,_setStyle);
 	rb_define_attr_method(rb_cWXStatusBarPane,"text",_getText,_setText);
 
-	rb_define_method(rb_cWXStatusBar,"push_text",RUBY_METHOD_FUNC(_pushText),1);
-	rb_define_method(rb_cWXStatusBar,"pop_text",RUBY_METHOD_FUNC(_PopText),0);
+	rb_define_method(rb_cWXStatusBarPane,"push_text",RUBY_METHOD_FUNC(_pushText),1);
+	rb_define_method(rb_cWXStatusBarPane,"pop_text",RUBY_METHOD_FUNC(_PopText),0);
 
 
 	registerInfo<wxStatusBar>(rb_cWXStatusBar);
+
 #endif
 
 }
