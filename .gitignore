@@ -5,8 +5,11 @@
 #eclipse project files
 .cproject
 .project
+.settings
 
 # Ignore mkmf-generated files
 ext/Makefile
 ext/mkmf.log
 
+#ignore temp files
+*.*~
