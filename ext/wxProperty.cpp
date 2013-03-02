@@ -47,13 +47,7 @@ VALUE _setDefaultValue(VALUE self,VALUE val)
 	_self->SetDefaultValue(var);
 	return val;
 }
-/*
-VALUE _setValueImage(VALUE self,VALUE val)
-{
-	_self->SetValueImage(*unwrap<wxBitmap*>(val));
-	return val;
-}
-*/
+
 VALUE _getAttribute(VALUE self,VALUE name)
 {
 	return wrap(_self->GetAttribute(unwrap<wxString>(name)));
