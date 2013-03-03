@@ -7,7 +7,7 @@
 
 
 #include "wxWindow.hpp"
-
+#include "wxRect.hpp"
 
 VALUE rb_cWXStatusBar,rb_cWXStatusBarPane;
 
@@ -22,9 +22,32 @@ namespace StatusBar {
 APP_PROTECT(wxStatusBar)
 
 
+VALUE _initialize(int argc,VALUE *argv,VALUE self)
+{
+	VALUE parent,hash;
+	rb_scan_args(argc, argv, "11",&parent,&hash);
+
+	if(!_created) {
+		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
+		_created = true;
+	}
+	rb_call_super(argc,argv);
+	return self;
+}
+
 macro_attr(StatusText,wxString)
 macro_attr(FieldsCount,int)
 
+VALUE _GetFieldRect(VALUE self,VALUE num)
+{
+	if(NUM2INT(num) < _self->GetFieldsCount())
+	{
+		wxRect rect;
+		if(_self->GetFieldRect(NUM2INT(num),rect))
+			return wrap(rect);
+	}
+	return Qnil;
+}
 
 VALUE _getStatusText2(VALUE self,VALUE num)
 {
@@ -49,11 +72,24 @@ VALUE _getStatusWidth(VALUE self,VALUE num)
 	return Qnil;
 }
 
-VALUE _setStatusWidth(VALUE self,VALUE val,VALUE num)
+VALUE _setStatusWidth(VALUE self,VALUE num,VALUE val)
 {
-	int w = NUM2INT(val);
-	if(NUM2INT(num) < _self->GetFieldsCount())
-		_self->SetStatusWidths(NUM2INT(num),&w);
+	const size_t count = _self->GetFieldsCount();
+
+
+	if(NUM2INT(num) < (int)count)
+	{
+		int w[count];
+		for(size_t i = 0; i < count; ++i )
+		{
+			int v = _self->GetStatusWidth(i);
+			w[i] = v ? v : -1;
+		}
+		w[NUM2INT(num)] = NUM2INT(val);
+		_self->SetStatusWidths(count,w);
+		//const_cast<wxStatusBarPane&>(_self->GetField(NUM2INT(num))).SetWidth(w);
+		//_self->Refresh();
+	}
 	return Qnil;
 }
 
@@ -121,8 +157,14 @@ DLL_LOCAL void Init_WXStatusBar(VALUE rb_mWX)
 	rb_cWXStatusBar = rb_define_class_under(rb_mWX,"StatusBar",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXStatusBar,_alloc);
 
+	rb_define_method(rb_cWXStatusBar,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
+
+
 	rb_define_attr_method(rb_cWXStatusBar,"status_text",_getStatusText,_setStatusText);
 	rb_define_attr_method(rb_cWXStatusBar,"fields_count",_getFieldsCount,_setFieldsCount);
+
+	rb_define_method(rb_cWXStatusBar,"get_field_rect",RUBY_METHOD_FUNC(_GetFieldRect),1);
+
 
 	rb_define_method(rb_cWXStatusBar,"get_status_text",RUBY_METHOD_FUNC(_getStatusText2),1);
 	rb_define_method(rb_cWXStatusBar,"set_status_text",RUBY_METHOD_FUNC(_setStatusText2),2);

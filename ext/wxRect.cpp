@@ -95,6 +95,9 @@ void Init_WXRect(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXRect,"width",_getWidth,_setWidth);
 	rb_define_attr_method(rb_cWXRect,"height",_getHeight,_setHeight);
 
+	rb_define_attr_method(rb_cWXRect,"position",_getPosition,_setPosition);
+	rb_define_attr_method(rb_cWXRect,"size",_getSize,_setSize);
+
 	rb_define_method(rb_cWXRect,"inspect",RUBY_METHOD_FUNC(_inspect),0);
 }
 

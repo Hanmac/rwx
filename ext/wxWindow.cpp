@@ -11,6 +11,7 @@
 #include "wxColor.hpp"
 #include "wxSizer.hpp"
 #include "wxPoint.hpp"
+#include "wxRect.hpp"
 #include "wxDC.hpp"
 
 #include "wxCursor.hpp"
@@ -187,6 +188,7 @@ singlereturn(LineDown)
 singlereturn(PageUp)
 singlereturn(PageDown)
 
+singlereturn(GetRect)
 
 VALUE _SetParent(VALUE self,VALUE parent)
 {
@@ -206,6 +208,13 @@ VALUE _SetForegroundColour(VALUE self,VALUE val)
 	_self->SetForegroundColour(unwrap<wxColor>(val));
 	return val;
 }
+
+VALUE _SetRect(VALUE self,VALUE rect)
+{
+	_self->SetSize(unwrap<wxRect>(rect));
+	return rect;
+}
+
 
 APP_PROTECT(wxWindow)
 
@@ -442,6 +451,9 @@ void Init_WXWindow(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXWindow, "size",_getSize,_setSize);
 	rb_define_attr_method(rb_cWXWindow, "min_size",_getMinSize,_setMinSize);
 	rb_define_attr_method(rb_cWXWindow, "max_size",_getMaxSize,_setMaxSize);
+
+	rb_define_attr_method(rb_cWXWindow, "position",_getPosition,_setPosition);
+	rb_define_attr_method(rb_cWXWindow, "rect",_GetRect,_SetRect);
 
 	rb_define_attr_method(rb_cWXWindow, "sizer",_getSizer,_setSizer);
 	rb_define_attr_method(rb_cWXWindow, "containing_sizer",_getContainingSizer,_setContainingSizer);

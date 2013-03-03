@@ -21,8 +21,16 @@ APP_PROTECT(wxStaticBitmap)
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
+	wxBitmap bitmap(wxNullBitmap);
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxNullBitmap);
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		VALUE temp;
+		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("bitmap")))))
+			bitmap = unwrap<wxBitmap>(temp);
+	}
+
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,bitmap);
 	_created = true;
 	rb_call_super(argc,argv);
 	return self;
