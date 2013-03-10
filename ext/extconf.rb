@@ -8,8 +8,8 @@ if(wx_config = find_executable('wx-config'))
 	
 	case `#{wx_config} --basename`
 	when /gtk2/
-		#pkg_config("gdk-x11-2.0")
-		#pkg_config("gtk+-x11-2.0")
+		pkg_config("gdk-x11-2.0")
+		pkg_config("gtk+-x11-2.0")
 	when /gtk3/
 		pkg_config("gtk-x11-3.0")
 		pkg_config("gtk+-x11-3.0")
@@ -35,4 +35,6 @@ end
 CONFIG["warnflags"].gsub!("-Wdeclaration-after-statement","")
 CONFIG["warnflags"].gsub!("-Wimplicit-function-declaration","")
 
+#wxAUI is a bit buggy
+CONFIG["warnflags"].gsub!("-Wextra","")
 create_makefile "rwx"
