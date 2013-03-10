@@ -114,6 +114,10 @@
 #include "wxCalendarCtrl.hpp"
 #include "wxCalendarCtrlGeneric.hpp"
 
+#include "wxInfoBarBase.hpp"
+#include "wxInfoBar.hpp"
+#include "wxInfoBarGeneric.hpp"
+
 
 #include "wxDataView.hpp"
 #include "wxDataViewList.hpp"
@@ -241,6 +245,10 @@ extern "C" void Init_rwx()
 	Init_WXCalendarCtrlBase(rb_mWX);
 	Init_WXCalendarCtrl(rb_mWX);
 	Init_WXCalendarCtrlGeneric(rb_mWX);
+
+	Init_WXInfoBarBase(rb_mWX);
+	Init_WXInfoBar(rb_mWX);
+	Init_WXInfoBarGeneric(rb_mWX);
 
 	Init_WXDataView(rb_mWX);
 	Init_WXDataViewList(rb_mWX);
