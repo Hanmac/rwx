@@ -21,7 +21,7 @@ class A < WX::App
 					}
 					info.append_normal(:info_adv,"&Advanced info bar\tShift-Ctrl-I") {
 					
-						@info_adv.show_message("Sorry, it didn't work out.")
+						@info_adv.show_message("Sorry, it didn't work out.",:warning)
 					}
 				}
 			}
@@ -32,6 +32,13 @@ class A < WX::App
 			
 			box.add(@info = WX::InfoBar.new(@frame),:expand => true)
 			box.add(@info_adv = WX::InfoBar.new(@frame),:expand => true)
+			
+			@info_adv.background_color = 0xc8ffff
+
+			#@info_adv.font.weight = :bold
+			f = @info_adv.font
+			f.weight = :bold
+			@info_adv.font = f
 		}	
 		
 		@frame.show
