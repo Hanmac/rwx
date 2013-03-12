@@ -22,8 +22,7 @@ VALUE _showMessage(int argc,VALUE *argv,VALUE self)
 {
 	VALUE text,icon;
 	rb_scan_args(argc, argv, "11",&text,&icon);
-	int flags = wxICON_INFORMATION;
-	_self->ShowMessage(unwrap<wxString>(text),flags);
+	_self->ShowMessage(unwrap<wxString>(text),unwrap_infoflag(icon));
 	return self;
 
 }
