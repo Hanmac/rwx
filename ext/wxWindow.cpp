@@ -427,8 +427,8 @@ void Init_WXWindow(VALUE rb_mWX)
 	rb_define_attr(rb_cWXWindow, "sizer",1,1);
 	rb_define_attr(rb_cWXWindow, "containing_sizer",1,1);
 
-	rb_define_attr(rb_cWXWindow, "backgroundColor",1,1);
-	rb_define_attr(rb_cWXWindow, "foregroundColor",1,1);
+	rb_define_attr(rb_cWXWindow, "background_color",1,1);
+	rb_define_attr(rb_cWXWindow, "foreground_color",1,1);
 
 	rb_define_attr(rb_cWXWindow, "font",1,1);
 	rb_define_attr(rb_cWXWindow, "help_text",1,1);
@@ -458,8 +458,8 @@ void Init_WXWindow(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXWindow, "sizer",_getSizer,_setSizer);
 	rb_define_attr_method(rb_cWXWindow, "containing_sizer",_getContainingSizer,_setContainingSizer);
 
-	rb_define_attr_method(rb_cWXWindow, "backgroundColor",_GetBackgroundColour,_SetBackgroundColour);
-	rb_define_attr_method(rb_cWXWindow, "foregroundColor",_GetForegroundColour,_SetForegroundColour);
+	rb_define_attr_method(rb_cWXWindow, "background_color",_GetBackgroundColour,_SetBackgroundColour);
+	rb_define_attr_method(rb_cWXWindow, "foreground_color",_GetForegroundColour,_SetForegroundColour);
 
 	rb_define_attr_method(rb_cWXWindow, "font",_getFont,_setFont);
 #if wxUSE_HELP
