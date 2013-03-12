@@ -58,6 +58,18 @@ VALUE _each(VALUE self)
 	return self;
 }
 
+void bind_callback(wxMenu* menu,wxWindowID id)
+{
+	if(rb_block_given_p()){
+		VALUE proc = rb_block_proc();
+#ifdef wxHAS_EVENT_BIND
+		menu->Bind(wxEVT_COMMAND_MENU_SELECTED,RubyFunctor(proc),id);
+#else
+		menu->Connect(id,wxEVT_COMMAND_MENU_SELECTED,wxCommandEventHandler(RubyFunctor::operator()),NULL,new RubyFunctor(proc));
+#endif
+	}
+}
+
 
 VALUE _appendNormalItem(int argc,VALUE *argv,VALUE self)
 {
@@ -76,14 +88,7 @@ VALUE _appendNormalItem(int argc,VALUE *argv,VALUE self)
 		if(!wxIsStockID(wid) && NIL_P(text))
 			rb_raise(rb_eArgError,"id %d needs an text",wid);
 		wxMenuItem *item = _self->Append(wid,unwrap<wxString>(text),unwrap<wxString>(help));
-		if(rb_block_given_p()){
-			VALUE proc = rb_block_proc();
-#ifdef wxHAS_EVENT_BIND
-			_self->Bind(wxEVT_COMMAND_MENU_SELECTED,RubyFunctor(proc),item->GetId());
-#else
-			_self->Connect(item->GetId(),wxEVT_COMMAND_MENU_SELECTED,wxCommandEventHandler(RubyFunctor::operator()),NULL,new RubyFunctor(proc));
-#endif
-		}
+		bind_callback(_self,item->GetId());
 		return wrap(item);
 	}
 }
@@ -94,14 +99,7 @@ VALUE _appendCheckItem(int argc,VALUE *argv,VALUE self)
 	VALUE id,text,help;
 	rb_scan_args(argc, argv, "12",&id,&text,&help);
 	wxMenuItem *item = _self->AppendCheckItem(unwrapID(id),unwrap<wxString>(text),unwrap<wxString>(help));
-	if(rb_block_given_p()){
-		VALUE proc = rb_block_proc();
-#ifdef wxHAS_EVENT_BIND
-		_self->Bind(wxEVT_COMMAND_MENU_SELECTED,RubyFunctor(proc),item->GetId());
-#else
-		_self->Connect(item->GetId(),wxEVT_COMMAND_MENU_SELECTED,wxCommandEventHandler(RubyFunctor::operator()),NULL,new RubyFunctor(proc));
-#endif
-	}
+	bind_callback(_self,item->GetId());
 	return wrap(item);
 }
 
@@ -110,14 +108,7 @@ VALUE _appendRadioItem(int argc,VALUE *argv,VALUE self)
 	VALUE id,text,help;
 	rb_scan_args(argc, argv, "12",&id,&text,&help);
 	wxMenuItem *item = _self->AppendRadioItem(unwrapID(id),unwrap<wxString>(text),unwrap<wxString>(help));
-	if(rb_block_given_p()){
-		VALUE proc = rb_block_proc();
-#ifdef wxHAS_EVENT_BIND
-		_self->Bind(wxEVT_COMMAND_MENU_SELECTED,RubyFunctor(proc),item->GetId());
-#else
-		_self->Connect(item->GetId(),wxEVT_COMMAND_MENU_SELECTED,wxCommandEventHandler(RubyFunctor::operator()),NULL,new RubyFunctor(proc));
-#endif
-	}
+	bind_callback(_self,item->GetId());
 	return wrap(item);
 }
 
@@ -155,6 +146,9 @@ DLL_LOCAL void Init_WXMenu(VALUE rb_mWX)
 	rb_define_method(rb_cWXMenu,"append_normal",RUBY_METHOD_FUNC(_appendNormalItem),-1);
 	rb_define_method(rb_cWXMenu,"append_check",RUBY_METHOD_FUNC(_appendCheckItem),-1);
 	rb_define_method(rb_cWXMenu,"append_radio",RUBY_METHOD_FUNC(_appendRadioItem),-1);
+
+	rb_define_method(rb_cWXMenu,"append_separator",RUBY_METHOD_FUNC(_AppendSeparator),0);
+	rb_define_method(rb_cWXMenu,"prepend_separator",RUBY_METHOD_FUNC(_PrependSeparator),0);
 
 	rb_define_method(rb_cWXMenu,"<<",RUBY_METHOD_FUNC(_appendShift),1);
 
