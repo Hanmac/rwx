@@ -43,6 +43,11 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
+singlereturn(Smaller)
+singlereturn(Larger)
+
+singlefunc(MakeSmaller)
+singlefunc(MakeLarger)
 
 }
 }
@@ -55,6 +60,11 @@ DLL_LOCAL void Init_WXFont(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXFont,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
+	rb_define_method(rb_cWXFont,"smaller",RUBY_METHOD_FUNC(_Smaller),0);
+	rb_define_method(rb_cWXFont,"larger",RUBY_METHOD_FUNC(_Larger),0);
+
+	rb_define_method(rb_cWXFont,"smaller!",RUBY_METHOD_FUNC(_MakeSmaller),0);
+	rb_define_method(rb_cWXFont,"larger!",RUBY_METHOD_FUNC(_MakeLarger),0);
 
 	rb_define_attr_method(rb_cWXFont,"point_size",_getPointSize,_setPointSize);
 
