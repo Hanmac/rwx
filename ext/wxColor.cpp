@@ -21,9 +21,9 @@ template <>
 bool is_wrapable< wxColor >(const VALUE &vcolor)
 {
 	if (rb_obj_is_kind_of(vcolor, rb_cWXColor) ||
-		rb_obj_is_kind_of(vcolor, rb_cString)){
+		rb_obj_is_kind_of(vcolor, rb_cString) || FIXNUM_P(vcolor)){
 		return true;
-	}else if(rb_respond_to(vcolor,rb_intern("red")) &&
+	} else if(rb_respond_to(vcolor,rb_intern("red")) &&
 		rb_respond_to(vcolor,rb_intern("blue")) &&
 		rb_respond_to(vcolor,rb_intern("green")) &&
 		rb_respond_to(vcolor,rb_intern("alpha"))){
@@ -43,7 +43,9 @@ wxColor unwrap< wxColor >(const VALUE &vcolor)
 {
 	if(rb_obj_is_kind_of(vcolor, rb_cString)){
 		return wxColour(unwrap<wxString>(vcolor));
-	}else if(!rb_obj_is_kind_of(vcolor, rb_cWXColor) &&
+	}else if(FIXNUM_P(vcolor))
+		return wxColor(NUM2INT(vcolor));
+	else if(!rb_obj_is_kind_of(vcolor, rb_cWXColor) &&
 		rb_respond_to(vcolor,rb_intern("red")) &&
 		rb_respond_to(vcolor,rb_intern("blue")) &&
 		rb_respond_to(vcolor,rb_intern("green")) &&
