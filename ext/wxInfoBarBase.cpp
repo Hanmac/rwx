@@ -22,13 +22,44 @@ VALUE _showMessage(int argc,VALUE *argv,VALUE self)
 {
 	VALUE text,icon;
 	rb_scan_args(argc, argv, "11",&text,&icon);
-	_self->ShowMessage(unwrap<wxString>(text),unwrap_infoflag(icon));
+
+	//use argc for check if parameter is given because nil is treated different
+	_self->ShowMessage(unwrap<wxString>(text), argc == 1 ? wxICON_INFORMATION : unwrap_infoflag(icon));
+
 	return self;
-
 }
 
+VALUE _addButton(int argc,VALUE *argv,VALUE self)
+{
+	VALUE id,label;
+	rb_scan_args(argc, argv, "11",&id,&label);
+	
+	wxWindowID wid = unwrapID(id);
+	
+	_self->AddButton(wid,unwrap<wxString>(label));
+	
+	if(rb_block_given_p())
+	{
+		VALUE proc = rb_block_proc();
+#ifdef wxHAS_EVENT_BIND
+			_self->Bind(wxEVT_COMMAND_BUTTON_CLICKED,RubyFunctor(proc),wid);
+#else
+			_self->Connect(wid,wxEVT_COMMAND_BUTTON_CLICKED,wxCommandEventHandler(RubyFunctor::operator()),NULL,new RubyFunctor(proc));
+#endif
+	
+	}
+	return self;
+}
+
+VALUE _removeButton(VALUE self,VALUE id)
+{
+	_self->RemoveButton(unwrapID(id));
+	return self;
+}
+
 }
 }
+
 #endif
 void Init_WXInfoBarBase(VALUE rb_mWX)
 {
@@ -39,6 +70,9 @@ void Init_WXInfoBarBase(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXInfoBarBase,"dismiss",RUBY_METHOD_FUNC(_Dismiss),0);
 	rb_define_method(rb_cWXInfoBarBase,"show_message",RUBY_METHOD_FUNC(_showMessage),-1);
+
+	rb_define_method(rb_cWXInfoBarBase,"add_button",RUBY_METHOD_FUNC(_addButton),-1);
+	rb_define_method(rb_cWXInfoBarBase,"remove_button",RUBY_METHOD_FUNC(_removeButton),1);
 
 	registerType<wxInfoBarBase>(rb_cWXInfoBarBase);
 #endif
