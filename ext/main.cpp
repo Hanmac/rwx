@@ -165,3 +165,37 @@ wxDateTime unwrap< wxDateTime >(const VALUE &val )
 }
 
 
+int unwrap_infoflag(VALUE val,int mask)
+{
+	if(NIL_P(val))
+		return wxICON_NONE;
+	
+	int result = 0;
+	if(SYMBOL_P(val))
+	{
+
+		if(SYM2ID(val) == rb_intern("exclamation"))
+			result = wxICON_EXCLAMATION;
+		else if(SYM2ID(val) == rb_intern("hand"))
+			result = wxICON_HAND;
+		else if(SYM2ID(val) == rb_intern("warning"))
+			result = wxICON_WARNING;
+		else if(SYM2ID(val) == rb_intern("error"))
+			result = wxICON_ERROR;
+		else if(SYM2ID(val) == rb_intern("question"))
+			result = wxICON_QUESTION;
+		else if(SYM2ID(val) == rb_intern("information"))
+			result = wxICON_INFORMATION;
+		else if(SYM2ID(val) == rb_intern("stop"))
+			result = wxICON_STOP;
+		else if(SYM2ID(val) == rb_intern("asterisk"))
+			result = wxICON_ASTERISK;
+	}else
+		result = NUM2INT(val);
+		
+	if((result & mask) != result)
+		rb_raise(rb_eTypeError,"%s is not a in %d mask",unwrap<char*>(val),mask);
+	
+	return result;
+
+}

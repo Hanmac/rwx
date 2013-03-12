@@ -313,6 +313,8 @@ VALUE wrap< wxDateTime >(const wxDateTime &st );
 template <>
 wxDateTime unwrap< wxDateTime >(const VALUE &val );
 
+int unwrap_infoflag(VALUE val,int mask = wxICON_MASK);
+
 #define macro_attr_func(attr,funcget,funcset,wrapget,wrapset) \
 DLL_LOCAL VALUE _get##attr(VALUE self)\
 { \
