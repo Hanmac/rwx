@@ -149,12 +149,8 @@
 
 
 #include "wxProperty.hpp"
-#include "wxFileProperty.hpp"
-#include "wxFontProperty.hpp"
-#include "wxStringProperty.hpp"
-#include "wxArrayStringProperty.hpp"
-#include "wxCategoryProperty.hpp"
 
+#include "wxPropertyCell.hpp"
 
 VALUE rb_mWX;
 
@@ -320,17 +316,12 @@ extern "C" void Init_rwx()
 	Init_WXGridCellAttr(rb_mWX);
 
 	Init_WXProperty(rb_mWX);
-	Init_WXFileProperty(rb_mWX);
-	Init_WXFontProperty(rb_mWX);
-	Init_WXStringProperty(rb_mWX);
-	Init_WXArrayStringProperty(rb_mWX);
-	Init_WXCategoryProperty(rb_mWX);
-
 
 	Init_WXPropertyGridInterface(rb_mWX);
 	Init_WXPropertyGrid(rb_mWX);
 	Init_WXPropertyGridManager(rb_mWX);
 
+	Init_WXPropertyCell(rb_mWX);
 
 	Init_WXXRC(rb_mWX);
 //	for(klassholdertype::iterator it = klassholder.begin();
