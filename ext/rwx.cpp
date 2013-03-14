@@ -73,6 +73,12 @@
 
 #include "wxGauge.hpp"
 
+#include "wxListBox.hpp"
+#include "wxCheckListBox.hpp"
+
+#include "wxRearrangeList.hpp"
+#include "wxRearrangeCtrl.hpp"
+#include "wxRearrangeDialog.hpp"
 
 #include "wxCheckBox.hpp"
 #include "wxRadioButton.hpp"
@@ -245,6 +251,13 @@ extern "C" void Init_rwx()
 	Init_WXInfoBarBase(rb_mWX);
 	Init_WXInfoBar(rb_mWX);
 	Init_WXInfoBarGeneric(rb_mWX);
+
+	Init_WXListBox(rb_mWX);
+	Init_WXCheckListBox(rb_mWX);
+
+	Init_WXRearrangeList(rb_mWX);
+	Init_WXRearrangeCtrl(rb_mWX);
+	Init_WXRearrangeDialog(rb_mWX);
 
 	Init_WXDataView(rb_mWX);
 	Init_WXDataViewList(rb_mWX);

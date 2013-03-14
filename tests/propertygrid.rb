@@ -1,7 +1,7 @@
 #Encoding: UTF-8
 require "../ext/rwx"
 
-STDERR.reopen("file.log","w")
+#STDERR.reopen("file.log","w")
 		
 		
 class A < WX::App
@@ -19,13 +19,18 @@ class A < WX::App
 			:extra_style => WX::PropertyGridManager::EX_MODE_BUTTONS
 		)
 
-		fp = pg.append(WX::FontProperty)
-		fp.value_image = "ruby32x32.png"
+#		pg = WX::PropertyGrid.new(@frame)
+
+
+		p WX::CursorProperty.ancestors
+
+		fp = pg.append(WX::SystemColorProperty)
+		#fp.value_image = "ruby32x32.png"
 		
 		p fp.value
 		p fp.each_attributes.to_a
 		
-		exit
+		#exit
 		
 		p fp.each_child.map {|pr| pr.class}
 		p fp.each_child.map {|pr| pr.type}

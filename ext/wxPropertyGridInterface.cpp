@@ -29,9 +29,15 @@ wxPropertyGridInterface* unwrap< wxPropertyGridInterface* >(const VALUE &obj)
 namespace RubyWX {
 namespace PropertyGridInterface {
 
-VALUE _append(VALUE self,VALUE val)
+VALUE _append(int argc,VALUE *argv,VALUE self)
 {
-	return wrap(_self->Append(unwrap<wxPGProperty*>(val)));
+	VALUE val,hash;
+	rb_scan_args(argc, argv, "11",&val,&hash);
+	
+	VALUE result = wrap(_self->Append(unwrap<wxPGProperty*>(val)));
+	if(rb_block_given_p())
+		rb_yield(result);
+	return result;
 }
 
 }
@@ -44,7 +50,7 @@ DLL_LOCAL void Init_WXPropertyGridInterface(VALUE rb_mWX)
 	using namespace RubyWX::PropertyGridInterface;
 	rb_mWXPropertyGridInterface = rb_define_module_under(rb_mWX,"PropertyGridInterface");
 
-	rb_define_method(rb_mWXPropertyGridInterface,"append",RUBY_METHOD_FUNC(_append),1);
+	rb_define_method(rb_mWXPropertyGridInterface,"append",RUBY_METHOD_FUNC(_append),-1);
 
 	wxPropertyGrid::InitAllTypeHandlers();
 #endif

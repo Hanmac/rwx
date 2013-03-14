@@ -16,6 +16,19 @@ VALUE rb_cWXProperty;
 #include <wx/propgrid/props.h>
 #include <wx/propgrid/advprops.h>
 
+template<typename T>
+void registerProperty(VALUE mod,const char* name,const char* parent = NULL)
+{
+	VALUE pc = rb_cWXProperty;
+	
+	if(parent)
+		pc = rb_const_get(mod,rb_intern(parent));
+	
+	VALUE klass = rb_define_class_under(mod,name,pc);
+	registerInfo<T>(klass);
+}
+
+
 #define _self unwrap<wxPGProperty*>(self)
 
 namespace RubyWX {
@@ -178,6 +191,9 @@ DLL_LOCAL void Init_WXProperty(VALUE rb_mWX)
 	registerProperty<wxArrayStringProperty>(rb_mWX,"ArrayStringProperty");
 	
 	registerProperty<wxEnumProperty>(rb_mWX,"EnumProperty");
+	
+	registerProperty<wxSystemColourProperty>(rb_mWX,"SystemColorProperty","EnumProperty");
+	registerProperty<wxCursorProperty>(rb_mWX,"CursorProperty","EnumProperty");
 	
 #endif
 }
