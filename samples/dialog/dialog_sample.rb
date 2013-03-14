@@ -32,6 +32,14 @@ class A < WX::App
 					info.append_normal(:info_adv_generic,"&Advanced info bar (generic)") {
 						@info_adv_generic.show_message("Sorry, it didn't work out.",:warning)
 					}
+					
+					info.append_separator
+					
+					info.append_normal(:wx_info,"&wxWidgets information\tCtrl-W") {
+						WX::info_message_box(@frame)
+					}
+					
+					
 				}
 			}
 		}

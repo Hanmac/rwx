@@ -79,6 +79,15 @@ VALUE _MessageBox(int argc,VALUE *argv,VALUE self)
 	return unwrapID(wxMessageBox(unwrap<wxString>(message),wxMessageBoxCaptionStr,wxOK | wxCENTRE,unwrap<wxWindow*>(parent)));
 }
 
+VALUE _InfoMessageBox(int argc,VALUE *argv,VALUE self)
+{
+	VALUE parent;
+	rb_scan_args(argc, argv, "01",&parent);
+
+	wxInfoMessageBox(unwrap<wxWindow*>(parent));
+	return Qnil;
+}
+
 }
 }
 #endif
@@ -100,6 +109,7 @@ void Init_WXMessageDialogBase(VALUE rb_mWX)
 
 
 	rb_define_module_function(rb_mWX,"message_box",RUBY_METHOD_FUNC(_MessageBox),-1);
+	rb_define_module_function(rb_mWX,"info_message_box",RUBY_METHOD_FUNC(_InfoMessageBox),-1);
 
 	registerType<wxMessageDialogBase>(rb_cWXMessageDialogBase);
 #endif
