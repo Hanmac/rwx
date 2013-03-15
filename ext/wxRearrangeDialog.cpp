@@ -38,7 +38,7 @@ void Init_WXRearrangeDialog(VALUE rb_mWX)
 {
 #if wxUSE_REARRANGECTRL
 	using namespace RubyWX::RearrangeDialog;
-	rb_cWXRearrangeDialog = rb_define_class_under(rb_mWX,"RearrangeDialog",rb_cWXPanel);
+	rb_cWXRearrangeDialog = rb_define_class_under(rb_mWX,"RearrangeDialog",rb_cWXDialog);
 	rb_define_alloc_func(rb_cWXRearrangeDialog,_alloc);
 
 	rb_define_method(rb_cWXRearrangeDialog,"initialize",RUBY_METHOD_FUNC(_initialize),-1);

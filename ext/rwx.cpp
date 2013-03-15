@@ -252,6 +252,8 @@ extern "C" void Init_rwx()
 	Init_WXInfoBar(rb_mWX);
 	Init_WXInfoBarGeneric(rb_mWX);
 
+	Init_WXItemContainer(rb_mWX);
+
 	Init_WXListBox(rb_mWX);
 	Init_WXCheckListBox(rb_mWX);
 
@@ -276,7 +278,7 @@ extern "C" void Init_rwx()
 	Init_WXStaticText(rb_mWX);
 	Init_WXStaticBox(rb_mWX);
 
-	Init_WXItemContainer(rb_mWX);
+	
 	Init_WXChoice(rb_mWX);
 
 	Init_WXAnyButton(rb_mWX);
