@@ -306,6 +306,8 @@ VALUE wrap< wxArrayInt >(const wxArrayInt &st );
 
 template <>
 wxArrayString unwrap< wxArrayString >(const VALUE &val );
+template <>
+wxArrayInt unwrap< wxArrayInt >(const VALUE &val );
 
 template <>
 VALUE wrap< wxDateTime >(const wxDateTime &st );

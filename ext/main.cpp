@@ -135,6 +135,23 @@ wxArrayString unwrap< wxArrayString >(const VALUE &val )
 	}
 	return arry;
 }
+template <>
+wxArrayInt unwrap< wxArrayInt >(const VALUE &val )
+{
+	wxArrayInt arry;
+	if(NIL_P(val))
+		return arry;
+	else if(rb_respond_to(val,rb_intern("to_a")))	{
+		VALUE dp = rb_funcall(val,rb_intern("to_a"),0);
+		size_t length = RARRAY_LEN(dp);
+		for(size_t i = 0; i < length; ++i)
+			arry.Add(NUM2INT(RARRAY_PTR(dp)[i]));
+	}else{
+		arry.Add(NUM2INT(val));
+	}
+	return arry;
+}
+
 
 template <>
 VALUE wrap< wxDateTime >(const wxDateTime &st )
