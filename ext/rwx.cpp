@@ -101,6 +101,7 @@
 #include "wxSpinCtrl.hpp"
 
 #include "wxTextCtrl.hpp"
+#include "wxTextAttr.hpp"
 #include "wxSearchCtrl.hpp"
 
 
@@ -290,6 +291,8 @@ extern "C" void Init_rwx()
 
 
 	Init_WXTextCtrl(rb_mWX);
+
+	Init_WXTextAttr(rb_mWX);
 
 	Init_WXSearchCtrl(rb_mWX);
 
