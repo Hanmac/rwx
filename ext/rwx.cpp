@@ -94,6 +94,7 @@
 #include "wxItemContainer.hpp"
 
 #include "wxChoice.hpp"
+#include "wxComboBox.hpp"
 
 #include "wxSlider.hpp"
 
@@ -279,7 +280,7 @@ extern "C" void Init_rwx()
 	Init_WXStaticText(rb_mWX);
 	Init_WXStaticBox(rb_mWX);
 
-	
+	Init_WXComboBox(rb_mWX);
 	Init_WXChoice(rb_mWX);
 
 	Init_WXAnyButton(rb_mWX);

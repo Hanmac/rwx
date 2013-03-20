@@ -10,6 +10,7 @@
 
 #include "wxListBox.hpp"
 #include "wxChoice.hpp"
+#include "wxComboBox.hpp"
 
 VALUE rb_mWXItemContainer;
 #if wxUSE_CONTROLS
@@ -22,6 +23,8 @@ wxItemContainer* unwrap< wxItemContainer* >(const VALUE &obj)
 		return unwrap<wxListBox*>(obj);
 	if(rb_obj_is_kind_of(obj,rb_cWXChoice))
 		return unwrap<wxChoice*>(obj);
+	if(rb_obj_is_kind_of(obj,rb_cWXComboBox))
+		return unwrap<wxComboBox*>(obj);
 		
 		return unwrapPtr<wxItemContainer>(obj,rb_mWXItemContainer);
  return NULL;
