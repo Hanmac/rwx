@@ -8,19 +8,21 @@ if(wx_config = find_executable('wx-config'))
 	
 	case `#{wx_config} --basename`
 	when /gtk2/
-		pkg_config("gdk-x11-2.0")
-		pkg_config("gtk+-x11-2.0")
+		CONFIG["CXXFLAGS"] << pkg_config("gtk+-x11-2.0")[0]
+		CONFIG["CXXFLAGS"] << pkg_config("gdk-x11-2.0")[0]
 	when /gtk3/
-		pkg_config("gtk-x11-3.0")
-		pkg_config("gtk+-x11-3.0")
+		CONFIG["CXXFLAGS"] << pkg_config("gtk+-x11-3.0")[0]
+		CONFIG["CXXFLAGS"] << pkg_config("gdk-x11-3.0")[0]
 	end
 
 	$CFLAGS << " -fvisibility-inlines-hidden -x c++ -g -Wall "
+	CONFIG["CXXFLAGS"] << " -fvisibility-inlines-hidden -g -Wall "
 	$CPPFLAGS << " -fvisibility-inlines-hidden -g "
 	$LDFLAGS << " -fvisibility-inlines-hidden "
 
 
-	$CFLAGS << `#{wx_config} --cflags`.chomp + " " + `#{wx_config} --cxxflags`.chomp
+	$CFLAGS << `#{wx_config} --cflags`.chomp
+	CONFIG["CXXFLAGS"] << `#{wx_config} --cxxflags`.chomp
 	$CPPFLAGS << `#{wx_config} --cppflags`.chomp
 	$LDFLAGS << `#{wx_config} --libs all`.chomp
 
