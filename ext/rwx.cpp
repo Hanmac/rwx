@@ -174,6 +174,8 @@ extern "C" void Init_rwx()
 {
 	//wxInitialize();
 
+	global_holder = rb_hash_new();
+	rb_global_variable(&global_holder);
 
 	rb_mWX = rb_define_module("WX");
 

@@ -41,6 +41,8 @@
 #include <typeinfo>
 #include <map>
 #include <string>
+#include <string.h>
+
 
 #ifdef HAVE_RUBY_ENCODING_H
 #include <ruby/encoding.h>
@@ -80,7 +82,9 @@ extern infoholdertype infoklassholder;
 typedef std::map<std::string,VALUE> typeholdertype;
 extern typeholdertype typeklassholder;
 
-
+extern VALUE global_holder;
+void rwx_refobject(VALUE object);
+void rwx_unrefobject(VALUE object);
 
 VALUE wrapPtr(void *arg,VALUE klass);
 VALUE wrapPtr(wxObject *object,VALUE klass);

@@ -7,10 +7,34 @@
 
 #include "main.hpp"
 
+#include <wx/arrstr.h>
+
 infoholdertype infoklassholder;
 typeholdertype typeklassholder;
 
 enumregistertype enumregister;
+
+VALUE global_holder;
+
+typedef std::map<VALUE,size_t> ref_countertype;
+ref_countertype ref_counter;
+
+
+void rwx_refobject(VALUE object)
+{
+	if(ref_counter[object] == 0)
+		rb_hash_aset(global_holder,INT2NUM(object),object);
+	ref_counter[object]++;
+}
+
+void rwx_unrefobject(VALUE object)
+{
+	if(ref_counter[object] != 0)
+		ref_counter[object]--;
+	if(ref_counter[object] == 0)
+		rb_hash_delete(global_holder,INT2NUM(object));
+
+}
 
 VALUE wrapClass(const wxClassInfo * info)
 {

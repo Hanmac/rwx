@@ -14,8 +14,6 @@
 
 VALUE rb_mWXEvtHandler;
 
-VALUE global_evthandler;
-
 typedef std::map<VALUE,wxEvtHandler*> evthandlerholdertype;
 typedef std::map<ID,wxEventType>  evttypeholdertype;
 typedef std::map<wxEventType,wxClassInfo*>  evttypeclassholdertype;
@@ -166,20 +164,20 @@ private:
 
 RubyClientData::RubyClientData(VALUE obj) : wxClientData(), mRuby(obj),created(false)
 {
-	rb_hash_aset(global_evthandler,INT2NUM(obj),obj);
+	rwx_refobject(obj);
 }
 
 RubyClientData::~RubyClientData()
 {
-	rb_hash_delete(global_evthandler,INT2NUM(mRuby));
+	rwx_unrefobject(mRuby);
 }
 
 RubyFunctorPtr::RubyFunctorPtr(VALUE obj) : mValue(obj){
-	rb_hash_aset(global_evthandler,INT2NUM(obj),obj);
+	rwx_refobject(obj);
 }
 
 RubyFunctorPtr::~RubyFunctorPtr(){
-	rb_hash_delete(global_evthandler,INT2NUM(mValue));
+	rwx_unrefobject(mValue);
 }
 
 RubyFunctor::RubyFunctor(VALUE obj) : ptr(new RubyFunctorPtr(obj)){
@@ -291,9 +289,6 @@ void Init_WXEvtHandler(VALUE rb_mWX)
 	rb_define_method(rb_mWXEvtHandler,"call",RUBY_METHOD_FUNC(_call),-1);
 
 	rb_define_method(rb_mWXEvtHandler,"call_after",RUBY_METHOD_FUNC(_callafter),-1);
-
-	global_evthandler = rb_hash_new();
-	rb_global_variable(&global_evthandler);
 
 	//because only Evthandler are created different
 	registerInfo<wxEvtHandler>(Qnil);
