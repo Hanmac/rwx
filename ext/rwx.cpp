@@ -160,6 +160,8 @@
 
 #include "wxPropertyCell.hpp"
 
+#include "wxPreferences.hpp"
+
 VALUE rb_mWX;
 
 void rb_define_attr_method(VALUE klass,std::string name,VALUE(get)(VALUE),VALUE(set)(VALUE,VALUE))
@@ -343,6 +345,8 @@ extern "C" void Init_rwx()
 	Init_WXPropertyGridManager(rb_mWX);
 
 	Init_WXPropertyCell(rb_mWX);
+
+	Init_WXPreferences(rb_mWX);
 
 	Init_WXXRC(rb_mWX);
 //	for(klassholdertype::iterator it = klassholder.begin();

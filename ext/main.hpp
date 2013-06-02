@@ -60,6 +60,9 @@
 #include <wx/grid.h>
 #endif
 
+#include "extconf.h"
+
+
 template< class T > struct remove_pointer                    {typedef T type;};
 template< class T > struct remove_pointer<T*>                {typedef T type;};
 template< class T > struct remove_pointer<T* const>          {typedef T type;};

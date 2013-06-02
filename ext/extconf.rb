@@ -26,7 +26,7 @@ if(wx_config = find_executable('wx-config'))
 	$CPPFLAGS << `#{wx_config} --cppflags`.chomp
 	$LDFLAGS << `#{wx_config} --libs all`.chomp
 
-
+	have_header("wx/preferences.h")
 	
 else
 		abort("wx-config executable not found")
@@ -39,4 +39,6 @@ CONFIG["warnflags"].gsub!("-Wimplicit-function-declaration","")
 
 #wxAUI is a bit buggy
 CONFIG["warnflags"].gsub!("-Wextra","")
+
+create_header
 create_makefile "rwx"
