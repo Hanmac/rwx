@@ -13,7 +13,23 @@ class A < WX::App
 		@index = 0
 		
 		@frame.menubar = WX::MenuBar.new(nil) {|m|
-			m.append("&Dialogs") {|menu|			
+			m.append("&Dialogs") {|menu|
+				menu.append_normal("&Choices and selectors") {|select|
+					select.append_normal(:rearrange,"&Rearrange dialog\tCtrl-R") {
+						dialog = WX::RearrangeDialog.new(@frame,
+							:items => "A".."E", :order => 0..4, :message => "Configure the columns shown:"
+						)
+						dialog.add_extra_controls(WX::Panel) {|pan|
+						  pan.sizer = WX::BoxSizer.new {|box|
+						    box.add(WX::StaticText.new(pan))
+                box.add(WX::TextCtrl.new(pan))
+                box.add(WX::Button.new(pan, :id => :rename, :label => "&Rename"))
+						  }
+						}
+						dialog.show_modal
+					}
+				}
+				
 				menu.append_normal("&Informative dialogs") {|info|
 					info.append_normal(:info_simple,"Simple &info bar\tCtrl-I") {
 						@index += 1
