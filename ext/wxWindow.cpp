@@ -18,8 +18,9 @@
 
 #include "wxAui.hpp"
 
-#ifdef __WXGTK__
 #include <sstream>
+
+#ifdef __WXGTK__
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
