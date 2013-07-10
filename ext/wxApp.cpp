@@ -8,6 +8,16 @@
 #include "wxApp.hpp"
 #include "wxPropertyGrid.hpp"
 
+#ifdef __WXMAC__
+    
+//#ifdef __WXCARBON__
+#include <Carbon/Carbon.h>
+//#else
+//#include <Cocoa/Cocoa.h>
+//#endif
+    extern "C" { void CPSEnableForegroundOperation(ProcessSerialNumber* psn); }
+#endif
+
 #define _self unwrap<wxApp*>(self)
 VALUE rb_cWXApp;
 
@@ -50,6 +60,16 @@ RubyApp::RubyApp(VALUE klass)
 bool RubyApp::OnInit()
 {
 	wxApp::OnInit();
+
+#ifdef __WXMAC__
+     ProcessSerialNumber psn;
+ 
+     GetCurrentProcess( &psn );
+     CPSEnableForegroundOperation( &psn );
+     SetFrontProcess( &psn );
+#endif
+
+
 
 #if wxUSE_INTL
 	wxLocale::CreateLanguagesDB();
