@@ -5,6 +5,7 @@
  *      Author: hanmac
  */
 #include "wxCalendarCtrlGeneric.hpp"
+#include "wxCalendarCtrl.hpp"
 
 VALUE rb_cWXCalendarCtrlGeneric;
 

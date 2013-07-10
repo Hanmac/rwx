@@ -6,6 +6,7 @@
  */
 
 #include "wxInfoBarGeneric.hpp"
+#include "wxInfoBar.hpp"
 
 VALUE rb_cWXInfoBarGeneric;
 
