@@ -23,7 +23,7 @@ public:
 	void SetMenu(wxMenu* menu) {mMenu = menu;};
 
 	const wxIcon& GetIcon() const;
-	void SetIcon(const wxIcon& icon);
+	bool SetIcon(const wxIcon& icon,const wxString& tool = wxString());
 
 	wxString GetToolTip() const;
 	void SetToolTip(const wxString& tooltip);

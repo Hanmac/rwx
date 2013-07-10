@@ -17,13 +17,14 @@ VALUE rb_cWXTaskBar;
 
 
 const wxIcon& RubyTaskBarIcon::GetIcon() const {return *mIcon;}
-void RubyTaskBarIcon::SetIcon(const wxIcon& icon)
+bool RubyTaskBarIcon::SetIcon(const wxIcon& icon,const wxString& tool)
 {
 	mIcon = &icon;
 	if(icon.IsOk())
-		wxTaskBarIcon::SetIcon(icon,mTooltip);
+		return wxTaskBarIcon::SetIcon(icon,mTooltip);
 	else
 		RemoveIcon();
+	return false;
 }
 
 wxString RubyTaskBarIcon::GetToolTip() const {return mTooltip;}
