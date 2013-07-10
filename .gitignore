@@ -1,6 +1,7 @@
 # Ignore compilation products
 *.o
 *.so
+*.bundle
 
 #eclipse project files
 .cproject
@@ -10,6 +11,8 @@
 # Ignore mkmf-generated files
 ext/Makefile
 ext/mkmf.log
+ext/extconf.h
 
 #ignore temp files
 *.*~
+.DS_Store
