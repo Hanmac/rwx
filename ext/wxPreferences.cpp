@@ -6,12 +6,12 @@
  */
 
 #include "main.hpp"
-#include <wx/preferences.h>
-
 
 VALUE rb_cWXPreferences;
 
 #ifdef HAVE_WX_PREFERENCES_H
+
+#include <wx/preferences.h>
 
 template <>
 VALUE wrap< wxPreferencesEditor >(wxPreferencesEditor *point )
