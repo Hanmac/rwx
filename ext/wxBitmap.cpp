@@ -71,7 +71,7 @@ VALUE wrap< wxIcon >(wxIcon *icon )
 {
 	if(icon == &wxNullIcon)
 		return Qnil;
-	return wrap< wxBitmap >(icon);
+	return wrap< wxBitmap >(wxBitmap(*icon));
 }
 template <>
 VALUE wrap< wxIcon >(const wxIcon &icon )
