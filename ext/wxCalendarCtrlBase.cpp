@@ -12,6 +12,12 @@ VALUE rb_cWXCalendarCtrlBase;
 #if wxUSE_TIMEPICKCTRL
 #define _self unwrap<wxCalendarCtrlBase*>(self)
 
+template <>
+wxCalendarCtrlBase* unwrap<wxCalendarCtrlBase*>(const VALUE &arg)
+{
+	return unwrapPtr<wxCalendarCtrlBase>(arg,rb_cWXCalendarCtrlBase);
+}
+
 namespace RubyWX {
 namespace CalendarCtrlBase {
 

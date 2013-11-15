@@ -42,6 +42,12 @@ public :
 };
 
 
+template <>
+wxGridCellRenderer* unwrap<wxGridCellRenderer*>(const VALUE &arg)
+{
+	return unwrapPtr<wxGridCellRenderer>(arg,rb_cWXGridCellRenderer);
+}
+
 
 #define typeRenderer(type,klass) \
 VALUE klass; \

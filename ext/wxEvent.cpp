@@ -10,9 +10,17 @@
 #include "wxEvent.hpp"
 #include "wxWindow.hpp"
 
-#define _self unwrap<wxEvent*>(self)
 
 VALUE rb_cWXEvent;
+
+template <>
+wxEvent* unwrap<wxEvent*>(const VALUE &arg)
+{
+	return unwrapPtr<wxEvent>(arg,rb_cWXEvent);
+}
+
+
+#define _self unwrap<wxEvent*>(self)
 
 namespace RubyWX {
 namespace Event {

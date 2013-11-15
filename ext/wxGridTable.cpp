@@ -74,6 +74,12 @@ bool RubyGridTable::DeleteCols( size_t pos, size_t numCols)
 }
 
 
+template <>
+wxGridTableBase* unwrap<wxGridTableBase*>(const VALUE &arg)
+{
+	return unwrapPtr<wxGridTableBase>(arg,rb_cWXGridTable);
+}
+
 
 namespace RubyWX {
 namespace GridTable {

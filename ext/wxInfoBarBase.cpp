@@ -11,6 +11,14 @@
 VALUE rb_cWXInfoBarBase;
 
 #if wxUSE_INFOBAR
+
+template <>
+wxInfoBarBase* unwrap<wxInfoBarBase*>(const VALUE &arg)
+{
+	return unwrapPtr<wxInfoBarBase>(arg,rb_cWXInfoBarBase);
+}
+
+
 #define _self unwrap<wxInfoBarBase*>(self)
 
 namespace RubyWX {

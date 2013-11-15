@@ -14,6 +14,13 @@
 VALUE rb_cWXBookCtrlBase,rb_cWXBookCtrlEvent;
 
 #if wxUSE_BOOKCTRL
+
+template <>
+wxBookCtrlBase* unwrap<wxBookCtrlBase*>(const VALUE &arg)
+{
+	return unwrapPtr<wxBookCtrlBase>(arg,rb_cWXBookCtrlBase);
+}
+
 #define _self unwrap<wxBookCtrlBase*>(self)
 
 namespace RubyWX {

@@ -10,6 +10,12 @@
 VALUE rb_cWXFileCtrlBase,rb_cWXFileCtrlEvent;
 
 #if wxUSE_FILECTRL
+template <>
+wxFileCtrlBase* unwrap<wxFileCtrlBase*>(const VALUE &arg)
+{
+	return unwrapPtr<wxFileCtrlBase>(arg,rb_cWXFileCtrlBase);
+}
+
 #define _self unwrap<wxFileCtrlBase*>(self)
 
 namespace RubyWX {

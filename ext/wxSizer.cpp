@@ -45,6 +45,14 @@ wxSizerFlags unwrap< wxSizerFlags >(const VALUE &hash)
 	return result;
 }
 
+
+template <>
+wxSizer* unwrap<wxSizer*>(const VALUE &arg)
+{
+	return unwrapPtr<wxSizer>(arg,rb_cWXSizer);
+}
+
+
 namespace RubyWX {
 namespace Sizer {
 

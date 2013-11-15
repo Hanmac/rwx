@@ -19,6 +19,9 @@ void Init_WXBookCtrl(VALUE rb_mWX);
 #include "wxNoteBook.hpp"
 #include "wxToolBook.hpp"
 #include "wxAuiBook.hpp"
+
+template <>
+wxBookCtrlBase* unwrap<wxBookCtrlBase*>(const VALUE &arg);
 #endif
 
 #endif /* WXBOOKCTRL_HPP_ */

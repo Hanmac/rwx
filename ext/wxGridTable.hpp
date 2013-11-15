@@ -39,6 +39,9 @@ public:
 
 };
 
+template <>
+wxGridTableBase* unwrap<wxGridTableBase*>(const VALUE &arg);
+
 #endif
 
 #endif /* WXGRIDTABLE_HPP_ */

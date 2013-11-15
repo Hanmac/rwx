@@ -19,6 +19,10 @@ void Init_WXGridCellRenderer(VALUE rb_mWX);
 template <>
 VALUE wrap< wxGridCellRenderer >(wxGridCellRenderer* window);
 
+
+template <>
+wxGridCellRenderer* unwrap<wxGridCellRenderer*>(const VALUE &arg);
+
 #endif
 
 

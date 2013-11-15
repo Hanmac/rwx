@@ -43,6 +43,12 @@ wxWizardPage* RubyWizardPage::GetNext() const
 	return wxWizardPageSimple::GetNext();
 }
 
+template <>
+wxWizardPage* unwrap<wxWizardPage*>(const VALUE &arg)
+{
+	return unwrapPtr<wxWizardPage>(arg,rb_cWXWizardPage);
+}
+
 
 namespace RubyWX {
 namespace WizardPage {

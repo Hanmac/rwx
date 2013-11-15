@@ -30,6 +30,9 @@ private:
 	bool mutable rubycall;
 };
 
+template <>
+wxWizardPage* unwrap<wxWizardPage*>(const VALUE &arg);
+
 #endif
 
 #endif /* WXWIZARDPAGE_HPP_ */

@@ -17,6 +17,10 @@ void Init_WXCalendarCtrlBase(VALUE rb_mWX);
 
 #if wxUSE_CALENDARCTRL
 #include <wx/calctrl.h>
+
+template <>
+wxCalendarCtrlBase* unwrap<wxCalendarCtrlBase*>(const VALUE &arg);
+
 #endif
 
 #endif /* WXCALENDARCTRLBASE_HPP_ */
