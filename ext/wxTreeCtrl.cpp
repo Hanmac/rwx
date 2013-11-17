@@ -381,27 +381,27 @@ void Init_WXTreeCtrl(VALUE rb_mWX)
 	}
 
 	rb_cWXTreeCtrlEvent = rb_define_class_under(rb_cWXEvent,"TreeCtrl",rb_cWXEvent);
-	registerEventType<wxTreeEvent>("tree_begin_drag", wxEVT_COMMAND_TREE_BEGIN_DRAG, rb_cWXTreeCtrlEvent);
-	registerEventType<wxTreeEvent>("tree_begin_rdrag", wxEVT_COMMAND_TREE_BEGIN_RDRAG, rb_cWXTreeCtrlEvent);
-	registerEventType<wxTreeEvent>("tree_begin_label_edit", wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, rb_cWXTreeCtrlEvent);
-	registerEventType<wxTreeEvent>("tree_end_label_edit", wxEVT_COMMAND_TREE_END_LABEL_EDIT, rb_cWXTreeCtrlEvent);
-	registerEventType<wxTreeEvent>("tree_delete_item", wxEVT_COMMAND_TREE_DELETE_ITEM, rb_cWXTreeCtrlEvent);
-	registerEventType<wxTreeEvent>("tree_get_info", wxEVT_COMMAND_TREE_GET_INFO, rb_cWXTreeCtrlEvent);
-	registerEventType<wxTreeEvent>("tree_set_info", wxEVT_COMMAND_TREE_SET_INFO, rb_cWXTreeCtrlEvent);
-	registerEventType<wxTreeEvent>("tree_item_expanded", wxEVT_COMMAND_TREE_ITEM_EXPANDED, rb_cWXTreeCtrlEvent);
-	registerEventType<wxTreeEvent>("tree_item_expanding", wxEVT_COMMAND_TREE_ITEM_EXPANDING, rb_cWXTreeCtrlEvent);
-	registerEventType<wxTreeEvent>("tree_item_collapsed", wxEVT_COMMAND_TREE_ITEM_COLLAPSED, rb_cWXTreeCtrlEvent);
-	registerEventType<wxTreeEvent>("tree_item_collaping", wxEVT_COMMAND_TREE_ITEM_COLLAPSING, rb_cWXTreeCtrlEvent);
-	registerEventType<wxTreeEvent>("tree_sel_changed", wxEVT_COMMAND_TREE_SEL_CHANGED, rb_cWXTreeCtrlEvent);
-	registerEventType<wxTreeEvent>("tree_sel_changing", wxEVT_COMMAND_TREE_SEL_CHANGING, rb_cWXTreeCtrlEvent);
-	registerEventType<wxTreeEvent>("tree_key_down", wxEVT_COMMAND_TREE_KEY_DOWN, rb_cWXTreeCtrlEvent);
-	registerEventType<wxTreeEvent>("tree_item_activated", wxEVT_COMMAND_TREE_ITEM_ACTIVATED, rb_cWXTreeCtrlEvent);
-	registerEventType<wxTreeEvent>("tree_item_right_click", wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK, rb_cWXTreeCtrlEvent);
-	registerEventType<wxTreeEvent>("tree_item_middle_click", wxEVT_COMMAND_TREE_ITEM_MIDDLE_CLICK, rb_cWXTreeCtrlEvent);
-	registerEventType<wxTreeEvent>("tree_end_drag", wxEVT_COMMAND_TREE_END_DRAG, rb_cWXTreeCtrlEvent);
-	registerEventType<wxTreeEvent>("tree_state_image_click", wxEVT_COMMAND_TREE_STATE_IMAGE_CLICK, rb_cWXTreeCtrlEvent);
-	registerEventType<wxTreeEvent>("tree_item_gettooltip", wxEVT_COMMAND_TREE_ITEM_GETTOOLTIP, rb_cWXTreeCtrlEvent);
-	registerEventType<wxTreeEvent>("tree_item_menu", wxEVT_COMMAND_TREE_ITEM_MENU, rb_cWXTreeCtrlEvent);
+	registerEventType<wxTreeEvent>("tree_begin_drag", wxEVT_TREE_BEGIN_DRAG, rb_cWXTreeCtrlEvent);
+	registerEventType<wxTreeEvent>("tree_begin_rdrag", wxEVT_TREE_BEGIN_RDRAG, rb_cWXTreeCtrlEvent);
+	registerEventType<wxTreeEvent>("tree_begin_label_edit", wxEVT_TREE_BEGIN_LABEL_EDIT, rb_cWXTreeCtrlEvent);
+	registerEventType<wxTreeEvent>("tree_end_label_edit", wxEVT_TREE_END_LABEL_EDIT, rb_cWXTreeCtrlEvent);
+	registerEventType<wxTreeEvent>("tree_delete_item", wxEVT_TREE_DELETE_ITEM, rb_cWXTreeCtrlEvent);
+	registerEventType<wxTreeEvent>("tree_get_info", wxEVT_TREE_GET_INFO, rb_cWXTreeCtrlEvent);
+	registerEventType<wxTreeEvent>("tree_set_info", wxEVT_TREE_SET_INFO, rb_cWXTreeCtrlEvent);
+	registerEventType<wxTreeEvent>("tree_item_expanded", wxEVT_TREE_ITEM_EXPANDED, rb_cWXTreeCtrlEvent);
+	registerEventType<wxTreeEvent>("tree_item_expanding", wxEVT_TREE_ITEM_EXPANDING, rb_cWXTreeCtrlEvent);
+	registerEventType<wxTreeEvent>("tree_item_collapsed", wxEVT_TREE_ITEM_COLLAPSED, rb_cWXTreeCtrlEvent);
+	registerEventType<wxTreeEvent>("tree_item_collaping", wxEVT_TREE_ITEM_COLLAPSING, rb_cWXTreeCtrlEvent);
+	registerEventType<wxTreeEvent>("tree_sel_changed", wxEVT_TREE_SEL_CHANGED, rb_cWXTreeCtrlEvent);
+	registerEventType<wxTreeEvent>("tree_sel_changing", wxEVT_TREE_SEL_CHANGING, rb_cWXTreeCtrlEvent);
+	registerEventType<wxTreeEvent>("tree_key_down", wxEVT_TREE_KEY_DOWN, rb_cWXTreeCtrlEvent);
+	registerEventType<wxTreeEvent>("tree_item_activated", wxEVT_TREE_ITEM_ACTIVATED, rb_cWXTreeCtrlEvent);
+	registerEventType<wxTreeEvent>("tree_item_right_click", wxEVT_TREE_ITEM_RIGHT_CLICK, rb_cWXTreeCtrlEvent);
+	registerEventType<wxTreeEvent>("tree_item_middle_click", wxEVT_TREE_ITEM_MIDDLE_CLICK, rb_cWXTreeCtrlEvent);
+	registerEventType<wxTreeEvent>("tree_end_drag", wxEVT_TREE_END_DRAG, rb_cWXTreeCtrlEvent);
+	registerEventType<wxTreeEvent>("tree_state_image_click", wxEVT_TREE_STATE_IMAGE_CLICK, rb_cWXTreeCtrlEvent);
+	registerEventType<wxTreeEvent>("tree_item_gettooltip", wxEVT_TREE_ITEM_GETTOOLTIP, rb_cWXTreeCtrlEvent);
+	registerEventType<wxTreeEvent>("tree_item_menu", wxEVT_TREE_ITEM_MENU, rb_cWXTreeCtrlEvent);
 
 
 	using namespace Event;

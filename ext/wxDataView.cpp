@@ -198,8 +198,8 @@ void Init_WXDataView(VALUE rb_mWX)
 
 
 	rb_cWXDataViewEvent = rb_define_class_under(rb_cWXEvent,"DataView",rb_cWXEvent);
-	registerEventType("dataview_selection_changed",wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED,rb_cWXDataViewEvent);
-	registerEventType("dataview_value_changed",wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED,rb_cWXDataViewEvent);
+	registerEventType("dataview_selection_changed",wxEVT_DATAVIEW_SELECTION_CHANGED,rb_cWXDataViewEvent);
+	registerEventType("dataview_value_changed",wxEVT_DATAVIEW_ITEM_VALUE_CHANGED,rb_cWXDataViewEvent);
 
 	using namespace Event;
 	rb_define_attr_method(rb_cWXDataViewEvent,"value",_getValue,_setValue);

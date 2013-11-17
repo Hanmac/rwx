@@ -57,7 +57,7 @@ void Init_WXFontPicker(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXFontPicker,"selected_font",_getSelectedFont,_setSelectedFont);
 
 	rb_cWXFontPickerEvent = rb_define_class_under(rb_cWXEvent,"FontPicker",rb_cWXEvent);
-	registerEventType("fontpicker_changed",wxEVT_COMMAND_FONTPICKER_CHANGED,rb_cWXFontPickerEvent);
+	registerEventType("fontpicker_changed",wxEVT_FONTPICKER_CHANGED,rb_cWXFontPickerEvent);
 	rb_define_attr_method(rb_cWXFontPickerEvent,"font",Event::_getFont,Event::_setFont);
 
 	registerInfo<wxFontPickerCtrl>(rb_cWXFontPicker);

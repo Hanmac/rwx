@@ -46,8 +46,8 @@ void Init_WXListBox(VALUE rb_mWX)
 
 	rb_include_module(rb_cWXListBox,rb_mWXItemContainer);
 
-	registerEventType("listbox_selected", wxEVT_COMMAND_LISTBOX_SELECTED,rb_cWXCommandEvent);
-	registerEventType("listbox_doubleclicked",  wxEVT_COMMAND_LISTBOX_DOUBLECLICKED,rb_cWXCommandEvent);
+	registerEventType("listbox", wxEVT_LISTBOX,rb_cWXCommandEvent);
+	registerEventType("listbox_dclick",  wxEVT_LISTBOX_DCLICK,rb_cWXCommandEvent);
 
 	registerInfo<wxListBox>(rb_cWXListBox);
 #endif

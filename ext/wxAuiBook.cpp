@@ -63,21 +63,21 @@ void Init_WXAuiNoteBookCtrl(VALUE rb_mWX)
 
 	registerInfo<wxAuiNotebook>(rb_cWXAuiNotebook);
 
-	registerEventType("auinotebook_page_close", wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE,rb_cWXBookCtrlEvent);
-	registerEventType("auinotebook_page_changed", wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGED,rb_cWXBookCtrlEvent);
-	registerEventType("auinotebook_page_changing", wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGING,rb_cWXBookCtrlEvent);
-	registerEventType("auinotebook_page_closed", wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSED,rb_cWXBookCtrlEvent);
-	registerEventType("auinotebook_button", wxEVT_COMMAND_AUINOTEBOOK_BUTTON,rb_cWXBookCtrlEvent);
-	registerEventType("auinotebook_begin_drag", wxEVT_COMMAND_AUINOTEBOOK_BEGIN_DRAG,rb_cWXBookCtrlEvent);
-	registerEventType("auinotebook_end_drag", wxEVT_COMMAND_AUINOTEBOOK_END_DRAG,rb_cWXBookCtrlEvent);
-	registerEventType("auinotebook_drag_motion", wxEVT_COMMAND_AUINOTEBOOK_DRAG_MOTION,rb_cWXBookCtrlEvent);
-	registerEventType("auinotebook_allow_dnd", wxEVT_COMMAND_AUINOTEBOOK_ALLOW_DND,rb_cWXBookCtrlEvent);
-	registerEventType("auinotebook_tab_middle_down", wxEVT_COMMAND_AUINOTEBOOK_TAB_MIDDLE_DOWN,rb_cWXBookCtrlEvent);
-	registerEventType("auinotebook_tab_middle_up", wxEVT_COMMAND_AUINOTEBOOK_TAB_MIDDLE_UP,rb_cWXBookCtrlEvent);
-	registerEventType("auinotebook_tab_right_down", wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_DOWN,rb_cWXBookCtrlEvent);
-	registerEventType("auinotebook_tab_right_up", wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_UP,rb_cWXBookCtrlEvent);
-	registerEventType("auinotebook_drag_done", wxEVT_COMMAND_AUINOTEBOOK_DRAG_DONE,rb_cWXBookCtrlEvent);
-	registerEventType("auinotebook_bg_dclick", wxEVT_COMMAND_AUINOTEBOOK_BG_DCLICK,rb_cWXBookCtrlEvent);
+	registerEventType("auinotebook_page_close", wxEVT_AUINOTEBOOK_PAGE_CLOSE,rb_cWXBookCtrlEvent);
+	registerEventType("auinotebook_page_changed", wxEVT_AUINOTEBOOK_PAGE_CHANGED,rb_cWXBookCtrlEvent);
+	registerEventType("auinotebook_page_changing", wxEVT_AUINOTEBOOK_PAGE_CHANGING,rb_cWXBookCtrlEvent);
+	registerEventType("auinotebook_page_closed", wxEVT_AUINOTEBOOK_PAGE_CLOSED,rb_cWXBookCtrlEvent);
+	registerEventType("auinotebook_button", wxEVT_AUINOTEBOOK_BUTTON,rb_cWXBookCtrlEvent);
+	registerEventType("auinotebook_begin_drag", wxEVT_AUINOTEBOOK_BEGIN_DRAG,rb_cWXBookCtrlEvent);
+	registerEventType("auinotebook_end_drag", wxEVT_AUINOTEBOOK_END_DRAG,rb_cWXBookCtrlEvent);
+	registerEventType("auinotebook_drag_motion", wxEVT_AUINOTEBOOK_DRAG_MOTION,rb_cWXBookCtrlEvent);
+	registerEventType("auinotebook_allow_dnd", wxEVT_AUINOTEBOOK_ALLOW_DND,rb_cWXBookCtrlEvent);
+	registerEventType("auinotebook_tab_middle_down", wxEVT_AUINOTEBOOK_TAB_MIDDLE_DOWN,rb_cWXBookCtrlEvent);
+	registerEventType("auinotebook_tab_middle_up", wxEVT_AUINOTEBOOK_TAB_MIDDLE_UP,rb_cWXBookCtrlEvent);
+	registerEventType("auinotebook_tab_right_down", wxEVT_AUINOTEBOOK_TAB_RIGHT_DOWN,rb_cWXBookCtrlEvent);
+	registerEventType("auinotebook_tab_right_up", wxEVT_AUINOTEBOOK_TAB_RIGHT_UP,rb_cWXBookCtrlEvent);
+	registerEventType("auinotebook_drag_done", wxEVT_AUINOTEBOOK_DRAG_DONE,rb_cWXBookCtrlEvent);
+	registerEventType("auinotebook_bg_dclick", wxEVT_AUINOTEBOOK_BG_DCLICK,rb_cWXBookCtrlEvent);
 
 
 #endif

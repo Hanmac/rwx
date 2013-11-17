@@ -23,6 +23,19 @@ macro_attr(Margins,wxSize)
 macro_attr(ToolPacking,int)
 macro_attr(ToolSeparation,int)
 
+void bind_callback(wxToolBarBase* toolbar,wxWindowID id)
+{
+	if(rb_block_given_p()){
+		VALUE proc = rb_block_proc();
+#ifdef wxHAS_EVENT_BIND
+		toolbar->Bind(wxEVT_MENU,RubyFunctor(proc),id);
+#else
+		toolbar->Connect(id,wxEVT_MENU,wxCommandEventHandler(RubyFunctor::operator()),NULL,new RubyFunctor(proc));
+#endif
+	}
+}
+
+
 VALUE _addNormal(int argc,VALUE *argv,VALUE self)
 {
 	VALUE id,text,bitmap,bmpDisabled,shorthelp,longhelp;
@@ -32,14 +45,8 @@ VALUE _addNormal(int argc,VALUE *argv,VALUE self)
 				wrapBitmap(bitmap,wxid,false,wxART_TOOLBAR),
 				wrapBitmap(bmpDisabled,wxid,true,wxART_TOOLBAR),wxITEM_NORMAL,
 				unwrap<wxString>(shorthelp), unwrap<wxString>(longhelp));
-	if(rb_block_given_p()){
-		VALUE proc = rb_block_proc();
-#ifdef wxHAS_EVENT_BIND
-		_self->Bind(wxEVT_COMMAND_MENU_SELECTED,RubyFunctor(proc),tool->GetId());
-#else
-		_self->Connect(tool->GetId(),wxEVT_COMMAND_MENU_SELECTED,wxCommandEventHandler(RubyFunctor::operator()),NULL,new RubyFunctor(proc));
-#endif
-	}
+	bind_callback(_self,tool->GetId());
+
 	return wrap(tool);
 }
 
@@ -74,14 +81,7 @@ VALUE _addCheck(int argc,VALUE *argv,VALUE self)
 				wrapBitmap(bmpDisabled,wxid,true,wxART_TOOLBAR),
 				unwrap<wxString>(shorthelp), unwrap<wxString>(longhelp));
 
-	if(rb_block_given_p()){
-		VALUE proc = rb_block_proc();
-#ifdef wxHAS_EVENT_BIND
-		_self->Bind(wxEVT_COMMAND_MENU_SELECTED,RubyFunctor(proc),tool->GetId());
-#else
-		_self->Connect(tool->GetId(),wxEVT_COMMAND_MENU_SELECTED,wxCommandEventHandler(RubyFunctor::operator()),NULL,new RubyFunctor(proc));
-#endif
-	}
+	bind_callback(_self,tool->GetId());
 
 	return wrap(tool);
 }
@@ -97,14 +97,7 @@ VALUE _addRadio(int argc,VALUE *argv,VALUE self)
 			wrapBitmap(bmpDisabled,wxid,true,wxART_TOOLBAR),
 			unwrap<wxString>(shorthelp), unwrap<wxString>(longhelp));
 
-	if(rb_block_given_p()){
-		VALUE proc = rb_block_proc();
-#ifdef wxHAS_EVENT_BIND
-_self->Bind(wxEVT_COMMAND_MENU_SELECTED,RubyFunctor(proc),tool->GetId());
-#else
-_self->Connect(tool->GetId(),wxEVT_COMMAND_MENU_SELECTED,wxCommandEventHandler(RubyFunctor::operator()),NULL,new RubyFunctor(proc));
-#endif
-	}
+	bind_callback(_self,tool->GetId());
 
 	return wrap(tool);
 }

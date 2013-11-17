@@ -63,9 +63,9 @@ void bind_callback(wxMenu* menu,wxWindowID id)
 	if(rb_block_given_p()){
 		VALUE proc = rb_block_proc();
 #ifdef wxHAS_EVENT_BIND
-		menu->Bind(wxEVT_COMMAND_MENU_SELECTED,RubyFunctor(proc),id);
+		menu->Bind(wxEVT_MENU,RubyFunctor(proc),id);
 #else
-		menu->Connect(id,wxEVT_COMMAND_MENU_SELECTED,wxCommandEventHandler(RubyFunctor::operator()),NULL,new RubyFunctor(proc));
+		menu->Connect(id,wxEVT_MENU,wxCommandEventHandler(RubyFunctor::operator()),NULL,new RubyFunctor(proc));
 #endif
 	}
 }
@@ -154,7 +154,7 @@ DLL_LOCAL void Init_WXMenu(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXMenu,"menubar",RUBY_METHOD_FUNC(_GetMenuBar),0);
 
-	registerEventType<wxCommandEvent>("menu_selected",wxEVT_COMMAND_MENU_SELECTED);
+	registerEventType<wxCommandEvent>("menu",wxEVT_MENU);
 
 	registerInfo<wxMenu>(rb_cWXMenu);
 #endif

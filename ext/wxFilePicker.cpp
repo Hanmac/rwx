@@ -54,7 +54,7 @@ void Init_WXFilePicker(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXFilePicker,"path",_getPath,_setPath);
 
 	rb_cWXFileDirPickerEvent = rb_define_class_under(rb_cWXEvent,"FileDirPicker",rb_cWXEvent);
-	registerEventType("filepicker_changed",wxEVT_COMMAND_FILEPICKER_CHANGED,rb_cWXFileDirPickerEvent);
+	registerEventType("filepicker_changed",wxEVT_FILEPICKER_CHANGED,rb_cWXFileDirPickerEvent);
 
 	rb_define_attr_method(rb_cWXFileDirPickerEvent,"path",
 			Event::_getPath,Event::_setPath);

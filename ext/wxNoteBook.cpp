@@ -46,8 +46,8 @@ void Init_WXNoteBookCtrl(VALUE rb_mWX)
 
 	registerInfo<wxNotebook>(rb_cWXNotebook);
 
-	registerEventType<wxBookCtrlEvent>("notebook_page_changed",wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED);
-	registerEventType<wxBookCtrlEvent>("notebook_page_changing",wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGING);
+	registerEventType<wxBookCtrlEvent>("notebook_page_changed",wxEVT_NOTEBOOK_PAGE_CHANGED);
+	registerEventType<wxBookCtrlEvent>("notebook_page_changing",wxEVT_NOTEBOOK_PAGE_CHANGING);
 #endif
 
 }

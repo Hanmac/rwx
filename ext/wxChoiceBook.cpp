@@ -47,8 +47,8 @@ void Init_WXChoiceBookCtrl(VALUE rb_mWX)
 
 	registerInfo<wxChoicebook>(rb_cWXChoicebook);
 
-	registerEventType<wxBookCtrlEvent>("choicebook_page_changed",wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED);
-	registerEventType<wxBookCtrlEvent>("choicebook_page_changing",wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING);
+	registerEventType<wxBookCtrlEvent>("choicebook_page_changed",wxEVT_CHOICEBOOK_PAGE_CHANGED);
+	registerEventType<wxBookCtrlEvent>("choicebook_page_changing",wxEVT_CHOICEBOOK_PAGE_CHANGING);
 
 #endif
 

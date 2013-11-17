@@ -46,8 +46,8 @@ void Init_WXToolBookCtrl(VALUE rb_mWX)
 
 	registerInfo<wxToolbook>(rb_cWXToolbook);
 
-	registerEventType<wxBookCtrlEvent>("toolbook_page_changed",wxEVT_COMMAND_TOOLBOOK_PAGE_CHANGED);
-	registerEventType<wxBookCtrlEvent>("toolbook_page_changing",wxEVT_COMMAND_TOOLBOOK_PAGE_CHANGING);
+	registerEventType<wxBookCtrlEvent>("toolbook_page_changed",wxEVT_TOOLBOOK_PAGE_CHANGED);
+	registerEventType<wxBookCtrlEvent>("toolbook_page_changing",wxEVT_TOOLBOOK_PAGE_CHANGING);
 #endif
 
 }

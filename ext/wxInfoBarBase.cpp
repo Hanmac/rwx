@@ -50,9 +50,9 @@ VALUE _addButton(int argc,VALUE *argv,VALUE self)
 	{
 		VALUE proc = rb_block_proc();
 #ifdef wxHAS_EVENT_BIND
-			_self->Bind(wxEVT_COMMAND_BUTTON_CLICKED,RubyFunctor(proc),wid);
+			_self->Bind(wxEVT_BUTTON,RubyFunctor(proc),wid);
 #else
-			_self->Connect(wid,wxEVT_COMMAND_BUTTON_CLICKED,wxCommandEventHandler(RubyFunctor::operator()),NULL,new RubyFunctor(proc));
+			_self->Connect(wid,wxEVT_BUTTON,wxCommandEventHandler(RubyFunctor::operator()),NULL,new RubyFunctor(proc));
 #endif
 	
 	}
