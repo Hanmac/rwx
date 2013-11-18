@@ -88,6 +88,7 @@ VALUE _initialize_copy(VALUE self, VALUE other)
 	_set_y(self,_get_y(other));
 	return result;
 }
+
 /*
  * call-seq:
  *   inspect -> String
@@ -98,20 +99,69 @@ VALUE _initialize_copy(VALUE self, VALUE other)
 */
 VALUE _inspect(VALUE self)
 {
-	VALUE array[4];
-	array[0]=rb_str_new2("#<%s:(%d, %d)>");
-	array[1]=rb_class_of(self);
-	array[2]=_get_x(self);
-	array[3]=_get_y(self);
-	return rb_f_sprintf(4,array);
+	return rb_sprintf( "%s(%f, %f)",
+		rb_obj_classname( self ),
+		NUM2DBL(_get_x(self)),
+		NUM2DBL(_get_y(self)));
 }
+
+/*
+ * call-seq:
+ *   marshal_dump -> Array
+ *
+ * Provides marshalling support for use by the Marshal library.
+ * ===Return value
+ * Array
+ */
+VALUE _marshal_dump(VALUE self)
+{
+    VALUE ptr[2];
+    ptr[0] = _get_x(self);
+    ptr[1] = _get_y(self);
+    return rb_ary_new4(2, ptr);
+}
+
+/*
+ * call-seq:
+ *   marshal_load(array) -> nil
+ *
+ * Provides marshalling support for use by the Marshal library.
+ *
+ *
+ */
+VALUE _marshal_load(VALUE self, VALUE data)
+{
+    VALUE* ptr = RARRAY_PTR(data);
+    _set_x(self, ptr[0]);
+    _set_y(self, ptr[1]);
+    return Qnil;
+}
+
 
 }
 }
 
+
+
+/*
+ * Document-class: WX::Point
+ *
+ * This class represents an Point.
+*/
+
+/* Document-attr: x
+ * returns the x value of Point. */
+/* Document-attr: y
+ * returns the y value of Point. */
 
 DLL_LOCAL void Init_WXPoint(VALUE rb_mWX)
 {
+
+#if 0
+	rb_define_attr(rb_cWXPoint,"x",1,1);
+	rb_define_attr(rb_cWXPoint,"y",1,1);
+#endif
+
 	using namespace RubyWX::Point;
 	rb_cWXPoint = rb_define_class_under(rb_mWX,"Point",rb_cObject);
 
@@ -124,6 +174,9 @@ DLL_LOCAL void Init_WXPoint(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXPoint,"y",_get_y,_set_y);
 
 	rb_define_method(rb_cWXPoint,"inspect",RUBY_METHOD_FUNC(_inspect),0);
+
+	rb_define_method(rb_cWXPoint,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
+	rb_define_method(rb_cWXPoint,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
 	registerType<wxPoint>(rb_cWXPoint);
 }
