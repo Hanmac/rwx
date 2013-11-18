@@ -20,7 +20,7 @@ macro_attr(Value,bool)
 
 APP_PROTECT(wxRadioButton)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	int style = 0;

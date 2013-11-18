@@ -18,7 +18,7 @@ macro_attr(Colour,wxColour)
 
 APP_PROTECT(wxColourPickerCtrl)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -38,7 +38,7 @@ macro_attr(Colour,wxColour)
 }
 
 #endif
-void Init_WXColorPicker(VALUE rb_mWX)
+DLL_LOCAL void Init_WXColorPicker(VALUE rb_mWX)
 {
 #if wxUSE_COLOURPICKERCTRL
 	using namespace RubyWX::ColorPicker;

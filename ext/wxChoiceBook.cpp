@@ -19,7 +19,7 @@ namespace Choicebook {
 
 APP_PROTECT(wxChoicebook)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -36,7 +36,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
-void Init_WXChoiceBookCtrl(VALUE rb_mWX)
+DLL_LOCAL void Init_WXChoiceBookCtrl(VALUE rb_mWX)
 {
 #if wxUSE_CHOICEBOOK
 	using namespace RubyWX::Choicebook;

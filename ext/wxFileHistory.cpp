@@ -23,7 +23,7 @@ macro_attr(BaseId,wxWindowID)
 
 APP_PROTECT(wxFileHistory)
 
-VALUE _each(VALUE self)
+DLL_LOCAL VALUE _each(VALUE self)
 {
 	size_t count = _self->GetCount();
 	for(size_t i = 0;i < count;++i)
@@ -32,7 +32,7 @@ VALUE _each(VALUE self)
 }
 
 #if wxUSE_CONFIG
-VALUE _load(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _load(int argc,VALUE *argv,VALUE self)
 {
 	VALUE config;
 	rb_scan_args(argc, argv, "01",&config);
@@ -45,7 +45,7 @@ VALUE _load(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _save(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _save(int argc,VALUE *argv,VALUE self)
 {
 	VALUE config;
 	rb_scan_args(argc, argv, "01",&config);
@@ -60,7 +60,7 @@ VALUE _save(int argc,VALUE *argv,VALUE self)
 
 #endif // wxUSE_CONFIG
 
-VALUE _shiftleft(VALUE self,VALUE val)
+DLL_LOCAL VALUE _shiftleft(VALUE self,VALUE val)
 {
 #if wxUSE_CONFIG
 	if(rb_obj_is_kind_of(val,rb_cWXConfig))
@@ -71,7 +71,7 @@ VALUE _shiftleft(VALUE self,VALUE val)
 	return self;
 }
 
-VALUE _shiftright(VALUE self,VALUE val)
+DLL_LOCAL VALUE _shiftright(VALUE self,VALUE val)
 {
 #if wxUSE_CONFIG
 	if(rb_obj_is_kind_of(val,rb_cWXConfig))
@@ -83,14 +83,14 @@ VALUE _shiftright(VALUE self,VALUE val)
 }
 
 
-VALUE _add(VALUE self,VALUE val)
+DLL_LOCAL VALUE _add(VALUE self,VALUE val)
 {
 
 	_self->AddFileToHistory(unwrap<wxString>(val));
 	return self;
 }
 
-VALUE _add_files(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _add_files(int argc,VALUE *argv,VALUE self)
 {
 	VALUE menu;
 	rb_scan_args(argc, argv, "01",&menu);
@@ -109,7 +109,7 @@ VALUE _add_files(int argc,VALUE *argv,VALUE self)
 #endif
 
 
-void Init_WXFileHistory(VALUE rb_mWX)
+DLL_LOCAL void Init_WXFileHistory(VALUE rb_mWX)
 {
 #if wxUSE_FILE_HISTORY
 	using namespace RubyWX::FileHistory;

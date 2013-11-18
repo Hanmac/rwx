@@ -18,7 +18,7 @@ namespace StaticBitmap {
 
 APP_PROTECT(wxStaticBitmap)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	wxBitmap bitmap(wxNullBitmap);

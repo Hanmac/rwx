@@ -19,7 +19,7 @@ macro_attr(Path,wxString)
 
 APP_PROTECT(wxDirPickerCtrl)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -42,7 +42,7 @@ macro_attr(Path,wxString)
 }
 
 #endif
-void Init_WXDirPicker(VALUE rb_mWX)
+DLL_LOCAL void Init_WXDirPicker(VALUE rb_mWX)
 {
 #if wxUSE_DIRPICKERCTRL
 	using namespace RubyWX::DirPicker;

@@ -50,7 +50,7 @@ wxPen unwrap< wxPen >(const VALUE &vbitmap)
 
 namespace RubyWX {
 namespace Pen {
-VALUE _alloc(VALUE self) {
+DLL_LOCAL VALUE _alloc(VALUE self) {
 	return wrap(new wxPen(*wxBLACK));
 }
 
@@ -62,7 +62,7 @@ macro_attr(Stipple,wxBitmap)
 }
 }
 
-void Init_WXPen(VALUE rb_mWX)
+DLL_LOCAL void Init_WXPen(VALUE rb_mWX)
 {
 	using namespace RubyWX::Pen;
 	rb_cWXPen = rb_define_class_under(rb_mWX,"Pen",rb_cObject);

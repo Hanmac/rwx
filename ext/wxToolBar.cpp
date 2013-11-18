@@ -18,7 +18,7 @@ namespace ToolBar {
 
 APP_PROTECT(wxToolBar)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,name,hash;
 	rb_scan_args(argc, argv, "12",&parent,&name,&hash);
@@ -34,7 +34,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 
-void Init_WXToolBar(VALUE rb_mWX)
+DLL_LOCAL void Init_WXToolBar(VALUE rb_mWX)
 {
 	using namespace RubyWX::ToolBar;
 	rb_cWXToolBar = rb_define_class_under(rb_mWX,"ToolBar",rb_cWXToolBarBase);

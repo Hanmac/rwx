@@ -71,37 +71,37 @@ singlereturn(GetValueType)
 
 macro_attr(ValueImage,wxBitmap&)
 
-VALUE _setValue(VALUE self,VALUE val)
+DLL_LOCAL VALUE _setValue(VALUE self,VALUE val)
 {
 	_self->SetValue(unwrapVariant(val,_self->GetValueType()));
 	return val;
 }
 
-VALUE _setDefaultValue(VALUE self,VALUE val)
+DLL_LOCAL VALUE _setDefaultValue(VALUE self,VALUE val)
 {
 	wxVariant var = unwrapVariant(val,_self->GetValueType());
 	_self->SetDefaultValue(var);
 	return val;
 }
 
-VALUE _getAttribute(VALUE self,VALUE name)
+DLL_LOCAL VALUE _getAttribute(VALUE self,VALUE name)
 {
 	return wrap(_self->GetAttribute(unwrap<wxString>(name)));
 }
 
-VALUE _setAttribute(VALUE self,VALUE name,VALUE val)
+DLL_LOCAL VALUE _setAttribute(VALUE self,VALUE name,VALUE val)
 {
 	_self->SetAttribute(unwrap<wxString>(name),unwrapVariant(val,_self->GetAttribute(unwrap<wxString>(name)).GetType()));
 	return val;
 }
 
-VALUE _getClass(VALUE self)
+DLL_LOCAL VALUE _getClass(VALUE self)
 {
 	return wrap(wxString(_self->GetClassInfo()->GetClassName()));
 }
 
 
-VALUE _each_child(VALUE self)
+DLL_LOCAL VALUE _each_child(VALUE self)
 {
 	RETURN_ENUMERATOR(self,0,NULL);
 	size_t count = _self->GetChildCount();
@@ -111,7 +111,7 @@ VALUE _each_child(VALUE self)
 }
 
 
-VALUE _each_choices(VALUE self)
+DLL_LOCAL VALUE _each_choices(VALUE self)
 {
 	RETURN_ENUMERATOR(self,0,NULL);
 	wxPGChoices& choices = const_cast<wxPGChoices&>(_self->GetChoices());
@@ -130,7 +130,7 @@ VALUE _each_choices(VALUE self)
 	return self;
 }
 
-VALUE _each_attributes(VALUE self)
+DLL_LOCAL VALUE _each_attributes(VALUE self)
 {
 	RETURN_ENUMERATOR(self,0,NULL);
 

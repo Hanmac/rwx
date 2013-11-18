@@ -30,7 +30,7 @@ macro_attr_enum(Weight,wxFontWeight)
 
 macro_attr(FaceName,wxString)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE size,family,style,weight;
 	rb_scan_args(argc, argv, "13",&size,&family,&style,&weight);

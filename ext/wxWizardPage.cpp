@@ -59,7 +59,7 @@ macro_attr(Bitmap,wxBitmap)
 
 APP_PROTECT(RubyWizardPage)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -73,7 +73,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 
-void Init_WXWizardPage(VALUE rb_mWX)
+DLL_LOCAL void Init_WXWizardPage(VALUE rb_mWX)
 {
 	using namespace RubyWX::WizardPage;
 	rb_cWXWizardPage = rb_define_class_under(rb_mWX,"WizardPage",rb_cWXPanel);

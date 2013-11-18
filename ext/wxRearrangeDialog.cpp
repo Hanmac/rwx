@@ -17,7 +17,7 @@ namespace RearrangeDialog {
 
 APP_PROTECT(wxRearrangeDialog)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -48,7 +48,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _AddExtraControls(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _AddExtraControls(int argc,VALUE *argv,VALUE self)
 {
 	VALUE wnd;
 	wxWindow *cwnd;
@@ -67,7 +67,7 @@ VALUE _AddExtraControls(int argc,VALUE *argv,VALUE self)
 }
 
 #endif
-void Init_WXRearrangeDialog(VALUE rb_mWX)
+DLL_LOCAL void Init_WXRearrangeDialog(VALUE rb_mWX)
 {
 #if wxUSE_REARRANGECTRL
 	using namespace RubyWX::RearrangeDialog;

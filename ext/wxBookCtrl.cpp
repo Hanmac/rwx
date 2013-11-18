@@ -34,7 +34,7 @@ macro_attr(Selection,int)
 singlereturn(GetControlSizer)
 singlereturn(GetCurrentPage)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -47,12 +47,12 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _page(VALUE self,VALUE i)
+DLL_LOCAL VALUE _page(VALUE self,VALUE i)
 {
 	return wrap(_self->GetPage(NUM2UINT(i)));
 }
 
-VALUE _each(VALUE self)
+DLL_LOCAL VALUE _each(VALUE self)
 {
 	RETURN_ENUMERATOR(self,0,NULL);
 	size_t count = _self->GetPageCount();
@@ -61,7 +61,7 @@ VALUE _each(VALUE self)
 	return self;
 }
 
-VALUE _addPage(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _addPage(int argc,VALUE *argv,VALUE self)
 {
 	VALUE window,text,select,imageid,hash;
 	wxWindow *w = NULL;
@@ -91,7 +91,7 @@ VALUE _addPage(int argc,VALUE *argv,VALUE self)
 	return wrap(_self->AddPage(w,unwrap<wxString>(text),sel,iid));
 }
 
-VALUE _insertPage(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _insertPage(int argc,VALUE *argv,VALUE self)
 {
 	VALUE n,window,text,select,imageid,hash;
 	wxWindow *w = NULL;
@@ -131,7 +131,7 @@ macro_attr(OldSelection,int)
 }
 }
 #endif
-void Init_WXBookCtrl(VALUE rb_mWX)
+DLL_LOCAL void Init_WXBookCtrl(VALUE rb_mWX)
 {
 #if wxUSE_BOOKCTRL
 	using namespace RubyWX::BookCtrl;

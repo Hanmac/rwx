@@ -19,7 +19,7 @@ macro_attr(Path,wxString)
 
 APP_PROTECT(wxFilePickerCtrl)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -42,7 +42,7 @@ macro_attr(Path,wxString)
 }
 
 #endif
-void Init_WXFilePicker(VALUE rb_mWX)
+DLL_LOCAL void Init_WXFilePicker(VALUE rb_mWX)
 {
 #if wxUSE_FILEPICKERCTRL
 	using namespace RubyWX::FilePicker;

@@ -44,7 +44,7 @@ wxCursor unwrap< wxCursor >(const VALUE &vbitmap)
 }
 
 
-VALUE _busy(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _busy(int argc,VALUE *argv,VALUE self)
 {
 	VALUE cursor;
 	rb_scan_args(argc, argv, "01",&cursor);
@@ -57,12 +57,12 @@ VALUE _busy(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _isBusy(VALUE self)
+DLL_LOCAL VALUE _isBusy(VALUE self)
 {
 	return wrap(wxIsBusy());
 }
 
-void Init_WXCursor(VALUE rb_mWX)
+DLL_LOCAL void Init_WXCursor(VALUE rb_mWX)
 {
 	rb_cWXCursor = rb_define_class_under(rb_mWX,"Cursor",rb_cObject);
 	rb_undef_alloc_func(rb_cWXCursor);

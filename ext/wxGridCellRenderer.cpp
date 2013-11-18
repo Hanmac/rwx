@@ -106,7 +106,7 @@ APP_PROTECT(RubyGridCellRenderer);
 
 #endif
 
-void Init_WXGridCellRenderer(VALUE rb_mWX)
+DLL_LOCAL void Init_WXGridCellRenderer(VALUE rb_mWX)
 {
 #if wxUSE_GRID
 	using namespace RubyWX::GridCellRenderer;

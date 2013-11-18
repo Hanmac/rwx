@@ -16,7 +16,7 @@ namespace Panel {
 
 APP_PROTECT(wxPanel)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,name,hash;
 	rb_scan_args(argc, argv, "12",&parent,&name,&hash);

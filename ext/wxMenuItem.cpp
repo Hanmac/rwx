@@ -31,7 +31,7 @@ macro_attr(Help,wxString)
 
 singlereturn(GetBitmap)
 
-VALUE _SetBitmap(VALUE self,VALUE val)
+DLL_LOCAL VALUE _SetBitmap(VALUE self,VALUE val)
 {
 	_self->SetBitmap(wrapBitmap(val,_self->GetId(),true,wxART_MENU));
 	return val;

@@ -19,7 +19,7 @@ macro_attr(Position,int)
 }
 }
 
-void Init_WXScrollEvent(VALUE rb_mWX)
+DLL_LOCAL void Init_WXScrollEvent(VALUE rb_mWX)
 {
 	using namespace RubyWX::ScrollEvent;
 

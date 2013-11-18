@@ -38,7 +38,7 @@ singlefunc(Skip)
 }
 
 
-void Init_WXEvent(VALUE rb_mWX)
+DLL_LOCAL void Init_WXEvent(VALUE rb_mWX)
 {
 	using namespace RubyWX::Event;
 	rb_cWXEvent = rb_define_class_under(rb_mWX,"Event",rb_cObject);

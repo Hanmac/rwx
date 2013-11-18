@@ -17,7 +17,7 @@ namespace ColourDialog {
 
 APP_PROTECT(wxColourDialog)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -28,19 +28,19 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _getColour(VALUE self)
+DLL_LOCAL VALUE _getColour(VALUE self)
 {
 	return wrap(_self->GetColourData().GetColour());
 }
 
-VALUE _setColour(VALUE self,VALUE val)
+DLL_LOCAL VALUE _setColour(VALUE self,VALUE val)
 {
 	_self->GetColourData().SetColour(unwrap<wxColour>(val));
 	return val;
 }
 
 
-VALUE _getCustomColors(VALUE self)
+DLL_LOCAL VALUE _getCustomColors(VALUE self)
 {
 	VALUE result = rb_ary_new();
 	wxColourData &data = _self->GetColourData();
@@ -48,7 +48,7 @@ VALUE _getCustomColors(VALUE self)
 		rb_ary_push(result,wrap(data.GetCustomColour(i)));
 	return result;
 }
-VALUE _setCustomColors(VALUE self,VALUE val)
+DLL_LOCAL VALUE _setCustomColors(VALUE self,VALUE val)
 {
 	VALUE dp = rb_funcall(val,rb_intern("to_a"),0);
 	wxColourData &data = _self->GetColourData();
@@ -59,7 +59,7 @@ VALUE _setCustomColors(VALUE self,VALUE val)
 }
 
 
-VALUE _getUserColor(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _getUserColor(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,caption;
 	rb_scan_args(argc, argv, "11",&parent,&caption);
@@ -72,7 +72,7 @@ VALUE _getUserColor(int argc,VALUE *argv,VALUE self)
 
 #endif
 
-void Init_WXColorDialog(VALUE rb_mWX)
+DLL_LOCAL void Init_WXColorDialog(VALUE rb_mWX)
 {
 #if wxUSE_COLOURDLG
 	using namespace RubyWX::ColourDialog;

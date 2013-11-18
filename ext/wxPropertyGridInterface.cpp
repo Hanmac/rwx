@@ -29,7 +29,7 @@ wxPropertyGridInterface* unwrap< wxPropertyGridInterface* >(const VALUE &obj)
 namespace RubyWX {
 namespace PropertyGridInterface {
 
-VALUE _append(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _append(int argc,VALUE *argv,VALUE self)
 {
 	VALUE val,hash;
 	rb_scan_args(argc, argv, "11",&val,&hash);

@@ -18,7 +18,7 @@ namespace StaticBox {
 
 APP_PROTECT(wxStaticBox)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -28,7 +28,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _GetContainingSizer(VALUE self)
+DLL_LOCAL VALUE _GetContainingSizer(VALUE self)
 {
 	wxSizer * result = _self->GetContainingSizer();
 	if(result)
@@ -40,7 +40,7 @@ VALUE _GetContainingSizer(VALUE self)
 }
 }
 #endif
-void Init_WXStaticBox(VALUE rb_mWX)
+DLL_LOCAL void Init_WXStaticBox(VALUE rb_mWX)
 {
 #if wxUSE_STATBOX
 	using namespace RubyWX::StaticBox;

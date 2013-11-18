@@ -18,7 +18,7 @@ namespace FontDialog {
 
 APP_PROTECT(wxFontDialog)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -33,40 +33,40 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _getColour(VALUE self)
+DLL_LOCAL VALUE _getColour(VALUE self)
 {
 	return wrap(_self->GetFontData().GetColour());
 }
 
-VALUE _setColour(VALUE self,VALUE val)
+DLL_LOCAL VALUE _setColour(VALUE self,VALUE val)
 {
 	_self->GetFontData().SetColour(unwrap<wxColour>(val));
 	return val;
 }
 
-VALUE _getInitialFont(VALUE self)
+DLL_LOCAL VALUE _getInitialFont(VALUE self)
 {
 	return wrap(_self->GetFontData().GetInitialFont());
 }
 
-VALUE _setInitialFont(VALUE self,VALUE val)
+DLL_LOCAL VALUE _setInitialFont(VALUE self,VALUE val)
 {
 	_self->GetFontData().SetInitialFont(unwrap<wxFont>(val));
 	return val;
 }
 
-VALUE _getChosenFont(VALUE self)
+DLL_LOCAL VALUE _getChosenFont(VALUE self)
 {
 	return wrap(_self->GetFontData().GetChosenFont());
 }
 
-VALUE _setChosenFont(VALUE self,VALUE val)
+DLL_LOCAL VALUE _setChosenFont(VALUE self,VALUE val)
 {
 	_self->GetFontData().SetChosenFont(unwrap<wxFont>(val));
 	return val;
 }
 
-VALUE _getUserFont(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _getUserFont(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,caption;
 	rb_scan_args(argc, argv, "11",&parent,&caption);
@@ -79,7 +79,7 @@ VALUE _getUserFont(int argc,VALUE *argv,VALUE self)
 
 #endif
 
-void Init_WXFontDialog(VALUE rb_mWX)
+DLL_LOCAL void Init_WXFontDialog(VALUE rb_mWX)
 {
 #if wxUSE_FONTDLG
 	using namespace RubyWX::FontDialog;

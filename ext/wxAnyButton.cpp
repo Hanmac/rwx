@@ -34,7 +34,7 @@ APP_PROTECT(wxAnyButton)
 }
 }
 
-void Init_WXAnyButton(VALUE rb_mWX)
+DLL_LOCAL void Init_WXAnyButton(VALUE rb_mWX)
 {
 	using namespace RubyWX::AnyButton;
 	rb_cWXAnyButton = rb_define_class_under(rb_mWX,"AnyButton",rb_cWXControl);

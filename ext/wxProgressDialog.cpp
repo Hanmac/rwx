@@ -28,7 +28,7 @@ DLL_LOCAL VALUE _alloc(VALUE self)
 	return Qnil;
 }
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -39,14 +39,14 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _update(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _update(int argc,VALUE *argv,VALUE self)
 {
 	VALUE val,message;
 	rb_scan_args(argc, argv, "11",&val,&message);
 	return wrap(_self->Update(NUM2INT(val),unwrap<wxString>(message)));
 }
 
-VALUE _pulse(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _pulse(int argc,VALUE *argv,VALUE self)
 {
 	VALUE message;
 	rb_scan_args(argc, argv, "01",&message);

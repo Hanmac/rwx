@@ -204,7 +204,7 @@ void RubyFunctor::operator()( wxTimerEvent & event )
 namespace RubyWX {
 namespace EvtHandler {
 
-VALUE _bind(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _bind(int argc,VALUE *argv,VALUE self)
 {
 	VALUE type,id,last,proc;
 	rb_scan_args(argc, argv, "12&",&type,&id,&last,&proc);
@@ -219,7 +219,7 @@ VALUE _bind(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _call(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _call(int argc,VALUE *argv,VALUE self)
 {
 	VALUE type,id;
 	rb_scan_args(argc, argv, "11",&type,&id);
@@ -255,7 +255,7 @@ VALUE _call(int argc,VALUE *argv,VALUE self)
 
 }
 
-VALUE _callafter(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _callafter(int argc,VALUE *argv,VALUE self)
 {
 #ifdef wxHAS_CALL_AFTER
 	//for some reason new does not work with
@@ -280,7 +280,7 @@ VALUE _callafter(int argc,VALUE *argv,VALUE self)
 }
 
 
-void Init_WXEvtHandler(VALUE rb_mWX)
+DLL_LOCAL void Init_WXEvtHandler(VALUE rb_mWX)
 {
 	using namespace RubyWX::EvtHandler;
 	rb_mWXEvtHandler = rb_define_module_under(rb_mWX,"EvtHandler");

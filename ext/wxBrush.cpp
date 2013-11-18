@@ -20,7 +20,7 @@ wxBrush nullPtr<wxBrush>(){ return wxNullBrush;}
 
 namespace RubyWX {
 namespace Brush {
-VALUE _alloc(VALUE self) {
+DLL_LOCAL VALUE _alloc(VALUE self) {
 	return wrap(new wxBrush(*wxBLACK));
 }
 
@@ -31,7 +31,7 @@ macro_attr(Stipple,wxBitmap)
 }
 }
 
-void Init_WXBrush(VALUE rb_mWX)
+DLL_LOCAL void Init_WXBrush(VALUE rb_mWX)
 {
 	using namespace RubyWX::Brush;
 	rb_cWXBrush = rb_define_class_under(rb_mWX,"Brush",rb_cObject);

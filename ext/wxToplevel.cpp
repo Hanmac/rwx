@@ -22,7 +22,7 @@ macro_attr(TmpDefaultItem,wxWindow*)
 
 APP_PROTECT(wxTopLevelWindow)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -41,7 +41,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 
-void Init_WXTopLevel(VALUE rb_mWX)
+DLL_LOCAL void Init_WXTopLevel(VALUE rb_mWX)
 {
 	using namespace RubyWX::TopLevel;
 	rb_cWXTopLevel = rb_define_class_under(rb_mWX,"TopLevel",rb_cWXWindow);

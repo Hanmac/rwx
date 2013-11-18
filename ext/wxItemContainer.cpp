@@ -43,14 +43,14 @@ singlefunc(Clear)
 singlereturn(GetStrings)
 
 
-VALUE _Append(VALUE self,VALUE items)
+DLL_LOCAL VALUE _Append(VALUE self,VALUE items)
 {
 	
 	_self->Append(unwrap<wxArrayString>(items));
 	return self;
 }
 
-VALUE _setItems(VALUE self,VALUE items)
+DLL_LOCAL VALUE _setItems(VALUE self,VALUE items)
 {
 	_self->Set(unwrap<wxArrayString>(items));
 	return items;
@@ -60,7 +60,7 @@ VALUE _setItems(VALUE self,VALUE items)
 }
 #endif
 
-void Init_WXItemContainer(VALUE rb_mWX)
+DLL_LOCAL void Init_WXItemContainer(VALUE rb_mWX)
 {
 	using namespace RubyWX::ItemContainer;
 

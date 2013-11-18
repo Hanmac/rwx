@@ -25,7 +25,7 @@ APP_PROTECT(wxSearchCtrl)
 macro_attr(Menu,wxMenu*)
 #endif
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -43,7 +43,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
-void Init_WXSearchCtrl(VALUE rb_mWX)
+DLL_LOCAL void Init_WXSearchCtrl(VALUE rb_mWX)
 {
 #if wxUSE_SEARCHCTRL
 	using namespace RubyWX::SearchCtrl;

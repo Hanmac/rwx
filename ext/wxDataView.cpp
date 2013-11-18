@@ -75,7 +75,7 @@ namespace DataView {
 
 APP_PROTECT(wxDataViewCtrl)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -85,19 +85,19 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _getSelection(VALUE self)
+DLL_LOCAL VALUE _getSelection(VALUE self)
 {
 	return wrap(_self->GetModel(),_self->GetSelection());
 }
 
-VALUE _setSelection(VALUE self,VALUE item)
+DLL_LOCAL VALUE _setSelection(VALUE self,VALUE item)
 {
 	//_self->Select(unwrap<wxDataViewItem>(item));
 	return self;
 }
 
 
-VALUE _AppendTextColumn(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _AppendTextColumn(int argc,VALUE *argv,VALUE self)
 {
 	VALUE label,hash;
 	rb_scan_args(argc, argv, "10",&label,&hash);
@@ -106,7 +106,7 @@ VALUE _AppendTextColumn(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _AppendToggleColumn(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _AppendToggleColumn(int argc,VALUE *argv,VALUE self)
 {
 	VALUE label,hash;
 	rb_scan_args(argc, argv, "11",&label,&hash);
@@ -115,7 +115,7 @@ VALUE _AppendToggleColumn(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _AppendIconTextColumn(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _AppendIconTextColumn(int argc,VALUE *argv,VALUE self)
 {
 	VALUE label,hash;
 	rb_scan_args(argc, argv, "11",&label,&hash);
@@ -124,7 +124,7 @@ VALUE _AppendIconTextColumn(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _AppendBitmapColumn(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _AppendBitmapColumn(int argc,VALUE *argv,VALUE self)
 {
 	VALUE label,hash;
 	rb_scan_args(argc, argv, "11",&label,&hash);
@@ -134,7 +134,7 @@ VALUE _AppendBitmapColumn(int argc,VALUE *argv,VALUE self)
 }
 
 
-VALUE _AppendProgressColumn(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _AppendProgressColumn(int argc,VALUE *argv,VALUE self)
 {
 	VALUE label,hash;
 	rb_scan_args(argc, argv, "11",&label,&hash);
@@ -147,14 +147,14 @@ VALUE _AppendProgressColumn(int argc,VALUE *argv,VALUE self)
 namespace Event {
 #undef _self
 #define _self unwrapPtr<wxDataViewEvent>(self,rb_cWXDataViewEvent)
-VALUE _getValue(VALUE self)
+DLL_LOCAL VALUE _getValue(VALUE self)
 {
 	//omg is this ugly
 	wxVariant var;
 	_self->GetModel()->GetValue(var,_self->GetItem(),_self->GetColumn());
 	return wrap(var);
 }
-VALUE _setValue(VALUE self,VALUE val)
+DLL_LOCAL VALUE _setValue(VALUE self,VALUE val)
 {
 	_self->SetValue(unwrapVariant(val,
 			_self->GetModel()->GetColumnType(_self->GetColumn())));
@@ -163,12 +163,12 @@ VALUE _setValue(VALUE self,VALUE val)
 
 macro_attr(Column,int)
 
-VALUE _getItem(VALUE self)
+DLL_LOCAL VALUE _getItem(VALUE self)
 {
 	return wrap(_self->GetModel(),_self->GetItem());
 }
 
-VALUE _setItem(VALUE self,VALUE item)
+DLL_LOCAL VALUE _setItem(VALUE self,VALUE item)
 {
 	return item;
 }
@@ -179,7 +179,7 @@ VALUE _setItem(VALUE self,VALUE item)
 }
 
 #endif
-void Init_WXDataView(VALUE rb_mWX)
+DLL_LOCAL void Init_WXDataView(VALUE rb_mWX)
 {
 #if wxUSE_DATAVIEWCTRL
 	using namespace RubyWX::DataView;

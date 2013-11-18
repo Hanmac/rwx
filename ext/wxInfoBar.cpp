@@ -17,7 +17,7 @@ namespace InfoBar {
 
 APP_PROTECT(wxInfoBar)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -31,7 +31,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
-void Init_WXInfoBar(VALUE rb_mWX)
+DLL_LOCAL void Init_WXInfoBar(VALUE rb_mWX)
 {
 #if wxUSE_CALENDARCTRL
 	using namespace RubyWX::InfoBar;

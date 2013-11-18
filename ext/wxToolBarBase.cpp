@@ -36,7 +36,7 @@ void bind_callback(wxToolBarBase* toolbar,wxWindowID id)
 }
 
 
-VALUE _addNormal(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _addNormal(int argc,VALUE *argv,VALUE self)
 {
 	VALUE id,text,bitmap,bmpDisabled,shorthelp,longhelp;
 	rb_scan_args(argc, argv, "24",&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
@@ -50,7 +50,7 @@ VALUE _addNormal(int argc,VALUE *argv,VALUE self)
 	return wrap(tool);
 }
 
-VALUE _addControl(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _addControl(int argc,VALUE *argv,VALUE self)
 {
 	VALUE id,text,arg;
 	wxControl *c = NULL;
@@ -70,7 +70,7 @@ VALUE _addControl(int argc,VALUE *argv,VALUE self)
 }
 
 
-VALUE _addCheck(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _addCheck(int argc,VALUE *argv,VALUE self)
 {
 	VALUE id,text,bitmap,bmpDisabled,shorthelp,longhelp;
 	rb_scan_args(argc, argv, "24",&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
@@ -87,7 +87,7 @@ VALUE _addCheck(int argc,VALUE *argv,VALUE self)
 }
 
 
-VALUE _addRadio(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _addRadio(int argc,VALUE *argv,VALUE self)
 {
 	VALUE id,text,bitmap,bmpDisabled,shorthelp,longhelp;
 	rb_scan_args(argc, argv, "24",&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
@@ -102,7 +102,7 @@ VALUE _addRadio(int argc,VALUE *argv,VALUE self)
 	return wrap(tool);
 }
 
-VALUE _each(VALUE self)
+DLL_LOCAL VALUE _each(VALUE self)
 {
 	RETURN_ENUMERATOR(self,0,NULL);
 	size_t count = _self->GetToolsCount();
@@ -122,7 +122,7 @@ singlereturn(Realize)
 }
 }
 
-void Init_WXToolBarBase(VALUE rb_mWX)
+DLL_LOCAL void Init_WXToolBarBase(VALUE rb_mWX)
 {
 	using namespace RubyWX::ToolBarBase;
 	rb_cWXToolBarBase = rb_define_class_under(rb_mWX,"ToolBarBase",rb_cWXControl);

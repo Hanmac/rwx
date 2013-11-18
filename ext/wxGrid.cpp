@@ -69,7 +69,7 @@ singlefunc(AutoSize)
 
 APP_PROTECT(wxGrid)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash,name;
 	rb_scan_args(argc, argv, "12",&parent,&name,&hash);
@@ -92,17 +92,17 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	return self;
 }
-VALUE _getRowSize(VALUE self,VALUE row)
+DLL_LOCAL VALUE _getRowSize(VALUE self,VALUE row)
 {
 	return INT2NUM(	_self->GetRowSize(NUM2INT(row)));
 }
 
-VALUE _getColSize(VALUE self,VALUE row)
+DLL_LOCAL VALUE _getColSize(VALUE self,VALUE row)
 {
 	return INT2NUM(	_self->GetColSize(NUM2INT(row)));
 }
 
-VALUE _getCellSize(VALUE self,VALUE x,VALUE y)
+DLL_LOCAL VALUE _getCellSize(VALUE self,VALUE x,VALUE y)
 {
 	return wrap(_self->GetCellSize(wxGridCellCoords(NUM2INT(x),NUM2INT(y))));
 }
@@ -110,12 +110,12 @@ VALUE _getCellSize(VALUE self,VALUE x,VALUE y)
 
 
 
-VALUE _getEditable(VALUE self)
+DLL_LOCAL VALUE _getEditable(VALUE self)
 {
 	return wrap(_self->IsEditable());
 }
 
-VALUE _setEditable(VALUE self,VALUE val)
+DLL_LOCAL VALUE _setEditable(VALUE self,VALUE val)
 {
 	_self->EnableEditing(RTEST(val));
 	return val;
@@ -127,7 +127,7 @@ VALUE _setEditable(VALUE self,VALUE val)
 
 #endif
 
-void Init_WXGrid(VALUE rb_mWX)
+DLL_LOCAL void Init_WXGrid(VALUE rb_mWX)
 {
 #if wxUSE_GRID
 	using namespace RubyWX::Grid;

@@ -26,7 +26,7 @@ singlereturn(GetSelection)
 }
 
 
-void Init_WXCommandEvent(VALUE rb_mWX)
+DLL_LOCAL void Init_WXCommandEvent(VALUE rb_mWX)
 {
 	using namespace RubyWX::CommandEvent;
 

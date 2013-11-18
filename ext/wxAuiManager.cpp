@@ -16,7 +16,7 @@ VALUE rb_cWXAuiManager;
 namespace RubyWX {
 namespace AuiManager {
 
-VALUE _get(VALUE self,VALUE key)
+DLL_LOCAL VALUE _get(VALUE self,VALUE key)
 {
 	if(rb_obj_is_kind_of(key,rb_cWXWindow))
 		return wrap(_self->GetPane(unwrap<wxWindow*>(key)));
@@ -24,7 +24,7 @@ VALUE _get(VALUE self,VALUE key)
 		return wrap(_self->GetPane(unwrap<wxString>(key)));
 }
 
-VALUE _set(VALUE self,VALUE key,VALUE val)
+DLL_LOCAL VALUE _set(VALUE self,VALUE key,VALUE val)
 {
 	wxAuiPaneInfo inf(_self->GetPane(unwrap<wxString>(key)));
 	if(inf.IsOk())
@@ -36,7 +36,7 @@ VALUE _set(VALUE self,VALUE key,VALUE val)
 	return val;
 }
 
-VALUE _addPane(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _addPane(int argc,VALUE *argv,VALUE self)
 {
 	VALUE window,hash;
 	wxWindow* w = NULL;
@@ -56,7 +56,7 @@ VALUE _addPane(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
-void Init_WXAuiManager(VALUE rb_mWX)
+DLL_LOCAL void Init_WXAuiManager(VALUE rb_mWX)
 {
 #if wxUSE_AUI
 	using namespace RubyWX::AuiManager;

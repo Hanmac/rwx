@@ -31,7 +31,7 @@ APP_PROTECT(wxGridCellAttr)
 
 #endif
 
-void Init_WXGridCellAttr(VALUE rb_mWX)
+DLL_LOCAL void Init_WXGridCellAttr(VALUE rb_mWX)
 {
 #if wxUSE_GRID
 	using namespace RubyWX::GridCellAttr;

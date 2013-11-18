@@ -43,7 +43,7 @@ wxImage unwrap< wxImage >(const VALUE &vimage)
 namespace RubyWX {
 namespace Image {
 
-VALUE _load(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _load(int argc,VALUE *argv,VALUE self)
 {
 	VALUE name,mime,nr;
 	rb_scan_args(argc, argv, "12",&name,&mime,&nr);
@@ -102,7 +102,7 @@ VALUE _load(int argc,VALUE *argv,VALUE self)
 	return wrap(result);
 }
 
-VALUE _alloc(VALUE self) {
+DLL_LOCAL VALUE _alloc(VALUE self) {
 	return wrap(new wxImage);
 }
 
@@ -114,7 +114,7 @@ VALUE _alloc(VALUE self) {
  *
  * creates a new Image Object.
 */
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE width,height,arg1;
 	rb_scan_args(argc, argv, "12",&width,&height,&arg1);
@@ -130,7 +130,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 /*
 */
-VALUE _initialize_copy(VALUE self, VALUE other)
+DLL_LOCAL VALUE _initialize_copy(VALUE self, VALUE other)
 {
 	VALUE result = rb_call_super(1,&other);
 	_self->SetData(unwrap<wxImage*>(other)->GetData());
@@ -138,21 +138,21 @@ VALUE _initialize_copy(VALUE self, VALUE other)
 	return result;
 }
 
-VALUE _getHeight(VALUE self)
+DLL_LOCAL VALUE _getHeight(VALUE self)
 {
 	if(_self->IsOk())
 		return ULONG2NUM(_self->GetHeight());
 	return INT2FIX(0);
 }
 
-VALUE _getWidth(VALUE self)
+DLL_LOCAL VALUE _getWidth(VALUE self)
 {
 	if(_self->IsOk())
 		return ULONG2NUM(_self->GetWidth());
 	return INT2FIX(0);
 }
 
-VALUE _get(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _get(int argc,VALUE *argv,VALUE self)
 {
 	VALUE vx,vy;
 	rb_scan_args(argc, argv, "11",&vx,&vy);
@@ -183,7 +183,7 @@ VALUE _get(int argc,VALUE *argv,VALUE self)
 		return Qnil;
 }
 
-VALUE _set(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _set(int argc,VALUE *argv,VALUE self)
 {
 	VALUE vx,vy,value;
 	rb_scan_args(argc, argv, "30",&vx,&vy,&value);
@@ -205,7 +205,7 @@ VALUE _set(int argc,VALUE *argv,VALUE self)
 	return value;
 }
 
-VALUE _scale(VALUE self,VALUE x_scale,VALUE y_scale)
+DLL_LOCAL VALUE _scale(VALUE self,VALUE x_scale,VALUE y_scale)
 {
 	wxImage result(*_self);
 
@@ -228,7 +228,7 @@ VALUE _scale(VALUE self,VALUE x_scale,VALUE y_scale)
 	return wrap(result);
 }
 
-VALUE _mal(VALUE self,VALUE obj)
+DLL_LOCAL VALUE _mal(VALUE self,VALUE obj)
 {
 
 
@@ -279,7 +279,7 @@ VALUE _mal(VALUE self,VALUE obj)
 	return wrap(result);
 }
 
-VALUE _getMask(VALUE self)
+DLL_LOCAL VALUE _getMask(VALUE self)
 {
 	unsigned char r,g,b;
 	if(_self->GetOrFindMaskColour(&r,&g,&b))
@@ -288,7 +288,7 @@ VALUE _getMask(VALUE self)
 		return Qnil;
 }
 
-VALUE _setMask(VALUE self,VALUE val)
+DLL_LOCAL VALUE _setMask(VALUE self,VALUE val)
 {
 	if(NIL_P(val))
 		_self->SetMask(false);
@@ -301,7 +301,7 @@ VALUE _setMask(VALUE self,VALUE val)
 }
 
 
-VALUE _save(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _save(int argc,VALUE *argv,VALUE self)
 {
 	VALUE name,mime;
 	rb_scan_args(argc, argv, "11",&name,&mime);
@@ -348,11 +348,11 @@ VALUE _save(int argc,VALUE *argv,VALUE self)
 }
 
 
-VALUE _to_image(VALUE self)
+DLL_LOCAL VALUE _to_image(VALUE self)
 {
 	return self;
 }
-VALUE _to_bitmap(VALUE self)
+DLL_LOCAL VALUE _to_bitmap(VALUE self)
 {
 	return wrap(unwrap<wxBitmap*>(self));
 }

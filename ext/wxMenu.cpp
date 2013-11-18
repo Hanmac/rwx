@@ -31,7 +31,7 @@ singlereturn(PrependSeparator)
 
 APP_PROTECT(wxMenu)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE title;
 	rb_scan_args(argc, argv, "01",&title);
@@ -50,7 +50,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 singlereturn(GetMenuBar);
 
-VALUE _each(VALUE self)
+DLL_LOCAL VALUE _each(VALUE self)
 {
 	int count = _self->GetMenuItemCount();
 	for(int i = 0;i < count;++i)
@@ -71,7 +71,7 @@ void bind_callback(wxMenu* menu,wxWindowID id)
 }
 
 
-VALUE _appendNormalItem(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _appendNormalItem(int argc,VALUE *argv,VALUE self)
 {
 	VALUE id,text,help,temp;
 
@@ -94,7 +94,7 @@ VALUE _appendNormalItem(int argc,VALUE *argv,VALUE self)
 }
 
 
-VALUE _appendCheckItem(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _appendCheckItem(int argc,VALUE *argv,VALUE self)
 {
 	VALUE id,text,help;
 	rb_scan_args(argc, argv, "12",&id,&text,&help);
@@ -103,7 +103,7 @@ VALUE _appendCheckItem(int argc,VALUE *argv,VALUE self)
 	return wrap(item);
 }
 
-VALUE _appendRadioItem(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _appendRadioItem(int argc,VALUE *argv,VALUE self)
 {
 	VALUE id,text,help;
 	rb_scan_args(argc, argv, "12",&id,&text,&help);
@@ -112,7 +112,7 @@ VALUE _appendRadioItem(int argc,VALUE *argv,VALUE self)
 	return wrap(item);
 }
 
-VALUE _appendShift(VALUE self,VALUE val)
+DLL_LOCAL VALUE _appendShift(VALUE self,VALUE val)
 {
 	wxWindowID id = unwrapID(val);
 	if(!wxIsStockID(id))

@@ -18,7 +18,7 @@ namespace PropertyGrid {
 
 APP_PROTECT(wxPropertyGrid)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	int style = wxPG_DEFAULT_STYLE;

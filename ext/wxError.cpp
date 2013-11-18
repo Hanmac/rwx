@@ -48,7 +48,7 @@ protected:
 
 
 
-void Init_WXError(VALUE rb_mWX)
+DLL_LOCAL void Init_WXError(VALUE rb_mWX)
 {
 	rb_eWXError = rb_define_class_under(rb_mWX,"Error",rb_eException);
 	wxLog::SetActiveTarget(new RubyExceptionLog);

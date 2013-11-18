@@ -18,7 +18,7 @@ namespace Timer {
 
 APP_PROTECT(wxTimer)
 
-VALUE _initialize(VALUE self)
+DLL_LOCAL VALUE _initialize(VALUE self)
 {
 	if(rb_block_given_p()){
 		VALUE proc = rb_block_proc();
@@ -32,7 +32,7 @@ VALUE _initialize(VALUE self)
 	return self;
 }
 
-VALUE _start(VALUE self,VALUE msec)
+DLL_LOCAL VALUE _start(VALUE self,VALUE msec)
 {
 	return wrap(_self->Start(NUM2UINT(msec)));
 }
@@ -40,7 +40,7 @@ VALUE _start(VALUE self,VALUE msec)
 singlefunc(Stop)
 singlereturn(GetOwner)
 
-VALUE _setOwner(VALUE self,VALUE val)
+DLL_LOCAL VALUE _setOwner(VALUE self,VALUE val)
 {
 	_self->SetOwner(unwrap<wxEvtHandler*>(val),_self->GetId());
 	return val;

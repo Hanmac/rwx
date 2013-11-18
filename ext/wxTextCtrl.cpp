@@ -17,7 +17,7 @@ namespace TextCtrl {
 
 APP_PROTECT(wxTextCtrl)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -30,7 +30,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
-void Init_WXTextCtrl(VALUE rb_mWX)
+DLL_LOCAL void Init_WXTextCtrl(VALUE rb_mWX)
 {
 #if wxUSE_TEXTCTRL
 	using namespace RubyWX::TextCtrl;

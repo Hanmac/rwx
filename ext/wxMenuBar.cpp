@@ -19,7 +19,7 @@ namespace MenuBar {
 
 APP_PROTECT(wxMenuBar)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	_created = true;
 	rb_call_super(argc,argv);
@@ -27,7 +27,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 
 
-VALUE _each(VALUE self)
+DLL_LOCAL VALUE _each(VALUE self)
 {
 	RETURN_ENUMERATOR(self,0,NULL);
 	size_t count = _self->GetMenuCount();
@@ -37,7 +37,7 @@ VALUE _each(VALUE self)
 }
 
 
-VALUE _appendShift(VALUE self,VALUE menu)
+DLL_LOCAL VALUE _appendShift(VALUE self,VALUE menu)
 {
 	wxMenu *m = unwrap<wxMenu*>(menu);
 	if(m->GetTitle().IsEmpty())
@@ -48,7 +48,7 @@ VALUE _appendShift(VALUE self,VALUE menu)
 
 
 
-VALUE _append(VALUE self,VALUE menu)
+DLL_LOCAL VALUE _append(VALUE self,VALUE menu)
 {
 	if(rb_obj_is_kind_of(menu,rb_cWXMenu))
 		return _appendShift(self,menu);

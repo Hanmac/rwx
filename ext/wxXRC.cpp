@@ -13,7 +13,7 @@
 namespace RubyWX {
 namespace XRC {
 
-VALUE _xrc_load_file(VALUE self,VALUE name)
+DLL_LOCAL VALUE _xrc_load_file(VALUE self,VALUE name)
 {
 	wxXmlResource *old = wxXmlResource::Get();
 	if(rb_block_given_p())

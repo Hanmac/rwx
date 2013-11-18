@@ -80,11 +80,11 @@ wxColor unwrap< wxColor >(const VALUE &vcolor)
 
 namespace RubyWX {
 namespace Color {
-VALUE _alloc(VALUE self) {
+DLL_LOCAL VALUE _alloc(VALUE self) {
 	return wrap(new wxColor);
 }
 
-VALUE _getRed(VALUE self)
+DLL_LOCAL VALUE _getRed(VALUE self)
 {
 	if(_self->IsOk())
 		return INT2NUM(_self->Red());
@@ -92,7 +92,7 @@ VALUE _getRed(VALUE self)
 		return UINT2NUM(0);
 }
 
-VALUE _getGreen(VALUE self)
+DLL_LOCAL VALUE _getGreen(VALUE self)
 {
 	if(_self->IsOk())
 		return INT2NUM(_self->Green());
@@ -100,7 +100,7 @@ VALUE _getGreen(VALUE self)
 		return UINT2NUM(0);
 }
 
-VALUE _getBlue(VALUE self)
+DLL_LOCAL VALUE _getBlue(VALUE self)
 {
 	if(_self->IsOk())
 		return INT2NUM(_self->Blue());
@@ -108,7 +108,7 @@ VALUE _getBlue(VALUE self)
 		return UINT2NUM(0);
 }
 
-VALUE _getAlpha(VALUE self)
+DLL_LOCAL VALUE _getAlpha(VALUE self)
 {
 	if(_self->IsOk())
 		return INT2NUM(_self->Alpha());
@@ -117,7 +117,7 @@ VALUE _getAlpha(VALUE self)
 }
 
 
-VALUE _setRed(VALUE self,VALUE val)
+DLL_LOCAL VALUE _setRed(VALUE self,VALUE val)
 {
 	if(_self->IsOk())
 		_self->Set(NUM2CHR(val),_self->Green(),_self->Blue(),_self->Alpha());
@@ -126,7 +126,7 @@ VALUE _setRed(VALUE self,VALUE val)
 	return val;
 }
 
-VALUE _setGreen(VALUE self,VALUE val)
+DLL_LOCAL VALUE _setGreen(VALUE self,VALUE val)
 {
 	if(_self->IsOk())
 		_self->Set(_self->Red(),NUM2CHR(val),_self->Blue(),_self->Alpha());
@@ -134,7 +134,7 @@ VALUE _setGreen(VALUE self,VALUE val)
 		_self->Set(0,NUM2CHR(val),0,0);
 	return val;
 }
-VALUE _setBlue(VALUE self,VALUE val)
+DLL_LOCAL VALUE _setBlue(VALUE self,VALUE val)
 {
 	if(_self->IsOk())
 		_self->Set(_self->Red(),_self->Green(),NUM2CHR(val),_self->Alpha());
@@ -142,7 +142,7 @@ VALUE _setBlue(VALUE self,VALUE val)
 		_self->Set(0,0,NUM2CHR(val),0);
 	return val;
 }
-VALUE _setAlpha(VALUE self,VALUE val)
+DLL_LOCAL VALUE _setAlpha(VALUE self,VALUE val)
 {
 	if(_self->IsOk())
 		_self->Set(_self->Red(),_self->Green(),_self->Blue(),NUM2CHR(val));
@@ -151,7 +151,7 @@ VALUE _setAlpha(VALUE self,VALUE val)
 	return val;
 }
 
-VALUE _tos(VALUE self)
+DLL_LOCAL VALUE _tos(VALUE self)
 {
 	return wrap(wxToString(*_self));
 }
@@ -161,7 +161,7 @@ VALUE _tos(VALUE self)
  *
  * creates a new Color Object.
 */
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE red,green,blue,alpha;
 	rb_scan_args(argc, argv, "31",&red,&green,&blue,&alpha);
@@ -173,7 +173,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 /*
 */
-VALUE _initialize_copy(VALUE self, VALUE other)
+DLL_LOCAL VALUE _initialize_copy(VALUE self, VALUE other)
 {
 	VALUE result = rb_call_super(1,&other);
 	_setRed(self,_getRed(other));
@@ -191,7 +191,7 @@ VALUE _initialize_copy(VALUE self, VALUE other)
  * ===Return value
  * String
 */
-VALUE _inspect(VALUE self)
+DLL_LOCAL VALUE _inspect(VALUE self)
 {
 	return rb_sprintf( "%s(%d, %d, %d, %d)",
 		rb_obj_classname( self ),
@@ -209,7 +209,7 @@ VALUE _inspect(VALUE self)
  * ===Return value
  * Array
  */
-VALUE _marshal_dump(VALUE self)
+DLL_LOCAL VALUE _marshal_dump(VALUE self)
 {
     VALUE ptr[4];
     ptr[0] = _getRed(self);
@@ -227,7 +227,7 @@ VALUE _marshal_dump(VALUE self)
  *
  *
  */
-VALUE _marshal_load(VALUE self, VALUE data)
+DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
 {
     VALUE* ptr = RARRAY_PTR( data );
     _setRed(self, ptr[0]);
@@ -259,7 +259,7 @@ VALUE _marshal_load(VALUE self, VALUE data)
  * returns the alpha value of Color. */
 
 
-void Init_WXColor(VALUE rb_mWX)
+DLL_LOCAL void Init_WXColor(VALUE rb_mWX)
 {
 	using namespace RubyWX::Color;
 

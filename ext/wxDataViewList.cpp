@@ -29,7 +29,7 @@ namespace DataViewList {
 
 APP_PROTECT(wxDataViewListCtrl)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -42,7 +42,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 singlefunc(DeleteAllItems);
 
-VALUE _AppendTextColumn(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _AppendTextColumn(int argc,VALUE *argv,VALUE self)
 {
 	VALUE label,hash;
 	rb_scan_args(argc, argv, "10",&label,&hash);
@@ -51,7 +51,7 @@ VALUE _AppendTextColumn(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _AppendToggleColumn(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _AppendToggleColumn(int argc,VALUE *argv,VALUE self)
 {
 	VALUE label,hash;
 	rb_scan_args(argc, argv, "11",&label,&hash);
@@ -60,7 +60,7 @@ VALUE _AppendToggleColumn(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _AppendIconTextColumn(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _AppendIconTextColumn(int argc,VALUE *argv,VALUE self)
 {
 	VALUE label,hash;
 	rb_scan_args(argc, argv, "11",&label,&hash);
@@ -69,7 +69,7 @@ VALUE _AppendIconTextColumn(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _AppendProgressColumn(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _AppendProgressColumn(int argc,VALUE *argv,VALUE self)
 {
 	VALUE label,hash;
 	rb_scan_args(argc, argv, "11",&label,&hash);
@@ -79,7 +79,7 @@ VALUE _AppendProgressColumn(int argc,VALUE *argv,VALUE self)
 }
 
 
-VALUE _AppendItem(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _AppendItem(int argc,VALUE *argv,VALUE self)
 {
 	VALUE arg;
 	rb_scan_args(argc, argv, "*",&arg);
@@ -96,7 +96,7 @@ VALUE _AppendItem(int argc,VALUE *argv,VALUE self)
 	return wrap(_self->GetModel(),_self->GetStore()->GetItem(_self->GetStore()->GetCount() - 1));
 }
 
-VALUE _PrependItem(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _PrependItem(int argc,VALUE *argv,VALUE self)
 {
 	VALUE arg;
 	rb_scan_args(argc, argv, "*",&arg);
@@ -114,7 +114,7 @@ VALUE _PrependItem(int argc,VALUE *argv,VALUE self)
 	return wrap(_self->GetModel(),_self->GetStore()->GetItem(0));
 }
 
-VALUE _InsertItem(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _InsertItem(int argc,VALUE *argv,VALUE self)
 {
 	VALUE index,arg;
 	rb_scan_args(argc, argv, "1*",&index,&arg);
@@ -139,7 +139,7 @@ VALUE _InsertItem(int argc,VALUE *argv,VALUE self)
 
 
 #endif
-void Init_WXDataViewList(VALUE rb_mWX)
+DLL_LOCAL void Init_WXDataViewList(VALUE rb_mWX)
 {
 #if wxUSE_DATAVIEWCTRL
 	using namespace RubyWX::DataViewList;

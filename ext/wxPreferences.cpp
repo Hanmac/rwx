@@ -81,7 +81,7 @@ public:
 namespace RubyWX {
 namespace Preferences {
 
-VALUE _add_page(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _add_page(int argc,VALUE *argv,VALUE self)
 {
 	VALUE kind, klass,block;
 	rb_scan_args(argc, argv, "20&",&kind,&klass,&block);
@@ -104,7 +104,7 @@ VALUE _add_page(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _preferences(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _preferences(int argc,VALUE *argv,VALUE self)
 {
 	VALUE window, title;
 	rb_scan_args(argc, argv, "11",&window,&title);

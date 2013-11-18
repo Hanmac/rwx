@@ -18,7 +18,7 @@ namespace AuiNotebook {
 
 APP_PROTECT(wxAuiNotebook)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -32,12 +32,12 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _page(VALUE self,VALUE i)
+DLL_LOCAL VALUE _page(VALUE self,VALUE i)
 {
 	return wrap(_self->GetPage(NUM2UINT(i)));
 }
 
-VALUE _each(VALUE self)
+DLL_LOCAL VALUE _each(VALUE self)
 {
 	RETURN_ENUMERATOR(self,0,NULL);
 	size_t count = _self->GetPageCount();
@@ -49,7 +49,7 @@ VALUE _each(VALUE self)
 }
 }
 #endif
-void Init_WXAuiNoteBookCtrl(VALUE rb_mWX)
+DLL_LOCAL void Init_WXAuiNoteBookCtrl(VALUE rb_mWX)
 {
 #if wxUSE_AUI
 	using namespace RubyWX::AuiNotebook;

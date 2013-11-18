@@ -30,12 +30,12 @@ macro_attr(TopRight,wxPoint)
 macro_attr(BottomLeft,wxPoint)
 macro_attr(BottomRight,wxPoint)
 
-VALUE _alloc(VALUE self)
+DLL_LOCAL VALUE _alloc(VALUE self)
 {
 	return wrap(new wxRect());
 }
 
-VALUE _initialize(VALUE self,VALUE x,VALUE y,VALUE width,VALUE height)
+DLL_LOCAL VALUE _initialize(VALUE self,VALUE x,VALUE y,VALUE width,VALUE height)
 {
 	_setX(self,x);
 	_setY(self,y);
@@ -46,7 +46,7 @@ VALUE _initialize(VALUE self,VALUE x,VALUE y,VALUE width,VALUE height)
 
 /*
 */
-VALUE _initialize_copy(VALUE self, VALUE other)
+DLL_LOCAL VALUE _initialize_copy(VALUE self, VALUE other)
 {
 	VALUE result = rb_call_super(1,&other);
 	_setX(self,_getX(other));
@@ -64,7 +64,7 @@ VALUE _initialize_copy(VALUE self, VALUE other)
  * ===Return value
  * String
 */
-VALUE _inspect(VALUE self)
+DLL_LOCAL VALUE _inspect(VALUE self)
 {
 	return rb_sprintf( "%s(%d, %d, %d, %d)",
 		rb_obj_classname( self ),
@@ -82,7 +82,7 @@ VALUE _inspect(VALUE self)
  * ===Return value
  * Array
  */
-VALUE _marshal_dump(VALUE self)
+DLL_LOCAL VALUE _marshal_dump(VALUE self)
 {
     VALUE ptr[4];
     ptr[0] = _getX(self);
@@ -100,7 +100,7 @@ VALUE _marshal_dump(VALUE self)
  *
  *
  */
-VALUE _marshal_load(VALUE self, VALUE data)
+DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
 {
     VALUE* ptr = RARRAY_PTR( data );
     _setX(self, ptr[0]);
@@ -130,7 +130,7 @@ VALUE _marshal_load(VALUE self, VALUE data)
  * returns the height value of Rect. */
 
 
-void Init_WXRect(VALUE rb_mWX)
+DLL_LOCAL void Init_WXRect(VALUE rb_mWX)
 {
 
 #if 0

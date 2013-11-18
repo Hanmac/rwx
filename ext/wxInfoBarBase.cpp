@@ -26,7 +26,7 @@ namespace InfoBarBase {
 
 singlefunc(Dismiss)
 
-VALUE _showMessage(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _showMessage(int argc,VALUE *argv,VALUE self)
 {
 	VALUE text,icon;
 	rb_scan_args(argc, argv, "11",&text,&icon);
@@ -37,7 +37,7 @@ VALUE _showMessage(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _addButton(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _addButton(int argc,VALUE *argv,VALUE self)
 {
 	VALUE id,label;
 	rb_scan_args(argc, argv, "11",&id,&label);
@@ -59,7 +59,7 @@ VALUE _addButton(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _removeButton(VALUE self,VALUE id)
+DLL_LOCAL VALUE _removeButton(VALUE self,VALUE id)
 {
 	_self->RemoveButton(unwrapID(id));
 	return self;
@@ -69,7 +69,7 @@ VALUE _removeButton(VALUE self,VALUE id)
 }
 
 #endif
-void Init_WXInfoBarBase(VALUE rb_mWX)
+DLL_LOCAL void Init_WXInfoBarBase(VALUE rb_mWX)
 {
 #if wxUSE_TIMEPICKCTRL
 	using namespace RubyWX::InfoBarBase;

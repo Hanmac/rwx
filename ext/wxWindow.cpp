@@ -191,26 +191,26 @@ singlereturn(PageDown)
 
 singlereturn(GetRect)
 
-VALUE _SetParent(VALUE self,VALUE parent)
+DLL_LOCAL VALUE _SetParent(VALUE self,VALUE parent)
 {
 	_self->Reparent(unwrap<wxWindow*>(parent));
 	return parent;
 }
 
 
-VALUE _SetBackgroundColour(VALUE self,VALUE val)
+DLL_LOCAL VALUE _SetBackgroundColour(VALUE self,VALUE val)
 {
 	_self->SetBackgroundColour(unwrap<wxColor>(val));
 	return val;
 }
 
-VALUE _SetForegroundColour(VALUE self,VALUE val)
+DLL_LOCAL VALUE _SetForegroundColour(VALUE self,VALUE val)
 {
 	_self->SetForegroundColour(unwrap<wxColor>(val));
 	return val;
 }
 
-VALUE _SetRect(VALUE self,VALUE rect)
+DLL_LOCAL VALUE _SetRect(VALUE self,VALUE rect)
 {
 	_self->SetSize(unwrap<wxRect>(rect));
 	return rect;
@@ -219,7 +219,7 @@ VALUE _SetRect(VALUE self,VALUE rect)
 
 APP_PROTECT(wxWindow)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -265,12 +265,12 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _getchild(VALUE self,VALUE id)
+DLL_LOCAL VALUE _getchild(VALUE self,VALUE id)
 {
 	return wrap(_self->FindWindow(unwrapID(id)));
 }
 
-VALUE _GetHandle(VALUE self)
+DLL_LOCAL VALUE _GetHandle(VALUE self)
 {
 	std::stringstream handleStream;
 #if defined(__WXMSW__)
@@ -298,7 +298,7 @@ VALUE _GetHandle(VALUE self)
 
 
 
-VALUE _draw(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _draw(int argc,VALUE *argv,VALUE self)
 {
 	VALUE paint;
 	rb_scan_args(argc, argv, "01",&paint);
@@ -328,14 +328,14 @@ if(NIL_P(paint) || RTEST(paint)) {
 	return self;
 }
 
-VALUE _Close(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _Close(int argc,VALUE *argv,VALUE self)
 {
 	VALUE force;
 	rb_scan_args(argc, argv, "01",&force);
 	return wrap(_self->Close(RTEST(force)));
 }
 
-VALUE _wxClass(VALUE self)
+DLL_LOCAL VALUE _wxClass(VALUE self)
 {
 	return wrap(wxString(_self->GetClassInfo()->GetClassName()));
 }
@@ -343,7 +343,7 @@ VALUE _wxClass(VALUE self)
 
 
 #if wxUSE_MENUS
-VALUE _popupmenu(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _popupmenu(int argc,VALUE *argv,VALUE self)
 {
 	VALUE menu,pos;
 	wxPoint cpoint;
@@ -366,7 +366,7 @@ VALUE _popupmenu(int argc,VALUE *argv,VALUE self)
 #endif
 
 #if wxUSE_AUI
-VALUE _aui(VALUE self)
+DLL_LOCAL VALUE _aui(VALUE self)
 {
 	wxWindow *wnd = _self;
 	VALUE result = Qnil;
@@ -381,7 +381,7 @@ VALUE _aui(VALUE self)
 }
 #endif
 
-VALUE _each(VALUE self)
+DLL_LOCAL VALUE _each(VALUE self)
 {
 	RETURN_ENUMERATOR(self,0,NULL);
 	wxWindowList list = _self->GetChildren();
@@ -392,18 +392,18 @@ VALUE _each(VALUE self)
 	return self;
 }
 
-VALUE _GetMousePosition(VALUE self)
+DLL_LOCAL VALUE _GetMousePosition(VALUE self)
 {
 	return wrap(wxGetMousePosition());
 }
 
 
-VALUE _ClientToScreen(VALUE self,VALUE point)
+DLL_LOCAL VALUE _ClientToScreen(VALUE self,VALUE point)
 {
 	return wrap(_self->ClientToScreen(unwrap<wxPoint>(point)));
 }
 
-VALUE _ScreenToClient(VALUE self,VALUE point)
+DLL_LOCAL VALUE _ScreenToClient(VALUE self,VALUE point)
 {
 	return wrap(_self->ScreenToClient(unwrap<wxPoint>(point)));
 }
@@ -411,7 +411,7 @@ VALUE _ScreenToClient(VALUE self,VALUE point)
 }
 }
 
-void Init_WXWindow(VALUE rb_mWX)
+DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 {
 	using namespace RubyWX::Window;
 #if 0

@@ -22,7 +22,7 @@ namespace SizerItem {
 
 
 
-void Init_WXSizerItem(VALUE rb_mWX)
+DLL_LOCAL void Init_WXSizerItem(VALUE rb_mWX)
 {
 	using namespace RubyWX::SizerItem;
 	rb_cWXSizerItem = rb_define_class_under(rb_cWXSizer,"Item",rb_cObject);

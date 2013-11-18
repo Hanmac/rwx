@@ -30,7 +30,7 @@ macro_attr(StateImageList,wxImageList*)
 
 APP_PROTECT(wxTreeCtrl)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -43,7 +43,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _root(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _root(int argc,VALUE *argv,VALUE self)
 {
 	VALUE str, id, selid;
 	rb_scan_args(argc, argv, "03",&str, &id, &selid);
@@ -60,13 +60,13 @@ VALUE _root(int argc,VALUE *argv,VALUE self)
 	return result;
 }
 
-VALUE _getSelection(VALUE self)
+DLL_LOCAL VALUE _getSelection(VALUE self)
 {
 	return wrap(_self,_self->GetSelection());
 
 
 }
-VALUE _setSelection(VALUE self,VALUE item)
+DLL_LOCAL VALUE _setSelection(VALUE self,VALUE item)
 {
 	_self->SelectItem(unwrap<wxTreeItemId>(item));
 	return item;
@@ -85,7 +85,7 @@ macro_attr(BackgroundColour,wxColour)
 
 singlefunc(Delete)
 
-VALUE _AppendItem(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _AppendItem(int argc,VALUE *argv,VALUE self)
 {
 	VALUE str, id, selid;
 	rb_scan_args(argc, argv, "12",&str, &id, &selid);
@@ -102,7 +102,7 @@ VALUE _AppendItem(int argc,VALUE *argv,VALUE self)
 
 }
 
-VALUE _PrependItem(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _PrependItem(int argc,VALUE *argv,VALUE self)
 {
 	VALUE str, id, selid;
 	rb_scan_args(argc, argv, "12",&str, &id, &selid);
@@ -119,22 +119,22 @@ VALUE _PrependItem(int argc,VALUE *argv,VALUE self)
 
 }
 
-VALUE _GetNextSibling(VALUE self)
+DLL_LOCAL VALUE _GetNextSibling(VALUE self)
 {
 	return _self->GetNextSibling();
 }
 
-VALUE _GetPrevSibling(VALUE self)
+DLL_LOCAL VALUE _GetPrevSibling(VALUE self)
 {
 	return _self->GetPrevSibling();
 }
 
-VALUE _compare(VALUE self,VALUE other)
+DLL_LOCAL VALUE _compare(VALUE self,VALUE other)
 {
 	return _self->compare(unwrapPtr<RubyTreeCtrlItem>(self, rb_cWXTreeCtrlItem));
 }
 
-VALUE _each(VALUE self)
+DLL_LOCAL VALUE _each(VALUE self)
 {
 	RETURN_ENUMERATOR(self,0,NULL);
 	_self->each();
@@ -154,20 +154,20 @@ macro_attr(ToolTip,wxString)
 
 macro_attr(Point,wxPoint)
 
-VALUE _GetItem(VALUE self)
+DLL_LOCAL VALUE _GetItem(VALUE self)
 {
 	return wrap(static_cast<wxTreeCtrl*>(_self->GetEventObject()),_self->GetItem());
 }
-VALUE _SetItem(VALUE self,VALUE val)
+DLL_LOCAL VALUE _SetItem(VALUE self,VALUE val)
 {
 	_self->SetItem(unwrap< wxTreeItemId >(val));
 	return val;
 }
-VALUE _GetOldItem(VALUE self)
+DLL_LOCAL VALUE _GetOldItem(VALUE self)
 {
 	return wrap(static_cast<wxTreeCtrl*>(_self->GetEventObject()),_self->GetOldItem());
 }
-VALUE _SetOldItem(VALUE self,VALUE val)
+DLL_LOCAL VALUE _SetOldItem(VALUE self,VALUE val)
 {
 	_self->SetOldItem(unwrap< wxTreeItemId >(val));
 	return val;
@@ -330,7 +330,7 @@ VALUE wrap(wxTreeCtrl* tree,wxTreeItemId id)
 }
 
 #endif
-void Init_WXTreeCtrl(VALUE rb_mWX)
+DLL_LOCAL void Init_WXTreeCtrl(VALUE rb_mWX)
 {
 #if wxUSE_TREECTRL
 	using namespace RubyWX::TreeCtrl;

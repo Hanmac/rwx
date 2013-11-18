@@ -67,12 +67,12 @@ namespace Point {
 macro_attr_prop(x,int)
 macro_attr_prop(y,int)
 
-VALUE _alloc(VALUE self)
+DLL_LOCAL VALUE _alloc(VALUE self)
 {
 	return wrap(new wxPoint());
 }
 
-VALUE _initialize(VALUE self,VALUE x,VALUE y)
+DLL_LOCAL VALUE _initialize(VALUE self,VALUE x,VALUE y)
 {
 	_set_x(self,x);
 	_set_y(self,y);
@@ -81,7 +81,7 @@ VALUE _initialize(VALUE self,VALUE x,VALUE y)
 
 /*
 */
-VALUE _initialize_copy(VALUE self, VALUE other)
+DLL_LOCAL VALUE _initialize_copy(VALUE self, VALUE other)
 {
 	VALUE result = rb_call_super(1,&other);
 	_set_x(self,_get_x(other));
@@ -97,7 +97,7 @@ VALUE _initialize_copy(VALUE self, VALUE other)
  * ===Return value
  * String
 */
-VALUE _inspect(VALUE self)
+DLL_LOCAL VALUE _inspect(VALUE self)
 {
 	return rb_sprintf( "%s(%f, %f)",
 		rb_obj_classname( self ),
@@ -113,7 +113,7 @@ VALUE _inspect(VALUE self)
  * ===Return value
  * Array
  */
-VALUE _marshal_dump(VALUE self)
+DLL_LOCAL VALUE _marshal_dump(VALUE self)
 {
     VALUE ptr[2];
     ptr[0] = _get_x(self);
@@ -129,7 +129,7 @@ VALUE _marshal_dump(VALUE self)
  *
  *
  */
-VALUE _marshal_load(VALUE self, VALUE data)
+DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
 {
     VALUE* ptr = RARRAY_PTR(data);
     _set_x(self, ptr[0]);

@@ -87,7 +87,7 @@ namespace GridTable {
 //macro_attr(Path,wxString)
 
 
-VALUE _alloc(VALUE self)
+DLL_LOCAL VALUE _alloc(VALUE self)
 {
 	return wrapPtr(new RubyGridTable(self),self);
 }
@@ -97,7 +97,7 @@ VALUE _alloc(VALUE self)
 
 #endif
 
-void Init_WXGridTable(VALUE rb_mWX)
+DLL_LOCAL void Init_WXGridTable(VALUE rb_mWX)
 {
 #if wxUSE_GRID
 	using namespace RubyWX::GridTable;

@@ -21,13 +21,13 @@ macro_attr(Value,int)
 singlereturn(GetMax)
 singlereturn(GetMin)
 
-VALUE _setMin(VALUE self,VALUE val)
+DLL_LOCAL VALUE _setMin(VALUE self,VALUE val)
 {
 	_self->SetRange(NUM2INT(val),_self->GetMax());
 	return val;
 }
 
-VALUE _setMax(VALUE self,VALUE val)
+DLL_LOCAL VALUE _setMax(VALUE self,VALUE val)
 {
 	_self->SetRange(_self->GetMin(), NUM2INT(val));
 	return val;
@@ -35,7 +35,7 @@ VALUE _setMax(VALUE self,VALUE val)
 
 APP_PROTECT(wxSpinCtrl)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);

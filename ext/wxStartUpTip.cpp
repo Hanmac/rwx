@@ -26,7 +26,7 @@ private:
 	VALUE mRuby;
 };
 
-VALUE _showTip(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _showTip(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,obj,i,show;
 	rb_scan_args(argc, argv, "31",&parent,&obj,&i,&show);

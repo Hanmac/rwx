@@ -22,7 +22,7 @@ macro_attr_with_func(ReturnCode,wrapID,unwrapID)
 macro_attr_with_func(AffirmativeId,wrapID,unwrapID)
 
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,name;
 	rb_scan_args(argc, argv, "11",&parent,&name);
@@ -46,19 +46,19 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 }
 
-VALUE _ShowModal(VALUE self)
+DLL_LOCAL VALUE _ShowModal(VALUE self)
 {
 	return wrapID(_self->ShowModal());
 }
 
-VALUE _EndModal(VALUE self,VALUE id)
+DLL_LOCAL VALUE _EndModal(VALUE self,VALUE id)
 {
 	_self->EndModal(unwrapID(id));
 	return self;
 }
 
 
-VALUE _CreateButtonSizer(VALUE self,VALUE flags)
+DLL_LOCAL VALUE _CreateButtonSizer(VALUE self,VALUE flags)
 {
 	int flag = 0;
 
@@ -90,7 +90,7 @@ VALUE _CreateButtonSizer(VALUE self,VALUE flags)
 
 #if wxUSE_STATTEXT
 
-VALUE _CreateTextSizer(VALUE self,VALUE text)
+DLL_LOCAL VALUE _CreateTextSizer(VALUE self,VALUE text)
 {
 	return wrap(_self->CreateTextSizer(unwrap<wxString>(text)));
 }
@@ -99,7 +99,7 @@ VALUE _CreateTextSizer(VALUE self,VALUE text)
 }
 }
 
-void Init_WXDialog(VALUE rb_mWX)
+DLL_LOCAL void Init_WXDialog(VALUE rb_mWX)
 {
 	using namespace RubyWX::Dialog;
 	rb_cWXDialog = rb_define_class_under(rb_mWX,"Dialog",rb_cWXTopLevel);

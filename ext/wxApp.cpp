@@ -125,35 +125,35 @@ macro_attr(VendorName,wxString)
 macro_attr(VendorDisplayName,wxString)
 
 
-VALUE _alloc(VALUE self)
+DLL_LOCAL VALUE _alloc(VALUE self)
 {
 	return (new RubyApp(self))->mRuby;
 }
 
 
-VALUE _main_loop(VALUE self)
+DLL_LOCAL VALUE _main_loop(VALUE self)
 {
 	wxChar* argv[] = { NULL};
 	int argc = 0;
 	return INT2NUM(wxEntry(argc, argv));
 }
 
-VALUE _on_init(VALUE self)
+DLL_LOCAL VALUE _on_init(VALUE self)
 {
 	return Qtrue; //For wxWidgets to continue
 }
 
-VALUE _on_run(VALUE self)
+DLL_LOCAL VALUE _on_run(VALUE self)
 {
 	return Qnil;
 }
 
-VALUE _on_exit(VALUE self)
+DLL_LOCAL VALUE _on_exit(VALUE self)
 {
 	return Qnil;
 }
 
-VALUE _wxExit(VALUE self)
+DLL_LOCAL VALUE _wxExit(VALUE self)
 {
 	wxExit();
 	return self;
@@ -170,7 +170,7 @@ VALUE  singleton_wxApp(VALUE self)
 }
 
 
-void Init_WXApp(VALUE rb_mWX)
+DLL_LOCAL void Init_WXApp(VALUE rb_mWX)
 {
 	using namespace RubyWX::App;
 	rb_cWXApp = rb_define_class_under(rb_mWX,"App",rb_cObject);

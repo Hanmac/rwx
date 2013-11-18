@@ -25,7 +25,7 @@ singlereturn(GetOKLabel)
 singlereturn(GetCancelLabel)
 singlereturn(GetHelpLabel)
 
-VALUE _SetOKLabel(VALUE self,VALUE val)
+DLL_LOCAL VALUE _SetOKLabel(VALUE self,VALUE val)
 {
 	if(FIXNUM_P(val) || SYMBOL_P(val))
 		_self->SetOKLabel(unwrapID(val));
@@ -34,7 +34,7 @@ VALUE _SetOKLabel(VALUE self,VALUE val)
 	return val;
 }
 
-VALUE _SetYesLabel(VALUE self,VALUE val)
+DLL_LOCAL VALUE _SetYesLabel(VALUE self,VALUE val)
 {
 	if(FIXNUM_P(val) || SYMBOL_P(val))
 		_self->SetYesNoLabels(unwrapID(val),_self->GetNoLabel());
@@ -43,7 +43,7 @@ VALUE _SetYesLabel(VALUE self,VALUE val)
 	return val;
 }
 
-VALUE _SetNoLabel(VALUE self,VALUE val)
+DLL_LOCAL VALUE _SetNoLabel(VALUE self,VALUE val)
 {
 	if(FIXNUM_P(val) || SYMBOL_P(val))
 		_self->SetYesNoLabels(_self->GetYesLabel(),unwrapID(val));
@@ -52,7 +52,7 @@ VALUE _SetNoLabel(VALUE self,VALUE val)
 	return val;
 }
 
-VALUE _SetCancelLabel(VALUE self,VALUE val)
+DLL_LOCAL VALUE _SetCancelLabel(VALUE self,VALUE val)
 {
 	if(FIXNUM_P(val) || SYMBOL_P(val))
 		_self->SetOKCancelLabels(_self->GetOKLabel(),unwrapID(val));
@@ -62,7 +62,7 @@ VALUE _SetCancelLabel(VALUE self,VALUE val)
 }
 
 
-VALUE _SetHelpLabel(VALUE self,VALUE val)
+DLL_LOCAL VALUE _SetHelpLabel(VALUE self,VALUE val)
 {
 	if(FIXNUM_P(val) || SYMBOL_P(val))
 		_self->SetHelpLabel(unwrapID(val));
@@ -71,7 +71,7 @@ VALUE _SetHelpLabel(VALUE self,VALUE val)
 	return val;
 }
 
-VALUE _MessageBox(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _MessageBox(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,message;
 	rb_scan_args(argc, argv, "20",&parent,&message);
@@ -79,7 +79,7 @@ VALUE _MessageBox(int argc,VALUE *argv,VALUE self)
 	return unwrapID(wxMessageBox(unwrap<wxString>(message),wxMessageBoxCaptionStr,wxOK | wxCENTRE,unwrap<wxWindow*>(parent)));
 }
 
-VALUE _InfoMessageBox(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _InfoMessageBox(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent;
 	rb_scan_args(argc, argv, "01",&parent);
@@ -91,7 +91,7 @@ VALUE _InfoMessageBox(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
-void Init_WXMessageDialogBase(VALUE rb_mWX)
+DLL_LOCAL void Init_WXMessageDialogBase(VALUE rb_mWX)
 {
 #if wxUSE_MSGDLG
 	using namespace RubyWX::MessageDialogBase;

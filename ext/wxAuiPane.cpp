@@ -79,7 +79,7 @@ singlereturn(IsToolbar)
 }
 }
 
-void Init_WXAuiPane(VALUE rb_mWX)
+DLL_LOCAL void Init_WXAuiPane(VALUE rb_mWX)
 {
 #if wxUSE_AUI
 	using namespace RubyWX::AuiPane;

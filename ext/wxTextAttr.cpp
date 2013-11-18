@@ -75,7 +75,7 @@ macro_textattr(URL,wxString,wrap)
 }
 }
 #endif
-void Init_WXTextAttr(VALUE rb_mWX)
+DLL_LOCAL void Init_WXTextAttr(VALUE rb_mWX)
 {
 #if wxUSE_TEXTCTRL
 	using namespace RubyWX::TextAttr;

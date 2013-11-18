@@ -23,7 +23,7 @@ singlefunc(Veto)
 }
 
 
-void Init_WXNotifyEvent(VALUE rb_mWX)
+DLL_LOCAL void Init_WXNotifyEvent(VALUE rb_mWX)
 {
 	using namespace RubyWX::NotifyEvent;
 

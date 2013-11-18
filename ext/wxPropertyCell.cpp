@@ -28,7 +28,7 @@ macro_attr(BgCol,wxColor)
  * ===Return value
  * String
 */
-VALUE _inspect(VALUE self)
+DLL_LOCAL VALUE _inspect(VALUE self)
 {
 	VALUE array[3];
 	array[0]=rb_str_new2("#<%s:(%s)>");

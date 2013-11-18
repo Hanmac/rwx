@@ -44,7 +44,7 @@ singlereturn(GetFile)
 }
 }
 #endif
-void Init_WXFileCtrlBase(VALUE rb_mWX)
+DLL_LOCAL void Init_WXFileCtrlBase(VALUE rb_mWX)
 {
 #if wxUSE_FILECTRL
 	using namespace RubyWX::FileCtrlBase;

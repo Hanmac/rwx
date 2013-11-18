@@ -132,11 +132,11 @@ macro_attr(Mask,wxMask*)
 //macro_attr(Palette,wxPalette)
 #endif
 
-VALUE _alloc(VALUE self) {
+DLL_LOCAL VALUE _alloc(VALUE self) {
 	return wrap(new wxBitmap);
 }
 
-VALUE _draw(VALUE self)
+DLL_LOCAL VALUE _draw(VALUE self)
 {
 	wxDC *dc;
 	wxMemoryDC *mdc = new wxMemoryDC;
@@ -151,7 +151,7 @@ VALUE _draw(VALUE self)
 	return self;
 }
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE x,y;
 	rb_scan_args(argc, argv, "11",&x,&y);
@@ -162,17 +162,17 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 
 #if wxUSE_IMAGE
-VALUE _to_image(VALUE self)
+DLL_LOCAL VALUE _to_image(VALUE self)
 {
 	return wrap(_self->ConvertToImage());
 }
 #endif
-VALUE _to_bitmap(VALUE self)
+DLL_LOCAL VALUE _to_bitmap(VALUE self)
 {
 	return self;
 }
 
-VALUE _save_file(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _save_file(int argc,VALUE *argv,VALUE self)
 {
 	VALUE name;
 	rb_scan_args(argc, argv, "10",&name);
@@ -212,7 +212,7 @@ wxBitmap wrapBitmap(const VALUE &vbitmap,wxWindowID id,bool disabled,const wxArt
 
 
 
-void Init_WXBitmap(VALUE rb_mWX)
+DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
 {
 	wxBitmap::InitStandardHandlers();
 

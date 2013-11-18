@@ -27,7 +27,7 @@ macro_attr(CaretLineBackground,wxColor)
 
 APP_PROTECT(wxStyledTextCtrl)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -38,7 +38,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _test_style(VALUE self)
+DLL_LOCAL VALUE _test_style(VALUE self)
 {
 	_self->SetLexer(wxSTC_LEX_RUBY);
 	_self->StyleSetBold(wxSTC_RB_STDERR,true);
@@ -53,7 +53,7 @@ VALUE _test_style(VALUE self)
 	return self;
 }
 
-VALUE _UndoAction(VALUE self)
+DLL_LOCAL VALUE _UndoAction(VALUE self)
 {
 	_self->BeginUndoAction();
 	rb_yield(Qnil);
@@ -66,7 +66,7 @@ VALUE _UndoAction(VALUE self)
 }
 }
 #endif
-void Init_WXSTC(VALUE rb_mWX)
+DLL_LOCAL void Init_WXSTC(VALUE rb_mWX)
 {
 #if wxUSE_STC
 	using namespace RubyWX::STC;

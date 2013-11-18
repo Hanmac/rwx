@@ -22,7 +22,7 @@ singlereturn(GetCurrentPage)
 
 APP_PROTECT(wxWizard)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -46,14 +46,14 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _showPage(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _showPage(int argc,VALUE *argv,VALUE self)
 {
 	VALUE page,goingForward;
 	rb_scan_args(argc, argv, "11",&page,&goingForward);
 	return wrap(_self->ShowPage(unwrap<wxWizardPage*>(page),RTEST(goingForward)));
 }
 
-VALUE _runWizard(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _runWizard(int argc,VALUE *argv,VALUE self)
 {
 	VALUE page;
 	wxWizardPage *wpage = NULL;
@@ -73,7 +73,7 @@ VALUE _runWizard(int argc,VALUE *argv,VALUE self)
 	return wrap(_self->RunWizard(wpage));
 }
 
-VALUE _addPage(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _addPage(int argc,VALUE *argv,VALUE self)
 {
 	VALUE obj,hash;
 	rb_scan_args(argc, argv, "02",&obj,&hash);
@@ -89,7 +89,7 @@ VALUE _addPage(int argc,VALUE *argv,VALUE self)
 	return result;
 }
 
-VALUE _chainPages(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _chainPages(int argc,VALUE *argv,VALUE self)
 {
 	VALUE page1,page2,args;
 	rb_scan_args(argc, argv, "2*",&page1,&page2,&args);

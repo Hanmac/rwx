@@ -15,7 +15,7 @@ namespace Frame {
 
 APP_PROTECT(wxFrame)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash,name;
 	rb_scan_args(argc, argv, "12",&parent,&name,&hash);

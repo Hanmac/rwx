@@ -33,20 +33,20 @@ singlereturn(GetBitmap)
 singlereturn(GetNormalBitmap)
 singlereturn(GetDisabledBitmap)
 
-VALUE _SetNormalBitmap(VALUE self,VALUE val)
+DLL_LOCAL VALUE _SetNormalBitmap(VALUE self,VALUE val)
 {
 	_self->SetNormalBitmap(wrapBitmap(val,_self->GetId(),false,wxART_TOOLBAR));
 	return val;
 }
 
-VALUE _SetDisabledBitmap(VALUE self,VALUE val)
+DLL_LOCAL VALUE _SetDisabledBitmap(VALUE self,VALUE val)
 {
 	_self->SetDisabledBitmap(wrapBitmap(val,_self->GetId(),true,wxART_TOOLBAR));
 	return val;
 }
 
 
-VALUE _getControl(VALUE self)
+DLL_LOCAL VALUE _getControl(VALUE self)
 {
 	if(_self->IsControl())
 		return wrap(_self->GetControl());
@@ -54,7 +54,7 @@ VALUE _getControl(VALUE self)
 }
 
 
-VALUE _alloc(VALUE self)
+DLL_LOCAL VALUE _alloc(VALUE self)
 {
 
 	return wrap(new wxToolBarToolBase);
@@ -64,7 +64,7 @@ VALUE _alloc(VALUE self)
 }
 
 
-void Init_WXToolBarTool(VALUE rb_mWX)
+DLL_LOCAL void Init_WXToolBarTool(VALUE rb_mWX)
 {
 	using namespace RubyWX::ToolBarTool;
 	//rb_cWXMenu = rb_define_class_under(rb_mWX,"Menu",rb_cObject);

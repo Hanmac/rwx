@@ -22,7 +22,7 @@ namespace StatusBar {
 APP_PROTECT(wxStatusBar)
 
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -38,7 +38,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 macro_attr(StatusText,wxString)
 macro_attr(FieldsCount,int)
 
-VALUE _GetFieldRect(VALUE self,VALUE num)
+DLL_LOCAL VALUE _GetFieldRect(VALUE self,VALUE num)
 {
 	if(NUM2INT(num) < _self->GetFieldsCount())
 	{
@@ -49,14 +49,14 @@ VALUE _GetFieldRect(VALUE self,VALUE num)
 	return Qnil;
 }
 
-VALUE _getStatusText2(VALUE self,VALUE num)
+DLL_LOCAL VALUE _getStatusText2(VALUE self,VALUE num)
 {
 	if(NUM2INT(num) < _self->GetFieldsCount())
 		return wrap(_self->GetStatusText(NUM2INT(num)));
 	return Qnil;
 }
 
-VALUE _setStatusText2(VALUE self,VALUE str,VALUE num)
+DLL_LOCAL VALUE _setStatusText2(VALUE self,VALUE str,VALUE num)
 {
 	if(NUM2INT(num) < _self->GetFieldsCount())
 		_self->SetStatusText(unwrap<wxString>(str),NUM2INT(num));
@@ -65,14 +65,14 @@ VALUE _setStatusText2(VALUE self,VALUE str,VALUE num)
 	return Qnil;
 }
 
-VALUE _getStatusWidth(VALUE self,VALUE num)
+DLL_LOCAL VALUE _getStatusWidth(VALUE self,VALUE num)
 {
 	if(NUM2INT(num) < _self->GetFieldsCount())
 		return INT2NUM(_self->GetStatusWidth(NUM2INT(num)));
 	return Qnil;
 }
 
-VALUE _setStatusWidth(VALUE self,VALUE num,VALUE val)
+DLL_LOCAL VALUE _setStatusWidth(VALUE self,VALUE num,VALUE val)
 {
 	const size_t count = _self->GetFieldsCount();
 
@@ -93,7 +93,7 @@ VALUE _setStatusWidth(VALUE self,VALUE num,VALUE val)
 	return Qnil;
 }
 
-VALUE _pushStatusText(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _pushStatusText(int argc,VALUE *argv,VALUE self)
 {
 	VALUE str,num;
 	rb_scan_args(argc, argv, "11",&str,&num);
@@ -105,7 +105,7 @@ VALUE _pushStatusText(int argc,VALUE *argv,VALUE self)
 	return Qnil;
 }
 
-VALUE _popStatusText(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _popStatusText(int argc,VALUE *argv,VALUE self)
 {
 	VALUE num;
 	rb_scan_args(argc, argv, "01",&num);
@@ -118,7 +118,7 @@ VALUE _popStatusText(int argc,VALUE *argv,VALUE self)
 }
 
 //TODO Fix the bad Reference
-VALUE _each(VALUE self)
+DLL_LOCAL VALUE _each(VALUE self)
 {
 	RETURN_ENUMERATOR(self,0,NULL);
 	size_t s = _self->GetFieldsCount();
@@ -137,7 +137,7 @@ macro_attr(Width,int)
 macro_attr(Style,int)
 macro_attr(Text,wxString)
 
-VALUE _pushText(VALUE self,VALUE str)
+DLL_LOCAL VALUE _pushText(VALUE self,VALUE str)
 {
 	return wrap(_self->PushText(unwrap<wxString>(str)));
 }

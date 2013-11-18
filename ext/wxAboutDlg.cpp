@@ -58,7 +58,7 @@ wxAboutDialogInfo toInto(VALUE hash)
 	return info;
 }
 
-VALUE _aboutBox(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _aboutBox(int argc,VALUE *argv,VALUE self)
 {
 	VALUE hash,parent;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -75,7 +75,7 @@ VALUE _aboutBox(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _genericaboutBox(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _genericaboutBox(int argc,VALUE *argv,VALUE self)
 {
 	VALUE hash,parent;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -96,7 +96,7 @@ VALUE _genericaboutBox(int argc,VALUE *argv,VALUE self)
 }
 }
 
-void Init_WXAboutDlg(VALUE rb_mWX)
+DLL_LOCAL void Init_WXAboutDlg(VALUE rb_mWX)
 {
 #if wxUSE_ABOUTDLG
 	using namespace RubyWX::AboutDlg;

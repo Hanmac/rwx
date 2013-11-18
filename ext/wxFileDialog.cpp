@@ -18,7 +18,7 @@ namespace FileDialog {
 
 APP_PROTECT(wxFileDialog)
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
@@ -56,14 +56,14 @@ macro_attr(Wildcard,wxString)
 macro_attr(Message,wxString)
 macro_attr(Path,wxString)
 
-VALUE _getFilenames(VALUE self)
+DLL_LOCAL VALUE _getFilenames(VALUE self)
 {
 	wxArrayString result;
 	_self->GetFilenames(result);
 	return wrap(result);
 }
 
-VALUE _getPaths(VALUE self)
+DLL_LOCAL VALUE _getPaths(VALUE self)
 {
 	wxArrayString result;
 	_self->GetPaths(result);
@@ -71,7 +71,7 @@ VALUE _getPaths(VALUE self)
 }
 
 
-VALUE _saveFileSelector(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _saveFileSelector(int argc,VALUE *argv,VALUE self)
 {
 	VALUE what,extension,default_name,parent;
 	rb_scan_args(argc, argv, "22",&what,&extension,&default_name,&parent);
@@ -80,7 +80,7 @@ VALUE _saveFileSelector(int argc,VALUE *argv,VALUE self)
 			unwrap<wxString>(default_name),
 			unwrap<wxWindow*>(parent)));
 }
-VALUE _loadFileSelector(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _loadFileSelector(int argc,VALUE *argv,VALUE self)
 {
 	VALUE what,extension,default_name,parent;
 	rb_scan_args(argc, argv, "22",&what,&extension,&default_name,&parent);
@@ -93,7 +93,7 @@ VALUE _loadFileSelector(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
-void Init_WXFileDialog(VALUE rb_mWX)
+DLL_LOCAL void Init_WXFileDialog(VALUE rb_mWX)
 {
 #if wxUSE_FILEDLG
 	using namespace RubyWX::FileDialog;

@@ -57,7 +57,7 @@ namespace RubyWX {
 namespace Sizer {
 
 
-VALUE _initialize(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE args;
 	rb_scan_args(argc, argv, "*",&args);
@@ -68,7 +68,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 
 
-VALUE _add(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _add(int argc,VALUE *argv,VALUE self)
 {
 	VALUE obj,hash;
 	rb_scan_args(argc, argv, "11",&obj,&hash);
@@ -86,7 +86,7 @@ VALUE _add(int argc,VALUE *argv,VALUE self)
 }
 
 
-VALUE _insert(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _insert(int argc,VALUE *argv,VALUE self)
 {
 	VALUE index,obj,hash;
 	rb_scan_args(argc, argv, "21",&index,&obj,&hash);
@@ -102,7 +102,7 @@ VALUE _insert(int argc,VALUE *argv,VALUE self)
 }
 
 
-VALUE _prepend(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _prepend(int argc,VALUE *argv,VALUE self)
 {
 	VALUE obj,hash;
 	rb_scan_args(argc, argv, "11",&obj,&hash);
@@ -118,12 +118,12 @@ VALUE _prepend(int argc,VALUE *argv,VALUE self)
 }
 
 
-VALUE _getItem(VALUE self,VALUE index)
+DLL_LOCAL VALUE _getItem(VALUE self,VALUE index)
 {
 	return wrap(_self->GetItem(NUM2UINT(index)));
 }
 
-VALUE _each(VALUE self)
+DLL_LOCAL VALUE _each(VALUE self)
 {
 	RETURN_ENUMERATOR(self,0,NULL);
 	size_t  count = _self->GetItemCount();
@@ -136,7 +136,7 @@ VALUE _each(VALUE self)
 }
 }
 
-void Init_WXSizer(VALUE rb_mWX)
+DLL_LOCAL void Init_WXSizer(VALUE rb_mWX)
 {
 	using namespace RubyWX::Sizer;
 	rb_cWXSizer = rb_define_class_under(rb_mWX,"Sizer",rb_cObject);

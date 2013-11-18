@@ -26,7 +26,7 @@ macro_attr(Date,wxDateTime)
 }
 }
 #endif
-void Init_WXCalendarCtrlBase(VALUE rb_mWX)
+DLL_LOCAL void Init_WXCalendarCtrlBase(VALUE rb_mWX)
 {
 #if wxUSE_TIMEPICKCTRL
 	using namespace RubyWX::CalendarCtrlBase;
