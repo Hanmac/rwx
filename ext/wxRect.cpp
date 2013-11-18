@@ -55,6 +55,7 @@ VALUE _initialize_copy(VALUE self, VALUE other)
 	_setHeight(self,_getHeight(other));
 	return result;
 }
+
 /*
  * call-seq:
  *   inspect -> String
@@ -65,22 +66,80 @@ VALUE _initialize_copy(VALUE self, VALUE other)
 */
 VALUE _inspect(VALUE self)
 {
-	VALUE array[6];
-	array[0]=rb_str_new2("#<%s:(%d, %d, %d, %d)>");
-	array[1]=rb_class_of(self);
-	array[2]=_getX(self);
-	array[3]=_getY(self);
-	array[4]=_getWidth(self);
-	array[5]=_getHeight(self);
-	return rb_f_sprintf(6,array);
+	return rb_sprintf( "%s(%d, %d, %d, %d)",
+		rb_obj_classname( self ),
+		FIX2INT(_getX(self)),
+		FIX2INT(_getY(self)),
+		FIX2INT(_getWidth(self)),
+		FIX2INT(_getHeight(self)));
 }
+
+/*
+ * call-seq:
+ *   marshal_dump -> Array
+ *
+ * Provides marshalling support for use by the Marshal library.
+ * ===Return value
+ * Array
+ */
+VALUE _marshal_dump(VALUE self)
+{
+    VALUE ptr[4];
+    ptr[0] = _getX(self);
+    ptr[1] = _getY(self);
+    ptr[2] = _getWidth(self);
+    ptr[3] = _getHeight(self);
+    return rb_ary_new4( 4, ptr );
+}
+
+/*
+ * call-seq:
+ *   marshal_load(array) -> nil
+ *
+ * Provides marshalling support for use by the Marshal library.
+ *
+ *
+ */
+VALUE _marshal_load(VALUE self, VALUE data)
+{
+    VALUE* ptr = RARRAY_PTR( data );
+    _setX(self, ptr[0]);
+    _setY(self, ptr[1]);
+    _setWidth(self, ptr[2]);
+    _setHeight(self, ptr[3]);
+    return Qnil;
+}
+
 
 }
 }
+
+/*
+ * Document-class: WX::Rect
+ *
+ * This class represents an Rect.
+*/
+
+/* Document-attr: x
+ * returns the x value of Rect. */
+/* Document-attr: y
+ * returns the y value of Rect. */
+/* Document-attr: width
+ * returns the width value of Rect. */
+/* Document-attr: height
+ * returns the height value of Rect. */
 
 
 void Init_WXRect(VALUE rb_mWX)
 {
+
+#if 0
+	rb_define_attr(rb_cWXRect,"x",1,1);
+	rb_define_attr(rb_cWXRect,"y",1,1);
+	rb_define_attr(rb_cWXRect,"width",1,1);
+	rb_define_attr(rb_cWXRect,"height",1,1);
+#endif
+
 	using namespace RubyWX::Rect;
 	rb_cWXRect = rb_define_class_under(rb_mWX,"Rect",rb_cObject);
 
@@ -99,6 +158,9 @@ void Init_WXRect(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXRect,"size",_getSize,_setSize);
 
 	rb_define_method(rb_cWXRect,"inspect",RUBY_METHOD_FUNC(_inspect),0);
+
+	rb_define_method(rb_cWXRect,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
+	rb_define_method(rb_cWXRect,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 }
 
 
