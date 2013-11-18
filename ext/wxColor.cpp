@@ -182,6 +182,7 @@ VALUE _initialize_copy(VALUE self, VALUE other)
 	_setAlpha(self,_getAlpha(other));
 	return result;
 }
+
 /*
  * call-seq:
  *   inspect -> String
@@ -192,19 +193,71 @@ VALUE _initialize_copy(VALUE self, VALUE other)
 */
 VALUE _inspect(VALUE self)
 {
-	VALUE array[6];
-	array[0]=rb_str_new2("#<%s:(%d, %d, %d, %d)>");
-	array[1]=rb_class_of(self);
-	array[2]=_getRed(self);
-	array[3]=_getGreen(self);
-	array[4]=_getBlue(self);
-	array[5]=_getAlpha(self);
-	return rb_f_sprintf(6,array);
+	return rb_sprintf( "%s(%d, %d, %d, %d)",
+		rb_obj_classname( self ),
+		FIX2INT(_getRed(self)),
+		FIX2INT(_getGreen(self)),
+		FIX2INT(_getBlue(self)),
+		FIX2INT(_getAlpha(self)));
+}
+
+/*
+ * call-seq:
+ *   marshal_dump -> Array
+ *
+ * Provides marshalling support for use by the Marshal library.
+ * ===Return value
+ * Array
+ */
+VALUE _marshal_dump(VALUE self)
+{
+    VALUE ptr[4];
+    ptr[0] = _getRed(self);
+    ptr[1] = _getGreen(self);
+    ptr[2] = _getBlue(self);
+    ptr[3] = _getAlpha(self);
+    return rb_ary_new4( 4, ptr );
+}
+
+/*
+ * call-seq:
+ *   marshal_load(array) -> nil
+ *
+ * Provides marshalling support for use by the Marshal library.
+ *
+ *
+ */
+VALUE _marshal_load(VALUE self, VALUE data)
+{
+    VALUE* ptr = RARRAY_PTR( data );
+    _setRed(self, ptr[0]);
+    _setGreen(self, ptr[1]);
+    _setBlue(self, ptr[2]);
+    _setAlpha(self, ptr[3]);
+    return Qnil;
 }
 
 
+
 }
 }
+
+
+/*
+ * Document-class: WX::Color
+ *
+ * This class represents an Color.
+*/
+
+/* Document-attr: red
+ * returns the red value of Color. */
+/* Document-attr: blue
+ * returns the blue value of Color. */
+/* Document-attr: green
+ * returns the green value of Color. */
+/* Document-attr: alpha
+ * returns the alpha value of Color. */
+
 
 void Init_WXColor(VALUE rb_mWX)
 {
@@ -232,4 +285,7 @@ void Init_WXColor(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXColor,"to_s",RUBY_METHOD_FUNC(_tos),0);
 	rb_define_method(rb_cWXColor,"inspect",RUBY_METHOD_FUNC(_inspect),0);
+
+	rb_define_method(rb_cWXColor,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
+	rb_define_method(rb_cWXColor,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 }
