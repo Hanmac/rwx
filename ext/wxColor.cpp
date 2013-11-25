@@ -216,7 +216,7 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
     ptr[1] = _getGreen(self);
     ptr[2] = _getBlue(self);
     ptr[3] = _getAlpha(self);
-    return rb_ary_new4( 4, ptr );
+    return rb_ary_new4(4, ptr);
 }
 
 /*
@@ -229,12 +229,25 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
  */
 DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
 {
-    VALUE* ptr = RARRAY_PTR( data );
+    VALUE* ptr = RARRAY_PTR(data);
     _setRed(self, ptr[0]);
     _setGreen(self, ptr[1]);
     _setBlue(self, ptr[2]);
     _setAlpha(self, ptr[3]);
     return Qnil;
+}
+
+/*
+ * call-seq:
+ *   == color -> bool
+ *
+ * compares two colors.
+ *
+ *
+ */
+DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
+{
+	return wrap((*_self) == unwrap<wxColor>(other));
 }
 
 
@@ -288,4 +301,6 @@ DLL_LOCAL void Init_WXColor(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXColor,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
 	rb_define_method(rb_cWXColor,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
+
+	rb_define_method(rb_cWXColor,"==",RUBY_METHOD_FUNC(_equal),1);
 }

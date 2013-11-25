@@ -261,7 +261,7 @@ DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
 	registerArtID("quit",wxART_QUIT);
 
 	registerArtID("find",wxART_FIND,wxID_FIND);
-	registerArtID("replace",wxART_FIND_AND_REPLACE,wxID_FIND);
+	registerArtID("replace",wxART_FIND_AND_REPLACE,wxID_REPLACE);
 
 
 	registerArtID("floppy",wxART_FLOPPY,wxID_FLOPPY);

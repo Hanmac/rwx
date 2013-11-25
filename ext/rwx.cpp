@@ -147,6 +147,8 @@
 #include "wxSizer.hpp"
 #include "wxSizerItem.hpp"
 
+#include "wxPalette.hpp"
+
 #include "wxGridTable.hpp"
 #include "wxGridCellRenderer.hpp"
 #include "wxGridCellAttr.hpp"
@@ -184,6 +186,7 @@ extern "C" void Init_rwx()
 	Init_WXError(rb_mWX);
 
 	Init_WXColor(rb_mWX);
+	Init_WXPalette(rb_mWX);
 	Init_WXFont(rb_mWX);
 	Init_WXPen(rb_mWX);
 	Init_WXBrush(rb_mWX);
