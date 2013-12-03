@@ -439,6 +439,10 @@ DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
 	rb_define_alloc_func(rb_cWXWindow,_alloc);
 
+	rb_undef_method(rb_cWXWindow,"initialize_copy");
+	rb_undef_method(rb_cWXWindow,"_load");
+	rb_undef_method(rb_cWXWindow,"_dump");
+
 	rb_define_method(rb_cWXWindow,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_include_module(rb_cWXWindow,rb_mWXEvtHandler);
