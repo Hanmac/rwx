@@ -59,6 +59,10 @@ DLL_LOCAL void Init_WXTimer(VALUE rb_mWX)
 	rb_cWXTimer = rb_define_class_under(rb_mWX,"Timer",rb_cObject);
 	rb_define_alloc_func(rb_cWXTimer,_alloc);
 
+	rb_undef_method(rb_cWXTimer,"initialize_copy");
+	rb_undef_method(rb_cWXTimer,"_load");
+	rb_undef_method(rb_cWXTimer,"_dump");
+
 	rb_define_method(rb_cWXTimer,"initialize",RUBY_METHOD_FUNC(_initialize),0);
 
 	rb_include_module(rb_cWXTimer,rb_mWXEvtHandler);
