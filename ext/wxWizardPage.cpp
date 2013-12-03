@@ -10,6 +10,8 @@
 
 VALUE rb_cWXWizardPage;
 
+#if wxUSE_WIZARDDLG
+
 #define _self unwrap<RubyWizardPage*>(self)
 
 
@@ -73,8 +75,20 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 
+
+#endif
+
 DLL_LOCAL void Init_WXWizardPage(VALUE rb_mWX)
 {
+#if 0
+	rb_define_attr(rb_cWXWizardPage,"prev",1,1);
+	rb_define_attr(rb_cWXWizardPage,"next",1,1);
+
+	rb_define_attr(rb_cWXWizardPage,"bitmap",1,1);
+
+#endif
+
+#if wxUSE_WIZARDDLG
 	using namespace RubyWX::WizardPage;
 	rb_cWXWizardPage = rb_define_class_under(rb_mWX,"WizardPage",rb_cWXPanel);
 	rb_define_alloc_func(rb_cWXWizardPage,_alloc);
@@ -89,4 +103,5 @@ DLL_LOCAL void Init_WXWizardPage(VALUE rb_mWX)
 	registerInfo<wxWizardPage>(rb_cWXWizardPage);
 	registerInfo<wxWizardPageSimple>(rb_cWXWizardPage);
 	registerInfo<RubyWizardPage>(rb_cWXWizardPage);
+#endif
 }

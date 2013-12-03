@@ -6,9 +6,14 @@
  */
 
 #include "wxWizard.hpp"
+#include "wxNotifyEvent.hpp"
 
 VALUE rb_cWXWizard;
+VALUE rb_cWXWizardEvent;
+
+
 #if wxUSE_WIZARDDLG
+
 #define _self unwrap<wxWizard*>(self)
 
 namespace RubyWX {
@@ -104,6 +109,16 @@ DLL_LOCAL VALUE _chainPages(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
+namespace Event
+{
+#undef _self
+#define _self unwrapPtr<wxWizardEvent>(self,rb_cWXWizardEvent)
+
+singlereturn(GetDirection)
+singlereturn(GetPage)
+
+}
+
 }
 }
 
@@ -132,5 +147,19 @@ DLL_LOCAL void Init_WXWizard(VALUE rb_mWX)
 	rb_define_method(rb_cWXWizard,"chain_pages",RUBY_METHOD_FUNC(_chainPages),-1);
 
 	registerInfo<wxWizard>(rb_cWXWizard);
+
+	rb_cWXWizardEvent = rb_define_class_under(rb_cWXEvent,"Wizard",rb_cWXNotifyEvent);
+
+	rb_define_method(rb_cWXWizardEvent,"direction",RUBY_METHOD_FUNC(Event::_GetDirection),0);
+	rb_define_method(rb_cWXWizardEvent,"page",RUBY_METHOD_FUNC(Event::_GetPage),0);
+
+	registerEventType("wizard_page_changed",wxEVT_WIZARD_PAGE_CHANGED,rb_cWXWizardEvent);
+	registerEventType("wizard_page_changing",wxEVT_WIZARD_PAGE_CHANGING,rb_cWXWizardEvent);
+	registerEventType("wizard_cancel",wxEVT_WIZARD_CANCEL,rb_cWXWizardEvent);
+	registerEventType("wizard_help",wxEVT_WIZARD_HELP,rb_cWXWizardEvent);
+	registerEventType("wizard_finished",wxEVT_WIZARD_FINISHED,rb_cWXWizardEvent);
+	registerEventType("wizard_page_shown",wxEVT_WIZARD_PAGE_SHOWN,rb_cWXWizardEvent);
+	registerEventType("wizard_before_page_changed",wxEVT_WIZARD_BEFORE_PAGE_CHANGED,rb_cWXWizardEvent);
+
 #endif
 }
