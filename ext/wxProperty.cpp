@@ -110,10 +110,20 @@ DLL_LOCAL VALUE _each_child(VALUE self)
 	return self;
 }
 
+DLL_LOCAL VALUE _each_choices_count(VALUE self)
+{
+	const wxPGChoices& choices = _self->GetChoices();
+	if(!choices.IsOk())
+		return INT2FIX(0);
+
+	return wrap(choices.GetCount());
+}
+
+
 
 DLL_LOCAL VALUE _each_choices(VALUE self)
 {
-	RETURN_ENUMERATOR(self,0,NULL);
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_choices_count);
 	wxPGChoices& choices = const_cast<wxPGChoices&>(_self->GetChoices());
 
 	if(!choices.IsOk())
@@ -130,9 +140,15 @@ DLL_LOCAL VALUE _each_choices(VALUE self)
 	return self;
 }
 
+DLL_LOCAL VALUE _each_attributes_size(VALUE self)
+{
+	return wrap(_self->GetAttributes().GetCount());
+}
+
+
 DLL_LOCAL VALUE _each_attributes(VALUE self)
 {
-	RETURN_ENUMERATOR(self,0,NULL);
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_attributes_size);
 
 	const wxPGAttributeStorage& attrs = _self->GetAttributes();
 
@@ -161,6 +177,11 @@ DLL_LOCAL void Init_WXProperty(VALUE rb_mWX)
 	rb_cWXProperty = rb_define_class_under(rb_mWX,"Property",rb_cObject);
 	rb_define_alloc_func(rb_cWXProperty,_alloc);
 
+	//TODO check if its possible to add this methods
+	rb_undef_method(rb_cWXProperty,"initialize_copy");
+	rb_undef_method(rb_cWXProperty,"_load");
+	rb_undef_method(rb_cWXProperty,"_dump");
+
 	rb_define_attr_method(rb_cWXProperty,"name",_getName,_setName);
 	rb_define_attr_method(rb_cWXProperty,"label",_getLabel,_setLabel);
 
@@ -187,12 +208,23 @@ DLL_LOCAL void Init_WXProperty(VALUE rb_mWX)
 	registerProperty<wxBoolProperty>(rb_mWX,"BoolProperty");
 	registerProperty<wxFontProperty>(rb_mWX,"FontProperty");
 	registerProperty<wxFileProperty>(rb_mWX,"FileProperty");
+
+#if wxUSE_IMAGE
+	registerProperty<wxImageFileProperty>(rb_mWX,"ImageFileProperty","FileProperty");
+#endif
+
+#if wxUSE_DATETIME
+	registerProperty<wxDateProperty>(rb_mWX,"DateProperty");
+#endif
+
 	registerProperty<wxStringProperty>(rb_mWX,"StringProperty");
 	registerProperty<wxArrayStringProperty>(rb_mWX,"ArrayStringProperty");
 	
 	registerProperty<wxEnumProperty>(rb_mWX,"EnumProperty");
+	registerProperty<wxFlagsProperty>(rb_mWX,"FlagsProperty");
 	
 	registerProperty<wxSystemColourProperty>(rb_mWX,"SystemColorProperty","EnumProperty");
+	registerProperty<wxColourProperty>(rb_mWX,"ColorProperty","SystemColorProperty");
 	registerProperty<wxCursorProperty>(rb_mWX,"CursorProperty","EnumProperty");
 	
 #endif
