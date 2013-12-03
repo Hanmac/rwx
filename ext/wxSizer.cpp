@@ -141,6 +141,11 @@ DLL_LOCAL void Init_WXSizer(VALUE rb_mWX)
 	using namespace RubyWX::Sizer;
 	rb_cWXSizer = rb_define_class_under(rb_mWX,"Sizer",rb_cObject);
 	rb_undef_alloc_func(rb_cWXSizer);
+
+	rb_undef_method(rb_cWXSizer,"initialize_copy");
+	rb_undef_method(rb_cWXSizer,"_load");
+	rb_undef_method(rb_cWXSizer,"_dump");
+
 	rb_define_method(rb_cWXSizer,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_method(rb_cWXSizer,"add",RUBY_METHOD_FUNC(_add),-1);
