@@ -125,7 +125,7 @@ extern enumregistertype enumregister;
 
 
 template <typename T>
-enumtype* registerEnum(const char* name,int def = 0)
+DLL_LOCAL enumtype* registerEnum(const char* name,int def = 0)
 {
 	enumtype *type = new enumtype;
 	enumregister.insert(std::make_pair(std::string(typeid(T).name()),type));

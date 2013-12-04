@@ -23,39 +23,39 @@
 
 #include <wx/sharedptr.h>
 
-void registerEventType(const char *sym, wxEventType type,wxClassInfo *info);
+DLL_LOCAL void registerEventType(const char *sym, wxEventType type,wxClassInfo *info);
 
 #ifdef wxHAS_EVENT_BIND
 template<typename T>
-void registerEventType(const char *sym, wxEventTypeTag<T> type,VALUE klass)
+DLL_LOCAL void registerEventType(const char *sym, wxEventTypeTag<T> type,VALUE klass)
 {
 	registerEventType(sym,type,wxCLASSINFO(T));
 	if(!NIL_P(klass))
 		registerInfo<T>(klass);
 }
 template<typename T>
-void registerEventType(const char *sym, wxEventTypeTag<T> type)
+DLL_LOCAL void registerEventType(const char *sym, wxEventTypeTag<T> type)
 {
 	registerEventType(sym,type,Qnil);
 }
 #else
 template<typename T>
-void registerEventType(const char *sym, wxEventType type,VALUE klass)
+DLL_LOCAL void registerEventType(const char *sym, wxEventType type,VALUE klass)
 {
 	registerEventType(sym,type,wxCLASSINFO(T));
 	if(!NIL_P(klass))
 		registerInfo<T>(klass);
 }
 template<typename T>
-void registerEventType(const char *sym, wxEventType type)
+DLL_LOCAL void registerEventType(const char *sym, wxEventType type)
 {
 	registerEventType<T>(sym,type,Qnil);
 }
 
 #endif
 
-wxEventType unwrapEventType(VALUE type);
-VALUE wrapEventType(wxEventType type);
+DLL_LOCAL wxEventType unwrapEventType(VALUE type);
+DLL_LOCAL VALUE wrapEventType(wxEventType type);
 
 class RubyFunctorPtr
 {

@@ -17,7 +17,7 @@ VALUE rb_cWXProperty;
 #include <wx/propgrid/advprops.h>
 
 template<typename T>
-void registerProperty(VALUE mod,const char* name,const char* parent = NULL)
+DLL_LOCAL void registerProperty(VALUE mod,const char* name,const char* parent = NULL)
 {
 	VALUE pc = rb_cWXProperty;
 	
