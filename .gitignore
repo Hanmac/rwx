@@ -1,7 +1,18 @@
-# Ignore compilation products
+# Compiled Object files
+*.slo
+*.lo
 *.o
+
+# Compiled Dynamic libraries
 *.so
+*.dylib
 *.bundle
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
 
 #eclipse project files
 .cproject
@@ -10,9 +21,29 @@
 
 # Ignore mkmf-generated files
 ext/Makefile
-ext/mkmf.log
 ext/extconf.h
+ext/mkmf.log
 
 #ignore temp files
 *.*~
-.DS_Store
+
+# Generated Packages
+*.gem
+*.rbc
+.bundle
+.config
+coverage
+InstalledFiles
+lib/bundler/man
+pkg
+rdoc
+spec/reports
+test/tmp
+test/version_tmp
+tmp
+
+# YARD artifacts
+.yardoc
+_yardoc
+doc/
+/Debug
