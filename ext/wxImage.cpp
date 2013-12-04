@@ -16,6 +16,10 @@
 
 #include <wx/filename.h>
 
+#if wxUSE_PALETTE
+#include "wxPalette.hpp"
+#endif
+
 #if wxUSE_IMAGE
 
 #define _self unwrap<wxImage*>(self)
@@ -42,6 +46,10 @@ wxImage unwrap< wxImage >(const VALUE &vimage)
 
 namespace RubyWX {
 namespace Image {
+
+#if wxUSE_PALETTE
+macro_attr(Palette,wxPalette)
+#endif
 
 DLL_LOCAL VALUE _load(int argc,VALUE *argv,VALUE self)
 {
@@ -128,28 +136,45 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	//_self->InitAlpha();
 	return self;
 }
-/*
-*/
-DLL_LOCAL VALUE _initialize_copy(VALUE self, VALUE other)
-{
-	VALUE result = rb_call_super(1,&other);
-	_self->SetData(unwrap<wxImage*>(other)->GetData());
-	_self->SetAlpha(unwrap<wxImage*>(other)->GetAlpha());
-	return result;
-}
+
 
 DLL_LOCAL VALUE _getHeight(VALUE self)
 {
 	if(_self->IsOk())
 		return ULONG2NUM(_self->GetHeight());
-	return INT2FIX(0);
+	return Qnil;
 }
 
 DLL_LOCAL VALUE _getWidth(VALUE self)
 {
 	if(_self->IsOk())
 		return ULONG2NUM(_self->GetWidth());
-	return INT2FIX(0);
+	return Qnil;
+}
+
+
+DLL_LOCAL VALUE _getSize(VALUE self)
+{
+	if(_self->IsOk())
+		return wrap(_self->GetSize());
+	return Qnil;
+}
+
+DLL_LOCAL VALUE _getData(VALUE self)
+{
+	if(_self->IsOk())
+		return rb_str_new((char*)_self->GetData(),_self->GetHeight() * _self->GetWidth());
+	return Qnil;
+}
+
+DLL_LOCAL VALUE _getAlpha(VALUE self)
+{
+	if(_self->IsOk() && _self->HasAlpha())
+	{
+		unsigned char *c = _self->GetAlpha();
+		return FIX2INT(&c);
+	}
+	return Qnil;
 }
 
 DLL_LOCAL VALUE _get(int argc,VALUE *argv,VALUE self)
@@ -357,6 +382,75 @@ DLL_LOCAL VALUE _to_bitmap(VALUE self)
 	return wrap(unwrap<wxBitmap*>(self));
 }
 
+/*
+*/
+DLL_LOCAL VALUE _initialize_copy(VALUE self, VALUE other)
+{
+	VALUE result = rb_call_super(1,&other);
+	_self->SetData(unwrap<wxImage*>(other)->GetData());
+	_self->SetAlpha(unwrap<wxImage*>(other)->GetAlpha());
+	_setMask(self,_getMask(other));
+
+#if wxUSE_PALETTE
+	_setPalette(self,_getPalette(other));
+#endif
+	return result;
+}
+
+
+/*
+ * call-seq:
+ *   marshal_dump -> Array
+ *
+ * Provides marshalling support for use by the Marshal library.
+ * ===Return value
+ * Array
+ */
+DLL_LOCAL VALUE _marshal_dump(VALUE self)
+{
+	VALUE result = rb_ary_new();
+
+	rb_ary_push(result,_getHeight(self));
+	rb_ary_push(result,_getWidth(self));
+	rb_ary_push(result,_getData(self));
+	rb_ary_push(result,_getAlpha(self));
+	rb_ary_push(result,_getMask(self));
+#if wxUSE_PALETTE
+	rb_ary_push(result,_getPalette(self));
+#endif
+	return result;
+}
+
+/*
+ * call-seq:
+ *   marshal_load(array) -> nil
+ *
+ * Provides marshalling support for use by the Marshal library.
+ *
+ *
+ */
+DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
+{
+	VALUE *ptr = RARRAY_PTR(data);
+	VALUE tmp;
+
+	_self->Create(NUM2UINT(ptr[0]),NUM2UINT(ptr[1]),StringValueCStr(ptr[2]));
+
+	tmp = ptr[3];
+	if(!NIL_P(tmp))
+	{
+		unsigned char c = NUM2CHR(tmp);
+		_self->SetAlpha(&c);
+	}
+	_setMask(self,ptr[4]);
+
+#if wxUSE_PALETTE
+	_setPalette(self,ptr[5]);
+#endif
+
+	return self;
+}
+
 }
 }
 
@@ -364,6 +458,11 @@ DLL_LOCAL VALUE _to_bitmap(VALUE self)
 
 DLL_LOCAL void Init_WXImage(VALUE rb_mWX)
 {
+#if 0
+	rb_define_attr(rb_cWXImage,"mask",1,1);
+	rb_define_attr(rb_cWXImage,"palette",1,1);
+#endif
+
 #if wxUSE_IMAGE
 
 	wxInitAllImageHandlers();
@@ -379,10 +478,19 @@ DLL_LOCAL void Init_WXImage(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXImage,"height",RUBY_METHOD_FUNC(_getHeight),0);
 	rb_define_method(rb_cWXImage,"width",RUBY_METHOD_FUNC(_getWidth),0);
+	rb_define_method(rb_cWXImage,"data",RUBY_METHOD_FUNC(_getData),0);
+	rb_define_method(rb_cWXImage,"alpha",RUBY_METHOD_FUNC(_getAlpha),0);
 
 	rb_define_method(rb_cWXImage,"to_image",RUBY_METHOD_FUNC(_to_image),0);
 	rb_define_method(rb_cWXImage,"to_bitmap",RUBY_METHOD_FUNC(_to_bitmap),0);
 
+	rb_define_method(rb_cWXImage,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
+	rb_define_method(rb_cWXImage,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
+
+	rb_define_attr_method(rb_cWXImage,"mask",_getMask,_setMask);
+#if wxUSE_PALETTE
+	rb_define_attr_method(rb_cWXImage,"palette",_getPalette,_setPalette);
+#endif
 
 	rb_define_method(rb_cWXImage,"*",RUBY_METHOD_FUNC(_mal),1);
 	rb_define_method(rb_cWXImage,"scale",RUBY_METHOD_FUNC(_scale),2);
