@@ -436,7 +436,7 @@ DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 	VALUE tmp = ptr[3];
 	unsigned char* alpha = NULL;
 	if(!NIL_P(tmp))
-		alpha = StringValuePtr(tmp);
+		alpha = (unsigned char*)StringValuePtr(tmp);
 
 	_self->Create(NUM2UINT(ptr[0]),NUM2UINT(ptr[1]),(unsigned char*)StringValuePtr(ptr[2]),alpha);
 
