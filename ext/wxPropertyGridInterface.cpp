@@ -7,6 +7,7 @@
 
 #include "wxPropertyGridInterface.hpp"
 #include "wxPropertyGrid.hpp"
+#include "wxPropertyGridPage.hpp"
 #include "wxPropertyGridManager.hpp"
 
 VALUE rb_mWXPropertyGridInterface;
@@ -18,6 +19,8 @@ wxPropertyGridInterface* unwrap< wxPropertyGridInterface* >(const VALUE &obj)
 {
  if(rb_obj_is_kind_of(obj,rb_cWXPropertyGrid))
 	 return unwrap<wxPropertyGrid*>(obj);
+ if(rb_obj_is_kind_of(obj,rb_cWXPropertyGridPage))
+	 return unwrap<wxPropertyGridPage*>(obj);
  if(rb_obj_is_kind_of(obj,rb_cWXPropertyGridManager))
 	 return unwrap<wxPropertyGridManager*>(obj);
 

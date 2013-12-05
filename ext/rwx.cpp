@@ -154,6 +154,7 @@
 #include "wxGridCellAttr.hpp"
 
 #include "wxPropertyGrid.hpp"
+#include "wxPropertyGridPage.hpp"
 #include "wxPropertyGridManager.hpp"
 #include "wxPropertyGridInterface.hpp"
 
@@ -346,6 +347,7 @@ extern "C" void Init_rwx()
 	Init_WXPropertyGridInterface(rb_mWX);
 	Init_WXPropertyGrid(rb_mWX);
 	Init_WXPropertyGridManager(rb_mWX);
+	Init_WXPropertyGridPage(rb_mWX);
 
 	Init_WXPropertyCell(rb_mWX);
 
