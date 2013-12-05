@@ -16,6 +16,9 @@ extern VALUE rb_cWXBitmap;
 void Init_WXBitmap(VALUE rb_mWX);
 
 template <>
+VALUE wrap< wxBitmap >(const wxBitmap& bitmap );
+
+template <>
 VALUE wrap< wxBitmap >(wxBitmap *bitmap );
 
 template <>

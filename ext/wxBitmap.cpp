@@ -30,11 +30,23 @@ void registerArtID(const char * name,const wxArtID& artid,wxWindowID wid = wxID_
 
 
 template <>
+VALUE wrap< wxBitmap >(const wxBitmap &vbitmap)
+{
+	if(!vbitmap.IsOk())
+		return Qnil;
+	return wrap(new wxBitmap(vbitmap));
+}
+
+template <>
 VALUE wrap< wxBitmap >(wxBitmap *bitmap )
 {
-	if(bitmap)
-		return Data_Wrap_Struct(rb_cWXBitmap, NULL, NULL, bitmap);
-	return Qnil;
+	if(!bitmap)
+		return Qnil;
+	if(!bitmap->IsOk())
+		return Qnil;
+	if(bitmap == &wxNullBitmap)
+		return Qnil;
+	return Data_Wrap_Struct(rb_cWXBitmap, NULL, NULL, bitmap);
 }
 
 template <>
@@ -70,6 +82,10 @@ wxBitmap& unwrap< wxBitmap& >(const VALUE &vbitmap)
 template <>
 VALUE wrap< wxIcon >(wxIcon *icon )
 {
+	if(!icon)
+		return Qnil;
+	if(!icon->IsOk())
+		return Qnil;
 	if(icon == &wxNullIcon)
 		return Qnil;
 	return wrap< wxBitmap >(wxBitmap(*icon));
@@ -77,6 +93,8 @@ VALUE wrap< wxIcon >(wxIcon *icon )
 template <>
 VALUE wrap< wxIcon >(const wxIcon &icon )
 {
+	if(!icon.IsOk())
+		return Qnil;
 	if(&icon == &wxNullIcon)
 		return Qnil;
 	return wrap< wxBitmap >(new wxBitmap(icon));
