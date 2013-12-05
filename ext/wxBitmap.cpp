@@ -7,6 +7,7 @@
 
 
 #include "wxBitmap.hpp"
+#include "wxPalette.hpp"
 #include "wxDC.hpp"
 #include <map>
 #include <wx/artprov.h>
@@ -129,7 +130,7 @@ macro_attr(Depth,int)
 
 macro_attr(Mask,wxMask*)
 #if wxUSE_PALETTE
-//macro_attr(Palette,wxPalette)
+macro_attr(Palette,wxPalette)
 #endif
 
 DLL_LOCAL VALUE _alloc(VALUE self) {
@@ -148,6 +149,8 @@ DLL_LOCAL VALUE _draw(VALUE self)
 #endif
 	rb_yield(wrap(dc));
 	mdc->SelectObject(wxNullBitmap);
+
+	//TODO add a way to delete the DCs again
 	return self;
 }
 
@@ -156,17 +159,61 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	VALUE x,y;
 	rb_scan_args(argc, argv, "11",&x,&y);
 
-	_self->Create(NUM2INT(x),NUM2INT(y));
+	if(NIL_P(x))
+	{
+		_self->LoadFile(unwrap<wxString>(x),wxBITMAP_TYPE_ANY);
+	}else
+		_self->Create(NUM2INT(x),NUM2INT(y));
 
 	return self;
 }
+
+
+DLL_LOCAL VALUE _initialize_copy(VALUE self,VALUE other)
+{
+	//TODO delete old data?
+	DATA_PTR(self) = new wxBitmap(unwrap<wxBitmap>(other));
+	return self;
+}
+
 
 #if wxUSE_IMAGE
 DLL_LOCAL VALUE _to_image(VALUE self)
 {
 	return wrap(_self->ConvertToImage());
 }
+
+
+/*
+ * call-seq:
+ *   marshal_dump -> Array
+ *
+ * Provides marshalling support for use by the Marshal library.
+ * ===Return value
+ * Array
+ */
+DLL_LOCAL VALUE _marshal_dump(VALUE self)
+{
+	return wrap(_self->ConvertToImage());
+}
+
+/*
+ * call-seq:
+ *   marshal_load(array) -> nil
+ *
+ * Provides marshalling support for use by the Marshal library.
+ *
+ *
+ */
+DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
+{
+	//TODO delete old data?
+	DATA_PTR(self) = new wxBitmap(unwrap<wxImage>(data));
+	return self;
+}
+
 #endif
+
 DLL_LOCAL VALUE _to_bitmap(VALUE self)
 {
 	return self;
@@ -219,9 +266,24 @@ DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
 	using namespace RubyWX::Bitmap;
 	rb_cWXBitmap = rb_define_class_under(rb_mWX,"Bitmap",rb_cObject);
 	rb_define_alloc_func(rb_cWXBitmap,_alloc);
+
+	rb_define_method(rb_cWXBitmap,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
+	rb_define_private_method(rb_cWXBitmap,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),1);
+
 #if wxUSE_IMAGE
 	rb_define_method(rb_cWXBitmap,"to_image",RUBY_METHOD_FUNC(_to_image),0);
+
+	rb_define_method(rb_cWXBitmap,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
+	rb_define_method(rb_cWXBitmap,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
+#else
+	rb_undef_method(rb_cWXBitmap,"_load");
+	rb_undef_method(rb_cWXBitmap,"_dump");
 #endif
+
+#if wxUSE_PALETTE
+	rb_define_attr_method(rb_cWXBitmap,"palette",_getPalette,_setPalette);
+#endif
+
 	rb_define_method(rb_cWXBitmap,"to_bitmap",RUBY_METHOD_FUNC(_to_bitmap),0);
 
 	rb_define_method(rb_cWXBitmap,"save_file",RUBY_METHOD_FUNC(_save_file),-1);
