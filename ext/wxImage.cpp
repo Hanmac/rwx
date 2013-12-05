@@ -163,7 +163,7 @@ DLL_LOCAL VALUE _getSize(VALUE self)
 DLL_LOCAL VALUE _getData(VALUE self)
 {
 	if(_self->IsOk())
-		return rb_str_new((char*)_self->GetData(),_self->GetHeight() * _self->GetWidth());
+		return rb_str_new((char*)_self->GetData(),_self->GetHeight() * _self->GetWidth() * 3);
 	return Qnil;
 }
 
@@ -171,8 +171,7 @@ DLL_LOCAL VALUE _getAlpha(VALUE self)
 {
 	if(_self->IsOk() && _self->HasAlpha())
 	{
-		unsigned char *c = _self->GetAlpha();
-		return FIX2INT(&c);
+		return rb_str_new((char*) _self->GetAlpha(),_self->GetHeight() * _self->GetWidth());
 	}
 	return Qnil;
 }
@@ -417,6 +416,8 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
 	rb_ary_push(result,_getMask(self));
 #if wxUSE_PALETTE
 	rb_ary_push(result,_getPalette(self));
+#else
+	rb_ary_push(result,Qnil);
 #endif
 	return result;
 }
@@ -432,16 +433,13 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
 DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 {
 	VALUE *ptr = RARRAY_PTR(data);
-	VALUE tmp;
-
-	_self->Create(NUM2UINT(ptr[0]),NUM2UINT(ptr[1]),StringValueCStr(ptr[2]));
-
-	tmp = ptr[3];
+	VALUE tmp = ptr[3];
+	unsigned char* alpha = NULL;
 	if(!NIL_P(tmp))
-	{
-		unsigned char c = NUM2CHR(tmp);
-		_self->SetAlpha(&c);
-	}
+		alpha = StringValuePtr(tmp);
+
+	_self->Create(NUM2UINT(ptr[0]),NUM2UINT(ptr[1]),(unsigned char*)StringValuePtr(ptr[2]),alpha);
+
 	_setMask(self,ptr[4]);
 
 #if wxUSE_PALETTE
@@ -497,8 +495,6 @@ DLL_LOCAL void Init_WXImage(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXImage,"[]",RUBY_METHOD_FUNC(_get),-1);
 	rb_define_method(rb_cWXImage,"[]=",RUBY_METHOD_FUNC(_set),-1);
-
-	rb_define_attr_method(rb_cWXImage,"mask",_getMask,_setMask);
 
 	rb_define_method(rb_cWXImage,"load",RUBY_METHOD_FUNC(_load),-1);
 	rb_define_method(rb_cWXImage,"save",RUBY_METHOD_FUNC(_save),-1);
