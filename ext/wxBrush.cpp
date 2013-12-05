@@ -39,8 +39,8 @@ singlereturn(IsHatch)
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE color,style,blue,alpha;
-	rb_scan_args(argc, argv, "11",&color,&style,&blue,&alpha);
+	VALUE color,style;
+	rb_scan_args(argc, argv, "11",&color,&style);
 	_setColour(self,color);
 	if(!NIL_P(style))
 		_setStyle(self,style);
