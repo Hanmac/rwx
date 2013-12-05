@@ -50,10 +50,17 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 singlereturn(GetMenuBar);
 
+DLL_LOCAL VALUE _each_size(VALUE self)
+{
+	return UINT2NUM(_self->GetMenuItemCount());
+}
+
+
 DLL_LOCAL VALUE _each(VALUE self)
 {
-	int count = _self->GetMenuItemCount();
-	for(int i = 0;i < count;++i)
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_size);
+	std::size_t count = _self->GetMenuItemCount();
+	for(std::size_t i = 0;i < count;++i)
 		rb_yield(wrap(_self->FindItemByPosition(i)));
 	return self;
 }
