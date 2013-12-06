@@ -18,6 +18,8 @@ namespace PropertyGrid {
 
 APP_PROTECT(wxPropertyGrid)
 
+singlereturn(GetRoot)
+
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
@@ -39,6 +41,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
+
 }
 }
 #endif
@@ -53,8 +56,7 @@ DLL_LOCAL void Init_WXPropertyGrid(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXPropertyGrid,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-
-//	rb_define_method(rb_cWXPropertyGrid,"append",RUBY_METHOD_FUNC(_append),1);
+	rb_define_method(rb_cWXPropertyGrid,"root",RUBY_METHOD_FUNC(_GetRoot),0);
 
 
 	rb_define_const(rb_cWXPropertyGrid,"DEFAULT_STYLE",INT2NUM(wxPG_DEFAULT_STYLE));

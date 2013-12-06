@@ -32,6 +32,11 @@ wxPropertyGridInterface* unwrap< wxPropertyGridInterface* >(const VALUE &obj)
 namespace RubyWX {
 namespace PropertyGridInterface {
 
+singlefunc(Clear)
+singlereturn(CollapseAll)
+singlereturn(ExpandAll)
+singlereturn(GetSelection)
+
 DLL_LOCAL VALUE _append(int argc,VALUE *argv,VALUE self)
 {
 	VALUE val,hash;
@@ -54,6 +59,13 @@ DLL_LOCAL void Init_WXPropertyGridInterface(VALUE rb_mWX)
 	rb_mWXPropertyGridInterface = rb_define_module_under(rb_mWX,"PropertyGridInterface");
 
 	rb_define_method(rb_mWXPropertyGridInterface,"append",RUBY_METHOD_FUNC(_append),-1);
+
+	rb_define_method(rb_mWXPropertyGridInterface,"clear",RUBY_METHOD_FUNC(_Clear),0);
+
+	rb_define_method(rb_mWXPropertyGridInterface,"collapse_all",RUBY_METHOD_FUNC(_CollapseAll),0);
+	rb_define_method(rb_mWXPropertyGridInterface,"expand_all",RUBY_METHOD_FUNC(_ExpandAll),0);
+
+	rb_define_method(rb_mWXPropertyGridInterface,"selection",RUBY_METHOD_FUNC(_GetSelection),0);
 
 	wxPropertyGrid::InitAllTypeHandlers();
 #endif

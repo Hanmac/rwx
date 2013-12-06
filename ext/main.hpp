@@ -343,6 +343,9 @@ DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
 #define macro_attr_enum(attr,type) macro_attr_func(attr,Get##attr(),Set##attr,wrapenum<type>,unwrapenum<type>)
 #define macro_attr_with_func(attr,getf,setf) macro_attr_func(attr,Get##attr(),Set##attr,getf,setf)
 
+#define macro_attr_bool(attr) macro_attr_func(attr,Is##attr(),Set##attr,wrap,unwrap<bool>)
+#define macro_attr_bool2(attr,attr2) macro_attr_func(attr,Is##attr(),attr2,wrap,unwrap<bool>)
+
 //*/
 #define macro_attr_prop(attr,type) macro_attr_func(_##attr,attr,attr = ,wrap,unwrap<type>)
 #define macro_attr_prop_enum(attr,type) macro_attr_func(_##attr,attr,attr = ,wrapenum<type>,unwrapenum<type>)

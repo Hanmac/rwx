@@ -63,6 +63,12 @@ singlereturn(GetBaseName)
 singlereturn(GetMainParent)
 singlereturn(GetParent)
 
+singlereturn(GetDepth)
+
+singlereturn(GetGrid)
+
+singlereturn(IsVisible)
+
 singlereturn(GetValue)
 singlereturn(GetDefaultValue)
 singlereturn(GetValueImage)
@@ -70,6 +76,9 @@ singlereturn(GetValueImage)
 singlereturn(GetValueType)
 
 macro_attr(ValueImage,wxBitmap&)
+
+macro_attr_bool(Expanded)
+macro_attr_bool2(Enabled,Enable)
 
 DLL_LOCAL VALUE _setValue(VALUE self,VALUE val)
 {
@@ -182,12 +191,23 @@ DLL_LOCAL void Init_WXProperty(VALUE rb_mWX)
 	rb_undef_method(rb_cWXProperty,"_load");
 	rb_undef_method(rb_cWXProperty,"_dump");
 
+	rb_define_method(rb_cWXProperty,"base_name",RUBY_METHOD_FUNC(_GetBaseName),0);
+	rb_define_method(rb_cWXProperty,"main_parent",RUBY_METHOD_FUNC(_GetMainParent),0);
+	rb_define_method(rb_cWXProperty,"parent",RUBY_METHOD_FUNC(_GetParent),0);
+
+	rb_define_method(rb_cWXProperty,"depth",RUBY_METHOD_FUNC(_GetDepth),0);
+
+	rb_define_method(rb_cWXProperty,"grid",RUBY_METHOD_FUNC(_GetGrid),0);
+
 	rb_define_attr_method(rb_cWXProperty,"name",_getName,_setName);
 	rb_define_attr_method(rb_cWXProperty,"label",_getLabel,_setLabel);
 
 	rb_define_attr_method(rb_cWXProperty,"value",_GetValue,_setValue);
 	rb_define_attr_method(rb_cWXProperty,"default_value",_GetDefaultValue,_setDefaultValue);
 	rb_define_attr_method(rb_cWXProperty,"value_image",_getValueImage,_setValueImage);
+
+	rb_define_attr_method(rb_cWXProperty,"expanded",_getExpanded,_setExpanded);
+	rb_define_attr_method(rb_cWXProperty,"enabled",_getEnabled,_setEnabled);
 
 	rb_define_method(rb_cWXProperty,"each_child",RUBY_METHOD_FUNC(_each_child),0);
 	rb_define_method(rb_cWXProperty,"each_choices",RUBY_METHOD_FUNC(_each_choices),0);
