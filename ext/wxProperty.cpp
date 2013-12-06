@@ -6,6 +6,7 @@
  */
 
 #include "wxProperty.hpp"
+#include "wxPropertyGrid.hpp"
 #include "wxVariant.hpp"
 #include "wxBitmap.hpp"
 #include "wxApp.hpp"
