@@ -70,8 +70,9 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
 	rb_ary_push(result,_getKind(self));
 //	rb_ary_push(result,_getSubMenu(self));
 	rb_ary_push(result,_getHelp(self));
-//	rb_ary_push(result,_GetBitmap(self));
-
+#if wxUSE_IMAGE
+	rb_ary_push(result,_GetBitmap(self));
+#endif
 	return result;
 }
 
@@ -92,8 +93,9 @@ DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 	_setKind(self,ptr[2]);
 
 	_setHelp(self,ptr[3]);
-//	_SetBitmap(self,ptr[4]);
-
+#if wxUSE_IMAGE
+	_SetBitmap(self,ptr[4]);
+#endif
 	return self;
 }
 
@@ -120,7 +122,7 @@ DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 /* Document-attr: help
  * returns the help string of the menu item. Type is String*/
 /* Document-attr: bitmap
- * returns the Bitmap, currently can be copied with inititalize_copy but not stored with Marshal*/
+ * returns the Bitmap, currently can be copied with inititalize_copy but only stored with Marshal when wxImage is available*/
 
 DLL_LOCAL void Init_WXMenuItem(VALUE rb_mWX)
 {
