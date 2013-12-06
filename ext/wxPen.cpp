@@ -167,10 +167,10 @@ DLL_LOCAL void Init_WXPen(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXPen,"style",_getStyle,_setStyle);
 	rb_define_attr_method(rb_cWXPen,"stipple",_getStipple,_setStipple);
 
-	rb_define_method(rb_cWXBrush,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
-	rb_define_method(rb_cWXBrush,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
+	rb_define_method(rb_cWXPen,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
+	rb_define_method(rb_cWXPen,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
-	rb_define_method(rb_cWXBrush,"==",RUBY_METHOD_FUNC(_equal),1);
+	rb_define_method(rb_cWXPen,"==",RUBY_METHOD_FUNC(_equal),1);
 
 //
 //	rb_define_method(rb_cWXPen,"to_s",RUBY_METHOD_FUNC(_tos),0);
