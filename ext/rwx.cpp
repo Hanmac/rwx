@@ -68,6 +68,7 @@
 
 #include "wxToolBarBase.hpp"
 #include "wxToolBar.hpp"
+#include "wxButtonToolBar.hpp"
 
 #include "wxStatusBar.hpp"
 
@@ -244,6 +245,8 @@ extern "C" void Init_rwx()
 	Init_WXToolBarBase(rb_mWX);
 	Init_WXToolBar(rb_mWX);
 	Init_WXToolBarTool(rb_mWX);
+
+	Init_WXButtonToolBar(rb_mWX);
 
 	Init_WXTimePicker(rb_mWX);
 	Init_WXColorPicker(rb_mWX);
