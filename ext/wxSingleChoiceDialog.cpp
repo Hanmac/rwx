@@ -31,6 +31,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	int style = wxCHOICEDLG_STYLE,selection = -1;
 	wxArrayString choices;
 
+	wxString message(wxEmptyString);
+
 	if(!_created){
 		if(rb_obj_is_kind_of(name,rb_cHash))
 		{
@@ -44,8 +46,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			if(!NIL_P(temp=rb_hash_aref(name,ID2SYM(rb_intern("selection")))))
 				selection = NUM2INT(temp);
 
+			if(!NIL_P(temp=rb_hash_aref(name,ID2SYM(rb_intern("message")))))
+				message = unwrap<wxString>(temp);
+
 		}
-		_self->Create(unwrap<wxWindow*>(parent),wxEmptyString,wxEmptyString,choices,(void **)NULL,style);
+		_self->Create(unwrap<wxWindow*>(parent),message,wxEmptyString,choices,(void **)NULL,style);
 		_created = true;
 
 		_self->SetSelection(selection);
