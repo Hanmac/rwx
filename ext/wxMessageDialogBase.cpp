@@ -73,10 +73,19 @@ DLL_LOCAL VALUE _SetHelpLabel(VALUE self,VALUE val)
 
 DLL_LOCAL VALUE _MessageBox(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,message;
-	rb_scan_args(argc, argv, "20",&parent,&message);
+	VALUE parent,message,hash;
+	rb_scan_args(argc, argv, "21",&parent,&message,&hash);
 
-	return unwrapID(wxMessageBox(unwrap<wxString>(message),wxMessageBoxCaptionStr,wxOK | wxCENTRE,unwrap<wxWindow*>(parent)));
+	wxString caption(wxMessageBoxCaptionStr);
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		VALUE tmp;
+		if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern("caption")))))
+			caption = unwrap<wxString>(tmp);
+	}
+
+	return wrapID(wxMessageBox(unwrap<wxString>(message),caption,wxOK | wxCENTRE,unwrap<wxWindow*>(parent)));
 }
 
 DLL_LOCAL VALUE _InfoMessageBox(int argc,VALUE *argv,VALUE self)
