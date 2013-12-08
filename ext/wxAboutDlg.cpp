@@ -14,6 +14,10 @@ namespace AboutDlg {
 
 #if wxUSE_ABOUTDLG
 
+#define set_option(name,cname,type) \
+	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern(#name))))) \
+		info.Set##cname(unwrap<type>(value));
+
 wxAboutDialogInfo toInto(VALUE hash)
 {
 	wxAboutDialogInfo info;
@@ -22,38 +26,18 @@ wxAboutDialogInfo toInto(VALUE hash)
 
 	VALUE value;
 
-	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern("name")))))
-		info.SetName(unwrap<wxString>(value));
+	set_option(name,Name,wxString)
+	set_option(version,Version,wxString)
+	set_option(description,Description,wxString)
+	set_option(copyright,Copyright,wxString)
+	set_option(licence,Licence,wxString)
+	set_option(web_site,WebSite,wxString)
+	set_option(icon,Icon,wxIcon)
 
-	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern("version")))))
-		info.SetVersion(unwrap<wxString>(value));
-
-	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern("description")))))
-		info.SetDescription(unwrap<wxString>(value));
-
-	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern("copyright")))))
-		info.SetCopyright(unwrap<wxString>(value));
-
-	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern("licence")))))
-		info.SetLicence(unwrap<wxString>(value));
-
-	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern("web_site")))))
-		info.SetWebSite(unwrap<wxString>(value));
-
-	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern("icon")))))
-		info.SetIcon(unwrap<wxIcon>(value));
-
-	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern("developers")))))
-		info.SetDevelopers(unwrap<wxArrayString>(value));
-
-	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern("doc_writers")))))
-		info.SetDocWriters(unwrap<wxArrayString>(value));
-
-	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern("artists")))))
-		info.SetArtists(unwrap<wxArrayString>(value));
-
-	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern("translators")))))
-		info.SetTranslators(unwrap<wxArrayString>(value));
+	set_option(developers,Developers,wxArrayString)
+	set_option(doc_writers,DocWriters,wxArrayString)
+	set_option(artists,Artists,wxArrayString)
+	set_option(translators,Translators,wxArrayString)
 
 	return info;
 }

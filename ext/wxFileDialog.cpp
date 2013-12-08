@@ -13,6 +13,11 @@ VALUE rb_cWXFileDialog;
 #if wxUSE_FILEDLG
 #define _self unwrap<wxFileDialog*>(self)
 
+#define set_option(name,cname,type) \
+	if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern(#name)))))\
+		_self->Set##cname(unwrap<type>(temp));
+
+
 namespace RubyWX {
 namespace FileDialog {
 
@@ -34,16 +39,12 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		VALUE temp;
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("wildcard")))))
-			_self->SetWildcard(unwrap<wxString>(temp));
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("message")))))
-			_self->SetMessage(unwrap<wxString>(temp));
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("directory")))))
-			_self->SetDirectory(unwrap<wxString>(temp));
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("filename")))))
-			_self->SetFilename(unwrap<wxString>(temp));
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("path")))))
-			_self->SetPath(unwrap<wxString>(temp));
+
+		set_option(wildcard,Wildcard,wxString)
+		set_option(message,Message,wxString)
+		set_option(directory,Directory,wxString)
+		set_option(filename,Filename,wxString)
+		set_option(path,Path,wxString)
 
 	}
 
