@@ -11,8 +11,8 @@
 
 VALUE rb_cWXButtonToolBar;
 
-#if wxUSE_BMPBUTTON && wxUSE_TOOLBAR
-
+#if defined(__WXMAC__) && wxUSE_TOOLBAR && wxUSE_BMPBUTTON
+#include <wx/generic/buttonbar.h>
 #define _self unwrap<wxButtonToolBar*>(self)
 
 namespace RubyWX {
@@ -40,7 +40,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL void Init_WXButtonToolBar(VALUE rb_mWX)
 {
-#if wxUSE_BMPBUTTON && wxUSE_TOOLBAR
+#if defined(__WXMAC__) && wxUSE_TOOLBAR && wxUSE_BMPBUTTON
 	using namespace RubyWX::ButtonToolBar;
 	rb_cWXButtonToolBar = rb_define_class_under(rb_mWX,"ButtonToolBar",rb_cWXToolBarBase);
 	rb_define_alloc_func(rb_cWXButtonToolBar,_alloc);

@@ -10,7 +10,7 @@
 
 #include "main.hpp"
 
-#if wxUSE_BMPBUTTON && wxUSE_TOOLBAR
+#if defined(__WXMAC__) && wxUSE_TOOLBAR && wxUSE_BMPBUTTON
 #include <wx/generic/buttonbar.h>
 #endif
 
