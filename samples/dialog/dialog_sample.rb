@@ -15,6 +15,24 @@ class A < WX::App
 		@frame.menubar = WX::MenuBar.new(nil) {|m|
 			m.append("&Dialogs") {|menu|
 				menu.append_normal("&Choices and selectors") {|select|
+				  
+				  select.append_normal(:single_choice,"&Single choice\tCtrl-C") {
+				    dialog = WX::SingleChoiceDialog.new(@frame,
+				      :message => "This is a small sample\nA single-choice convenience dialog",
+				      :title => "Please select a value",
+				      :choices => %w(one two three four five),
+				      :selection => 2
+				    )
+				    
+            if dialog.show_modal == :ok
+              WX::message_box(@frame,dialog.string_selection,:caption => "Got string")
+            end
+				  }
+				  
+				  select.append_normal(:multi_choice,"M&ultiple choice\tCtrl-U") {
+				    
+				  }
+				  
 					select.append_normal(:rearrange,"&Rearrange dialog\tCtrl-R") {
 						dialog = WX::RearrangeDialog.new(@frame,
 							:items => "A".."E", :order => 0..4, :message => "Configure the columns shown:"
