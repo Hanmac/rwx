@@ -85,7 +85,20 @@ DLL_LOCAL VALUE _MessageBox(int argc,VALUE *argv,VALUE self)
 			caption = unwrap<wxString>(tmp);
 	}
 
-	return wrapID(wxMessageBox(unwrap<wxString>(message),caption,wxOK | wxCENTRE,unwrap<wxWindow*>(parent)));
+	int id = wxMessageBox(unwrap<wxString>(message),caption,wxOK | wxCENTRE,unwrap<wxWindow*>(parent));
+
+	//wrap the ids
+	std::map<int,wxWindowID> keys;
+
+	keys[wxYES] = wxID_YES;
+	keys[wxOK] = wxID_OK;
+	keys[wxNO] = wxID_NO;
+
+	keys[wxCANCEL] = wxID_CANCEL;
+	keys[wxAPPLY] = wxID_APPLY;
+	keys[wxCLOSE] = wxID_CLOSE;
+
+	return wrapID(keys[id]);
 }
 
 DLL_LOCAL VALUE _InfoMessageBox(int argc,VALUE *argv,VALUE self)
