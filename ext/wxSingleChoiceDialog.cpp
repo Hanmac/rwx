@@ -55,6 +55,49 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 }
 
+
+VALUE _GetSingleChoice(int argc,VALUE *argv,VALUE self)
+{
+	VALUE message,caption,choices,hash;
+	rb_scan_args(argc, argv, "31",&message,&caption,&choices,&hash);
+
+	wxWindow *parent = NULL;
+
+	int x = wxDefaultCoord;
+	int y = wxDefaultCoord;
+	bool centre = true;
+	int width = wxCHOICE_WIDTH;
+	int height = wxCHOICE_HEIGHT;
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		VALUE tmp;
+		if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern("parent")))))
+			parent = unwrap<wxWindow*>(tmp);
+
+
+		if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern("x")))))
+			x = NUM2INT(tmp);
+		if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern("y")))))
+			y = NUM2INT(tmp);
+
+		if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern("center")))))
+			centre = RTEST(tmp);
+
+		if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern("width")))))
+			width = NUM2INT(tmp);
+		if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern("height")))))
+			height = NUM2INT(tmp);
+
+	}
+
+	return wrap(wxGetSingleChoice(
+			unwrap<wxString>(message), unwrap<wxString>(caption),
+			unwrap<wxArrayString>(choices),
+			parent, x, y, centre, width, height
+	));
+}
+
 }
 }
 #endif
@@ -74,6 +117,8 @@ DLL_LOCAL void Init_WXSingleChoiceDialog(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXSingleChoiceDialog,"selection",_getSelection,_setSelection);
 
 	rb_define_method(rb_cWXSingleChoiceDialog,"string_selection",RUBY_METHOD_FUNC(_GetStringSelection),0);
+
+	rb_define_module_function(rb_mWX,"single_choice",RUBY_METHOD_FUNC(_GetSingleChoice),-1);
 
 	registerInfo<wxSingleChoiceDialog>(rb_cWXSingleChoiceDialog);
 #endif

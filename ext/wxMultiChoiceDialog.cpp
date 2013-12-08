@@ -26,7 +26,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	VALUE parent,name;
 	rb_scan_args(argc, argv, "11",&parent,&name);
 
-	int style = wxCHOICEDLG_STYLE,selection = -1;
+	int style = wxCHOICEDLG_STYLE;
 	wxArrayString choices;
 
 	if(!_created){
@@ -49,6 +49,54 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 }
 
+
+VALUE _GetSelectedChoices(int argc,VALUE *argv,VALUE self)
+{
+	VALUE message,caption,choices,hash;
+	rb_scan_args(argc, argv, "31",&message,&caption,&choices,&hash);
+
+	wxWindow *parent = NULL;
+
+	wxArrayInt selections;
+
+	int x = wxDefaultCoord;
+	int y = wxDefaultCoord;
+	bool centre = true;
+	int width = wxCHOICE_WIDTH;
+	int height = wxCHOICE_HEIGHT;
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		VALUE tmp;
+		if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern("parent")))))
+			parent = unwrap<wxWindow*>(tmp);
+
+
+		if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern("x")))))
+			x = NUM2INT(tmp);
+		if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern("y")))))
+			y = NUM2INT(tmp);
+
+		if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern("center")))))
+			centre = RTEST(tmp);
+
+		if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern("width")))))
+			width = NUM2INT(tmp);
+		if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern("height")))))
+			height = NUM2INT(tmp);
+
+	}
+
+	if(wxGetSelectedChoices(selections,
+			unwrap<wxString>(message), unwrap<wxString>(caption),
+			unwrap<wxArrayString>(choices),
+			parent, x, y, centre, width, height
+	) != -1)
+		return wrap(selections);
+	return Qnil;
+}
+
+
 }
 }
 #endif
@@ -66,6 +114,9 @@ DLL_LOCAL void Init_WXMultiChoiceDialog(VALUE rb_mWX)
 	rb_define_method(rb_cWXMultiChoiceDialog,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_attr_method(rb_cWXMultiChoiceDialog,"selections",_getSelections,_setSelections);
+
+	rb_define_module_function(rb_mWX,"multi_choices",RUBY_METHOD_FUNC(_GetSelectedChoices),-1);
+
 
 	registerInfo<wxMultiChoiceDialog>(rb_cWXMultiChoiceDialog);
 #endif
