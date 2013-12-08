@@ -59,6 +59,9 @@
 
 #include "wxWizard.hpp"
 
+#include "wxAnyChoiceDialog.hpp"
+#include "wxSingleChoiceDialog.hpp"
+#include "wxMultiChoiceDialog.hpp"
 
 #include "wxAui.hpp"
 
@@ -236,6 +239,10 @@ extern "C" void Init_rwx()
 	Init_WXProgressDialog(rb_mWX);
 	Init_WXWizard(rb_mWX);
 	Init_WXWizardPage(rb_mWX);
+
+	Init_WXAnyChoiceDialog(rb_mWX);
+	Init_WXSingleChoiceDialog(rb_mWX);
+	Init_WXMultiChoiceDialog(rb_mWX);
 
 	Init_WXMessageDialogBase(rb_mWX);
 
