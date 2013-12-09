@@ -28,10 +28,24 @@ class A < WX::App
               WX::message_box(@frame,dialog.string_selection,:caption => "Got string")
             end
 				  }
-				  
-				  select.append_normal(:multi_choice,"M&ultiple choice\tCtrl-U") {
-				    
-				  }
+          select.append_normal(:multi_choice,"M&ultiple choice\tCtrl-U") {
+            
+          }
+          
+          select.append_separator
+                   
+          select.append_normal(:single_choice2,"&Single choice per command") {
+            choice = WX::single_choice(
+              "This is a small sample\nA single-choice convenience dialog",
+              "Please select a value",%w(one two three four five),
+              :parent => @frame,:selection => 2
+            )
+            
+            WX::message_box(@frame,choice,:caption => "Got string")
+            
+          }
+          
+          select.append_separator
 				  
 					select.append_normal(:rearrange,"&Rearrange dialog\tCtrl-R") {
 						dialog = WX::RearrangeDialog.new(@frame,
