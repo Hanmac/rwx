@@ -17,6 +17,7 @@ void Init_WXBookCtrl(VALUE rb_mWX);
 #if wxUSE_BOOKCTRL
 #include "wxChoiceBook.hpp"
 #include "wxNoteBook.hpp"
+#include "wxListBook.hpp"
 #include "wxToolBook.hpp"
 #include "wxAuiBook.hpp"
 

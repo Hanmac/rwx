@@ -341,6 +341,7 @@ extern "C" void Init_rwx()
 	Init_WXChoiceBookCtrl(rb_mWX);
 	Init_WXToolBookCtrl(rb_mWX);
 	Init_WXNoteBookCtrl(rb_mWX);
+	Init_WXListBookCtrl(rb_mWX);
 	Init_WXAuiNoteBookCtrl(rb_mWX);
 
 	Init_WXAuiToolBar(rb_mWX);
