@@ -30,6 +30,15 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
+
+DLL_LOCAL VALUE _getCheckedItems(VALUE self)
+{
+	wxArrayInt data;
+	_self->GetCheckedItems(data);
+	return wrap(data);
+}
+
+
 }
 }
 
@@ -42,6 +51,11 @@ DLL_LOCAL void Init_WXCheckListBox(VALUE rb_mWX)
 	rb_define_alloc_func(rb_cWXCheckListBox,_alloc);
 
 	rb_define_method(rb_cWXCheckListBox,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
+
+	rb_define_method(rb_cWXCheckListBox,"checked_items",RUBY_METHOD_FUNC(_getCheckedItems),0);
+
+
+	registerEventType("checklistbox", wxEVT_CHECKLISTBOX,rb_cWXCommandEvent);
 
 	registerInfo<wxCheckListBox>(rb_cWXCheckListBox);
 #endif
