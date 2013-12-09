@@ -9,6 +9,7 @@
 
 
 VALUE rb_cWXSpinButton;
+VALUE rb_cWXSpinEvent;
 
 #if wxUSE_SPINBTN
 #define _self unwrap<wxSpinButton*>(self)
@@ -22,21 +23,53 @@ macro_attr(Min,int)
 
 APP_PROTECT(wxSpinButton)
 
+
+#define set_option(name,cname) \
+	if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern(#name)))))\
+		_self->Set##cname(NUM2INT(temp));
+
+
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 	_created = true;
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		VALUE temp;
+		set_option(value,Value)
+		set_option(min,Min)
+		set_option(max,Max)
+	}
+
 	rb_call_super(argc,argv);
 	return self;
+}
+
+namespace Event
+{
+#undef _self
+#define _self unwrap<wxSpinEvent*>(self)
+macro_attr(Value,int)
 }
 
 }
 }
 #endif
+
+
 DLL_LOCAL void Init_WXSpinButton(VALUE rb_mWX)
 {
+#if 0
+	rb_define_attr(rb_cWXSpinButton,"value",1,1);
+	rb_define_attr(rb_cWXSpinButton,"min",1,1);
+	rb_define_attr(rb_cWXSpinButton,"max",1,1);
+
+	rb_define_attr(rb_cWXSpinEvent,"value",1,1);
+#endif
+
 #if wxUSE_SPINBTN
 	using namespace RubyWX::SpinButton;
 	rb_cWXSpinButton = rb_define_class_under(rb_mWX,"SpinButton",rb_cWXControl);
@@ -47,6 +80,15 @@ DLL_LOCAL void Init_WXSpinButton(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXSpinButton,"value",_getValue,_setValue);
 	rb_define_attr_method(rb_cWXSpinButton,"min",_getMin,_setMin);
 	rb_define_attr_method(rb_cWXSpinButton,"max",_getMax,_setMax);
+
+
+	rb_cWXSpinEvent = rb_define_class_under(rb_cWXEvent,"Spin",rb_cWXEvent);
+
+	rb_define_attr_method(rb_cWXSpinEvent,"value",Event::_getValue,Event::_setValue);
+
+	registerEventType("spin", wxEVT_SPIN,rb_cWXSpinEvent);
+	registerEventType("spin_up", wxEVT_SPIN_UP,rb_cWXSpinEvent);
+	registerEventType("spin_down", wxEVT_SPIN_DOWN,rb_cWXSpinEvent);
 
 	registerInfo<wxSpinButton>(rb_cWXSpinButton);
 #endif
