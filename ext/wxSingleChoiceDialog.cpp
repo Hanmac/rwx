@@ -74,6 +74,8 @@ VALUE _GetSingleChoice(int argc,VALUE *argv,VALUE self)
 	int width = wxCHOICE_WIDTH;
 	int height = wxCHOICE_HEIGHT;
 
+	int selection = -1;
+
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		VALUE tmp;
@@ -94,12 +96,14 @@ VALUE _GetSingleChoice(int argc,VALUE *argv,VALUE self)
 		if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern("height")))))
 			height = NUM2INT(tmp);
 
+		if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern("selection")))))
+			selection = NUM2INT(tmp);
 	}
 
 	return wrap(wxGetSingleChoice(
 			unwrap<wxString>(message), unwrap<wxString>(caption),
 			unwrap<wxArrayString>(choices),
-			parent, x, y, centre, width, height
+			parent, x, y, centre, width, height, selection
 	));
 }
 
