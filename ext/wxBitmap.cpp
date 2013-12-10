@@ -353,4 +353,20 @@ DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
 	registerArtID("information",wxART_INFORMATION);
 	registerArtID("error",wxART_ERROR);
 
+	registerArtID("help_side_panel",wxART_HELP_SIDE_PANEL);
+	registerArtID("help_settings",wxART_HELP_SETTINGS);
+	registerArtID("help_book",wxART_HELP_BOOK);
+	registerArtID("help_folder",wxART_HELP_FOLDER);
+	registerArtID("help_page",wxART_HELP_PAGE);
+
+	registerArtID("go_back",wxART_GO_BACK);
+	registerArtID("go_forward",wxART_GO_FORWARD);
+	registerArtID("go_up",wxART_GO_UP);
+	registerArtID("go_down",wxART_GO_DOWN);
+	registerArtID("go_to_parent",wxART_GO_TO_PARENT);
+	registerArtID("go_home",wxART_GO_HOME);
+	registerArtID("goto_first",wxART_GOTO_FIRST);
+	registerArtID("goto_last",wxART_GOTO_LAST);
+
+
 }
