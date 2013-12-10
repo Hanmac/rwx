@@ -68,6 +68,9 @@
 #include "wxAnyButton.hpp"
 #include "wxButton.hpp"
 #include "wxBitmapButton.hpp"
+#include "wxToggleButton.hpp"
+#include "wxBitmapToggleButton.hpp"
+
 
 #include "wxToolBarBase.hpp"
 #include "wxToolBar.hpp"
@@ -304,6 +307,9 @@ extern "C" void Init_rwx()
 	Init_WXAnyButton(rb_mWX);
 	Init_WXButton(rb_mWX);
 	Init_WXBitmapButton(rb_mWX);
+
+	Init_WXToggleButton(rb_mWX);
+	Init_WXBitmapToggleButton(rb_mWX);
 
 	Init_WXCheckBox(rb_mWX);
 	Init_WXRadioButton(rb_mWX);
