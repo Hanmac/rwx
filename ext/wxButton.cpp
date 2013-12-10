@@ -56,7 +56,7 @@ DLL_LOCAL void Init_WXButton(VALUE rb_mWX)
 
 	registerInfo<wxButton>(rb_cWXButton);
 
-	registerEventType<wxCommandEvent>("button_clicked",wxEVT_COMMAND_BUTTON_CLICKED);
+	registerEventType<wxCommandEvent>("button",wxEVT_BUTTON);
 
 #endif
 }
