@@ -7,6 +7,8 @@
 
 #include "main.hpp"
 
+#include "wxApp.hpp"
+
 VALUE rb_cWXPreferences;
 
 #ifdef HAVE_WX_PREFERENCES_H
@@ -29,7 +31,7 @@ public:
 
 	virtual ~RubyPreferencesPageInterface() {}
 
-	wxWindow *CreateWindow(wxWindow *parent)
+	virtual wxWindow *CreateWindow(wxWindow *parent)
 	{
 		//VALUE argv[] = {wrap(parent)};
 		//VALUE result = rb_class_new_instance(1,argv,mklass);
@@ -108,6 +110,9 @@ DLL_LOCAL VALUE _preferences(int argc,VALUE *argv,VALUE self)
 {
 	VALUE window, title;
 	rb_scan_args(argc, argv, "11",&window,&title);
+
+	app_protected();
+
 	wxPreferencesEditor *pref = new wxPreferencesEditor(unwrap<wxString>(title));
 
 	if(rb_block_given_p())

@@ -36,8 +36,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		label = unwrap<wxString>(rb_hash_aref(hash,ID2SYM(rb_intern("label"))));
+		set_hash_option(hash,"label",label);
 	}
+
 	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,
 			label,wxEmptyString);
 	_created = true;
@@ -45,8 +46,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		VALUE temp;
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("url")))))
-			_self->SetURL(unwrap<wxString>(temp));
+		set_option(url,URL,wxString)
 	}
 
 	return self;

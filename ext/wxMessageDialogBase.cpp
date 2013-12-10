@@ -7,6 +7,7 @@
 
 
 #include "wxMessageDialogBase.hpp"
+#include "wxApp.hpp"
 
 VALUE rb_cWXMessageDialogBase;
 
@@ -76,13 +77,13 @@ DLL_LOCAL VALUE _MessageBox(int argc,VALUE *argv,VALUE self)
 	VALUE parent,message,hash;
 	rb_scan_args(argc, argv, "21",&parent,&message,&hash);
 
+	app_protected();
+
 	wxString caption(wxMessageBoxCaptionStr);
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE tmp;
-		if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern("caption")))))
-			caption = unwrap<wxString>(tmp);
+		set_hash_option(hash,"caption",caption);
 	}
 
 	int id = wxMessageBox(unwrap<wxString>(message),caption,wxOK | wxCENTRE,unwrap<wxWindow*>(parent));
@@ -105,7 +106,7 @@ DLL_LOCAL VALUE _InfoMessageBox(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent;
 	rb_scan_args(argc, argv, "01",&parent);
-
+	app_protected();
 	wxInfoMessageBox(unwrap<wxWindow*>(parent));
 	return Qnil;
 }

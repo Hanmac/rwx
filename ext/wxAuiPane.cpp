@@ -20,6 +20,11 @@ VALUE wrap< wxAuiPaneInfo >(wxAuiPaneInfo *vinfo)
 	return wrapPtr(vinfo,rb_cWXAuiPane);
 }
 
+#define set_aui_option(name, cname, func) \
+	if(!NIL_P(temp=rb_hash_aref(vinfo,ID2SYM(rb_intern(#name)))))\
+		info.cname(func(temp));
+
+
 template <>
 wxAuiPaneInfo unwrap< wxAuiPaneInfo >(const VALUE &vinfo)
 {
@@ -43,16 +48,13 @@ wxAuiPaneInfo unwrap< wxAuiPaneInfo >(const VALUE &vinfo)
 	{
 		wxAuiPaneInfo info;
 		VALUE temp;
-		if(!NIL_P(temp=rb_hash_aref(vinfo,ID2SYM(rb_intern("caption")))))
-			info.caption = unwrap<wxString>(temp);
-		if(!NIL_P(temp=rb_hash_aref(vinfo,ID2SYM(rb_intern("name")))))
-			info.name = unwrap<wxString>(temp);
-		if(!NIL_P(temp=rb_hash_aref(vinfo,ID2SYM(rb_intern("icon")))))
-			info.icon = unwrap<wxBitmap>(temp);
-		if(!NIL_P(temp=rb_hash_aref(vinfo,ID2SYM(rb_intern("direction")))))
-			info.Direction(unwrapenum< wxAuiManagerDock >(temp));
-		if(!NIL_P(temp=rb_hash_aref(vinfo,ID2SYM(rb_intern("layer")))))
-			info.Layer(NUM2INT(temp));
+
+		set_aui_option(caption,Caption,unwrap<wxString>)
+		set_aui_option(name,Name,unwrap<wxString>)
+		set_aui_option(icon,Icon,unwrap<wxIcon>)
+		set_aui_option(direction,Direction,unwrapenum< wxAuiManagerDock >)
+		set_aui_option(icon,Layer,NUM2INT)
+
 		return info;
 	}else
 		return *unwrapPtr<wxAuiPaneInfo>(vinfo, rb_cWXAuiPane);

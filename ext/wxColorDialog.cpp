@@ -8,6 +8,8 @@
 #include "wxColorDialog.hpp"
 #include "wxColor.hpp"
 
+#include "wxApp.hpp"
+
 VALUE rb_cWXColorDialog;
 #if wxUSE_COLOURDLG
 #define _self unwrap<wxColourDialog*>(self)
@@ -63,6 +65,9 @@ DLL_LOCAL VALUE _getUserColor(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,caption;
 	rb_scan_args(argc, argv, "11",&parent,&caption);
+
+	app_protected();
+
 	wxColor col = wxGetColourFromUser(unwrap<wxWindow*>(parent),*wxBLACK,unwrap<wxString>(caption));
 	return col.IsOk() ? wrap(col) : Qnil;
 }

@@ -42,8 +42,8 @@ DLL_LOCAL VALUE _addNormal(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "24",&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
 	wxWindowID wxid = unwrapID(id);
 	wxToolBarToolBase *tool = _self->AddTool(wxid, unwrap<wxString>(text),
-				wrapBitmap(bitmap,wxid,false,wxART_TOOLBAR),
-				wrapBitmap(bmpDisabled,wxid,true,wxART_TOOLBAR),wxITEM_NORMAL,
+				wrapBitmap(bitmap,wxid,WRAP_BITMAP_RAISE,wxART_TOOLBAR),
+				wrapBitmap(bmpDisabled,wxid,WRAP_BITMAP_NULL,wxART_TOOLBAR),wxITEM_NORMAL,
 				unwrap<wxString>(shorthelp), unwrap<wxString>(longhelp));
 	bind_callback(_self,tool->GetId());
 
@@ -77,8 +77,8 @@ DLL_LOCAL VALUE _addCheck(int argc,VALUE *argv,VALUE self)
 	wxWindowID wxid = unwrapID(id);
 
 	wxToolBarToolBase *tool = _self->AddCheckTool(wxid, unwrap<wxString>(text),
-				wrapBitmap(bitmap,wxid,false,wxART_TOOLBAR),
-				wrapBitmap(bmpDisabled,wxid,true,wxART_TOOLBAR),
+				wrapBitmap(bitmap,wxid,WRAP_BITMAP_RAISE,wxART_TOOLBAR),
+				wrapBitmap(bmpDisabled,wxid,WRAP_BITMAP_NULL,wxART_TOOLBAR),
 				unwrap<wxString>(shorthelp), unwrap<wxString>(longhelp));
 
 	bind_callback(_self,tool->GetId());
@@ -93,8 +93,8 @@ DLL_LOCAL VALUE _addRadio(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "24",&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
 	wxWindowID wxid = unwrapID(id);
 	wxToolBarToolBase *tool = _self->AddRadioTool(wxid, unwrap<wxString>(text),
-			wrapBitmap(bitmap,wxid,false,wxART_TOOLBAR),
-			wrapBitmap(bmpDisabled,wxid,true,wxART_TOOLBAR),
+			wrapBitmap(bitmap,wxid,WRAP_BITMAP_RAISE,wxART_TOOLBAR),
+			wrapBitmap(bmpDisabled,wxid,WRAP_BITMAP_NULL,wxART_TOOLBAR),
 			unwrap<wxString>(shorthelp), unwrap<wxString>(longhelp));
 
 	bind_callback(_self,tool->GetId());

@@ -36,9 +36,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		wxBitmap bitmap = wxNullBitmap;
 
 		if(rb_obj_is_kind_of(hash,rb_cHash)){
-			VALUE temp;
-			if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("bitmap")))))
-				bitmap = unwrap<wxBitmap>(temp);
+			set_hash_option(hash,"bitmap",bitmap);
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),

@@ -8,6 +8,7 @@
 
 #include "wxDirDialog.hpp"
 #include "wxPoint.hpp"
+#include "wxApp.hpp"
 
 VALUE rb_cWXDirDialog;
 #if wxUSE_DIRDLG
@@ -32,11 +33,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		VALUE temp;
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("message")))))
-			_self->SetMessage(unwrap<wxString>(temp));
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("path")))))
-			_self->SetPath(unwrap<wxString>(temp));
-
+		set_option(message,Message,wxString)
+		set_option(path,Path,wxString)
 	}
 
 	return self;
@@ -50,6 +48,9 @@ DLL_LOCAL VALUE _getUserDir(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "02",&parent,&hash);
+
+	app_protected();
+
 	wxString message = wxDirSelectorPromptStr;
 	wxString defaultPath = wxEmptyString;
 	long style = wxDD_DEFAULT_STYLE;
@@ -57,15 +58,10 @@ DLL_LOCAL VALUE _getUserDir(int argc,VALUE *argv,VALUE self)
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE temp;
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("message")))))
-			message = unwrap<wxString>(temp);
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("path")))))
-			defaultPath =unwrap<wxString>(temp);
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("style")))))
-			style = NUM2LONG(temp);
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("pos")))))
-			pos =unwrap<wxPoint>(temp);
+		set_hash_option(hash,"message",message);
+		set_hash_option(hash,"path",defaultPath);
+		set_hash_option(hash,"style",style);
+		set_hash_option(hash,"pos",pos);
 	}
 
 	return wrap(wxDirSelector(message,

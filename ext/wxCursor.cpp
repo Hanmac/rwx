@@ -6,6 +6,7 @@
  */
 
 #include "wxCursor.hpp"
+#include "wxApp.hpp"
 
 VALUE rb_cWXCursor;
 
@@ -48,6 +49,9 @@ DLL_LOCAL VALUE _busy(int argc,VALUE *argv,VALUE self)
 {
 	VALUE cursor;
 	rb_scan_args(argc, argv, "01",&cursor);
+
+	app_protected();
+
 	if(NIL_P(cursor))
 		cursor = ID2SYM(rb_intern("wait"));
 
@@ -59,6 +63,7 @@ DLL_LOCAL VALUE _busy(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL VALUE _isBusy(VALUE self)
 {
+	app_protected();
 	return wrap(wxIsBusy());
 }
 

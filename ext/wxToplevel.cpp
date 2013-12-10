@@ -29,9 +29,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		VALUE temp;
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("title")))))
-			_self->SetTitle(unwrap<wxString>(temp));
-
+		set_option(title,Title,wxString)
 	}
 	rb_call_super(argc,argv);
 	return self;

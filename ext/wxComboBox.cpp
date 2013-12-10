@@ -34,10 +34,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	if(rb_obj_is_kind_of(hash,rb_cHash)) {
 		VALUE temp;
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("items")))))
-			_self->Set(unwrap<wxArrayString>(temp));
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("select")))))
-					_self->SetSelection(NUM2INT(temp));
+		set_option(items,,wxArrayString)
+		set_option(select,Selection,int)
 	}
 
 	return self;

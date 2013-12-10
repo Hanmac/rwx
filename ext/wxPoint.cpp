@@ -89,7 +89,7 @@ DLL_LOCAL VALUE _initialize_copy(VALUE self, VALUE other)
 	return result;
 }
 
-/*
+/* Document-method: inspect
  * call-seq:
  *   inspect -> String
  *
@@ -105,7 +105,7 @@ DLL_LOCAL VALUE _inspect(VALUE self)
 		NUM2DBL(_get_y(self)));
 }
 
-/*
+/* Document-method: marshal_dump
  * call-seq:
  *   marshal_dump -> Array
  *
@@ -121,7 +121,7 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
     return rb_ary_new4(2, ptr);
 }
 
-/*
+/* Document-method: marshal_load
  * call-seq:
  *   marshal_load(array) -> nil
  *
@@ -143,17 +143,19 @@ DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
 
 
 
-/*
- * Document-class: WX::Point
+/* Document-class: WX::Point
  *
  * This class represents an Point.
-*/
+ */
 
 /* Document-attr: x
- * returns the x value of Point. */
+ * returns the x value of Point.
+ */
 /* Document-attr: y
- * returns the y value of Point. */
+ * returns the y value of Point.
+ */
 
+/**/
 DLL_LOCAL void Init_WXPoint(VALUE rb_mWX)
 {
 

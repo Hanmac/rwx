@@ -203,6 +203,23 @@ DLL_LOCAL VALUE _to_s(VALUE self)
 	return wrap(wxToString(*_self));
 }
 
+DLL_LOCAL VALUE _class_get(int argc,VALUE *argv,VALUE self)
+{
+
+	VALUE size,family,style,weight;
+	rb_scan_args(argc, argv, "40",&size,&family,&style,&weight);
+	//TODO add refcounting
+	return wrap(wxTheFontList->FindOrCreateFont(
+		NUM2INT(size),
+		unwrapenum<wxFontFamily>(family),
+		unwrapenum<wxFontStyle>(style),
+		unwrapenum<wxFontWeight>(weight)
+	));
+//	rb_call_super(argc,argv);
+	return self;
+}
+
+
 }
 }
 
@@ -243,6 +260,8 @@ DLL_LOCAL void Init_WXFont(VALUE rb_mWX)
 #endif
 	rb_define_method(rb_cWXFont,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
 	rb_define_method(rb_cWXFont,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
+
+	rb_define_singleton_method(rb_cWXFont,"[]",RUBY_METHOD_FUNC(_class_get),-1);
 
 	registerInfo<wxFont>(rb_cWXFont);
 

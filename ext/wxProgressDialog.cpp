@@ -21,11 +21,9 @@ singlereturn(GetMessage)
 
 DLL_LOCAL VALUE _alloc(VALUE self)
 {
-	if(ruby_app_inited)
-		return wrapPtr(new wxProgressDialog(wxEmptyString,wxEmptyString),self);
-	else
-		rb_raise(rb_eArgError,"%s is not running.",rb_class2name(rb_cWXApp));
-	return Qnil;
+	app_protected();
+
+	return wrapPtr(new wxProgressDialog(wxEmptyString,wxEmptyString),self);
 }
 
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)

@@ -39,22 +39,22 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-
-	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
-	_created = true;
-
+	long style = wxSP_ARROW_KEYS | wxALIGN_RIGHT;
+	int value = 0, min = 0, max = 100;
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE temp;
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("range")))))
-		{
-			_self->SetRange(NUM2INT(rb_funcall(temp,rb_intern("begin"),0)),
-			NUM2INT(rb_funcall(temp,rb_intern("end"),0)));
-		}
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("value")))))
-			_self->SetValue(NUM2INT(temp));
+		set_hash_option(hash,"style",style);
+		set_hash_option(hash,"value",value);
+		set_hash_option(hash,"min",min);
+		set_hash_option(hash,"max",max);
 	}
+
+	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,
+		wxEmptyString,wxDefaultPosition,wxDefaultSize,
+		style,min,max,value
+	);
+	_created = true;
 
 	rb_call_super(argc,argv);
 	return self;

@@ -49,7 +49,11 @@ public:
 
 };
 
-
+void app_protected()
+{
+	if(!ruby_app_inited)
+		rb_raise(rb_eArgError,"%s is not running.",rb_class2name(rb_cWXApp));\
+}
 
 
 RubyApp::RubyApp(VALUE klass)
@@ -155,6 +159,7 @@ DLL_LOCAL VALUE _on_exit(VALUE self)
 
 DLL_LOCAL VALUE _wxExit(VALUE self)
 {
+	app_protected();
 	wxExit();
 	return self;
 }

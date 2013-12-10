@@ -7,16 +7,12 @@
 
 
 #include "wxFileDialog.hpp"
+#include "wxApp.hpp"
 
 VALUE rb_cWXFileDialog;
 
 #if wxUSE_FILEDLG
 #define _self unwrap<wxFileDialog*>(self)
-
-#define set_option(name,cname,type) \
-	if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern(#name)))))\
-		_self->Set##cname(unwrap<type>(temp));
-
 
 namespace RubyWX {
 namespace FileDialog {
@@ -76,6 +72,7 @@ DLL_LOCAL VALUE _saveFileSelector(int argc,VALUE *argv,VALUE self)
 {
 	VALUE what,extension,default_name,parent;
 	rb_scan_args(argc, argv, "22",&what,&extension,&default_name,&parent);
+	app_protected();
 	return wrap(wxSaveFileSelector(unwrap<wxString>(what),
 			unwrap<wxString>(extension),
 			unwrap<wxString>(default_name),
@@ -85,6 +82,7 @@ DLL_LOCAL VALUE _loadFileSelector(int argc,VALUE *argv,VALUE self)
 {
 	VALUE what,extension,default_name,parent;
 	rb_scan_args(argc, argv, "22",&what,&extension,&default_name,&parent);
+	app_protected();
 	return wrap(wxLoadFileSelector(unwrap<wxString>(what),
 			unwrap<wxString>(extension),
 			unwrap<wxString>(default_name),

@@ -16,10 +16,10 @@ VALUE rb_cWXTextAttr;
 
 
 //use this macro to automaticly check the Has Methods
-#define macro_textattr(attr,type,w) \
+#define macro_textattr2(attr,attr2,type,w) \
 DLL_LOCAL VALUE _get##attr(VALUE self)\
 { \
-	return _self->Has##attr() ? w<type>(_self->Get##attr()) : Qnil;\
+	return _self->Has##attr2() ? w<type>(_self->Get##attr()) : Qnil;\
 }\
 \
 DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
@@ -27,7 +27,7 @@ DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
 	_self->Set##attr(un##w<type>(other));\
 	return other;\
 }
-
+#define macro_textattr(attr,type,w) macro_textattr2(attr,attr,type,w)
 
 
 namespace RubyWX {
@@ -46,7 +46,7 @@ macro_textattr(RightIndent,int,wrap)
 macro_textattr(FontSize,int,wrap)
 //macro_textattr(FontPointSize,int,wrap)
 //macro_textattr(FontPixelSize,int,wrap)
-//macro_textattr(FontStyle,wxFontStyle,wrapenum)
+macro_textattr2(FontStyle,Font,wxFontStyle,wrapenum)
 macro_textattr(FontWeight,wxFontWeight,wrapenum)
 macro_textattr(FontFaceName,wxString,wrap)
 macro_textattr(FontUnderlined,bool,wrap)
@@ -68,13 +68,13 @@ macro_textattr(BulletText,wxString,wrap)
 macro_attr(BulletFont,wxString)
 macro_textattr(BulletName,wxString,wrap)
 macro_textattr(URL,wxString,wrap)
-//macro_textattr(PageBreak,bool,wrap)
-
 
 
 }
 }
 #endif
+
+
 DLL_LOCAL void Init_WXTextAttr(VALUE rb_mWX)
 {
 #if wxUSE_TEXTCTRL

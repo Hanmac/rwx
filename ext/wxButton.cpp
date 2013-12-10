@@ -24,9 +24,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 	wxWindowID id = wxID_ANY;
 	if(rb_obj_is_kind_of(hash,rb_cHash)) {
-		VALUE temp;
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("id")))))
-			id = unwrapID(temp);
+		set_hash_option(hash,"id",id,unwrapID);
 	}
 
 	if(!_created) {

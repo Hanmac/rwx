@@ -30,7 +30,14 @@ wxBitmap unwrap< wxBitmap >(const VALUE &vbitmap);
 template <>
 wxBitmap& unwrap< wxBitmap& >(const VALUE &vbitmap);
 
-wxBitmap wrapBitmap(const VALUE &vbitmap,wxWindowID id,bool disabled,const wxArtClient &type);
+enum wrapBitmapType
+{
+	WRAP_BITMAP_NULL,
+	WRAP_BITMAP_ID,
+	WRAP_BITMAP_RAISE
+};
+
+wxBitmap wrapBitmap(const VALUE &vbitmap,wxWindowID id,wrapBitmapType type,const wxArtClient &client);
 
 template <>
 VALUE wrap< wxIcon >(wxIcon *icon );

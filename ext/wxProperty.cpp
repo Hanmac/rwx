@@ -39,20 +39,16 @@ namespace Property {
 
 DLL_LOCAL VALUE _alloc(VALUE self)
 {
-	if(ruby_app_inited)
+	app_protected();
+
+	VALUE klass = self;
+	while(true)
 	{
-		VALUE klass = self;
-		while(true)
-		{
-			for(infoholdertype::const_iterator it = infoklassholder.begin(); it != infoklassholder.end();++it)
-				if(it->second == klass)
-					return wrapPtr(it->first->CreateObject(),self);
-			klass = rb_class_get_superclass(klass);
-		}
-	
+		for(infoholdertype::const_iterator it = infoklassholder.begin(); it != infoklassholder.end();++it)
+			if(it->second == klass)
+				return wrapPtr(it->first->CreateObject(),self);
+		klass = rb_class_get_superclass(klass);
 	}
-	else
-		rb_raise(rb_eArgError,"%s is not running.",rb_class2name(rb_cWXApp));
 	return Qnil;
 }
 

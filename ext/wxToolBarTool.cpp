@@ -35,13 +35,13 @@ singlereturn(GetDisabledBitmap)
 
 DLL_LOCAL VALUE _SetNormalBitmap(VALUE self,VALUE val)
 {
-	_self->SetNormalBitmap(wrapBitmap(val,_self->GetId(),false,wxART_TOOLBAR));
+	_self->SetNormalBitmap(wrapBitmap(val,_self->GetId(),WRAP_BITMAP_RAISE,wxART_TOOLBAR));
 	return val;
 }
 
 DLL_LOCAL VALUE _SetDisabledBitmap(VALUE self,VALUE val)
 {
-	_self->SetDisabledBitmap(wrapBitmap(val,_self->GetId(),true,wxART_TOOLBAR));
+	_self->SetDisabledBitmap(wrapBitmap(val,_self->GetId(),WRAP_BITMAP_NULL,wxART_TOOLBAR));
 	return val;
 }
 

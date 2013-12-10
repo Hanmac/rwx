@@ -29,12 +29,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE temp;
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("style")))))
-			style = NUM2INT(temp);
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("label")))))
-			label = unwrap<wxString>(temp);
-
+		set_hash_option(hash,"style",style);
+		set_hash_option(hash,"label",label);
 	}
 
 	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,label,wxDefaultPosition,wxDefaultSize,style);

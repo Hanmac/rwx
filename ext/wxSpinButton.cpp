@@ -24,11 +24,6 @@ macro_attr(Min,int)
 APP_PROTECT(wxSpinButton)
 
 
-#define set_option(name,cname) \
-	if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern(#name)))))\
-		_self->Set##cname(NUM2INT(temp));
-
-
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
@@ -39,9 +34,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		VALUE temp;
-		set_option(value,Value)
-		set_option(min,Min)
-		set_option(max,Max)
+		set_option(value,Value,int)
+		set_option(min,Min,int)
+		set_option(max,Max,int)
 	}
 
 	rb_call_super(argc,argv);

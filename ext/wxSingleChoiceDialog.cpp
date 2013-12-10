@@ -9,6 +9,8 @@
 #include "wxAnyChoiceDialog.hpp"
 #include "wxSingleChoiceDialog.hpp"
 
+#include "wxApp.hpp"
+
 VALUE rb_cWXSingleChoiceDialog;
 
 #if wxUSE_CHOICEDLG
@@ -34,22 +36,13 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	wxString message(wxEmptyString);
 
 	if(!_created){
-		if(rb_obj_is_kind_of(name,rb_cHash))
-		{
-			VALUE temp;
-			if(!NIL_P(temp=rb_hash_aref(name,ID2SYM(rb_intern("style")))))
-				style = NUM2INT(temp);
-
-			if(!NIL_P(temp=rb_hash_aref(name,ID2SYM(rb_intern("choices")))))
-				choices = unwrap<wxArrayString>(temp);
-
-			if(!NIL_P(temp=rb_hash_aref(name,ID2SYM(rb_intern("selection")))))
-				selection = NUM2INT(temp);
-
-			if(!NIL_P(temp=rb_hash_aref(name,ID2SYM(rb_intern("message")))))
-				message = unwrap<wxString>(temp);
-
+		if(rb_obj_is_kind_of(name,rb_cHash)){
+			set_hash_option(name,"style",style);
+			set_hash_option(name,"choices",choices);
+			set_hash_option(name,"selection",selection);
+			set_hash_option(name,"message",message);
 		}
+
 		_self->Create(unwrap<wxWindow*>(parent),message,wxEmptyString,choices,(void **)NULL,style);
 		_created = true;
 
@@ -66,6 +59,8 @@ VALUE _GetSingleChoice(int argc,VALUE *argv,VALUE self)
 	VALUE message,caption,choices,hash;
 	rb_scan_args(argc, argv, "31",&message,&caption,&choices,&hash);
 
+	app_protected();
+
 	wxWindow *parent = NULL;
 
 	int x = wxDefaultCoord;
@@ -78,26 +73,18 @@ VALUE _GetSingleChoice(int argc,VALUE *argv,VALUE self)
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE tmp;
-		if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern("parent")))))
-			parent = unwrap<wxWindow*>(tmp);
 
+		set_hash_option(hash,"parent",parent);
+		set_hash_option(hash,"x",x);
+		set_hash_option(hash,"y",y);
 
-		if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern("x")))))
-			x = NUM2INT(tmp);
-		if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern("y")))))
-			y = NUM2INT(tmp);
+		set_hash_option(hash,"center",centre);
 
-		if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern("center")))))
-			centre = RTEST(tmp);
+		set_hash_option(hash,"width",width);
+		set_hash_option(hash,"height",height);
 
-		if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern("width")))))
-			width = NUM2INT(tmp);
-		if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern("height")))))
-			height = NUM2INT(tmp);
+		set_hash_option(hash,"selection",selection);
 
-		if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern("selection")))))
-			selection = NUM2INT(tmp);
 	}
 
 	return wrap(wxGetSingleChoice(

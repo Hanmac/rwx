@@ -247,29 +247,35 @@ DLL_LOCAL VALUE _save_file(int argc,VALUE *argv,VALUE self)
 }
 }
 
-wxBitmap wrapBitmap(const VALUE &vbitmap,wxWindowID id,bool disabled,const wxArtClient &type)
+wxBitmap wrapBitmap(const VALUE &vbitmap,wxWindowID id,wrapBitmapType type,const wxArtClient &client)
 {
 	if(NIL_P(vbitmap))
 	{
-		if(disabled)
+		if(type == WRAP_BITMAP_NULL)
 			return wxNullBitmap;
 		else
 		{
 			WindowArt::iterator it = windowArtHolder.find(id);
 			if(it == windowArtHolder.end())
-				if(!disabled)
+			{
+				if(type == WRAP_BITMAP_RAISE)
 					rb_raise(rb_eArgError,"need an valid bitmap");
-			return wxArtProvider::GetBitmap(it->second,type);
+				return wxNullBitmap;
+			}
+			return wxArtProvider::GetBitmap(it->second,client);
 		}
 	}else if(SYMBOL_P(vbitmap))
 	{
 		RubyArt::iterator it = rubyArtHolder.find(SYM2ID(vbitmap));
 		if(it == rubyArtHolder.end())
-			if(!disabled)
+		{
+			if(type == WRAP_BITMAP_RAISE)
 				rb_raise(rb_eArgError,"need an valid bitmap");
-		return wxArtProvider::GetBitmap(it->second,type);
+			return wxNullBitmap;
+		}
+		return wxArtProvider::GetBitmap(it->second,client);
 	}
-	wxBitmap temp = wxArtProvider::GetBitmap(unwrap<wxString>(vbitmap),type);
+	wxBitmap temp = wxArtProvider::GetBitmap(unwrap<wxString>(vbitmap),client);
 	if(temp.IsOk())
 		return temp;
 	return *unwrap<wxBitmap*>(vbitmap);

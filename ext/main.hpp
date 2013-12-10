@@ -322,7 +322,7 @@ VALUE wrap< wxDateTime >(const wxDateTime &st );
 template <>
 wxDateTime unwrap< wxDateTime >(const VALUE &val );
 
-int unwrap_infoflag(VALUE val,int mask = wxICON_MASK);
+DLL_LOCAL int unwrap_infoflag(VALUE val,int mask = wxICON_MASK);
 
 #define macro_attr_func(attr,funcget,funcset,wrapget,wrapset) \
 DLL_LOCAL VALUE _get##attr(VALUE self)\
@@ -336,8 +336,22 @@ DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
 	return other;\
 }
 
+template <typename T>
+DLL_LOCAL void set_hash_option(VALUE hash,const char* name,T& val)
+{
+	VALUE temp;
+	if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern(name)))))
+		val = unwrap<T>(temp);
+}
 
+template <typename T>
+DLL_LOCAL void set_hash_option(VALUE hash,const char* name,T& val,T func(VALUE))
+{
+	VALUE temp;
+	if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern(name)))))
+		val = func(temp);
 
+}
 
 #define macro_attr(attr,type) macro_attr_func(attr,Get##attr(),Set##attr,wrap,unwrap<type>)
 #define macro_attr_enum(attr,type) macro_attr_func(attr,Get##attr(),Set##attr,wrapenum<type>,unwrapenum<type>)
@@ -368,4 +382,12 @@ DLL_LOCAL VALUE _##func(VALUE self)\
 	return wrap(_self->func());\
 }
 
+
+#define set_option(name,cname,type) \
+	if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern(#name)))))\
+		_self->Set##cname(unwrap<type>(temp));
+
+#define set_option_func(name,cname,func) \
+	if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern(#name)))))\
+		_self->Set##cname(func(temp));
 #endif /* MAIN_HPP_ */

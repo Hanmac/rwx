@@ -29,15 +29,10 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE temp;
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("items")))))
-			items = unwrap<wxArrayString>(temp);
-			order.resize(items.size());
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("order")))))
-			order = unwrap<wxArrayInt>(temp);
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("message")))))
-			message = unwrap<wxString>(temp);
-
+		set_hash_option(hash,"items",items);
+		order.resize(items.size());
+		set_hash_option(hash,"order",order);
+		set_hash_option(hash,"message",message);
 	}
 	if(!_created)
 	{

@@ -14,6 +14,7 @@ namespace AboutDlg {
 
 #if wxUSE_ABOUTDLG
 
+#undef set_option
 #define set_option(name,cname,type) \
 	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern(#name))))) \
 		info.Set##cname(unwrap<type>(value));
@@ -47,8 +48,7 @@ DLL_LOCAL VALUE _aboutBox(int argc,VALUE *argv,VALUE self)
 	VALUE hash,parent;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 
-	if(!ruby_app_inited)
-		rb_raise(rb_eArgError,"%s is not running.",rb_class2name(rb_cWXApp));
+	app_protected();
 
 	if(NIL_P(hash))
 		std::swap(hash,parent);
@@ -64,8 +64,7 @@ DLL_LOCAL VALUE _genericaboutBox(int argc,VALUE *argv,VALUE self)
 	VALUE hash,parent;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 
-	if(!ruby_app_inited)
-		rb_raise(rb_eArgError,"%s is not running.",rb_class2name(rb_cWXApp));
+	app_protected();
 
 	if(NIL_P(hash))
 		std::swap(hash,parent);

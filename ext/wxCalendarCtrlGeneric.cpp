@@ -9,7 +9,8 @@
 
 VALUE rb_cWXCalendarCtrlGeneric;
 
-#if wxUSE_CALENDARCTRL
+#ifdef wxHAS_NATIVE_CALENDARCTRL
+
 #define _self unwrap<wxGenericCalendarCtrl*>(self)
 
 namespace RubyWX {
@@ -31,6 +32,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
+
 DLL_LOCAL void Init_WXCalendarCtrlGeneric(VALUE rb_mWX)
 {
 #if wxUSE_CALENDARCTRL

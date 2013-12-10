@@ -9,6 +9,8 @@
 #include "wxFont.hpp"
 #include "wxColor.hpp"
 
+#include "wxApp.hpp"
+
 VALUE rb_cWXFontDialog;
 #if wxUSE_FONTDLG
 #define _self unwrap<wxFontDialog*>(self)
@@ -70,6 +72,9 @@ DLL_LOCAL VALUE _getUserFont(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,caption;
 	rb_scan_args(argc, argv, "11",&parent,&caption);
+
+	app_protected();
+
 	wxFont col = wxGetFontFromUser(unwrap<wxWindow*>(parent),wxNullFont,unwrap<wxString>(caption));
 	return col.IsOk() ? wrap(col) : Qnil;
 }

@@ -16,6 +16,8 @@
 
 #include "wxCursor.hpp"
 
+#include "wxApp.hpp"
+
 #include "wxAui.hpp"
 
 #include <sstream>
@@ -235,27 +237,23 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		VALUE temp;
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("extra_style")))))
-			_self->SetExtraStyle(NUM2INT(temp));
+		bool disabled = false;
 
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("name")))))
-			_self->SetName(unwrap<wxString>(temp));
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("label")))))
-			_self->SetLabel(unwrap<wxString>(temp));
+		set_option(extra_style,ExtraStyle,int)
+		set_option(name,Name,wxString)
+		set_option(label,Label,wxString)
+
 #if wxUSE_HELP
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("help_text")))))
-			_self->SetHelpText(unwrap<wxString>(temp));
+		set_option(help_text,HelpText,wxString)
 #endif // wxUSE_HELP
 
+//		set_option_func(id,Id,unwrapID)
 
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("id")))))
-			_self->SetId(unwrapID(temp));
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("size")))))
-			_self->SetSize(unwrap<wxSize>(temp));
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("position")))))
-			_self->SetPosition(unwrap<wxPoint>(temp));
+		set_option(size,Size,wxSize)
+		set_option(position,Position,wxPoint)
 
-		if(RTEST(rb_hash_aref(hash,ID2SYM(rb_intern("disabled")))))
+		set_hash_option(hash,"disabled",disabled);
+		if(disabled)
 			_self->Disable();
 
 	}
@@ -394,6 +392,8 @@ DLL_LOCAL VALUE _each(VALUE self)
 
 DLL_LOCAL VALUE _GetMousePosition(VALUE self)
 {
+	app_protected();
+
 	return wrap(wxGetMousePosition());
 }
 

@@ -33,9 +33,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	if(!_created && !rb_obj_is_kind_of(name,rb_cString)){
 		if(rb_obj_is_kind_of(name,rb_cHash))
 		{
-			VALUE temp;
-			if(!NIL_P(temp=rb_hash_aref(name,ID2SYM(rb_intern("style")))))
-				style = NUM2INT(temp);
+			set_hash_option(name,"style",style);
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,style);

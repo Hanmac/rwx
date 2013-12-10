@@ -24,14 +24,14 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	VALUE parent,hash;
 	int style = wxPGMAN_DEFAULT_STYLE;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
-	if(rb_obj_is_kind_of(hash,rb_cHash))
-	{
-		VALUE temp;
-		if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern("style")))))
-			style = NUM2INT(temp);
-	}
+
 	if(!rb_obj_is_kind_of(hash,rb_cString))
 	{
+		if(rb_obj_is_kind_of(hash,rb_cHash))
+		{
+			set_hash_option(hash,"style",style);
+		}
+
 		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxDefaultPosition,wxDefaultSize,style);
 		_created = true;
 	}

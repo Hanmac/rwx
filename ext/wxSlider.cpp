@@ -28,19 +28,6 @@ macro_attr(ThumbLength,int)
 
 APP_PROTECT(wxSlider)
 
-DLL_LOCAL void set_ref_option(VALUE hash,const char* name, int& val)
-{
-	VALUE temp;
-	if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern(name)))))
-		val = NUM2INT(temp);
-
-}
-
-#define set_option(name,cname) \
-	if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern(#name)))))\
-		_self->Set##cname(NUM2INT(temp));
-
-
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
@@ -50,9 +37,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		set_ref_option(hash,"min",min);
-		set_ref_option(hash,"max",max);
-		set_ref_option(hash,"value",value);
+		set_hash_option(hash,"min",min);
+		set_hash_option(hash,"max",max);
+		set_hash_option(hash,"value",value);
 	}
 
 	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,value,min,max);
@@ -61,9 +48,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		VALUE temp;
-		set_option(line_size,LineSize)
-		set_option(page_size,PageSize)
-		set_option(thumb_length,ThumbLength)
+		set_option(line_size,LineSize,int)
+		set_option(page_size,PageSize,int)
+		set_option(thumb_length,ThumbLength,int)
 	}
 
 	rb_call_super(argc,argv);
