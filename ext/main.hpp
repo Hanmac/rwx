@@ -332,6 +332,7 @@ DLL_LOCAL VALUE _get##attr(VALUE self)\
 \
 DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
 {\
+	rb_check_frozen(self);\
 	_self->funcset(wrapset(other));\
 	return other;\
 }
@@ -357,6 +358,8 @@ DLL_LOCAL void set_hash_option(VALUE hash,const char* name,T& val,T func(VALUE))
 #define macro_attr_enum(attr,type) macro_attr_func(attr,Get##attr(),Set##attr,wrapenum<type>,unwrapenum<type>)
 #define macro_attr_with_func(attr,getf,setf) macro_attr_func(attr,Get##attr(),Set##attr,getf,setf)
 
+#define macro_attr_pre(attr,type,pre) macro_attr_func(attr,pre().Get##attr(),pre().Set##attr,wrap,unwrap<type>)
+
 #define macro_attr_bool(attr) macro_attr_func(attr,Is##attr(),Set##attr,wrap,unwrap<bool>)
 #define macro_attr_bool2(attr,attr2) macro_attr_func(attr,Is##attr(),attr2,wrap,unwrap<bool>)
 
@@ -371,6 +374,7 @@ DLL_LOCAL void rb_define_attr_method(VALUE klass,std::string name,VALUE(get)(VAL
 #define singlefunc(func) \
 DLL_LOCAL VALUE _##func(VALUE self)\
 {\
+	rb_check_frozen(self);\
 	_self->func();\
 	return self;\
 }
@@ -382,12 +386,17 @@ DLL_LOCAL VALUE _##func(VALUE self)\
 	return wrap(_self->func());\
 }
 
-
-#define set_option(name,cname,type) \
-	if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern(#name)))))\
-		_self->Set##cname(unwrap<type>(temp));
+#define singlereturn_frozen(func) \
+DLL_LOCAL VALUE _##func(VALUE self)\
+{\
+	rb_check_frozen(self);\
+	return wrap(_self->func());\
+}
 
 #define set_option_func(name,cname,func) \
 	if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern(#name)))))\
 		_self->Set##cname(func(temp));
+
+#define set_option(name,cname,type) set_option_func(name,cname,unwrap<type>)
+
 #endif /* MAIN_HPP_ */
