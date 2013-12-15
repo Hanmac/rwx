@@ -18,6 +18,18 @@ macro_attr(Colour,wxColour)
 
 APP_PROTECT(wxColourPickerCtrl)
 
+/*
+ * call-seq:
+ *   ColorPicker.new(parent, options)
+ *
+ * creates a new ColorPicker widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ * * *color WX::Color default color
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
@@ -25,6 +37,14 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 	_created = true;
 	rb_call_super(argc,argv);
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		VALUE temp;
+
+		set_option(color,Colour,wxColour)
+	}
+
 	return self;
 }
 

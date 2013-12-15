@@ -52,6 +52,7 @@ DLL_LOCAL VALUE _Append(VALUE self,VALUE items)
 
 DLL_LOCAL VALUE _setItems(VALUE self,VALUE items)
 {
+	rb_check_frozen(self);
 	_self->Set(unwrap<wxArrayString>(items));
 	return items;
 }

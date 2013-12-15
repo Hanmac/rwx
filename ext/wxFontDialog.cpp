@@ -20,6 +20,21 @@ namespace FontDialog {
 
 APP_PROTECT(wxFontDialog)
 
+/*
+ * call-seq:
+ *   FontDialog.new(parent, [options])
+ *
+ * creates a new FontDialog widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ * * * font WX::Font
+ * * * color WX::Color
+ * * * symbols true/false Allows using SymbolFonts (default false)
+ * * * show_help true/false (default false)
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
@@ -27,46 +42,48 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	if(!rb_obj_is_kind_of(hash,rb_cString))
 	{
-		_self->Create(unwrap<wxWindow*>(parent));
+		wxFontData data;
+
+		if(rb_obj_is_kind_of(hash,rb_cHash))
+		{
+			wxColour color(wxNullColour);
+			wxFont font(wxNullFont);
+			bool symbols(false);
+			bool show_help(false);
+
+			set_hash_option(hash,"color",color);
+			set_hash_option(hash,"font",font);
+			set_hash_option(hash,"symbols",symbols);
+			set_hash_option(hash,"show_help",show_help);
+
+			if(color.IsOk())
+				data.SetColour(color);
+			if(font.IsOk())
+				data.SetInitialFont(font);
+
+			data.SetAllowSymbols(symbols);
+			data.SetShowHelp(show_help);
+
+		}
+		_self->Create(unwrap<wxWindow*>(parent),data);
 		_created = true;
 	}
 
 	rb_call_super(argc,argv);
+
+
+
 	return self;
 }
 
-DLL_LOCAL VALUE _getColour(VALUE self)
-{
-	return wrap(_self->GetFontData().GetColour());
-}
+macro_attr_pre(Colour,wxColour,GetFontData)
+macro_attr_pre(InitialFont,wxFont,GetFontData)
+macro_attr_pre(ChosenFont,wxFont,GetFontData)
 
-DLL_LOCAL VALUE _setColour(VALUE self,VALUE val)
-{
-	_self->GetFontData().SetColour(unwrap<wxColour>(val));
-	return val;
-}
+macro_attr_pre(AllowSymbols,bool,GetFontData)
+macro_attr_pre(ShowHelp,bool,GetFontData)
 
-DLL_LOCAL VALUE _getInitialFont(VALUE self)
-{
-	return wrap(_self->GetFontData().GetInitialFont());
-}
-
-DLL_LOCAL VALUE _setInitialFont(VALUE self,VALUE val)
-{
-	_self->GetFontData().SetInitialFont(unwrap<wxFont>(val));
-	return val;
-}
-
-DLL_LOCAL VALUE _getChosenFont(VALUE self)
-{
-	return wrap(_self->GetFontData().GetChosenFont());
-}
-
-DLL_LOCAL VALUE _setChosenFont(VALUE self,VALUE val)
-{
-	_self->GetFontData().SetChosenFont(unwrap<wxFont>(val));
-	return val;
-}
+//macro_attr_pre(EnableEffects,bool,GetFontData)
 
 DLL_LOCAL VALUE _getUserFont(int argc,VALUE *argv,VALUE self)
 {
@@ -86,6 +103,16 @@ DLL_LOCAL VALUE _getUserFont(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL void Init_WXFontDialog(VALUE rb_mWX)
 {
+#if 0
+	rb_define_attr(rb_cWXFontDialog,"initial_font",1,1);
+	rb_define_attr(rb_cWXFontDialog,"chosen_font",1,1);
+
+	rb_define_attr(rb_cWXFontDialog,"color",1,1);
+
+	rb_define_attr(rb_cWXFontDialog,"allow_symbols",1,1);
+	rb_define_attr(rb_cWXFontDialog,"show_help",1,1);
+#endif
+
 #if wxUSE_FONTDLG
 	using namespace RubyWX::FontDialog;
 	rb_cWXFontDialog = rb_define_class_under(rb_mWX,"FontDialog",rb_cWXDialog);
@@ -95,7 +122,11 @@ DLL_LOCAL void Init_WXFontDialog(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXFontDialog,"initial_font",_getInitialFont,_setInitialFont);
 	rb_define_attr_method(rb_cWXFontDialog,"chosen_font",_getChosenFont,_setChosenFont);
 
-	rb_define_attr_method(rb_cWXFontDialog,"colour",_getColour,_setColour);
+	rb_define_attr_method(rb_cWXFontDialog,"color",_getColour,_setColour);
+
+	rb_define_attr_method(rb_cWXFontDialog,"allow_symbols",_getAllowSymbols,_setAllowSymbols);
+	rb_define_attr_method(rb_cWXFontDialog,"show_help",_getShowHelp,_setShowHelp);
+
 
 	rb_define_module_function(rb_mWX,"font_dialog",RUBY_METHOD_FUNC(_getUserFont),-1);
 

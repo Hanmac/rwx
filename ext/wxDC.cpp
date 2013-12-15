@@ -36,6 +36,7 @@ singlereturn(GetDeviceOrigin)
 
 DLL_LOCAL VALUE _setLogicalOrigin(VALUE self,VALUE val)
 {
+	rb_check_frozen(self);
 	wxPoint *p = unwrap<wxPoint*>(val);
 	_self->SetLogicalOrigin(p->x,p->y);
 	return val;
@@ -43,6 +44,7 @@ DLL_LOCAL VALUE _setLogicalOrigin(VALUE self,VALUE val)
 
 DLL_LOCAL VALUE _setDeviceOrigin(VALUE self,VALUE val)
 {
+	rb_check_frozen(self);
 	wxPoint *p = unwrap<wxPoint*>(val);
 	_self->SetDeviceOrigin(p->x,p->y);
 	return val;
@@ -50,6 +52,7 @@ DLL_LOCAL VALUE _setDeviceOrigin(VALUE self,VALUE val)
 
 DLL_LOCAL VALUE _doc(VALUE self,VALUE message)
 {
+	rb_check_frozen(self);
 	_self->StartDoc(unwrap<wxString>(message));
 	rb_yield(self);
 	_self->EndDoc();
@@ -58,6 +61,7 @@ DLL_LOCAL VALUE _doc(VALUE self,VALUE message)
 
 DLL_LOCAL VALUE _page(VALUE self)
 {
+	rb_check_frozen(self);
 	_self->StartPage();
 	rb_yield(self);
 	_self->EndPage();

@@ -18,6 +18,16 @@ namespace Listbook {
 
 APP_PROTECT(wxListbook)
 
+/*
+ * call-seq:
+ *   ListBookCtrl.new(parent, [options])
+ *
+ * creates a new ListBookCtrl widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;

@@ -16,6 +16,19 @@ namespace Panel {
 
 APP_PROTECT(wxPanel)
 
+/*
+ * call-seq:
+ *   Panel.new(parent, name, [options])
+ *   Panel.new(parent, [options])
+ *
+ * creates a new Window widget.
+ * ===Arguments
+ * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
+ *
+ * *options: Hash with possible options to set
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,name,hash;

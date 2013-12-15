@@ -20,16 +20,43 @@ macro_attr(Value,int)
 
 APP_PROTECT(wxGauge)
 
+/*
+ * call-seq:
+ *   Gauge.new(parent, [options])
+ *
+ * creates a new Gauge widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ * * *range Integer
+ * * *value Integer
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 	if(!rb_obj_is_kind_of(hash,rb_cString))
 	{
-		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,0);
+		int range(0);
+
+		if(rb_obj_is_kind_of(hash,rb_cHash))
+		{
+			set_hash_option(hash,"range",range);
+		}
+
+		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,range);
 		_created = true;
 	}
 	rb_call_super(argc,argv);
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		VALUE temp;
+
+		set_option(value,Value,int)
+	}
 	return self;
 }
 
@@ -40,6 +67,11 @@ singlefunc(Pulse)
 #endif
 DLL_LOCAL void Init_WXGauge(VALUE rb_mWX)
 {
+#if 0
+	rb_define_attr(rb_cWXGauge,"range",1,1);
+	rb_define_attr(rb_cWXGauge,"value",1,1);
+#endif
+
 #if wxUSE_GAUGE
 	using namespace RubyWX::Gauge;
 	rb_cWXGauge = rb_define_class_under(rb_mWX,"Gauge",rb_cWXControl);

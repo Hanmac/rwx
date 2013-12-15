@@ -15,6 +15,20 @@ namespace Frame {
 
 APP_PROTECT(wxFrame)
 
+
+/*
+ * call-seq:
+ *   Frame.new(parent, name, [options])
+ *   Frame.new(parent, options)
+ *
+ * creates a new Frame widget.
+ * ===Arguments
+ * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
+ *
+ * *options: Hash with possible options to set
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash,name;
@@ -65,6 +79,12 @@ singlereturn(CreateToolBar)
 
 DLL_LOCAL void Init_WXFrame(VALUE rb_mWX)
 {
+#if 0
+	rb_define_attr(rb_cWXFrame,"menubar",1,1);
+	rb_define_attr(rb_cWXFrame,"statusbar",1,1);
+	rb_define_attr(rb_cWXFrame,"toolbar",1,1);
+#endif
+
 	using namespace RubyWX::Frame;
 	rb_cWXFrame = rb_define_class_under(rb_mWX,"Frame",rb_cWXTopLevel);
 	rb_define_alloc_func(rb_cWXFrame,_alloc);

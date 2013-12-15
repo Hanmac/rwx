@@ -12,6 +12,8 @@
 
 VALUE rb_cWXToolBarBase;
 
+#if wxUSE_TOOLBAR
+
 #define _self unwrapPtr<wxToolBarBase>(self,rb_cWXToolBarBase)
 
 namespace RubyWX {
@@ -122,8 +124,11 @@ singlereturn(Realize)
 }
 }
 
+#endif
+
 DLL_LOCAL void Init_WXToolBarBase(VALUE rb_mWX)
 {
+#if wxUSE_TOOLBAR
 	using namespace RubyWX::ToolBarBase;
 	rb_cWXToolBarBase = rb_define_class_under(rb_mWX,"ToolBarBase",rb_cWXControl);
 	rb_undef_alloc_func(rb_cWXToolBarBase);
@@ -142,5 +147,5 @@ DLL_LOCAL void Init_WXToolBarBase(VALUE rb_mWX)
 
 
 	rb_define_method(rb_cWXToolBarBase,"each_tool",RUBY_METHOD_FUNC(_each),0);
-
+#endif
 }

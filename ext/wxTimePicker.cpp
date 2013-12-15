@@ -20,6 +20,17 @@ macro_attr(Value,wxDateTime)
 
 APP_PROTECT(wxTimePickerCtrl)
 
+/*
+ * call-seq:
+ *   TimePicker.new(parent, [options])
+ *
+ * creates a new TimePicker widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
@@ -35,6 +46,10 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 #endif
 DLL_LOCAL void Init_WXTimePicker(VALUE rb_mWX)
 {
+#if 0
+	rb_define_attr(rb_cWXTimePicker,"value",1,1);
+#endif
+
 #if wxUSE_TIMEPICKCTRL
 	using namespace RubyWX::TimePicker;
 	rb_cWXTimePicker = rb_define_class_under(rb_mWX,"TimePicker",rb_cWXControl);

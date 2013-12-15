@@ -22,6 +22,19 @@ macro_attr_with_func(ReturnCode,wrapID,unwrapID)
 macro_attr_with_func(AffirmativeId,wrapID,unwrapID)
 
 
+/*
+ * call-seq:
+ *   Dialog.new(parent, name)
+ *   Dialog.new(parent, options)
+ *
+ * creates a new Dialog widget.
+ * ===Arguments
+ * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
+ *
+ * *options: Hash with possible options to set
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,name;

@@ -16,14 +16,25 @@ namespace BitmapButton {
 
 APP_PROTECT(wxBitmapButton)
 
+/*
+ * call-seq:
+ *   BitmapButton.new(parent, [options])
+ *
+ * creates a new BitmapButton widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ * * *bitmap WX::Bitmap
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 
 	if(!_created) {
-		wxWindowID id = wxID_ANY;
-		wxBitmap bitmap = wxNullBitmap;
+		wxWindowID id(wxID_ANY);
+		wxBitmap bitmap(wxNullBitmap);
 
 		if(rb_obj_is_kind_of(hash,rb_cHash)) {
 			VALUE temp;

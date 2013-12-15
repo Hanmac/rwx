@@ -20,6 +20,17 @@ macro_attr(Value,bool)
 
 APP_PROTECT(wxCheckBox)
 
+/*
+ * call-seq:
+ *   CheckBox.new(parent, [options])
+ *
+ * creates a new CheckBox widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
@@ -44,6 +55,10 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 #endif
 DLL_LOCAL void Init_WXCheckBox(VALUE rb_mWX)
 {
+#if 0
+	rb_define_attr(rb_cWXCheckBox,"value",1,1);
+#endif
+
 #if wxUSE_CHECKBOX
 	using namespace RubyWX::CheckBox;
 	rb_cWXCheckBox = rb_define_class_under(rb_mWX,"CheckBox",rb_cWXControl);

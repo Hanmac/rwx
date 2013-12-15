@@ -21,6 +21,18 @@ macro_attr(SelectedFont,wxFont)
 
 APP_PROTECT(wxFontPickerCtrl)
 
+/*
+ * call-seq:
+ *   FontPicker.new(parent, [options])
+ *
+ * creates a new FontPicker widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ * * *selected_font WX::Font default font
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
@@ -32,6 +44,13 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	}
 
 	rb_call_super(argc,argv);
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		VALUE temp;
+
+		set_option(selected_font,SelectedFont,wxFont)
+	}
 	return self;
 }
 
@@ -47,6 +66,11 @@ macro_attr(Font,wxFont)
 #endif
 DLL_LOCAL void Init_WXFontPicker(VALUE rb_mWX)
 {
+#if 0
+	rb_define_attr(rb_cWXFontPicker,"selected_font",1,1);
+	rb_define_attr(rb_cWXFontPickerEvent,"font",1,1);
+#endif
+
 #if wxUSE_FONTPICKERCTRL
 	using namespace RubyWX::FontPicker;
 	rb_cWXFontPicker = rb_define_class_under(rb_mWX,"FontPicker",rb_cWXControl);

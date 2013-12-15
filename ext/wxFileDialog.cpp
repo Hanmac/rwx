@@ -19,6 +19,22 @@ namespace FileDialog {
 
 APP_PROTECT(wxFileDialog)
 
+/*
+ * call-seq:
+ *   FileDialog.new(parent, [options])
+ *
+ * creates a new FileDialog widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ * * *wildcard String default WildCard
+ * * *directory String default directory
+ * * *filename String default filename
+ * * *path String default path
+ * * *message String
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
@@ -94,6 +110,15 @@ DLL_LOCAL VALUE _loadFileSelector(int argc,VALUE *argv,VALUE self)
 #endif
 DLL_LOCAL void Init_WXFileDialog(VALUE rb_mWX)
 {
+#if 0
+	rb_define_attr(rb_cWXFileDialog,"directory",1,1);
+	rb_define_attr(rb_cWXFileDialog,"filename",1,1);
+	rb_define_attr(rb_cWXFileDialog,"wildcard",1,1);
+	rb_define_attr(rb_cWXFileDialog,"message",1,1);
+	rb_define_attr(rb_cWXFileDialog,"path",1,1);
+
+#endif
+
 #if wxUSE_FILEDLG
 	using namespace RubyWX::FileDialog;
 	rb_cWXFileDialog = rb_define_class_under(rb_mWX,"FileDialog",rb_cWXDialog);

@@ -183,8 +183,8 @@ singlereturn(Layout)
 singlereturn(GetParent)
 singlereturn(GetGrandParent)
 
-singlereturn(GetBackgroundColour)
-singlereturn(GetForegroundColour)
+macro_attr(BackgroundColour,wxColour)
+macro_attr(ForegroundColour,wxColour)
 
 singlereturn(LineUp)
 singlereturn(LineDown)
@@ -195,25 +195,14 @@ singlereturn(GetRect)
 
 DLL_LOCAL VALUE _SetParent(VALUE self,VALUE parent)
 {
+	rb_check_frozen(self);
 	_self->Reparent(unwrap<wxWindow*>(parent));
 	return parent;
 }
 
-
-DLL_LOCAL VALUE _SetBackgroundColour(VALUE self,VALUE val)
-{
-	_self->SetBackgroundColour(unwrap<wxColor>(val));
-	return val;
-}
-
-DLL_LOCAL VALUE _SetForegroundColour(VALUE self,VALUE val)
-{
-	_self->SetForegroundColour(unwrap<wxColor>(val));
-	return val;
-}
-
 DLL_LOCAL VALUE _SetRect(VALUE self,VALUE rect)
 {
+	rb_check_frozen(self);
 	_self->SetSize(unwrap<wxRect>(rect));
 	return rect;
 }
@@ -221,6 +210,29 @@ DLL_LOCAL VALUE _SetRect(VALUE self,VALUE rect)
 
 APP_PROTECT(wxWindow)
 
+
+/*
+ * call-seq:
+ *   Window.new(parent, name)
+ *   Window.new(parent, [options])
+ *
+ * creates a new Window widget.
+ * ===Arguments
+ * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
+ *
+ * *options: Hash with possible options to set:
+ * * * name String
+ * * * label String depends on the control what is shown
+ * * * help_text String
+ * * * id Symbol or Integer
+ * * * size WX::Size
+ * * * position WX::Point
+ * * * font WX::Font
+ * * * background_color WX::Color
+ * * * foreground_color WX::Color
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
@@ -247,7 +259,12 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		set_option(help_text,HelpText,wxString)
 #endif // wxUSE_HELP
 
-//		set_option_func(id,Id,unwrapID)
+		set_option(font,Font,wxFont)
+
+		set_option(background_color,BackgroundColour,wxColour)
+		set_option(foreground_color,ForegroundColour,wxColour)
+
+		set_option_func(id,Id,unwrapID)
 
 		set_option(size,Size,wxSize)
 		set_option(position,Position,wxPoint)
@@ -463,8 +480,8 @@ DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXWindow, "sizer",_getSizer,_setSizer);
 	rb_define_attr_method(rb_cWXWindow, "containing_sizer",_getContainingSizer,_setContainingSizer);
 
-	rb_define_attr_method(rb_cWXWindow, "background_color",_GetBackgroundColour,_SetBackgroundColour);
-	rb_define_attr_method(rb_cWXWindow, "foreground_color",_GetForegroundColour,_SetForegroundColour);
+	rb_define_attr_method(rb_cWXWindow, "background_color",_getBackgroundColour,_setBackgroundColour);
+	rb_define_attr_method(rb_cWXWindow, "foreground_color",_getForegroundColour,_setForegroundColour);
 
 	rb_define_attr_method(rb_cWXWindow, "font",_getFont,_setFont);
 #if wxUSE_HELP

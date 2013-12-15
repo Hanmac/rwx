@@ -27,6 +27,18 @@ singlereturn(GetCurrentPage)
 
 APP_PROTECT(wxWizard)
 
+/*
+ * call-seq:
+ *   Wizard.new(parent, [options])
+ *
+ * creates a new Wizard widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ * * *bitmap WX::Bitmap
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
@@ -53,6 +65,7 @@ DLL_LOCAL VALUE _showPage(int argc,VALUE *argv,VALUE self)
 {
 	VALUE page,goingForward;
 	rb_scan_args(argc, argv, "11",&page,&goingForward);
+	rb_check_frozen(self);
 	return wrap(_self->ShowPage(unwrap<wxWizardPage*>(page),RTEST(goingForward)));
 }
 
@@ -62,6 +75,7 @@ DLL_LOCAL VALUE _runWizard(int argc,VALUE *argv,VALUE self)
 	wxWizardPage *wpage = NULL;
 
 	rb_scan_args(argc, argv, "01",&page);
+	rb_check_frozen(false);
 	if(NIL_P(page))
 	{
 		wxWindowList list = _self->GetChildren();
@@ -80,6 +94,7 @@ DLL_LOCAL VALUE _addPage(int argc,VALUE *argv,VALUE self)
 {
 	VALUE obj,hash;
 	rb_scan_args(argc, argv, "02",&obj,&hash);
+	rb_check_frozen(self);
 	if(NIL_P(obj))
 		obj = rb_cWXWizardPage;
 	if(rb_obj_is_kind_of(obj,rb_cHash))
@@ -124,6 +139,10 @@ singlereturn(GetPage)
 
 DLL_LOCAL void Init_WXWizard(VALUE rb_mWX)
 {
+#if 0
+	rb_define_attr(rb_cWXWizard, "bitmap",1,1);
+#endif
+
 #if wxUSE_WIZARDDLG
 	using namespace RubyWX::Wizard;
 	rb_cWXWizard = rb_define_class_under(rb_mWX,"Wizard",rb_cWXDialog);

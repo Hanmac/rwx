@@ -23,7 +23,20 @@ macro_attr(Min,int)
 
 APP_PROTECT(wxSpinButton)
 
-
+/*
+ * call-seq:
+ *   SpinButton.new(parent, [options])
+ *
+ * creates a new SpinButton widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ * * *min Integer
+ * * *max Integer
+ * * *value Integer
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;

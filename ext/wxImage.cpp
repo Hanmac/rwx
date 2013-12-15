@@ -314,6 +314,7 @@ DLL_LOCAL VALUE _getMask(VALUE self)
 
 DLL_LOCAL VALUE _setMask(VALUE self,VALUE val)
 {
+	rb_check_frozen(self);
 	if(NIL_P(val))
 		_self->SetMask(false);
 	else

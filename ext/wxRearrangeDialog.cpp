@@ -17,6 +17,20 @@ namespace RearrangeDialog {
 
 APP_PROTECT(wxRearrangeDialog)
 
+/*
+ * call-seq:
+ *   RearrangeList.new(parent, [options])
+ *
+ * creates a new RearrangeList widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ * * *items [string]
+ * * *order [Integer]
+ * * *message String
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;

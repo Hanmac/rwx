@@ -17,6 +17,17 @@ namespace RearrangeCtrl {
 
 APP_PROTECT(wxRearrangeCtrl)
 
+/*
+ * call-seq:
+ *   RearrangeCtrl.new(parent, [options])
+ *
+ * creates a new RearrangeCtrl widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;

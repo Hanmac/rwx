@@ -58,6 +58,7 @@ DLL_LOCAL VALUE _getStatusText2(VALUE self,VALUE num)
 
 DLL_LOCAL VALUE _setStatusText2(VALUE self,VALUE str,VALUE num)
 {
+	rb_check_frozen(self);
 	if(NUM2INT(num) < _self->GetFieldsCount())
 		_self->SetStatusText(unwrap<wxString>(str),NUM2INT(num));
 	//const_cast<wxStatusBarPane&>(_self->GetField(NUM2INT(num))).SetText(unwrap<wxString>(str));

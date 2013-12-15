@@ -18,6 +18,18 @@ namespace StaticBitmapGeneric {
 
 APP_PROTECT(wxGenericStaticBitmap)
 
+/*
+ * call-seq:
+ *   StaticBitmapGeneric.new(parent, [options])
+ *
+ * creates a new StaticBitmapGeneric widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ * * *bitmap WX::Bitmap
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
@@ -41,7 +53,7 @@ DLL_LOCAL void Init_WXStaticBitmapGeneric(VALUE rb_mWX)
 {
 #if wxUSE_STATBMP
 	using namespace RubyWX::StaticBitmapGeneric;
-	rb_cWXStaticBitmapGeneric = rb_define_class_under(rb_mWX,"StaticBitmap",rb_cWXStaticBitmapBase);
+	rb_cWXStaticBitmapGeneric = rb_define_class_under(rb_mWX,"StaticBitmapGeneric",rb_cWXStaticBitmapBase);
 	rb_define_alloc_func(rb_cWXStaticBitmapGeneric,_alloc);
 
 	rb_define_method(rb_cWXStaticBitmapGeneric,"initialize",RUBY_METHOD_FUNC(_initialize),-1);

@@ -22,6 +22,21 @@ macro_attr(TmpDefaultItem,wxWindow*)
 
 APP_PROTECT(wxTopLevelWindow)
 
+/*
+ * call-seq:
+ *   TopLevel.new(parent, name)
+ *   TopLevel.new(parent, options)
+ *
+ * creates a new Control widget.
+ * ===Arguments
+ * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
+ *
+ * *options: Hash with possible options to set:
+ * * * title wxString Shown in the TitleBar of framed Window
+ * * * icon wxBitmap Shown in the TitleBar of framed Window
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
@@ -30,6 +45,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	{
 		VALUE temp;
 		set_option(title,Title,wxString)
+		set_option(icon,Icon,wxIcon)
 	}
 	rb_call_super(argc,argv);
 	return self;
@@ -41,6 +57,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL void Init_WXTopLevel(VALUE rb_mWX)
 {
+#if 0
+	rb_define_attr(rb_cWXTopLevel, "title",1,1);
+	rb_define_attr(rb_cWXTopLevel, "icon",1,1);
+#endif
+
 	using namespace RubyWX::TopLevel;
 	rb_cWXTopLevel = rb_define_class_under(rb_mWX,"TopLevel",rb_cWXWindow);
 	rb_define_alloc_func(rb_cWXTopLevel,_alloc);

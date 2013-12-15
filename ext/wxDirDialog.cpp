@@ -23,7 +23,7 @@ APP_PROTECT(wxDirDialog)
  * call-seq:
  *   DirDialog.new(parent, [options])
  *
- * creates a new DirDialog Object.
+ * creates a new DirDialog widget.
  * ===Arguments
  * * parent of this window or nil
  *

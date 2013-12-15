@@ -18,6 +18,18 @@ macro_attr(LabelText,wxString)
 
 APP_PROTECT(wxControl)
 
+/*
+ * call-seq:
+ *   Control.new(parent, [options])
+ *
+ * creates a new Control widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ * * * label_text String depends on the control what is shown
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
@@ -28,6 +40,13 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		_created = true;
 	}
 	rb_call_super(argc,argv);
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		VALUE temp;
+		set_option(label_text,LabelText,wxString)
+	}
+
 	return self;
 }
 
@@ -38,6 +57,10 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 #endif
 DLL_LOCAL void Init_WXControl(VALUE rb_mWX)
 {
+#if 0
+	rb_define_attr(rb_cWXControl,"label_text",1,1);
+#endif
+
 #if wxUSE_CONTROLS
 	using namespace RubyWX::Control;
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);

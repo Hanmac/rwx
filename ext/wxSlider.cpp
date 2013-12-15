@@ -28,6 +28,24 @@ macro_attr(ThumbLength,int)
 
 APP_PROTECT(wxSlider)
 
+
+/*
+ * call-seq:
+ *   Slider.new(parent, [options])
+ *
+ * creates a new Slider widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ * * *min Integer
+ * * *max Integer
+ * * *value Integer
+ * * *line_size Integer
+ * * *page_size Integer
+ * * *thumb_length Integer
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;

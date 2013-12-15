@@ -18,6 +18,18 @@ namespace StaticBitmap {
 
 APP_PROTECT(wxStaticBitmap)
 
+/*
+ * call-seq:
+ *   StaticBitmap.new(parent, [options])
+ *
+ * creates a new StaticBitmap widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ * * *bitmap WX::Bitmap
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;

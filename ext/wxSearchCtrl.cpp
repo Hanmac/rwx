@@ -25,6 +25,37 @@ APP_PROTECT(wxSearchCtrl)
 macro_attr(Menu,wxMenu*)
 #endif
 
+singlereturn(IsSearchButtonVisible)
+singlereturn(IsCancelButtonVisible)
+
+DLL_LOCAL VALUE _setSearchButtonVisible(VALUE self,VALUE val)
+{
+	rb_check_frozen(self);
+	_self->ShowSearchButton(RTEST(val));
+	return self;
+}
+
+DLL_LOCAL VALUE _setCancelButtonVisible(VALUE self,VALUE val)
+{
+	rb_check_frozen(self);
+	_self->ShowCancelButton(RTEST(val));
+	return self;
+}
+
+/*
+ * call-seq:
+ *   SearchCtrl.new(parent, [options])
+ *
+ * creates a new SearchCtrl widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ * * *menu WX::Menu
+ * * *search true/false
+ * * *cancel true/false
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
@@ -37,6 +68,23 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	}
 
 	rb_call_super(argc,argv);
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		VALUE temp;
+
+		bool search(false),cancel(false);
+
+#if wxUSE_MENUS
+		set_option(menu,Menu,wxMenu*)
+#endif
+
+		set_hash_option(hash,"search",search);
+		set_hash_option(hash,"cancel",cancel);
+
+		_self->ShowSearchButton(search);
+		_self->ShowCancelButton(cancel);
+	}
 	return self;
 }
 
@@ -52,7 +100,21 @@ DLL_LOCAL void Init_WXSearchCtrl(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXSearchCtrl,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
+#if wxUSE_MENUS
+	rb_define_attr_method(rb_cWXSearchCtrl,"menu",_getMenu,_setMenu);
+#endif
+
+	rb_define_attr_method(rb_cWXSearchCtrl,"search_button_visible",_IsSearchButtonVisible,_setSearchButtonVisible);
+	rb_define_attr_method(rb_cWXSearchCtrl,"cancel_button_visible",_IsCancelButtonVisible,_setCancelButtonVisible);
+
+
+
 	registerInfo<wxSearchCtrl>(rb_cWXSearchCtrl);
+
+	registerEventType("searchctrl_cancel_btn",wxEVT_SEARCHCTRL_CANCEL_BTN);
+	registerEventType("searchctrl_cancel_btn",wxEVT_SEARCHCTRL_SEARCH_BTN);
+
+
 #endif
 
 }

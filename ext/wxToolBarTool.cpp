@@ -10,6 +10,8 @@
 #include "wxToolBarBase.hpp"
 #include "wxToolBarTool.hpp"
 
+#if wxUSE_TOOLBAR
+
 #define _self unwrap<wxToolBarToolBase*>(self)
 
 VALUE rb_cWXToolBarTool;
@@ -35,12 +37,14 @@ singlereturn(GetDisabledBitmap)
 
 DLL_LOCAL VALUE _SetNormalBitmap(VALUE self,VALUE val)
 {
+	rb_check_frozen(self);
 	_self->SetNormalBitmap(wrapBitmap(val,_self->GetId(),WRAP_BITMAP_RAISE,wxART_TOOLBAR));
 	return val;
 }
 
 DLL_LOCAL VALUE _SetDisabledBitmap(VALUE self,VALUE val)
 {
+	rb_check_frozen(self);
 	_self->SetDisabledBitmap(wrapBitmap(val,_self->GetId(),WRAP_BITMAP_NULL,wxART_TOOLBAR));
 	return val;
 }
@@ -63,9 +67,23 @@ DLL_LOCAL VALUE _alloc(VALUE self)
 }
 }
 
+#endif
 
 DLL_LOCAL void Init_WXToolBarTool(VALUE rb_mWX)
 {
+#if 0
+	rb_define_attr(rb_cWXToolBarTool,"normal_bitmap",1,1);
+	rb_define_attr(rb_cWXToolBarTool,"disabled_bitmap",1,1);
+
+	rb_define_attr(rb_cWXToolBarTool,"label",1,1);
+	rb_define_attr(rb_cWXToolBarTool,"short_help",1,1);
+	rb_define_attr(rb_cWXToolBarTool,"long_help",1,1);
+
+	rb_define_attr(rb_cWXToolBarTool,"dropdown_menu",1,1);
+
+#endif
+
+#if wxUSE_TOOLBAR
 	using namespace RubyWX::ToolBarTool;
 	//rb_cWXMenu = rb_define_class_under(rb_mWX,"Menu",rb_cObject);
 	rb_cWXToolBarTool = rb_define_class_under(rb_cWXToolBarBase,"Tool",rb_cObject);
@@ -88,4 +106,5 @@ DLL_LOCAL void Init_WXToolBarTool(VALUE rb_mWX)
 
 	registerInfo<wxToolBarToolBase>(rb_cWXToolBarTool);
 //	registerInfo<wxToolBarTool>(rb_cWXToolBarTool);
+#endif
 }

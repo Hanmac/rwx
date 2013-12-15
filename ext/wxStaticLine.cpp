@@ -17,6 +17,17 @@ namespace StaticLine {
 
 APP_PROTECT(wxStaticLine)
 
+/*
+ * call-seq:
+ *   StaticLine.new(parent, [options])
+ *
+ * creates a new StaticLine widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;

@@ -119,6 +119,7 @@ DLL_LOCAL VALUE _getAlpha(VALUE self)
 
 DLL_LOCAL VALUE _setRed(VALUE self,VALUE val)
 {
+	rb_check_frozen(self);
 	if(_self->IsOk())
 		_self->Set(NUM2CHR(val),_self->Green(),_self->Blue(),_self->Alpha());
 	else
@@ -128,6 +129,7 @@ DLL_LOCAL VALUE _setRed(VALUE self,VALUE val)
 
 DLL_LOCAL VALUE _setGreen(VALUE self,VALUE val)
 {
+	rb_check_frozen(self);
 	if(_self->IsOk())
 		_self->Set(_self->Red(),NUM2CHR(val),_self->Blue(),_self->Alpha());
 	else
@@ -136,6 +138,7 @@ DLL_LOCAL VALUE _setGreen(VALUE self,VALUE val)
 }
 DLL_LOCAL VALUE _setBlue(VALUE self,VALUE val)
 {
+	rb_check_frozen(self);
 	if(_self->IsOk())
 		_self->Set(_self->Red(),_self->Green(),NUM2CHR(val),_self->Alpha());
 	else
@@ -144,6 +147,7 @@ DLL_LOCAL VALUE _setBlue(VALUE self,VALUE val)
 }
 DLL_LOCAL VALUE _setAlpha(VALUE self,VALUE val)
 {
+	rb_check_frozen(self);
 	if(_self->IsOk())
 		_self->Set(_self->Red(),_self->Green(),_self->Blue(),NUM2CHR(val));
 	else

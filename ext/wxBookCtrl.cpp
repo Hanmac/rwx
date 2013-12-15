@@ -33,9 +33,25 @@ macro_attr(InternalBorder,unsigned int)
 macro_attr(ControlMargin,int)
 macro_attr(Selection,int)
 
+macro_attr(FitToCurrentPage,bool)
+
 singlereturn(GetControlSizer)
 singlereturn(GetCurrentPage)
+singlereturn(GetControllerSize)
 
+
+/*
+ * call-seq:
+ *   BookCtrl.new(parent, options)
+ *
+ * creates a new BookCtrl widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ * * * image_list [wxBitmap*]
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
@@ -46,6 +62,14 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		_created = true;
 	}
 	rb_call_super(argc,argv);
+
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		VALUE temp;
+		set_option(image_list,ImageList,wxImageList*)
+	}
+
 	return self;
 }
 

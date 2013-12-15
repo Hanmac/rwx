@@ -79,12 +79,14 @@ macro_attr_bool2(Enabled,Enable)
 
 DLL_LOCAL VALUE _setValue(VALUE self,VALUE val)
 {
+	rb_check_frozen(self);
 	_self->SetValue(unwrapVariant(val,_self->GetValueType()));
 	return val;
 }
 
 DLL_LOCAL VALUE _setDefaultValue(VALUE self,VALUE val)
 {
+	rb_check_frozen(self);
 	wxVariant var = unwrapVariant(val,_self->GetValueType());
 	_self->SetDefaultValue(var);
 	return val;
@@ -97,6 +99,7 @@ DLL_LOCAL VALUE _getAttribute(VALUE self,VALUE name)
 
 DLL_LOCAL VALUE _setAttribute(VALUE self,VALUE name,VALUE val)
 {
+	rb_check_frozen(self);
 	_self->SetAttribute(unwrap<wxString>(name),unwrapVariant(val,_self->GetAttribute(unwrap<wxString>(name)).GetType()));
 	return val;
 }

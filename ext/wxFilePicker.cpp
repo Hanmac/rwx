@@ -19,6 +19,18 @@ macro_attr(Path,wxString)
 
 APP_PROTECT(wxFilePickerCtrl)
 
+/*
+ * call-seq:
+ *   FilePicker.new(parent, [options])
+ *
+ * creates a new FilePicker widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ * * *path String default path
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
@@ -29,6 +41,14 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		_created = true;
 	}
 	rb_call_super(argc,argv);
+
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		VALUE temp;
+
+		set_option(path,Path,wxString)
+	}
 	return self;
 }
 
@@ -44,6 +64,12 @@ macro_attr(Path,wxString)
 #endif
 DLL_LOCAL void Init_WXFilePicker(VALUE rb_mWX)
 {
+#if 0
+	rb_define_attr(rb_cWXFilePicker,"path",1,1);
+	rb_define_attr(rb_cWXFileDirPickerEvent,"path",1,1);
+
+#endif
+
 #if wxUSE_FILEPICKERCTRL
 	using namespace RubyWX::FilePicker;
 	rb_cWXFilePicker = rb_define_class_under(rb_mWX,"FilePicker",rb_cWXControl);

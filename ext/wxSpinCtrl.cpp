@@ -23,18 +23,34 @@ singlereturn(GetMin)
 
 DLL_LOCAL VALUE _setMin(VALUE self,VALUE val)
 {
+	rb_check_frozen(self);
 	_self->SetRange(NUM2INT(val),_self->GetMax());
 	return val;
 }
 
 DLL_LOCAL VALUE _setMax(VALUE self,VALUE val)
 {
+	rb_check_frozen(self);
 	_self->SetRange(_self->GetMin(), NUM2INT(val));
 	return val;
 }
 
 APP_PROTECT(wxSpinCtrl)
 
+/*
+ * call-seq:
+ *   SpinButton.new(parent, [options])
+ *
+ * creates a new SpinButton widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ * * *min Integer
+ * * *max Integer
+ * * *value Integer
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
@@ -66,6 +82,12 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL void Init_WXSpinCtrl(VALUE rb_mWX)
 {
+#if 0
+	rb_define_attr(rb_cWXSpinCtrl,"value",1,1);
+	rb_define_attr(rb_cWXSpinCtrl,"min",1,1);
+	rb_define_attr(rb_cWXSpinCtrl,"max",1,1);
+#endif
+
 #if wxUSE_SPINCTRL
 	using namespace RubyWX::SpinCtrl;
 	rb_cWXSpinCtrl = rb_define_class_under(rb_mWX,"SpinCtrl",rb_cWXControl);

@@ -30,17 +30,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-DLL_LOCAL VALUE _getColour(VALUE self)
-{
-	return wrap(_self->GetColourData().GetColour());
-}
-
-DLL_LOCAL VALUE _setColour(VALUE self,VALUE val)
-{
-	_self->GetColourData().SetColour(unwrap<wxColour>(val));
-	return val;
-}
-
+macro_attr_pre(Colour,wxColor,GetColourData)
 
 DLL_LOCAL VALUE _getCustomColors(VALUE self)
 {
@@ -52,6 +42,7 @@ DLL_LOCAL VALUE _getCustomColors(VALUE self)
 }
 DLL_LOCAL VALUE _setCustomColors(VALUE self,VALUE val)
 {
+	rb_check_frozen(self);
 	VALUE dp = rb_funcall(val,rb_intern("to_a"),0);
 	wxColourData &data = _self->GetColourData();
 	for(size_t i = 0; i < wxColourData::NUM_CUSTOM && i < (size_t)RARRAY_LEN(dp); ++i)

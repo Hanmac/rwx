@@ -36,6 +36,7 @@ singlereturn(GetBitmap)
 
 DLL_LOCAL VALUE _SetBitmap(VALUE self,VALUE val)
 {
+	rb_check_frozen(self);
 	_self->SetBitmap(wrapBitmap(val,_self->GetId(),WRAP_BITMAP_RAISE,wxART_MENU));
 	return val;
 }

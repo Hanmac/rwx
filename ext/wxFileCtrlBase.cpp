@@ -28,6 +28,41 @@ macro_attr(Path,wxString)
 
 macro_attr(FilterIndex,int)
 
+/*
+ * call-seq:
+ *   FileCtrlBase.new(parent, [options])
+ *
+ * creates a new FileCtrlBase widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ * * *wildcard String default WildCard
+ * * *directory String default directory
+ * * *filename String default filename
+ * * *path String default path
+ *
+*/
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
+{
+	VALUE parent,hash;
+	rb_scan_args(argc, argv, "11",&parent,&hash);
+
+	rb_call_super(argc,argv);
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		VALUE temp;
+		set_option(wildcard,Wildcard,wxString)
+		set_option(directory,Directory,wxString)
+		set_option(filename,Filename,wxString)
+		set_option(path,Path,wxString)
+
+		set_option(filter_index,FilterIndex,int)
+	}
+	return self;
+}
+
 namespace Event
 {
 #undef _self
@@ -46,10 +81,25 @@ singlereturn(GetFile)
 #endif
 DLL_LOCAL void Init_WXFileCtrlBase(VALUE rb_mWX)
 {
+#if 0
+	rb_define_attr(rb_cWXFileCtrlBase,"wildcard",1,1);
+	rb_define_attr(rb_cWXFileCtrlBase,"directory",1,1);
+	rb_define_attr(rb_cWXFileCtrlBase,"filename",1,1);
+	rb_define_attr(rb_cWXFileCtrlBase,"filter_index",1,1);
+
+	rb_define_attr(rb_cWXFileCtrlEvent,"directory",1,1);
+	rb_define_attr(rb_cWXFileCtrlEvent,"filter_index",1,1);
+
+	rb_define_attr(rb_cWXFileCtrlEvent,"files",1,1);
+
+#endif
+
 #if wxUSE_FILECTRL
 	using namespace RubyWX::FileCtrlBase;
 	rb_cWXFileCtrlBase = rb_define_class_under(rb_mWX,"FileCtrlBase",rb_cWXControl);
 	rb_undef_alloc_func(rb_cWXFileCtrlBase);
+
+	rb_define_method(rb_cWXFileCtrlBase,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_attr_method(rb_cWXFileCtrlBase,"wildcard",_getWildcard,_setWildcard);
 	rb_define_attr_method(rb_cWXFileCtrlBase,"directory",_getDirectory,_setDirectory);

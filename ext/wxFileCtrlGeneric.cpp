@@ -19,6 +19,18 @@ namespace FileCtrlGeneric {
 
 APP_PROTECT(wxFileCtrl)
 
+
+/*
+ * call-seq:
+ *   FileCtrlGeneric.new(parent, [options])
+ *
+ * creates a new FileCtrlGeneric widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;

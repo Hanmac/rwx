@@ -18,22 +18,38 @@ namespace AnyChoiceDialog {
 
 APP_PROTECT(wxAnyChoiceDialog)
 
-
+/*
+ * call-seq:
+ *   SingleChoiceDialog.new(parent, [options])
+ *
+ * creates a new SingleChoiceDialog widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ * * *choices [string]
+ * * *message String
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,name;
 	rb_scan_args(argc, argv, "11",&parent,&name);
 
-	int style = wxCHOICEDLG_STYLE;
-	wxArrayString choices;
 
 	if(!_created){
+		int style = wxCHOICEDLG_STYLE;
+		wxArrayString choices;
+		wxString message(wxEmptyString);
+
 		if(rb_obj_is_kind_of(name,rb_cHash))
 		{
 			set_hash_option(name,"style",style);
 			set_hash_option(name,"choices",choices);
+
+			set_hash_option(name,"message",message);
 		}
-		_self->Create(unwrap<wxWindow*>(parent),wxEmptyString,wxEmptyString,choices,style);
+		_self->Create(unwrap<wxWindow*>(parent),message,wxEmptyString,choices,style);
 		_created = true;
 	}
 	rb_call_super(argc,argv);
