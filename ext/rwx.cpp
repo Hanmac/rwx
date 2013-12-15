@@ -118,6 +118,7 @@
 #include "wxColorPicker.hpp"
 #include "wxFilePicker.hpp"
 #include "wxDirPicker.hpp"
+#include "wxDatePicker.hpp"
 
 #include "wxTreeCtrl.hpp"
 
@@ -262,6 +263,8 @@ extern "C" void Init_rwx()
 	Init_WXColorPicker(rb_mWX);
 	Init_WXFontPicker(rb_mWX);
 	Init_WXFilePicker(rb_mWX);
+	Init_WXDirPicker(rb_mWX);
+	Init_WXDatePicker(rb_mWX);
 
 	Init_WXFileCtrlBase(rb_mWX);
 	Init_WXFileCtrl(rb_mWX);

@@ -19,6 +19,19 @@ namespace DirDialog {
 
 APP_PROTECT(wxDirDialog)
 
+/*
+ * call-seq:
+ *   DirDialog.new(parent, [options])
+ *
+ * creates a new DirDialog Object.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ * * *path String default path
+ * * *message String
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;

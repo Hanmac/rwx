@@ -19,6 +19,18 @@ macro_attr(Path,wxString)
 
 APP_PROTECT(wxDirPickerCtrl)
 
+/*
+ * call-seq:
+ *   DirPicker.new(parent, [options])
+ *
+ * creates a new DirPicker widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ * * *path String default path
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
@@ -29,6 +41,14 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		_created = true;
 	}
 	rb_call_super(argc,argv);
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		VALUE temp;
+
+		set_option(path,Path,wxString)
+	}
+
 	return self;
 }
 
@@ -44,6 +64,11 @@ macro_attr(Path,wxString)
 #endif
 DLL_LOCAL void Init_WXDirPicker(VALUE rb_mWX)
 {
+#if 0
+	rb_define_attr(rb_cWXDirPicker,"path",1,1);
+	rb_define_attr(rb_cWXFileDirPickerEvent,"path",1,1);
+#endif
+
 #if wxUSE_DIRPICKERCTRL
 	using namespace RubyWX::DirPicker;
 	rb_cWXDirPicker = rb_define_class_under(rb_mWX,"DirPicker",rb_cWXControl);
