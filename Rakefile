@@ -64,12 +64,14 @@ end
 task :prepare_sources do
   rm_r "tmpsrc" if File.directory?(TMPSRCDIR)
 
-  cp_r "ext", TMPSRCDIR
-
-  Dir["#{TMPSRCDIR}/*.cpp"].each do |path|
+  mkdir TMPSRCDIR
+  
+  #cp "ext/*.cpp", TMPSRCDIR
+  Dir["ext/*.cpp"].each do |path|
+    path = path[/\/(.+)/,1]
     puts "Removing DLL_LOCAL in #{path}"
 
-    File.write(path,File.read(path).gsub(/DLL_LOCAL\s?/, ""))
+    File.write("#{TMPSRCDIR}/#{path}",File.read("ext/#{path}").gsub(/DLL_LOCAL\s?/, ""))
   end
 end
 
