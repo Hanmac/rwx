@@ -3,11 +3,18 @@ gem "rdoc"
 require "rake"
 require "rake/clean"
 require "rubygems/package_task"
+require "rdoc/task"
 
-require 'rake/extensiontask' rescue nil
+begin
+require 'rake/extensiontask'
+rescue LoadError
+end
 
 ENV["RDOCOPT"] = "" if ENV["RDOCOPT"]
-CLOBBER.include("doc")
+TMPSRCDIR = "tmpsrc"
+CLEAN.include(TMPSRCDIR)
+CLOBBER.include("rdoc")
+
 
 load "rwx.gemspec"
 
@@ -40,3 +47,36 @@ else
     t.cross_platform = 'i386-mswin32'     # forces the Windows platform instead of the default one
   end
 end
+
+RDoc::Task.new do |rdoc|
+  rdoc.title = "rwx RDocs"
+  rdoc.main = "README.rdoc"
+  rdoc.rdoc_files.include("*.rdoc", TMPSRCDIR)
+  rdoc.rdoc_dir = "rdoc"
+
+  # We will have another 'rdoc' task that depends on this task
+  rdoc.name = :docs
+end
+
+# This task removes the DLL_LOCAL statements temporarily to
+# make RDoc work properly. The stripped sources are to be
+# found in TMPSRCDIR afterwards.
+task :prepare_sources do
+  rm_r "tmpsrc" if File.directory?(TMPSRCDIR)
+
+  cp_r "ext", TMPSRCDIR
+
+  Dir["#{TMPSRCDIR}/*.cpp"].each do |path|
+    puts "Removing DLL_LOCAL in #{path}"
+
+    File.write(path,File.read(path).gsub(/DLL_LOCAL\s?/, ""))
+  end
+end
+
+# Removes the temporary directory created by :prepare_sources.
+task :clean_sources do
+  rm_r TMPSRCDIR
+end
+
+desc "Generate the RDoc documentation."
+task :rdoc => [:prepare_sources, :docs, :clean_sources]
