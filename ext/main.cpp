@@ -16,7 +16,7 @@ enumregistertype enumregister;
 
 VALUE global_holder;
 
-typedef std::map<VALUE,size_t> ref_countertype;
+typedef std::map<VALUE,std::size_t> ref_countertype;
 ref_countertype ref_counter;
 
 
@@ -151,8 +151,8 @@ wxArrayString unwrap< wxArrayString >(const VALUE &val )
 		return arry;
 	else if(rb_respond_to(val,rb_intern("to_a")))	{
 		VALUE dp = rb_funcall(val,rb_intern("to_a"),0);
-		size_t length = RARRAY_LEN(dp);
-		for(size_t i = 0; i < length; ++i)
+		std::size_t length = RARRAY_LEN(dp);
+		for(std::size_t i = 0; i < length; ++i)
 			arry.Add(unwrap<wxString>(RARRAY_PTR(dp)[i]));
 	}else{
 		arry.Add(unwrap<wxString>(val));
@@ -167,8 +167,8 @@ wxArrayInt unwrap< wxArrayInt >(const VALUE &val )
 		return arry;
 	else if(rb_respond_to(val,rb_intern("to_a")))	{
 		VALUE dp = rb_funcall(val,rb_intern("to_a"),0);
-		size_t length = RARRAY_LEN(dp);
-		for(size_t i = 0; i < length; ++i)
+		std::size_t length = RARRAY_LEN(dp);
+		for(std::size_t i = 0; i < length; ++i)
 			arry.Add(NUM2INT(RARRAY_PTR(dp)[i]));
 	}else{
 		arry.Add(NUM2INT(val));

@@ -55,8 +55,8 @@ wxPointList* unwrap< wxPointList* >(const VALUE &val)
 {
 	wxPointList *result = new wxPointList;
 	VALUE dp = rb_funcall(val,rb_intern("to_a"),0);
-	size_t length = RARRAY_LEN(dp);
-	for(size_t i = 0; i < length; ++i)
+	std::size_t length = RARRAY_LEN(dp);
+	for(std::size_t i = 0; i < length; ++i)
 		result->Append(new wxPoint(unwrap<wxPoint>(RARRAY_PTR(dp)[i])));
 	return result;
 }

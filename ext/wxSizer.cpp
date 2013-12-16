@@ -123,9 +123,15 @@ DLL_LOCAL VALUE _getItem(VALUE self,VALUE index)
 	return wrap(_self->GetItem(NUM2UINT(index)));
 }
 
+DLL_LOCAL VALUE _each_size(VALUE self)
+{
+	return UINT2NUM(_self->GetItemCount());
+}
+
+
 DLL_LOCAL VALUE _each(VALUE self)
 {
-	RETURN_ENUMERATOR(self,0,NULL);
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_size);
 	size_t  count = _self->GetItemCount();
 	for(size_t i = 0; i < count; ++i)
 		rb_yield(wrap(_self->GetItem(i)));

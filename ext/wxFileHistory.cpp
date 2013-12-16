@@ -25,8 +25,8 @@ APP_PROTECT(wxFileHistory)
 
 DLL_LOCAL VALUE _each(VALUE self)
 {
-	size_t count = _self->GetCount();
-	for(size_t i = 0;i < count;++i)
+	std::size_t count = _self->GetCount();
+	for(std::size_t i = 0;i < count;++i)
 		rb_yield(wrap(_self->GetHistoryFile(i)));
 	return self;
 }

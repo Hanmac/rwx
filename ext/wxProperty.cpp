@@ -109,12 +109,18 @@ DLL_LOCAL VALUE _getClass(VALUE self)
 	return wrap(wxString(_self->GetClassInfo()->GetClassName()));
 }
 
+DLL_LOCAL VALUE _each_child_size(VALUE self)
+{
+	return UINT2NUM(_self->GetChildCount());
+}
+
+
 
 DLL_LOCAL VALUE _each_child(VALUE self)
 {
-	RETURN_ENUMERATOR(self,0,NULL);
-	size_t count = _self->GetChildCount();
-	for(size_t i = 0; i < count; ++i)
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_child_size);
+	std::size_t count = _self->GetChildCount();
+	for(std::size_t i = 0; i < count; ++i)
 		rb_yield(wrap(_self->Item(i)));
 	return self;
 }

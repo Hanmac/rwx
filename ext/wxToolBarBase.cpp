@@ -104,11 +104,17 @@ DLL_LOCAL VALUE _addRadio(int argc,VALUE *argv,VALUE self)
 	return wrap(tool);
 }
 
+
+DLL_LOCAL VALUE _each_size(VALUE self)
+{
+	return UINT2NUM(_self->GetToolsCount());
+}
+
 DLL_LOCAL VALUE _each(VALUE self)
 {
-	RETURN_ENUMERATOR(self,0,NULL);
-	size_t count = _self->GetToolsCount();
-	for(size_t i = 0; i < count; ++i)
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_size);
+	std::size_t count = _self->GetToolsCount();
+	for(std::size_t i = 0; i < count; ++i)
 	{
 		rb_yield(wrap(const_cast<wxToolBarToolBase*>(_self->GetToolByPos(i))));
 	}

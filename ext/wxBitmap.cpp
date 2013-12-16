@@ -132,8 +132,8 @@ wxImageList* unwrap< wxImageList* >(const VALUE &imagelist)
 	wxImageList *result = new wxImageList;
 	VALUE dup = rb_funcall(imagelist,rb_intern("to_a"),0);
 	result->Create();
-	size_t count = RARRAY_LEN(dup);
-	for(size_t i = 0;i < count;++i)
+	std::size_t count = RARRAY_LEN(dup);
+	for(std::size_t i = 0;i < count;++i)
 		result->Add(unwrap<wxBitmap>(RARRAY_PTR(dup)[i]));
 	return result;
 }

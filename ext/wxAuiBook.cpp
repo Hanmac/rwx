@@ -32,20 +32,6 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-DLL_LOCAL VALUE _page(VALUE self,VALUE i)
-{
-	return wrap(_self->GetPage(NUM2UINT(i)));
-}
-
-DLL_LOCAL VALUE _each(VALUE self)
-{
-	RETURN_ENUMERATOR(self,0,NULL);
-	size_t count = _self->GetPageCount();
-	for(size_t i = 0; i < count; ++i)
-		rb_yield(wrap(_self->GetPage(i)));
-	return self;
-}
-
 }
 }
 #endif
@@ -58,8 +44,8 @@ DLL_LOCAL void Init_WXAuiNoteBookCtrl(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXAuiNotebook,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-	rb_define_method(rb_cWXAuiNotebook,"each_page",RUBY_METHOD_FUNC(_each),0);
-	rb_define_method(rb_cWXAuiNotebook,"page",RUBY_METHOD_FUNC(_page),1);
+//	rb_define_method(rb_cWXAuiNotebook,"each_page",RUBY_METHOD_FUNC(_each),0);
+//	rb_define_method(rb_cWXAuiNotebook,"page",RUBY_METHOD_FUNC(_page),1);
 
 	registerInfo<wxAuiNotebook>(rb_cWXAuiNotebook);
 

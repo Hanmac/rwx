@@ -396,9 +396,15 @@ DLL_LOCAL VALUE _aui(VALUE self)
 }
 #endif
 
+DLL_LOCAL VALUE _each_size(VALUE self)
+{
+	return UINT2NUM(_self->GetChildren().GetCount());
+}
+
+
 DLL_LOCAL VALUE _each(VALUE self)
 {
-	RETURN_ENUMERATOR(self,0,NULL);
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_size);
 	wxWindowList list = _self->GetChildren();
 	for(wxWindowList::iterator it = list.begin();it != list.end();++it)
 	{

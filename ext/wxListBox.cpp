@@ -54,6 +54,9 @@ DLL_LOCAL VALUE _getSelections(VALUE self)
 #endif
 DLL_LOCAL void Init_WXListBox(VALUE rb_mWX)
 {
+#if 0
+	rb_mWXItemContainer = rb_define_module_under(rb_mWX,"ItemContainer");
+#endif
 #if wxUSE_LISTBOX
 	using namespace RubyWX::ListBox;
 	rb_cWXListBox = rb_define_class_under(rb_mWX,"ListBox",rb_cWXControl);

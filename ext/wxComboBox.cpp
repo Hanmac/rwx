@@ -59,6 +59,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL void Init_WXComboBox(VALUE rb_mWX)
 {
+#if 0
+	rb_mWXItemContainer = rb_define_module_under(rb_mWX,"ItemContainer");
+#endif
 #if wxUSE_COMBOBOX
 	using namespace RubyWX::ComboBox;
 	rb_cWXComboBox = rb_define_class_under(rb_mWX,"ComboBox",rb_cWXControl);

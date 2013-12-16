@@ -58,6 +58,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 #endif
 DLL_LOCAL void Init_WXChoice(VALUE rb_mWX)
 {
+#if 0
+	rb_mWXItemContainer = rb_define_module_under(rb_mWX,"ItemContainer");
+#endif
 #if wxUSE_CHOICE
 	using namespace RubyWX::Choice;
 	rb_cWXChoice = rb_define_class_under(rb_mWX,"Choice",rb_cWXControl);

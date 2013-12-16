@@ -118,13 +118,18 @@ DLL_LOCAL VALUE _popStatusText(int argc,VALUE *argv,VALUE self)
 	return Qnil;
 }
 
+DLL_LOCAL VALUE _each_size(VALUE self)
+{
+	return UINT2NUM(_self->GetFieldsCount());
+}
+
 //TODO Fix the bad Reference
 DLL_LOCAL VALUE _each(VALUE self)
 {
-	RETURN_ENUMERATOR(self,0,NULL);
-	size_t s = _self->GetFieldsCount();
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_size);
+	std::size_t s = _self->GetFieldsCount();
 
-	for(size_t i = 0 ; i < s; ++i)
+	for(std::size_t i = 0 ; i < s; ++i)
 		rb_yield(wrapPtr(&const_cast<wxStatusBarPane&>(_self->GetField(i)),rb_cWXStatusBarPane));
 	return self;
 }
