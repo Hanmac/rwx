@@ -41,6 +41,8 @@ APP_PROTECT(wxAnyButton)
 DLL_LOCAL void Init_WXAnyButton(VALUE rb_mWX)
 {
 #if 0
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+
 	rb_define_attr(rb_cWXAnyButton,"label_text",1,1);
 
 	rb_define_attr(rb_cWXAnyButton,"bitmap_label",1,1);

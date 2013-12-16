@@ -53,6 +53,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL void Init_WXToolBar(VALUE rb_mWX)
 {
+#if 0
+	rb_cWXToolBarBase = rb_define_class_under(rb_mWX,"ToolBarBase",rb_cWXControl);
+#endif
 #if wxUSE_TOOLBAR
 	using namespace RubyWX::ToolBar;
 	rb_cWXToolBar = rb_define_class_under(rb_mWX,"ToolBar",rb_cWXToolBarBase);

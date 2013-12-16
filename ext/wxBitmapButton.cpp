@@ -59,6 +59,10 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL void Init_WXBitmapButton(VALUE rb_mWX)
 {
+#if 0
+	rb_cWXButton = rb_define_class_under(rb_mWX,"Button",rb_cWXAnyButton);
+#endif
+
 #if wxUSE_BMPBUTTON
 	using namespace RubyWX::BitmapButton;
 	rb_cWXBitmapButton = rb_define_class_under(rb_mWX,"BitmapButton",rb_cWXButton);

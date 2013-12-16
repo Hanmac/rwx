@@ -53,6 +53,9 @@ DLL_LOCAL VALUE _GetContainingSizer(VALUE self)
 #endif
 DLL_LOCAL void Init_WXStaticBox(VALUE rb_mWX)
 {
+#if 0
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+#endif
 #if wxUSE_STATBOX
 	using namespace RubyWX::StaticBox;
 	rb_cWXStaticBox = rb_define_class_under(rb_mWX,"StaticBox",rb_cWXControl);

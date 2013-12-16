@@ -53,6 +53,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL void Init_WXButton(VALUE rb_mWX)
 {
+#if 0
+	rb_cWXAnyButton = rb_define_class_under(rb_mWX,"AnyButton",rb_cWXControl);
+	rb_define_attr(rb_cWXButton,"auth_needed",1,1);
+#endif
+
 #if wxUSE_BUTTON
 	using namespace RubyWX::Button;
 	rb_cWXButton = rb_define_class_under(rb_mWX,"Button",rb_cWXAnyButton);

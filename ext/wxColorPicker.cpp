@@ -5,6 +5,7 @@
  *      Author: hanmac
  */
 #include "wxColorPicker.hpp"
+#include "wxPickerBase.hpp"
 #include "wxColor.hpp"
 
 VALUE rb_cWXColorPicker,rb_cWXColorPickerEvent;
@@ -60,9 +61,16 @@ macro_attr(Colour,wxColour)
 #endif
 DLL_LOCAL void Init_WXColorPicker(VALUE rb_mWX)
 {
+#if 0
+	rb_cWXPickerBase = rb_define_class_under(rb_mWX,"PickerBase",rb_cWXControl);
+
+	rb_define_attr(rb_cWXColorPicker,"color",1,1);
+	rb_define_attr(rb_cWXColorPickerEvent,"color",1,1);
+#endif
+
 #if wxUSE_COLOURPICKERCTRL
 	using namespace RubyWX::ColorPicker;
-	rb_cWXColorPicker = rb_define_class_under(rb_mWX,"ColorPicker",rb_cWXControl);
+	rb_cWXColorPicker = rb_define_class_under(rb_mWX,"ColorPicker",rb_cWXPickerBase);
 	rb_define_alloc_func(rb_cWXColorPicker,_alloc);
 
 	rb_define_method(rb_cWXColorPicker,"initialize",RUBY_METHOD_FUNC(_initialize),-1);

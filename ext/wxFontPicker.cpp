@@ -7,6 +7,7 @@
 
 
 #include "wxFontPicker.hpp"
+#include "wxPickerBase.hpp"
 #include "wxFont.hpp"
 
 VALUE rb_cWXFontPicker,rb_cWXFontPickerEvent;
@@ -67,13 +68,15 @@ macro_attr(Font,wxFont)
 DLL_LOCAL void Init_WXFontPicker(VALUE rb_mWX)
 {
 #if 0
+	rb_cWXPickerBase = rb_define_class_under(rb_mWX,"PickerBase",rb_cWXControl);
+
 	rb_define_attr(rb_cWXFontPicker,"selected_font",1,1);
 	rb_define_attr(rb_cWXFontPickerEvent,"font",1,1);
 #endif
 
 #if wxUSE_FONTPICKERCTRL
 	using namespace RubyWX::FontPicker;
-	rb_cWXFontPicker = rb_define_class_under(rb_mWX,"FontPicker",rb_cWXControl);
+	rb_cWXFontPicker = rb_define_class_under(rb_mWX,"FontPicker",rb_cWXPickerBase);
 	rb_define_alloc_func(rb_cWXFontPicker,_alloc);
 
 	rb_define_method(rb_cWXFontPicker,"initialize",RUBY_METHOD_FUNC(_initialize),-1);

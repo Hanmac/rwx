@@ -6,6 +6,7 @@
  */
 
 #include "wxDirPicker.hpp"
+#include "wxPickerBase.hpp"
 
 VALUE rb_cWXDirPicker;
 static VALUE rb_cWXFileDirPickerEvent;
@@ -65,13 +66,15 @@ macro_attr(Path,wxString)
 DLL_LOCAL void Init_WXDirPicker(VALUE rb_mWX)
 {
 #if 0
+	rb_cWXPickerBase = rb_define_class_under(rb_mWX,"PickerBase",rb_cWXControl);
+
 	rb_define_attr(rb_cWXDirPicker,"path",1,1);
 	rb_define_attr(rb_cWXFileDirPickerEvent,"path",1,1);
 #endif
 
 #if wxUSE_DIRPICKERCTRL
 	using namespace RubyWX::DirPicker;
-	rb_cWXDirPicker = rb_define_class_under(rb_mWX,"DirPicker",rb_cWXControl);
+	rb_cWXDirPicker = rb_define_class_under(rb_mWX,"DirPicker",rb_cWXPickerBase);
 	rb_define_alloc_func(rb_cWXDirPicker,_alloc);
 
 	rb_define_method(rb_cWXDirPicker,"initialize",RUBY_METHOD_FUNC(_initialize),-1);

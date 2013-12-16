@@ -113,6 +113,7 @@
 #include "wxSearchCtrl.hpp"
 
 
+#include "wxPickerBase.hpp"
 #include "wxTimePicker.hpp"
 #include "wxFontPicker.hpp"
 #include "wxColorPicker.hpp"
@@ -259,6 +260,7 @@ extern "C" void Init_rwx()
 
 	Init_WXButtonToolBar(rb_mWX);
 
+	Init_WXPickerBase(rb_mWX);
 	Init_WXTimePicker(rb_mWX);
 	Init_WXColorPicker(rb_mWX);
 	Init_WXFontPicker(rb_mWX);

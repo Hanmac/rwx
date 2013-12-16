@@ -43,6 +43,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 #endif
 DLL_LOCAL void Init_WXStaticLine(VALUE rb_mWX)
 {
+#if 0
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+#endif
 #if wxUSE_STATLINE
 	using namespace RubyWX::StaticLine;
 	rb_cWXStaticLine = rb_define_class_under(rb_mWX,"StaticLine",rb_cWXControl);

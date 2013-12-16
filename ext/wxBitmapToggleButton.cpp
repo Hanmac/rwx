@@ -61,6 +61,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL void Init_WXBitmapToggleButton(VALUE rb_mWX)
 {
+#if 0
+	rb_cWXToggleButton = rb_define_class_under(rb_mWX,"ToggleButton",rb_cWXAnyButton);
+#endif
 #if wxUSE_TOGGLEBTN & defined(wxHAS_BITMAPTOGGLEBUTTON)
 	using namespace RubyWX::BitmapToggleButton;
 	rb_cWXBitmapToggleButton = rb_define_class_under(rb_mWX,"BitmapToggleButton",rb_cWXToggleButton);

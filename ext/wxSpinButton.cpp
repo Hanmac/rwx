@@ -71,6 +71,8 @@ macro_attr(Value,int)
 DLL_LOCAL void Init_WXSpinButton(VALUE rb_mWX)
 {
 #if 0
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+
 	rb_define_attr(rb_cWXSpinButton,"value",1,1);
 	rb_define_attr(rb_cWXSpinButton,"min",1,1);
 	rb_define_attr(rb_cWXSpinButton,"max",1,1);

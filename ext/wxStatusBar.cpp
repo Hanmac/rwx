@@ -158,6 +158,9 @@ singlereturn(PopText)
 #endif
 DLL_LOCAL void Init_WXStatusBar(VALUE rb_mWX)
 {
+#if 0
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+#endif
 #if wxUSE_STATUSBAR
 	using namespace RubyWX::StatusBar;
 	rb_cWXStatusBar = rb_define_class_under(rb_mWX,"StatusBar",rb_cWXControl);

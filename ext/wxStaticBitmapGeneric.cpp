@@ -51,6 +51,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 #endif
 DLL_LOCAL void Init_WXStaticBitmapGeneric(VALUE rb_mWX)
 {
+#if 0
+	rb_cWXStaticBitmapBase = rb_define_class_under(rb_mWX,"StaticBitmapBase",rb_cWXControl);
+#endif
 #if wxUSE_STATBMP
 	using namespace RubyWX::StaticBitmapGeneric;
 	rb_cWXStaticBitmapGeneric = rb_define_class_under(rb_mWX,"StaticBitmapGeneric",rb_cWXStaticBitmapBase);

@@ -83,6 +83,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL void Init_WXSpinCtrl(VALUE rb_mWX)
 {
 #if 0
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+
 	rb_define_attr(rb_cWXSpinCtrl,"value",1,1);
 	rb_define_attr(rb_cWXSpinCtrl,"min",1,1);
 	rb_define_attr(rb_cWXSpinCtrl,"max",1,1);

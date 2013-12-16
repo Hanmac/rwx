@@ -9,7 +9,7 @@
 #define WXDATEPICKER_HPP_
 
 
-#include "wxControl.hpp"
+#include "wxPickerBase.hpp"
 
 extern VALUE rb_cWXDatePicker;
 
