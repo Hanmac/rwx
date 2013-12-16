@@ -75,7 +75,7 @@ DLL_LOCAL VALUE _runWizard(int argc,VALUE *argv,VALUE self)
 	wxWizardPage *wpage = NULL;
 
 	rb_scan_args(argc, argv, "01",&page);
-	rb_check_frozen(false);
+	rb_check_frozen(self);
 	if(NIL_P(page))
 	{
 		wxWindowList list = _self->GetChildren();
