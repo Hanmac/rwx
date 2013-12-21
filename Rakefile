@@ -1,5 +1,6 @@
 # -*- mode: ruby; coding: utf-8 -*-
 gem "rdoc"
+require "tmpdir"
 require "rake"
 require "rake/clean"
 require "rubygems/package_task"
@@ -11,7 +12,7 @@ rescue LoadError
 end
 
 ENV["RDOCOPT"] = "" if ENV["RDOCOPT"]
-TMPSRCDIR = "tmpsrc"
+TMPSRCDIR = Dir.mktmpdir
 CLEAN.include(TMPSRCDIR)
 CLOBBER.include("rdoc")
 
@@ -62,7 +63,7 @@ end
 # make RDoc work properly. The stripped sources are to be
 # found in TMPSRCDIR afterwards.
 task :prepare_sources do
-  rm_r "tmpsrc" if File.directory?(TMPSRCDIR)
+  rm_r TMPSRCDIR if File.directory?(TMPSRCDIR)
 
   mkdir TMPSRCDIR
   
