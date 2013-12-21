@@ -58,7 +58,7 @@ VALUE wrapID(wxWindowID val)
 	return INT2NUM(val);
 }
 
-wxWindowID unwrapID(VALUE val)
+wxWindowID unwrapID(const VALUE &val)
 {
 	if(NIL_P(val))
 		return wxID_ANY;

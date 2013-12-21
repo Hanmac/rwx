@@ -20,7 +20,7 @@ extern VALUE rb_cWXWindow;
 DLL_LOCAL void Init_WXWindow(VALUE rb_mWX);
 
 VALUE wrapID(wxWindowID val);
-wxWindowID unwrapID(VALUE val);
+wxWindowID unwrapID(const VALUE &val);
 void registerID(const char *name,wxWindowID id);
 
 #if wxUSE_TOOLTIPS
