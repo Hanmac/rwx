@@ -89,6 +89,29 @@ VALUE wrap< unsigned int >(const unsigned int &st )
 	return UINT2NUM(st);
 }
 
+template <>
+long unwrap< long >(const VALUE &val )
+{
+	return NUM2LONG(val);
+}
+
+template <>
+VALUE wrap< long >(const long &st )
+{
+	return LONG2NUM(st);
+}
+
+template <>
+unsigned long unwrap< unsigned long >(const VALUE &val )
+{
+	return NUM2ULONG(val);
+}
+
+template <>
+VALUE wrap< unsigned long >(const unsigned long &st )
+{
+	return ULONG2NUM(st);
+}
 
 template <>
 VALUE wrap< wxString >(const wxString &st )

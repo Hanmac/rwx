@@ -292,6 +292,15 @@ unsigned int unwrap< unsigned int >(const VALUE &val );
 template <>
 VALUE wrap< unsigned int >(const unsigned int &st );
 
+template <>
+long unwrap< long >(const VALUE &val );
+template <>
+VALUE wrap< long >(const long &st );
+
+template <>
+unsigned long unwrap< unsigned long >(const VALUE &val );
+template <>
+VALUE wrap< unsigned long >(const unsigned long &st );
 
 template <>
 VALUE wrap< wxString >(const wxString &st );
