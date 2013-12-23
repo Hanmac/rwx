@@ -68,6 +68,7 @@
 #include "wxAnyButton.hpp"
 #include "wxButton.hpp"
 #include "wxBitmapButton.hpp"
+#include "wxContextHelpButton.hpp"
 #include "wxToggleButton.hpp"
 #include "wxBitmapToggleButton.hpp"
 
@@ -312,7 +313,7 @@ extern "C" void Init_rwx()
 	Init_WXAnyButton(rb_mWX);
 	Init_WXButton(rb_mWX);
 	Init_WXBitmapButton(rb_mWX);
-
+	Init_WXContextHelpButton(rb_mWX);
 	Init_WXToggleButton(rb_mWX);
 	Init_WXBitmapToggleButton(rb_mWX);
 
