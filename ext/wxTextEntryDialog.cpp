@@ -115,7 +115,7 @@ DLL_LOCAL void Init_WXTextEntryDialog(VALUE rb_mWX)
 
 	rb_define_module_function(rb_mWX,"text_dialog",RUBY_METHOD_FUNC(_getText),-1);
 
-	rb_define_const(rb_cWXDialog,"DEFAULT_STYLE",INT2NUM(wxTextEntryDialogStyle));
+	rb_define_const(rb_cWXTextEntryDialog,"DEFAULT_STYLE",INT2NUM(wxTextEntryDialogStyle));
 
 	registerInfo<wxTextEntryDialog>(rb_cWXTextEntryDialog);
 #endif

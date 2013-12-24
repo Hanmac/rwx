@@ -15,6 +15,9 @@ extern VALUE rb_cWXSizer;
 void Init_WXSizer(VALUE rb_mWX);
 
 template <>
+wxSizerFlags unwrap< wxSizerFlags >(const VALUE &hash);
+
+template <>
 wxSizer* unwrap<wxSizer*>(const VALUE &arg);
 
 #endif /* WXSIZER_HPP_ */
