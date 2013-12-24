@@ -1,7 +1,7 @@
 /*
  * wxNumberEntryDialog.cpp
  *
- *  Created on: 05.03.2012
+ *  Created on: 24.12.2013
  *      Author: hanmac
  */
 

@@ -54,6 +54,8 @@
 #include "wxFileDialog.hpp"
 #include "wxDirDialog.hpp"
 #include "wxNumberEntryDialog.hpp"
+#include "wxTextEntryDialog.hpp"
+#include "wxPasswordEntryDialog.hpp"
 
 #include "wxProgressDialog.hpp"
 
@@ -245,6 +247,8 @@ extern "C" void Init_rwx()
 	Init_WXFileDialog(rb_mWX);
 	Init_WXDirDialog(rb_mWX);
 	Init_WXNumberEntryDialog(rb_mWX);
+	Init_WXTextEntryDialog(rb_mWX);
+	Init_WXPasswordEntryDialog(rb_mWX);
 	Init_WXProgressDialog(rb_mWX);
 	Init_WXWizard(rb_mWX);
 	Init_WXWizardPage(rb_mWX);
