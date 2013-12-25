@@ -129,10 +129,22 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 VALUE _addControl(int argc,VALUE *argv,VALUE self)
 {
-	VALUE control,sizer;
-	rb_scan_args(argc, argv, "11",&control,&sizer);
+	VALUE control,sizer,arg;
+	rb_scan_args(argc, argv, "11*",&control,&sizer,&arg);
 
-	_self->AddControl(unwrap<wxControl*>(control),unwrap<wxSizerFlags>(sizer));
+	wxControl *c = NULL;
+	if(rb_obj_is_kind_of(control,rb_cClass) && rb_class_inherited(control,rb_cWXControl)) {
+		rb_scan_args(argc, argv, "11",&control,&arg);
+		VALUE argv2[] = {self, arg };
+		c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,control));
+	}else
+	{
+		c = unwrap<wxControl*>(control);
+		if(c->GetParent() != _self)
+			rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(control));
+	}
+
+	_self->AddControl(c,unwrap<wxSizerFlags>(sizer));
 	return self;
 }
 
