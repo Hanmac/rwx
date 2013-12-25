@@ -385,7 +385,7 @@ extern "C" void Init_rwx()
 
 	Init_WXXRC(rb_mWX);
 
-	rb_define_const(rb_mWX,"WXVERSION",wrap(wxVERSION_NUM_DOT_STRING));
+	rb_define_const(rb_mWX,"WXVERSION",wrap(wxString(wxVERSION_NUM_DOT_STRING)));
 
 	rb_define_const(rb_mWX,"WXVERSION_MAYOR",wrap(wxMAJOR_VERSION));
 	rb_define_const(rb_mWX,"WXVERSION_MINOR",wrap(wxMINOR_VERSION));
