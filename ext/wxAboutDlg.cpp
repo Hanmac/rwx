@@ -44,6 +44,18 @@ APP_PROTECT(RubyAboutDlg)
 	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern(#name))))) \
 		info.Set##cname(unwrap<type>(value));
 
+#define set_option2(name,cname) \
+	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern(#name))))) \
+	{\
+		value = rb_ary_to_ary(value);\
+		if(RARRAY_LEN(value) > 1) {\
+			info.Set##cname(unwrap<wxString>(RARRAY_AREF(value,0)),unwrap<wxString>(RARRAY_AREF(value,1)));\
+		}else \
+		{\
+			info.Set##cname(unwrap<wxString>(RARRAY_AREF(value,0)));\
+		}\
+	}
+
 wxAboutDialogInfo toInto(VALUE hash)
 {
 	wxAboutDialogInfo info;
@@ -53,11 +65,11 @@ wxAboutDialogInfo toInto(VALUE hash)
 	VALUE value;
 
 	set_option(name,Name,wxString)
-	set_option(version,Version,wxString)
+	set_option2(version,Version)
 	set_option(description,Description,wxString)
 	set_option(copyright,Copyright,wxString)
 	set_option(licence,Licence,wxString)
-	set_option(web_site,WebSite,wxString)
+	set_option2(web_site,WebSite)
 	set_option(icon,Icon,wxIcon)
 
 	set_option(developers,Developers,wxArrayString)
@@ -131,7 +143,6 @@ VALUE _addControl(int argc,VALUE *argv,VALUE self)
 {
 	VALUE control,sizer,arg;
 	rb_scan_args(argc, argv, "11*",&control,&sizer,&arg);
-
 	wxControl *c = NULL;
 	if(rb_obj_is_kind_of(control,rb_cClass) && rb_class_inherited(control,rb_cWXControl)) {
 		rb_scan_args(argc, argv, "11",&control,&arg);
@@ -179,7 +190,7 @@ DLL_LOCAL void Init_WXAboutDlg(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXAboutDialog,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-	rb_define_method(rb_cWXAboutDialog,"add_control",RUBY_METHOD_FUNC(_addControl),1);
+	rb_define_method(rb_cWXAboutDialog,"add_control",RUBY_METHOD_FUNC(_addControl),-1);
 	rb_define_method(rb_cWXAboutDialog,"add_text",RUBY_METHOD_FUNC(_addText),1);
 
 #if wxUSE_COLLPANE
