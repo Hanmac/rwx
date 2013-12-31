@@ -19,13 +19,18 @@ VALUE rb_mWXItemContainer;
 template <>
 wxItemContainer* unwrap< wxItemContainer* >(const VALUE &obj)
 {
+#if wxUSE_LISTBOX
 	if(rb_obj_is_kind_of(obj,rb_cWXListBox))
 		return unwrap<wxListBox*>(obj);
+#endif
+#if wxUSE_CHOICE
 	if(rb_obj_is_kind_of(obj,rb_cWXChoice))
 		return unwrap<wxChoice*>(obj);
+#endif
+#if wxUSE_COMBOBOX
 	if(rb_obj_is_kind_of(obj,rb_cWXComboBox))
 		return unwrap<wxComboBox*>(obj);
-		
+#endif
 		return unwrapPtr<wxItemContainer>(obj,rb_mWXItemContainer);
  return NULL;
 }

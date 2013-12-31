@@ -16,6 +16,14 @@ void Init_WXTextAttr(VALUE rb_mWX);
 
 #if wxUSE_TEXTCTRL
 #include <wx/textctrl.h>
+
+
+template <>
+VALUE wrap< wxTextAttr >(wxTextAttr *color );
+
+template <>
+wxTextAttr unwrap< wxTextAttr >(const VALUE &vcolor);
+
 #endif
 
 #endif /* WXTEXTATTR_HPP_ */

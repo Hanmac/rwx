@@ -12,10 +12,24 @@
 VALUE rb_cWXTextAttr;
 
 #if wxUSE_TEXTCTRL
+
+//find better way?
+template <>
+VALUE wrap< wxTextAttr >(wxTextAttr *color )
+{
+	return Data_Wrap_Struct(rb_cWXTextAttr, NULL, free, color);
+}
+
+template <>
+wxTextAttr unwrap< wxTextAttr >(const VALUE &vcolor)
+{
+	return *unwrapPtr<wxTextAttr>(vcolor,rb_cWXTextAttr);
+}
+
 #define _self unwrap<wxTextAttr*>(self)
 
 
-//use this macro to automaticly check the Has Methods
+//use this macro to automatically check the Has Methods
 #define macro_textattr2(attr,attr2,type,w) \
 DLL_LOCAL VALUE _get##attr(VALUE self)\
 { \

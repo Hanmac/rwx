@@ -113,6 +113,9 @@
 #include "wxSpinButton.hpp"
 #include "wxSpinCtrl.hpp"
 
+#include "wxTextArea.hpp"
+#include "wxTextEntry.hpp"
+
 #include "wxTextCtrl.hpp"
 #include "wxTextAttr.hpp"
 #include "wxSearchCtrl.hpp"
@@ -314,9 +317,6 @@ extern "C" void Init_rwx()
 	Init_WXStaticText(rb_mWX);
 	Init_WXStaticBox(rb_mWX);
 
-	Init_WXComboBox(rb_mWX);
-	Init_WXChoice(rb_mWX);
-
 	Init_WXAnyButton(rb_mWX);
 	Init_WXButton(rb_mWX);
 	Init_WXBitmapButton(rb_mWX);
@@ -327,12 +327,17 @@ extern "C" void Init_rwx()
 	Init_WXCheckBox(rb_mWX);
 	Init_WXRadioButton(rb_mWX);
 
+	Init_WXTextArea(rb_mWX);
+	Init_WXTextEntry(rb_mWX);
 
 	Init_WXTextCtrl(rb_mWX);
 
 	Init_WXTextAttr(rb_mWX);
 
 	Init_WXSearchCtrl(rb_mWX);
+
+	Init_WXComboBox(rb_mWX);
+	Init_WXChoice(rb_mWX);
 
 	Init_WXTreeCtrl(rb_mWX);
 	Init_WXStatusBar(rb_mWX);

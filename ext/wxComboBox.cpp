@@ -9,6 +9,7 @@
 
 #include "wxEvtHandler.hpp"
 #include "wxItemContainer.hpp"
+#include "wxTextEntry.hpp"
 
 VALUE rb_cWXComboBox;
 
@@ -19,6 +20,12 @@ namespace RubyWX {
 namespace ComboBox {
 
 APP_PROTECT(wxComboBox)
+
+//need to define it again to prevent Shadowing
+singlefunc(Clear)
+
+singlereturn(IsListEmpty)
+singlereturn(IsTextEmpty)
 
 /*
  * call-seq:
@@ -31,6 +38,7 @@ APP_PROTECT(wxComboBox)
  * *options: Hash with possible options to set:
  * items [String]
  * select Integer
+ * value String
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -48,6 +56,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		VALUE temp;
 		set_option(items,,wxArrayString)
 		set_option(select,Selection,int)
+		set_option(value,Value,wxString)
+
 	}
 
 	return self;
@@ -61,6 +71,7 @@ DLL_LOCAL void Init_WXComboBox(VALUE rb_mWX)
 {
 #if 0
 	rb_mWXItemContainer = rb_define_module_under(rb_mWX,"ItemContainer");
+	rb_mWXTextEntry = rb_define_module_under(rb_mWX,"TextEntry");
 #endif
 #if wxUSE_COMBOBOX
 	using namespace RubyWX::ComboBox;
@@ -69,7 +80,13 @@ DLL_LOCAL void Init_WXComboBox(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXComboBox,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
+	rb_define_method(rb_cWXComboBox,"clear",RUBY_METHOD_FUNC(_Clear),0);
+
+	rb_define_method(rb_cWXComboBox,"list_empty?",RUBY_METHOD_FUNC(_IsListEmpty),0);
+	rb_define_method(rb_cWXComboBox,"text_empty?",RUBY_METHOD_FUNC(_IsTextEmpty),0);
+
 	rb_include_module(rb_cWXComboBox,rb_mWXItemContainer);
+	rb_include_module(rb_cWXComboBox,rb_mWXTextEntry);
 
 	registerInfo<wxComboBox>(rb_cWXComboBox);
 #endif

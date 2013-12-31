@@ -10,6 +10,8 @@
 #include "wxBitmap.hpp"
 #include "wxBitmapButton.hpp"
 #include "wxTextCtrl.hpp"
+#include "wxTextArea.hpp"
+#include "wxTextEntry.hpp"
 
 VALUE rb_cWXSearchCtrl;
 
@@ -20,6 +22,8 @@ namespace RubyWX {
 namespace SearchCtrl {
 
 APP_PROTECT(wxSearchCtrl)
+
+macro_attr(Value,wxString)
 
 #if wxUSE_MENUS
 macro_attr(Menu,wxMenu*)
@@ -73,8 +77,10 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	{
 		VALUE temp;
 
-		bool search(false),cancel(false);
+		bool search(_self->IsSearchButtonVisible());
+		bool cancel(_self->IsCancelButtonVisible());
 
+		set_option(value,Value,wxString)
 #if wxUSE_MENUS
 		set_option(menu,Menu,wxMenu*)
 #endif
@@ -93,6 +99,20 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 #endif
 DLL_LOCAL void Init_WXSearchCtrl(VALUE rb_mWX)
 {
+#if 0
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+
+	rb_mWXTextArea = rb_define_module_under(rb_mWX,"TextArea");
+	rb_mWXTextEntry = rb_define_module_under(rb_mWX,"TextEntry");
+
+	rb_define_attr(rb_cWXSearchCtrl,"value",1,1);
+	rb_define_attr(rb_cWXSearchCtrl,"menu",1,1);
+
+	rb_define_attr(rb_cWXSearchCtrl,"search_button_visible",1,1);
+	rb_define_attr(rb_cWXSearchCtrl,"cancel_button_visible",1,1);
+
+#endif
+
 #if wxUSE_SEARCHCTRL
 	using namespace RubyWX::SearchCtrl;
 	rb_cWXSearchCtrl = rb_define_class_under(rb_mWX,"SearchCtrl",rb_cWXControl);
@@ -100,14 +120,16 @@ DLL_LOCAL void Init_WXSearchCtrl(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXSearchCtrl,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
+	rb_include_module(rb_cWXSearchCtrl,rb_mWXTextArea);
+	rb_include_module(rb_cWXSearchCtrl,rb_mWXTextEntry);
+
+	rb_define_attr_method(rb_cWXSearchCtrl,"value",_getValue,_setValue);
 #if wxUSE_MENUS
 	rb_define_attr_method(rb_cWXSearchCtrl,"menu",_getMenu,_setMenu);
 #endif
 
 	rb_define_attr_method(rb_cWXSearchCtrl,"search_button_visible",_IsSearchButtonVisible,_setSearchButtonVisible);
 	rb_define_attr_method(rb_cWXSearchCtrl,"cancel_button_visible",_IsCancelButtonVisible,_setCancelButtonVisible);
-
-
 
 	registerInfo<wxSearchCtrl>(rb_cWXSearchCtrl);
 
