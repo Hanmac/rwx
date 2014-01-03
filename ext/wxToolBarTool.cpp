@@ -69,6 +69,25 @@ DLL_LOCAL VALUE _alloc(VALUE self)
 
 #endif
 
+
+
+/* Document-attr: normal_bitmap
+ * returns the default WX::Bitmap
+ */
+/* Document-attr: disabled_bitmap
+ * returns the diabled WX::Bitmap
+ */
+
+/* Document-attr: label
+ * returns the label of the tool bar item. Type is String
+ */
+/* Document-attr: short_help
+ * returns the short help, used in status bar. Type is String
+ */
+/* Document-attr: long_help
+ * returns the long help, used in tool tip. Type is String
+ */
+
 DLL_LOCAL void Init_WXToolBarTool(VALUE rb_mWX)
 {
 #if 0

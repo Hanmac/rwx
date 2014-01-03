@@ -30,7 +30,7 @@ APP_PROTECT(wxFilePickerCtrl)
  * * parent of this window or nil
  *
  * *options: Hash with possible options to set:
- * * *path String default path
+ *   * path String default path
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
@@ -64,6 +64,12 @@ macro_attr(Path,wxString)
 }
 
 #endif
+
+
+/* Document-attr: path
+ * the path of the FilePicker. String
+ */
+
 DLL_LOCAL void Init_WXFilePicker(VALUE rb_mWX)
 {
 #if 0

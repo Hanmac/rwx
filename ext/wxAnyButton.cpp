@@ -17,7 +17,6 @@ VALUE rb_cWXAnyButton;
 namespace RubyWX {
 namespace AnyButton {
 
-macro_attr(LabelText,wxString)
 macro_attr(BitmapLabel,wxBitmap)
 macro_attr(BitmapPressed,wxBitmap)
 macro_attr(BitmapDisabled,wxBitmap)
@@ -33,17 +32,83 @@ singlereturn(GetBitmap)
 
 APP_PROTECT(wxAnyButton)
 
+
+/*
+ * call-seq:
+ *   AnyButton.new(parent, [options])
+ *
+ * creates a new AnyButton widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ *   * bitmap_label WX::Bitmap
+ *   * bitmap_pressed WX::Bitmap
+ *   * bitmap_disabled WX::Bitmap
+ *   * bitmap_current WX::Bitmap
+ *   * bitmap_focus WX::Bitmap
+ *   * bitmap_selected WX::Bitmap
+ *   * bitmap_hover WX::Bitmap
+ *
+*/
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
+{
+	VALUE parent,hash;
+	rb_scan_args(argc, argv, "11",&parent,&hash);
+
+	//TODO: Can AnyButton really created?
+	if(!_created) {
+		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
+		_created = true;
+	}
+	rb_call_super(argc,argv);
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		VALUE temp;
+		set_option(bitmap_label,BitmapLabel,wxBitmap)
+		set_option(bitmap_pressed,BitmapPressed,wxBitmap)
+		set_option(bitmap_disabled,BitmapDisabled,wxBitmap)
+		set_option(bitmap_current,BitmapCurrent,wxBitmap)
+		set_option(bitmap_focus,BitmapFocus,wxBitmap)
+		set_option(bitmap_selected,BitmapSelected,wxBitmap)
+		set_option(bitmap_hover,BitmapHover,wxBitmap)
+	}
+
+	return self;
+}
+
 }
 }
 
 #endif
 
+/* Document-attr: bitmap_label
+ * the WX::Bitmap of the button in normal state
+ */
+/* Document-attr: bitmap_pressed
+ * the WX::Bitmap of the button in pressed state
+ */
+/* Document-attr: bitmap_disabled
+ * the WX::Bitmap of the button in disabled state
+ */
+/* Document-attr: bitmap_current
+ * the WX::Bitmap of the button in current state
+ */
+/* Document-attr: bitmap_focus
+ * the WX::Bitmap of the button in focus state
+ */
+/* Document-attr: bitmap_selected
+ * the WX::Bitmap of the button in selected state
+ */
+/* Document-attr: bitmap_hover
+ * the WX::Bitmap of the button in hover state
+ */
+
 DLL_LOCAL void Init_WXAnyButton(VALUE rb_mWX)
 {
 #if 0
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
-
-	rb_define_attr(rb_cWXAnyButton,"label_text",1,1);
 
 	rb_define_attr(rb_cWXAnyButton,"bitmap_label",1,1);
 	rb_define_attr(rb_cWXAnyButton,"bitmap_pressed",1,1);
@@ -60,7 +125,7 @@ DLL_LOCAL void Init_WXAnyButton(VALUE rb_mWX)
 	rb_cWXAnyButton = rb_define_class_under(rb_mWX,"AnyButton",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXAnyButton,_alloc);
 
-	rb_define_attr_method(rb_cWXAnyButton,"label_text",_getLabelText,_setLabelText);
+	rb_define_method(rb_cWXAnyButton,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_attr_method(rb_cWXAnyButton,"bitmap_label",_getBitmapLabel,_setBitmapLabel);
 	rb_define_attr_method(rb_cWXAnyButton,"bitmap_pressed",_getBitmapPressed,_setBitmapPressed);

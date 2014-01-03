@@ -77,11 +77,24 @@ singlereturn(CreateToolBar)
 }
 }
 
+
+/* Document-attr: menubar
+ * the menu bar of the Frame. WX::MenuBar
+ */
+/* Document-attr: statusbar
+ * the status bar of the Frame. WX::StatusBar
+ */
+/* Document-attr: toolbar
+ * the tool bar of the Frame. WX::ToolBar
+ */
+
+
 DLL_LOCAL void Init_WXFrame(VALUE rb_mWX)
 {
 #if 0
 	rb_define_attr(rb_cWXFrame,"menubar",1,1);
 	rb_define_attr(rb_cWXFrame,"statusbar",1,1);
+	rb_define_attr(rb_cWXFrame,"statusbar_pane",1,1);
 	rb_define_attr(rb_cWXFrame,"toolbar",1,1);
 #endif
 
@@ -96,6 +109,7 @@ DLL_LOCAL void Init_WXFrame(VALUE rb_mWX)
 #endif // wxUSE_MENUS
 #if wxUSE_STATUSBAR
 	rb_define_attr_method(rb_cWXFrame,"statusbar",_getStatusBar,_setStatusBar);
+	rb_define_attr_method(rb_cWXFrame,"statusbar_pane",_getStatusBarPane,_setStatusBarPane);
 	rb_define_method(rb_cWXFrame,"create_statusbar",RUBY_METHOD_FUNC(_CreateStatusBar),0);
 #endif // wxUSE_STATUSBAR
 #if wxUSE_TOOLBAR

@@ -47,8 +47,19 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
+
+
+/* Document-attr: value
+ * the value of the RadioButton. bool
+ */
 DLL_LOCAL void Init_WXRadioButton(VALUE rb_mWX)
 {
+#if 0
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+
+	rb_define_attr(rb_cWXRadioButton,"value",1,1);
+#endif
+
 #if wxUSE_RADIOBTN
 	using namespace RubyWX::RadioButton;
 	rb_cWXRadioButton = rb_define_class_under(rb_mWX,"RadioButton",rb_cWXControl);

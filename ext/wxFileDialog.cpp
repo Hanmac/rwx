@@ -28,11 +28,11 @@ APP_PROTECT(wxFileDialog)
  * * parent of this window or nil
  *
  * *options: Hash with possible options to set:
- * * *wildcard String default WildCard
- * * *directory String default directory
- * * *filename String default filename
- * * *path String default path
- * * *message String
+ *   * wildcard String default WildCard
+ *   * directory String default directory
+ *   * filename String default filename
+ *   * path String default path
+ *   * message String
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
@@ -108,6 +108,24 @@ DLL_LOCAL VALUE _loadFileSelector(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
+
+
+/* Document-attr: wildcard
+ * the wildcard of the FileDialog. String
+ */
+/* Document-attr: directory
+ * the directory of the FileDialog. String
+ */
+/* Document-attr: filename
+ * the filename of the FileDialog. String
+ */
+/* Document-attr: message
+ * the message of the FileDialog. String
+ */
+/* Document-attr: path
+ * the path of the FileDialog. String
+ */
+
 DLL_LOCAL void Init_WXFileDialog(VALUE rb_mWX)
 {
 #if 0

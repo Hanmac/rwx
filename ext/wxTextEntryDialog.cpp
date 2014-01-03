@@ -30,8 +30,8 @@ macro_attr(Value,wxString)
  * * parent of this window or nil
  *
  * *options: Hash with possible options to set:
- * * *path String default path
- * * *message String
+ *   * path String default path
+ *   * message String
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
@@ -98,6 +98,9 @@ DLL_LOCAL VALUE _getText(int argc,VALUE *argv,VALUE self)
 
 #endif
 
+/* Document-attr: value
+ * the value of the TextEntryDialog. String
+ */
 DLL_LOCAL void Init_WXTextEntryDialog(VALUE rb_mWX)
 {
 #if 0

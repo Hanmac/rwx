@@ -267,13 +267,17 @@ DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
 */
 
 /* Document-attr: red
- * returns the red value of Color. */
+ * returns the red value of Color.
+ */
 /* Document-attr: blue
- * returns the blue value of Color. */
+ * returns the blue value of Color.
+ */
 /* Document-attr: green
- * returns the green value of Color. */
+ * returns the green value of Color.
+ */
 /* Document-attr: alpha
- * returns the alpha value of Color. */
+ * returns the alpha value of Color.
+ */
 
 
 DLL_LOCAL void Init_WXColor(VALUE rb_mWX)

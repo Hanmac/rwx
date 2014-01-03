@@ -46,9 +46,9 @@ APP_PROTECT(wxSpinCtrl)
  * * parent of this window or nil
  *
  * *options: Hash with possible options to set:
- * * *min Integer
- * * *max Integer
- * * *value Integer
+ *   * min Integer
+ *   * max Integer
+ *   * value Integer
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
@@ -79,6 +79,16 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
+
+/* Document-attr: value
+ * the value of the SpinCtrl. Integer
+ */
+/* Document-attr: mix
+ * the minimum value of the SpinCtrl. Integer
+ */
+/* Document-attr: max
+ * the maximum value of the SpinCtrl. Integer
+ */
 
 DLL_LOCAL void Init_WXSpinCtrl(VALUE rb_mWX)
 {

@@ -99,10 +99,11 @@ DLL_LOCAL void Init_WXCursor(VALUE rb_mWX)
 		->add(wxCURSOR_SIZENS,"sizens")
 		->add(wxCURSOR_SIZENWSE,"sizenwse")
 		->add(wxCURSOR_SIZEWE,"sizenewe")
-		->add(wxCURSOR_SIZING,"sizeneng")
+		->add(wxCURSOR_SIZING,"sizing")
 		->add(wxCURSOR_SPRAYCAN,"spraycan")
 		->add(wxCURSOR_WAIT,"wait")
 		->add(wxCURSOR_WATCH,"watch")
-		->add(wxCURSOR_BLANK,"blank");
+		->add(wxCURSOR_BLANK,"blank")
+		->add(wxCURSOR_ARROWWAIT,"arrow_wait");
 
 }

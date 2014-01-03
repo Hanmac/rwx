@@ -48,6 +48,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 #endif
 
+/* Document-attr: value
+ * the value of the ToggleButton. bool
+ */
 DLL_LOCAL void Init_WXToggleButton(VALUE rb_mWX)
 {
 #if 0

@@ -6,6 +6,7 @@
  */
 
 #include "wxSpinButton.hpp"
+#include "wxNotifyEvent.hpp"
 
 
 VALUE rb_cWXSpinButton;
@@ -32,9 +33,9 @@ APP_PROTECT(wxSpinButton)
  * * parent of this window or nil
  *
  * *options: Hash with possible options to set:
- * * *min Integer
- * * *max Integer
- * * *value Integer
+ *   * min Integer
+ *   * max Integer
+ *   * value Integer
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
@@ -68,6 +69,17 @@ macro_attr(Value,int)
 #endif
 
 
+
+/* Document-attr: value
+ * the value of the SpinButton. Integer
+ */
+/* Document-attr: mix
+ * the minimum value of the SpinButton. Integer
+ */
+/* Document-attr: max
+ * the maximum value of the SpinButton. Integer
+ */
+
 DLL_LOCAL void Init_WXSpinButton(VALUE rb_mWX)
 {
 #if 0
@@ -92,7 +104,7 @@ DLL_LOCAL void Init_WXSpinButton(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXSpinButton,"max",_getMax,_setMax);
 
 
-	rb_cWXSpinEvent = rb_define_class_under(rb_cWXEvent,"Spin",rb_cWXEvent);
+	rb_cWXSpinEvent = rb_define_class_under(rb_cWXEvent,"Spin",rb_cWXNotifyEvent);
 
 	rb_define_attr_method(rb_cWXSpinEvent,"value",Event::_getValue,Event::_setValue);
 

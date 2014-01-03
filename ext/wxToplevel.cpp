@@ -33,8 +33,8 @@ APP_PROTECT(wxTopLevelWindow)
  * * name is a String describing a resource in a loaded xrc
  *
  * *options: Hash with possible options to set:
- * * * title wxString Shown in the TitleBar of framed Window
- * * * icon wxBitmap Shown in the TitleBar of framed Window
+ *   * title wxString Shown in the TitleBar of framed Window
+ *   * icon wxBitmap Shown in the TitleBar of framed Window
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)

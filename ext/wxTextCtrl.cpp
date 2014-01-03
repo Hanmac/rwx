@@ -22,6 +22,19 @@ macro_attr(Value,wxString)
 
 APP_PROTECT(wxTextCtrl)
 
+
+/*
+ * call-seq:
+ *   TextEntryDialog.new(parent, [options])
+ *
+ * creates a new TextEntryDialog widget.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ *   * value String
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
@@ -46,6 +59,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
+
+
+/* Document-attr: value
+ * the value of the TextCtrl. String
+ */
 DLL_LOCAL void Init_WXTextCtrl(VALUE rb_mWX)
 {
 #if 0

@@ -113,17 +113,23 @@ DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 */
 
 /* Document-attr: menu
- * returns the parent menu, this attribute are not copied with inititalize_copy or stored with Marshal */
+ * returns the parent menu, this attribute are not copied with inititalize_copy or stored with Marshal
+ */
 /* Document-attr: label
- * returns the label of the menu item. Type is String*/
+ * returns the label of the menu item. Type is String
+ */
 /* Document-attr: id
- * returns the Id of the menu item. Type can be Symbol,if pre- or user defined, or Integer if auto generated.*/
+ * returns the Id of the menu item. Type can be Symbol,if pre- or user defined, or Integer if auto generated.
+ */
 /* Document-attr: sub_menu
- * returns the sub_menu, currently can be copied with inititalize_copy but not stored with Marshal*/
+ * returns the sub_menu, currently can be copied with inititalize_copy but not stored with Marshal
+ */
 /* Document-attr: help
- * returns the help string of the menu item. Type is String*/
+ * returns the help string of the menu item. Type is String
+ */
 /* Document-attr: bitmap
- * returns the Bitmap, currently can be copied with inititalize_copy but only stored with Marshal when wxImage is available*/
+ * returns the Bitmap, currently can be copied with inititalize_copy but only stored with Marshal when wxImage is available
+ */
 
 DLL_LOCAL void Init_WXMenuItem(VALUE rb_mWX)
 {

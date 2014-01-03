@@ -49,7 +49,7 @@ singlereturn(GetControllerSize)
  * * parent of this window or nil
  *
  * *options: Hash with possible options to set:
- * * * image_list [wxBitmap*]
+ *   * image_list [wxBitmap*]
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)

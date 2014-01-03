@@ -25,7 +25,7 @@ APP_PROTECT(wxBitmapButton)
  * * parent of this window or nil
  *
  * *options: Hash with possible options to set:
- * * *bitmap WX::Bitmap
+ *   * bitmap WX::Bitmap
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {

@@ -50,6 +50,17 @@ macro_attr(ToolTip,wxString)
 
 #endif
 
+
+/* Document-attr: menu
+ * the menu of the TaskBar. WX::Menu
+ */
+/* Document-attr: icon
+ * the icon of the TaskBar. WX::Bitmap
+ */
+/* Document-attr: tooltip
+ * the tooltip of the TaskBar. String
+ */
+
 DLL_LOCAL void Init_WXTaskBar(VALUE rb_mWX)
 {
 #if wxUSE_TASKBARICON

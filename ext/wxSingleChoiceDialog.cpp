@@ -34,9 +34,9 @@ singlereturn(GetStringSelection)
  * * parent of this window or nil
  *
  * *options: Hash with possible options to set:
- * * *choices [string]
- * * *selection Integer
- * * *message String
+ *   * choices [string]
+ *   * selection Integer
+ *   * message String
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)

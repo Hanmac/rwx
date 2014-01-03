@@ -37,10 +37,10 @@ macro_attr(FilterIndex,int)
  * * parent of this window or nil
  *
  * *options: Hash with possible options to set:
- * * *wildcard String default WildCard
- * * *directory String default directory
- * * *filename String default filename
- * * *path String default path
+ *   * wildcard String default WildCard
+ *   * directory String default directory
+ *   * filename String default filename
+ *   * path String default path
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
@@ -79,6 +79,21 @@ singlereturn(GetFile)
 }
 }
 #endif
+
+/* Document-attr: wildcard
+ * the wildcard of the FileCtrl. String
+ */
+/* Document-attr: directory
+ * the directory of the FileCtrl. String
+ */
+/* Document-attr: filename
+ * the filename of the FileCtrl. String
+ */
+/* Document-attr: filter_index
+ * the filter_index of the FileCtrl. Integer
+ */
+
+
 DLL_LOCAL void Init_WXFileCtrlBase(VALUE rb_mWX)
 {
 #if 0

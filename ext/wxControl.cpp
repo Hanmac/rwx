@@ -27,7 +27,7 @@ APP_PROTECT(wxControl)
  * * parent of this window or nil
  *
  * *options: Hash with possible options to set:
- * * * label_text String depends on the control what is shown
+ *   * label_text String depends on the control what is shown
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
@@ -55,9 +55,15 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 
 #endif
+
+/* Document-attr: label_text
+ * the label_text of the Control. String
+ */
 DLL_LOCAL void Init_WXControl(VALUE rb_mWX)
 {
 #if 0
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+
 	rb_define_attr(rb_cWXControl,"label_text",1,1);
 #endif
 

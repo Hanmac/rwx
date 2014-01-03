@@ -55,9 +55,9 @@ DLL_LOCAL VALUE _setCancelButtonVisible(VALUE self,VALUE val)
  * * parent of this window or nil
  *
  * *options: Hash with possible options to set:
- * * *menu WX::Menu
- * * *search true/false
- * * *cancel true/false
+ *   * menu WX::Menu
+ *   * search true/false
+ *   * cancel true/false
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)

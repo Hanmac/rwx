@@ -29,7 +29,7 @@ APP_PROTECT(wxDirPickerCtrl)
  * * parent of this window or nil
  *
  * *options: Hash with possible options to set:
- * * *path String default path
+ *   * path String default path
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)

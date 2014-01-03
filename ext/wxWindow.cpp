@@ -110,8 +110,8 @@ namespace Window {
 
 macro_attr(Label,wxString)
 macro_attr(Name,wxString)
-//macro_attr(WindowVariant,wxWindowVariant)
-//macro_attr(LayoutDirection,wxLayoutDirection)
+macro_attr_enum(WindowVariant,wxWindowVariant)
+macro_attr_enum(LayoutDirection,wxLayoutDirection)
 
 macro_attr_with_func(Id,wrapID,unwrapID)
 
@@ -128,7 +128,7 @@ macro_attr(MinClientSize,wxSize)
 macro_attr(MaxSize,wxSize)
 macro_attr(MaxClientSize,wxSize)
 
-//macro_attr(BackgroundStyle,wxBackgroundStyle)
+macro_attr_enum(BackgroundStyle,wxBackgroundStyle)
 
 macro_attr(Font,wxFont)
 macro_attr(Cursor,wxCursor)
@@ -178,7 +178,7 @@ singlefunc(Update)
 singlefunc(Refresh)
 
 singlefunc(Fit)
-singlereturn(Layout)
+singlereturn_frozen(Layout)
 
 singlereturn(GetParent)
 singlereturn(GetGrandParent)
@@ -186,10 +186,10 @@ singlereturn(GetGrandParent)
 macro_attr(BackgroundColour,wxColour)
 macro_attr(ForegroundColour,wxColour)
 
-singlereturn(LineUp)
-singlereturn(LineDown)
-singlereturn(PageUp)
-singlereturn(PageDown)
+singlereturn_frozen(LineUp)
+singlereturn_frozen(LineDown)
+singlereturn_frozen(PageUp)
+singlereturn_frozen(PageDown)
 
 singlereturn(GetRect)
 
@@ -221,28 +221,36 @@ APP_PROTECT(wxWindow)
  * * parent of this window or nil
  * * name is a String describing a resource in a loaded xrc
  *
- * *options: Hash with possible options to set:
- * * * name String
- * * * label String depends on the control what is shown
- * * * help_text String
- * * * id Symbol or Integer
- * * * size WX::Size
- * * * position WX::Point
- * * * font WX::Font
- * * * background_color WX::Color
- * * * foreground_color WX::Color
+ * * options: Hash with possible options to set:
+ *   * name String
+ *   * label String depends on the control what is shown
+ *   * help_text String
+ *   * tool_tip String
+ *   * id Symbol or Integer
+ *   * size WX::Size
+ *   * position WX::Point
+ *   * font WX::Font
+ *   * cursor WX::Cursor
+ *   * background_color WX::Color
+ *   * foreground_color WX::Color
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "12",&parent,&name,&hash);
+
+	if(NIL_P(hash))
+		hash = name;
 
 	if(!_created) {
+		wxWindowID id(wxID_ANY);
+		if(rb_obj_is_kind_of(hash,rb_cHash))
+			set_hash_option(hash,"id",id,unwrapID);
 #if wxUSE_XRC
-		if(!loadxrc(_self,hash,unwrap<wxWindow*>(parent)))
+		if(!loadxrc(_self,name,unwrap<wxWindow*>(parent)))
 #endif
-		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
+		_self->Create(unwrap<wxWindow*>(parent),id);
 		_created = true;
 	}
 
@@ -258,8 +266,12 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 #if wxUSE_HELP
 		set_option(help_text,HelpText,wxString)
 #endif // wxUSE_HELP
+#if wxUSE_TOOLTIPS
+		set_option(tool_tip,ToolTip,wxToolTip*)
+#endif // wxUSE_TOOLTIPS
 
 		set_option(font,Font,wxFont)
+		set_option(cursor,Cursor,wxCursor)
 
 		set_option(background_color,BackgroundColour,wxColour)
 		set_option(foreground_color,ForegroundColour,wxColour)
@@ -431,8 +443,74 @@ DLL_LOCAL VALUE _ScreenToClient(VALUE self,VALUE point)
 	return wrap(_self->ScreenToClient(unwrap<wxPoint>(point)));
 }
 
+DLL_LOCAL VALUE _ClientToWindowSize(VALUE self,VALUE point)
+{
+	return wrap(_self->ClientToWindowSize(unwrap<wxSize>(point)));
+}
+
+DLL_LOCAL VALUE _WindowToClientSize(VALUE self,VALUE point)
+{
+	return wrap(_self->WindowToClientSize(unwrap<wxSize>(point)));
+}
+
 }
 }
+
+
+/* Document-attr: label
+ * the label of the Window, is mostly used for WX::Control windows. String
+ */
+/* Document-attr: name
+ * the name of the Window, is not shown directly. String
+ */
+/* Document-attr: parent
+ * the parent of the window, type: WX::Window or nil for no parent
+ */
+/* Document-attr: id
+ * the WindowId of the Window, is Symbol for system or self defined Ids, and Integer for generated
+ */
+
+/* Document-attr: background_color
+ * the WX::Color of the background, not all windows use them.
+ */
+/* Document-attr: foreground_color
+ * the WX::Color of the foreground, not all windows use them.
+ */
+/* Document-attr: font
+ * the WX::Font of the window, not all windows use them.
+ */
+/* Document-attr: cursor
+ * the WX::Cursor of the window. Shown when the mouse is over this window.
+ */
+
+
+/* Document-attr: size
+ * the size of this window. WX::Size
+ */
+/* Document-attr: min_size
+ * the minimum size of this window. WX::Size
+ */
+/* Document-attr: max_size
+ * the maximum size of this window. WX::Size
+ */
+
+/* Document-attr: client_size
+ * the size of this window. WX::Size
+ */
+/* Document-attr: min_client_size
+ * the minimum client size of this window. WX::Size
+ */
+/* Document-attr: max_client_size
+ * the maximum client size of this window. WX::Size
+ */
+
+
+/* Document-attr: help_text
+ * the help text of this window, not always available. String
+ */
+/* Document-attr: tool_tip
+ * the tool tip of this window, not always available. String
+ */
 
 DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 {
@@ -444,9 +522,17 @@ DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 
 	rb_define_attr(rb_cWXWindow, "id",1,1);
 
+	rb_define_attr(rb_cWXWindow, "window_variant",1,1);
+	rb_define_attr(rb_cWXWindow, "layout_direction",1,1);
+	rb_define_attr(rb_cWXWindow, "background_style",1,1);
+
 	rb_define_attr(rb_cWXWindow, "size",1,1);
 	rb_define_attr(rb_cWXWindow, "min_size",1,1);
 	rb_define_attr(rb_cWXWindow, "max_size",1,1);
+
+	rb_define_attr(rb_cWXWindow, "client_size",1,1);
+	rb_define_attr(rb_cWXWindow, "min_client_size",1,1);
+	rb_define_attr(rb_cWXWindow, "max_client_size",1,1);
 
 	rb_define_attr(rb_cWXWindow, "sizer",1,1);
 	rb_define_attr(rb_cWXWindow, "containing_sizer",1,1);
@@ -455,6 +541,8 @@ DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 	rb_define_attr(rb_cWXWindow, "foreground_color",1,1);
 
 	rb_define_attr(rb_cWXWindow, "font",1,1);
+	rb_define_attr(rb_cWXWindow, "cursor",1,1);
+
 	rb_define_attr(rb_cWXWindow, "help_text",1,1);
 
 #endif
@@ -476,9 +564,19 @@ DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXWindow, "id",_getId,_setId);
 
+	rb_define_attr_method(rb_cWXWindow, "window_variant",_getWindowVariant,_setWindowVariant);
+	rb_define_attr_method(rb_cWXWindow, "layout_direction",_getLayoutDirection,_setLayoutDirection);
+	rb_define_attr_method(rb_cWXWindow, "background_style",_getBackgroundStyle,_setBackgroundStyle);
+
 	rb_define_attr_method(rb_cWXWindow, "size",_getSize,_setSize);
 	rb_define_attr_method(rb_cWXWindow, "min_size",_getMinSize,_setMinSize);
 	rb_define_attr_method(rb_cWXWindow, "max_size",_getMaxSize,_setMaxSize);
+
+	rb_define_attr_method(rb_cWXWindow, "client_size",_getClientSize,_setClientSize);
+	rb_define_attr_method(rb_cWXWindow, "min_client_size",_getMinClientSize,_setMinClientSize);
+	rb_define_attr_method(rb_cWXWindow, "max_client_size",_getMaxClientSize,_setMaxClientSize);
+
+	rb_define_attr_method(rb_cWXWindow, "virtual_size",_getVirtualSize,_setVirtualSize);
 
 	rb_define_attr_method(rb_cWXWindow, "position",_getPosition,_setPosition);
 	rb_define_attr_method(rb_cWXWindow, "rect",_GetRect,_SetRect);
@@ -490,9 +588,13 @@ DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXWindow, "foreground_color",_getForegroundColour,_setForegroundColour);
 
 	rb_define_attr_method(rb_cWXWindow, "font",_getFont,_setFont);
+	rb_define_attr_method(rb_cWXWindow, "cursor",_getCursor,_setCursor);
 #if wxUSE_HELP
 	rb_define_attr_method(rb_cWXWindow, "help_text",_getHelpText,_setHelpText);
 #endif // wxUSE_HELP
+#if wxUSE_TOOLTIPS
+	rb_define_attr_method(rb_cWXWindow, "tool_tip",_getToolTip,_setToolTip);
+#endif // wxUSE_TOOLTIPS
 
 	rb_define_method(rb_cWXWindow,"show",RUBY_METHOD_FUNC(_Show),0);
 	rb_define_method(rb_cWXWindow,"hide",RUBY_METHOD_FUNC(_Hide),0);
@@ -525,6 +627,10 @@ DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXWindow,"client_to_screen",RUBY_METHOD_FUNC(_ClientToScreen),1);
 	rb_define_method(rb_cWXWindow,"screen_to_client",RUBY_METHOD_FUNC(_ScreenToClient),1);
+
+	rb_define_method(rb_cWXWindow,"client_to_window_size",RUBY_METHOD_FUNC(_ClientToWindowSize),1);
+	rb_define_method(rb_cWXWindow,"window_to_client_size",RUBY_METHOD_FUNC(_WindowToClientSize),1);
+
 
 	registerInfo<wxWindow>(rb_cWXWindow);
 
@@ -664,4 +770,22 @@ DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 	registerEventType("move",wxEVT_MOVE);
 	registerEventType("size",wxEVT_SIZE);
 	registerEventType("sizing",wxEVT_SIZING);
+
+
+	registerEnum<wxWindowVariant>("wxWindowVariant")
+		->add(wxWINDOW_VARIANT_NORMAL, "normal")
+		->add(wxWINDOW_VARIANT_SMALL, "small")
+		->add(wxWINDOW_VARIANT_MINI, "mini")
+		->add(wxWINDOW_VARIANT_LARGE, "large");
+
+	registerEnum<wxLayoutDirection>("wxLayoutDirection")
+		->add(wxLayout_Default, "default")
+		->add(wxLayout_LeftToRight, "left_to_right")
+		->add(wxLayout_RightToLeft, "right_to_left");
+
+	registerEnum<wxBackgroundStyle>("wxBackgroundStyle")
+		->add(wxBG_STYLE_ERASE, "erase")
+		->add(wxBG_STYLE_SYSTEM, "system")
+		->add(wxBG_STYLE_PAINT, "paint");
+
 }

@@ -36,11 +36,11 @@ APP_PROTECT(wxHyperlinkCtrl)
  * * parent of this window or nil
  *
  * *options: Hash with possible options to set:
- * * *url String
- * * *hover_color wxColor
- * * *normal_color wxColor
- * * *visited_color wxColor
- * * *visited true/false
+ *   * url String
+ *   * hover_color wxColor
+ *   * normal_color wxColor
+ *   * visited_color wxColor
+ *   * visited true/false
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -76,6 +76,23 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
+
+/* Document-attr: hover_color
+ * the hover color of the HyperLink. WX::Color
+ */
+/* Document-attr: normal_color
+ * the normal color of the HyperLink. WX::Color
+ */
+/* Document-attr: visited_color
+ * the visited color of the HyperLink. WX::Color
+ */
+/* Document-attr: url
+ * the url of the HyperLink. String
+ */
+/* Document-attr: visited_color
+ * the visited of the HyperLink. bool
+ */
+
 DLL_LOCAL void Init_WXHyperLink(VALUE rb_mWX)
 {
 #if 0

@@ -28,7 +28,7 @@ APP_PROTECT(wxColourPickerCtrl)
  * * parent of this window or nil
  *
  * *options: Hash with possible options to set:
- * * *color WX::Color default color
+ *   * color WX::Color default color
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
@@ -59,6 +59,13 @@ macro_attr(Colour,wxColour)
 }
 
 #endif
+
+/* Document-attr: color
+ * the color of the ColorPicker. WX::Color
+ */
+/* Document-attr: WX::Event::ColorPicker#color
+ * the color of the ColorPicker. WX::Color
+ */
 DLL_LOCAL void Init_WXColorPicker(VALUE rb_mWX)
 {
 #if 0

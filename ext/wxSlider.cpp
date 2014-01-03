@@ -38,12 +38,12 @@ APP_PROTECT(wxSlider)
  * * parent of this window or nil
  *
  * *options: Hash with possible options to set:
- * * *min Integer
- * * *max Integer
- * * *value Integer
- * * *line_size Integer
- * * *page_size Integer
- * * *thumb_length Integer
+ *   * min Integer
+ *   * max Integer
+ *   * value Integer
+ *   * line_size Integer
+ *   * page_size Integer
+ *   * thumb_length Integer
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
@@ -78,6 +78,18 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
+
+
+/* Document-attr: value
+ * the value of the Slider. Integer
+ */
+/* Document-attr: mix
+ * the minimum value of the Slider. Integer
+ */
+/* Document-attr: max
+ * the maximum value of the Slider. Integer
+ */
+
 DLL_LOCAL void Init_WXSlider(VALUE rb_mWX)
 {
 #if 0

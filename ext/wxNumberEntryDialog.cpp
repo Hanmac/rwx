@@ -30,8 +30,8 @@ singlereturn(GetValue)
  * * parent of this window or nil
  *
  * *options: Hash with possible options to set:
- * * *path String default path
- * * *message String
+ *   * path String default path
+ *   * message String
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)

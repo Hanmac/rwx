@@ -223,8 +223,45 @@ DLL_LOCAL VALUE _class_get(int argc,VALUE *argv,VALUE self)
 }
 }
 
+
+/* Document-attr: point_size
+ * the point size of the Font, int
+ */
+/* Document-attr: pixel_size
+ * the pixel size of the Font, WX::Size
+ */
+
+
+/* Document-attr: family
+ * the family of the Font, Symbol
+ */
+/* Document-attr: style
+ * the style of the Font, Symbol
+ */
+/* Document-attr: weight
+ * the weight of the Font, Symbol
+ */
+/* Document-attr: face_name
+ * the face name of the Font, Symbol
+ */
+
+/* Document-attr: encoding
+ * the encoding of the Font, Encoding
+ */
+
 DLL_LOCAL void Init_WXFont(VALUE rb_mWX)
 {
+#if 0
+	rb_define_attr(rb_cWXFont,"point_size",1,1);
+	rb_define_attr(rb_cWXFont,"pixel_size",1,1);
+
+	rb_define_attr(rb_cWXFont,"family",1,1);
+	rb_define_attr(rb_cWXFont,"style",1,1);
+	rb_define_attr(rb_cWXFont,"weight",1,1);
+	rb_define_attr(rb_cWXFont,"face_name",1,1);
+	rb_define_attr(rb_cWXFont,"encoding",1,1);
+#endif
+
 	using namespace RubyWX::Font;
 	rb_cWXFont = rb_define_class_under(rb_mWX,"Font",rb_cObject);
 	rb_define_alloc_func(rb_cWXFont,_alloc);

@@ -15,7 +15,6 @@ VALUE rb_cWXDatePicker;
 
 namespace RubyWX {
 namespace DatePicker {
-
 macro_attr(Value,wxDateTime)
 
 APP_PROTECT(wxDatePickerCtrl)
@@ -44,17 +43,21 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
+
+
+/* Document-attr: value
+ * the value of the DatePicker. Time
+ */
 DLL_LOCAL void Init_WXDatePicker(VALUE rb_mWX)
 {
 #if 0
-	rb_cWXPickerBase = rb_define_class_under(rb_mWX,"PickerBase",rb_cWXControl);
 
 	rb_define_attr(rb_cWXDatePicker,"value",1,1);
 #endif
 
 #if wxUSE_DATEPICKCTRL
 	using namespace RubyWX::DatePicker;
-	rb_cWXDatePicker = rb_define_class_under(rb_mWX,"DatePicker",rb_cWXPickerBase);
+	rb_cWXDatePicker = rb_define_class_under(rb_mWX,"DatePicker",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXDatePicker,_alloc);
 
 	rb_define_method(rb_cWXDatePicker,"initialize",RUBY_METHOD_FUNC(_initialize),-1);

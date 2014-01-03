@@ -185,8 +185,48 @@ VALUE find_prop_class(VALUE self,VALUE name)
 
 #endif
 
+
+/* Document-attr: label
+ * the label of the Property. String
+ */
+/* Document-attr: name
+ * the name of the Property. String
+ */
+/* Document-attr: value
+ * the value of the Property.
+ */
+/* Document-attr: default_value
+ * the default_value of the Property.
+ */
+/* Document-attr: value_image
+ * the image of the Property. WX::Bitmap
+ */
+
+
+/* Document-attr: expanded
+ * the expanded of the Property. bool
+ */
+
+/* Document-attr: enabled
+ * the enabled of the Property. bool
+ */
+
 DLL_LOCAL void Init_WXProperty(VALUE rb_mWX)
 {
+#if 0
+
+	rb_define_attr(rb_cWXProperty,"name",1,1);
+	rb_define_attr(rb_cWXProperty,"label",1,1);
+
+	rb_define_attr(rb_cWXProperty,"value",1,1);
+	rb_define_attr(rb_cWXProperty,"default_value",1,1);
+	rb_define_attr(rb_cWXProperty,"value_image",1,1);
+
+	rb_define_attr(rb_cWXProperty,"expanded",1,1);
+	rb_define_attr(rb_cWXProperty,"enabled",1,1);
+
+#endif
+
 #if wxUSE_PROPGRID
 	using namespace RubyWX::Property;
 	rb_cWXProperty = rb_define_class_under(rb_mWX,"Property",rb_cObject);

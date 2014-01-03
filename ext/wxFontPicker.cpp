@@ -31,7 +31,7 @@ APP_PROTECT(wxFontPickerCtrl)
  * * parent of this window or nil
  *
  * *options: Hash with possible options to set:
- * * *selected_font WX::Font default font
+ *   * selected_font WX::Font default font
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)

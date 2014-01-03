@@ -29,10 +29,10 @@ APP_PROTECT(wxFontDialog)
  * * parent of this window or nil
  *
  * *options: Hash with possible options to set:
- * * * font WX::Font
- * * * color WX::Color
- * * * symbols true/false Allows using SymbolFonts (default false)
- * * * show_help true/false (default false)
+ *   * font WX::Font
+ *   * color WX::Color
+ *   * symbols true/false Allows using SymbolFonts (default false)
+ *   * show_help true/false (default false)
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)

@@ -27,8 +27,8 @@ APP_PROTECT(wxAnyChoiceDialog)
  * * parent of this window or nil
  *
  * *options: Hash with possible options to set:
- * * *choices [string]
- * * *message String
+ *   * choices [string]
+ *   * message String
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)

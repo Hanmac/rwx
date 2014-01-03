@@ -7,7 +7,7 @@
 
 
 #include "wxTimePicker.hpp"
-#include "wxPickerBase.hpp"
+#include "wxControl.hpp"
 
 VALUE rb_cWXTimePicker;
 
@@ -45,17 +45,19 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
+
+/* Document-attr: value
+ * the value of the TimePicker. Time
+ */
 DLL_LOCAL void Init_WXTimePicker(VALUE rb_mWX)
 {
 #if 0
-	rb_cWXPickerBase = rb_define_class_under(rb_mWX,"PickerBase",rb_cWXControl);
-
 	rb_define_attr(rb_cWXTimePicker,"value",1,1);
 #endif
 
 #if wxUSE_TIMEPICKCTRL
 	using namespace RubyWX::TimePicker;
-	rb_cWXTimePicker = rb_define_class_under(rb_mWX,"TimePicker",rb_cWXPickerBase);
+	rb_cWXTimePicker = rb_define_class_under(rb_mWX,"TimePicker",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXTimePicker,_alloc);
 
 	rb_define_method(rb_cWXTimePicker,"initialize",RUBY_METHOD_FUNC(_initialize),-1);

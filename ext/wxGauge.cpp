@@ -28,9 +28,9 @@ APP_PROTECT(wxGauge)
  * ===Arguments
  * * parent of this window or nil
  *
- * *options: Hash with possible options to set:
- * * *range Integer
- * * *value Integer
+ * * options: Hash with possible options to set:
+ *   * range Integer
+ *   * value Integer
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
@@ -65,6 +65,15 @@ singlefunc(Pulse)
 }
 }
 #endif
+
+
+/* Document-attr: range
+ * the range of the Gauge. Integer
+ */
+/* Document-attr: value
+ * the value of the Gauge. Integer
+ */
+
 DLL_LOCAL void Init_WXGauge(VALUE rb_mWX)
 {
 #if 0

@@ -32,7 +32,7 @@ macro_attr(Date,wxDateTime)
  * * parent of this window or nil
  *
  * *options: Hash with possible options to set:
- * * * date Time default time
+ *   * date Time default time
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
@@ -53,6 +53,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
+
+
+/* Document-attr: date
+ * the date of the CalendarCtrl. Time
+ */
 DLL_LOCAL void Init_WXCalendarCtrlBase(VALUE rb_mWX)
 {
 #if 0

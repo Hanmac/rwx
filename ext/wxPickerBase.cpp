@@ -39,6 +39,8 @@ DLL_LOCAL void Init_WXPickerBase(VALUE rb_mWX)
 #if 0
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
 
+	rb_define_attr(rb_cWXPickerBase,"internal_margin",1,1);
+
 	rb_define_attr(rb_cWXPickerBase,"text_ctrl",1,1);
 	rb_define_attr(rb_cWXPickerBase,"picker_ctrl",1,1);
 
