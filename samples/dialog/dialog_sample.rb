@@ -138,6 +138,15 @@ LICENCE
 					
 				}
 			}
+			
+      m.append("&Edit") {|edit|
+        edit << :undo << :redo
+        edit.append_separator
+        edit << :cut << :copy << :paste << :clear
+        edit.append_separator
+        edit << :select_all
+      }
+			
 			m.append("&Help") {|help|
 				help.append_normal(:about_simple,"&About (simple)...\tF1") {
 					WX::about_box(@frame,aboutinfo_minimal)
