@@ -61,7 +61,20 @@ DLL_LOCAL VALUE _append(VALUE self,VALUE menu)
 	if(rb_block_given_p())
 		rb_yield(wrap(m));
 
-	_self->Append(m,unwrap<wxString>(menu));
+	wxString name(unwrap<wxString>(menu));
+
+	if(SYMBOL_P(menu))
+	{
+		wxWindowID id(unwrapID(menu));
+		if(wxIsStockID(id))
+		{
+			name = wxGetStockLabel(id);
+		}
+	}
+
+
+
+	_self->Append(m,name);
 	return self;
 }
 

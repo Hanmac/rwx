@@ -139,7 +139,7 @@ LICENCE
 				}
 			}
 			
-      m.append("&Edit") {|edit|
+      m.append(:edit) {|edit|
         edit << :undo << :redo
         edit.append_separator
         edit << :cut << :copy << :paste << :clear
@@ -147,7 +147,7 @@ LICENCE
         edit << :select_all
       }
 			
-			m.append("&Help") {|help|
+			m.append(:help) {|help|
 				help.append_normal(:about_simple,"&About (simple)...\tF1") {
 					WX::about_box(@frame,aboutinfo_minimal)
 				}
