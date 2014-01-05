@@ -32,7 +32,7 @@ DLL_LOCAL VALUE _showMessage(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "11",&text,&icon);
 
 	//use argc for check if parameter is given because nil is treated different
-	_self->ShowMessage(unwrap<wxString>(text), argc == 1 ? wxICON_INFORMATION : unwrap_infoflag(icon));
+	_self->ShowMessage(unwrap<wxString>(text), argc == 1 ? wxICON_INFORMATION : unwrap_iconflag(icon));
 
 	return self;
 }

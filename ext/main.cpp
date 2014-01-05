@@ -229,7 +229,7 @@ wxDateTime unwrap< wxDateTime >(const VALUE &val )
 }
 
 
-int unwrap_infoflag(VALUE val,int mask)
+int unwrap_iconflag(const VALUE &val,int mask)
 {
 	if(NIL_P(val))
 		return wxICON_NONE;
@@ -237,22 +237,22 @@ int unwrap_infoflag(VALUE val,int mask)
 	int result = 0;
 	if(SYMBOL_P(val))
 	{
-
-		if(SYM2ID(val) == rb_intern("exclamation"))
+		ID id(SYM2ID(val));
+		if(id == rb_intern("exclamation"))
 			result = wxICON_EXCLAMATION;
-		else if(SYM2ID(val) == rb_intern("hand"))
+		else if(id == rb_intern("hand"))
 			result = wxICON_HAND;
-		else if(SYM2ID(val) == rb_intern("warning"))
+		else if(id == rb_intern("warning"))
 			result = wxICON_WARNING;
-		else if(SYM2ID(val) == rb_intern("error"))
+		else if(id == rb_intern("error"))
 			result = wxICON_ERROR;
-		else if(SYM2ID(val) == rb_intern("question"))
+		else if(id == rb_intern("question"))
 			result = wxICON_QUESTION;
-		else if(SYM2ID(val) == rb_intern("information"))
+		else if(id == rb_intern("information"))
 			result = wxICON_INFORMATION;
-		else if(SYM2ID(val) == rb_intern("stop"))
+		else if(id == rb_intern("stop"))
 			result = wxICON_STOP;
-		else if(SYM2ID(val) == rb_intern("asterisk"))
+		else if(id == rb_intern("asterisk"))
 			result = wxICON_ASTERISK;
 	}else
 		result = NUM2INT(val);
@@ -262,4 +262,40 @@ int unwrap_infoflag(VALUE val,int mask)
 	
 	return result;
 
+}
+
+int unwrap_buttonflag(const VALUE& val)
+{
+	if(rb_obj_is_kind_of(val,rb_cArray))
+	{
+
+		int result(0);
+		std::size_t count = RARRAY_LEN(val);
+		for(std::size_t i = 0;i < count; ++i)
+		{
+			result |= unwrap_buttonflag(RARRAY_PTR(val)[i]);
+		}
+		return result;
+	}else if(SYMBOL_P(val))
+	{
+		ID id(SYM2ID(val));
+		if(id == rb_intern("yes"))
+			return wxYES;
+		if(id == rb_intern("ok"))
+			return wxOK;
+		if(id == rb_intern("no"))
+			return wxNO;
+		if(id == rb_intern("yes_no"))
+			return wxYES_NO;
+		if(id == rb_intern("cancel"))
+			return wxCANCEL;
+		if(id == rb_intern("apply"))
+			return wxAPPLY;
+		if(id == rb_intern("close"))
+			return wxCLOSE;
+		if(id == rb_intern("help"))
+			return wxHELP;
+	}else
+			return NUM2INT(val);
+	return wxOK;
 }

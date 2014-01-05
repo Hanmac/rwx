@@ -71,32 +71,7 @@ DLL_LOCAL VALUE _EndModal(VALUE self,VALUE id)
 
 DLL_LOCAL VALUE _CreateButtonSizer(VALUE self,VALUE flags)
 {
-	int flag = 0;
-
-	for(int i= 0; i < RARRAY_LEN(flags);++i)
-	{
-		VALUE val = RARRAY_PTR(flags)[i];
-		if(SYMBOL_P(val))
-		{
-			ID id = SYM2ID(val);
-			if(id == rb_intern("ok"))
-				flag |= wxOK;
-			if(id == rb_intern("cancel"))
-				flag |= wxCANCEL;
-			if(id == rb_intern("yes"))
-				flag |= wxYES;
-			if(id == rb_intern("no"))
-				flag |= wxNO;
-			if(id == rb_intern("apply"))
-				flag |= wxAPPLY;
-			if(id == rb_intern("close"))
-				flag |= wxCLOSE;
-			if(id == rb_intern("help"))
-				flag |= wxHELP;
-		}
-	}
-
-	return wrap(_self->CreateButtonSizer(flag));
+	return wrap(_self->CreateButtonSizer(unwrap_buttonflag(flags)));
 }
 
 #if wxUSE_STATTEXT

@@ -35,6 +35,8 @@
   #endif
 #endif
 
+//need to include setup first because main header does it wrong
+#include <wx/setup.h>
 #include <wx/wx.h>
 #include <ruby.h>
 
@@ -331,7 +333,9 @@ VALUE wrap< wxDateTime >(const wxDateTime &st );
 template <>
 wxDateTime unwrap< wxDateTime >(const VALUE &val );
 
-DLL_LOCAL int unwrap_infoflag(VALUE val,int mask = wxICON_MASK);
+DLL_LOCAL int unwrap_iconflag(const VALUE& val,int mask = wxICON_MASK);
+DLL_LOCAL int unwrap_buttonflag(const VALUE& val);
+
 
 #define macro_attr_func(attr,funcget,funcset,wrapget,wrapset) \
 DLL_LOCAL VALUE _get##attr(VALUE self)\

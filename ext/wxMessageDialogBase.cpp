@@ -81,12 +81,16 @@ DLL_LOCAL VALUE _MessageBox(int argc,VALUE *argv,VALUE self)
 
 	wxString caption(wxMessageBoxCaptionStr);
 
+	int buttons(wxOK);
+	int icon(wxICON_NONE);
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		set_hash_option(hash,"caption",caption);
+		set_hash_option(hash,"buttons",buttons,unwrap_buttonflag);
+		set_hash_option(hash,"icon",icon,(int(*)(const VALUE&))unwrap_iconflag);
 	}
 
-	int id = wxMessageBox(unwrap<wxString>(message),caption,wxOK | wxCENTRE,unwrap<wxWindow*>(parent));
+	int id = wxMessageBox(unwrap<wxString>(message),caption,buttons | wxCENTRE | icon,unwrap<wxWindow*>(parent));
 
 	//wrap the ids
 	std::map<int,wxWindowID> keys;
