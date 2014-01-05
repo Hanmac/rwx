@@ -16,6 +16,8 @@ VALUE rb_cWXFont;
 typedef std::map<wxFontEncoding,VALUE> encodingholdertype;
 encodingholdertype encodingholder;
 
+typedef std::map<wxFont*,VALUE> fontlisttype;
+fontlisttype fontlistholder;
 
 template <>
 wxFont nullPtr<wxFont>(){ return wxNullFont;}
@@ -126,12 +128,17 @@ singlereturn(Larger)
 
 singlereturn(Bold)
 singlereturn(Italic)
+singlereturn(Underlined)
+singlereturn(Strikethrough)
 
 singlefunc(MakeSmaller)
 singlefunc(MakeLarger)
 
 singlefunc(MakeBold)
 singlefunc(MakeItalic)
+
+singlefunc(MakeUnderlined)
+singlefunc(MakeStrikethrough)
 
 /*
  * call-seq:
@@ -206,22 +213,151 @@ DLL_LOCAL VALUE _to_s(VALUE self)
 DLL_LOCAL VALUE _class_get(int argc,VALUE *argv,VALUE self)
 {
 
-	VALUE size,family,style,weight;
-	rb_scan_args(argc, argv, "40",&size,&family,&style,&weight);
+	VALUE size,family,style,weight,underlined;
+	rb_scan_args(argc, argv, "41",&size,&family,&style,&weight);
 	//TODO add refcounting
-	return wrap(wxTheFontList->FindOrCreateFont(
+	wxFont *font = wxTheFontList->FindOrCreateFont(
 		NUM2INT(size),
 		unwrapenum<wxFontFamily>(family),
 		unwrapenum<wxFontStyle>(style),
-		unwrapenum<wxFontWeight>(weight)
-	));
-//	rb_call_super(argc,argv);
-	return self;
+		unwrapenum<wxFontWeight>(weight),
+		RTEST(underlined)
+	);
+
+	if(!font || !font->IsOk())
+		return Qnil;
+
+	//look in the FontList holder is font was already wrapped
+	fontlisttype::iterator it = fontlistholder.find(font);
+	if(it != fontlistholder.end()) {
+		return it->second;
+	} else {
+		//wrap wxFont pointer to ruby object
+		VALUE result = wrap(font);
+
+		//FontList objects should not be changed
+		rb_obj_freeze(result);
+		//Prevent FontList objects from been deleted
+		rwx_refobject(result);
+		//add wrapped font to the FontList holder to find it again
+		fontlistholder[font] = result;
+		return result;
+	}
 }
 
 
 }
 }
+
+/* Document-method: smaller
+ * call-seq:
+ *   smaller -> Font
+ *
+ * returns new WX::Font which is 1/1.2 of the original size.
+ * ===Return value
+ * WX::Font
+ */
+
+/* Document-method: larger
+ * call-seq:
+ *   larger -> Font
+ *
+ * returns new WX::Font which is 1.2 times of the original size.
+ * ===Return value
+ * WX::Font
+ */
+
+/* Document-method: to_bold
+ * call-seq:
+ *   to_bold -> Font
+ *
+ * returns new WX::Font which is bold.
+ * ===Return value
+ * WX::Font
+ */
+
+/* Document-method: to_italic
+ * call-seq:
+ *   to_italic -> Font
+ *
+ * returns new WX::Font which is italic.
+ * ===Return value
+ * WX::Font
+ */
+
+/* Document-method: to_underlined
+ * call-seq:
+ *   to_underlined -> Font
+ *
+ * returns new WX::Font which is underlined.
+ * ===Return value
+ * WX::Font
+ */
+
+/* Document-method: to_strikethrough
+ * call-seq:
+ *   to_strikethrough -> Font
+ *
+ * returns new WX::Font which is strikethrough.
+ * ===Return value
+ * WX::Font
+ */
+
+
+/* Document-method: smaller!
+ * call-seq:
+ *   smaller! -> self
+ *
+ * makes this WX::Font 1/1.2 of the original size.
+ * ===Return value
+ * self
+ */
+
+/* Document-method: larger!
+ * call-seq:
+ *   larger! -> self
+ *
+ * makes this WX::Font 1.2 times of the original size.
+ * ===Return value
+ * self
+ */
+
+
+/* Document-method: to_bold!
+ * call-seq:
+ *   to_bold! -> self
+ *
+ * makes this WX::Font bold.
+ * ===Return value
+ * self
+ */
+
+/* Document-method: to_italic!
+ * call-seq:
+ *   to_italic! -> self
+ *
+ * makes this WX::Font italic.
+ * ===Return value
+ * self
+ */
+
+/* Document-method: to_underlined!
+ * call-seq:
+ *   to_underlined! -> self
+ *
+ * makes this WX::Font underlined.
+ * ===Return value
+ * self
+ */
+
+/* Document-method: to_strikethrough!
+ * call-seq:
+ *   to_strikethrough! -> self
+ *
+ * makes this WX::Font strikethrough.
+ * ===Return value
+ * self
+ */
 
 
 /* Document-attr: point_size
@@ -273,12 +409,16 @@ DLL_LOCAL void Init_WXFont(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXFont,"to_bold",RUBY_METHOD_FUNC(_Bold),0);
 	rb_define_method(rb_cWXFont,"to_italic",RUBY_METHOD_FUNC(_Italic),0);
+	rb_define_method(rb_cWXFont,"to_underlined",RUBY_METHOD_FUNC(_Underlined),0);
+	rb_define_method(rb_cWXFont,"to_strikethrough",RUBY_METHOD_FUNC(_Strikethrough),0);
 
 	rb_define_method(rb_cWXFont,"smaller!",RUBY_METHOD_FUNC(_MakeSmaller),0);
 	rb_define_method(rb_cWXFont,"larger!",RUBY_METHOD_FUNC(_MakeLarger),0);
 
 	rb_define_method(rb_cWXFont,"to_bold!",RUBY_METHOD_FUNC(_MakeBold),0);
 	rb_define_method(rb_cWXFont,"to_italic!",RUBY_METHOD_FUNC(_MakeItalic),0);
+	rb_define_method(rb_cWXFont,"to_underlined!",RUBY_METHOD_FUNC(_MakeUnderlined),0);
+	rb_define_method(rb_cWXFont,"to_strikethrough!",RUBY_METHOD_FUNC(_MakeStrikethrough),0);
 
 
 	rb_define_method(rb_cWXFont,"==",RUBY_METHOD_FUNC(_compare),1);
