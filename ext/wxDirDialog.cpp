@@ -69,12 +69,18 @@ DLL_LOCAL VALUE _getUserDir(int argc,VALUE *argv,VALUE self)
 	long style = wxDD_DEFAULT_STYLE;
 	wxPoint pos = wxDefaultPosition;
 
+	bool mustExist(false);
+
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		set_hash_option(hash,"message",message);
 		set_hash_option(hash,"path",defaultPath);
 		set_hash_option(hash,"style",style);
 		set_hash_option(hash,"pos",pos);
+		set_hash_option(hash,"must_exist",mustExist);
+
+		if(mustExist)
+			style |= wxDD_DIR_MUST_EXIST;
 	}
 
 	return wrap(wxDirSelector(message,
@@ -99,6 +105,9 @@ DLL_LOCAL void Init_WXDirDialog(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXDirDialog,"path",_getPath,_setPath);
 
 	rb_define_module_function(rb_mWX,"dir_dialog",RUBY_METHOD_FUNC(_getUserDir),-1);
+
+	rb_define_const(rb_cWXDialog,"DEFAULT_STYLE",INT2NUM(wxDD_DEFAULT_STYLE));
+	rb_define_const(rb_cWXDialog,"DIR_MUST_EXIST",INT2NUM(wxDD_DIR_MUST_EXIST));
 
 	registerInfo<wxDirDialog>(rb_cWXDirDialog);
 #endif

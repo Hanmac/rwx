@@ -48,6 +48,14 @@ LICENCE
 		) {|key,old,new| Array(old) + Array(new)	}
 	end
 	
+	def choice_dir(exist_flag)
+    WX::dir_dialog(@frame,
+      :message => "Testing directory picker",
+      :path => Dir.home,
+      :must_exist => exist_flag 
+    )
+	end
+	
 	
 	def on_init
 	
@@ -109,6 +117,17 @@ LICENCE
 						dialog.show_modal
 					}
 				}
+        menu.append_normal("&File operations") {|file|
+          file.append_normal(:file_open,"&Open file\tCtrl-O")
+          file.append_normal(:file_open2,"&Second open file\tCtrl-2")
+          file.append_normal(:files_open,"Open &files\tCtrl-Q")
+          file.append_normal(:file_save,"Sa&ve file\tCtrl-S")
+        }
+        
+        menu.append_normal("&Directory operations") {|file|
+        file.append_normal(:dir_choose,"&Choose a directory\tCtrl-D") {choice_dir(true)}
+          file.append_normal(:dir_choose_new,"Choose a directory (with \"Ne&w\" button)\tShift-Ctrl-D") {choice_dir(false)}
+        }
 				
 				menu.append_normal("&Informative dialogs") {|info|
 					info.append_normal(:info_simple,"Simple &info bar\tCtrl-I") {
