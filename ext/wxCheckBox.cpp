@@ -45,7 +45,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	}
 
 	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,label,wxDefaultPosition,wxDefaultSize,style);
-	_created = true;
+	
 	rb_call_super(argc,argv);
 	return self;
 }

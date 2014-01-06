@@ -80,7 +80,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 #endif
 		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
 		_self->SetMargins(0,0);
-		_created = true;
+		
 	}
 	if(rb_obj_is_kind_of(name,rb_cString)){
 		VALUE args[] = {parent,hash};

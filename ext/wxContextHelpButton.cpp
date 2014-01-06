@@ -44,7 +44,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),id);
-		_created = true;
+		
 	}
 #else
 	wxWindowID id(wxID_CONTEXT_HELP);
@@ -54,7 +54,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	}
 
 	DATA_PTR(self) = new wxContextHelpButton(unwrap<wxWindow*>(parent),id);
-	_created = true;
+	
 #endif
 
 

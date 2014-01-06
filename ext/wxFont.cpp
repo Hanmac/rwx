@@ -214,7 +214,7 @@ DLL_LOCAL VALUE _class_get(int argc,VALUE *argv,VALUE self)
 {
 
 	VALUE size,family,style,weight,underlined;
-	rb_scan_args(argc, argv, "41",&size,&family,&style,&weight);
+	rb_scan_args(argc, argv, "41",&size,&family,&style,&weight,&underlined);
 	//TODO add refcounting
 	wxFont *font = wxTheFontList->FindOrCreateFont(
 		NUM2INT(size),

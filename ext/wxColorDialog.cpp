@@ -25,7 +25,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 
 	_self->Create(unwrap<wxWindow*>(parent));
-	_created = true;
+	
 	rb_call_super(argc,argv);
 	return self;
 }

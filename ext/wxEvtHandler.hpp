@@ -97,7 +97,6 @@ public:
 	RubyClientData(VALUE obj);
 	~RubyClientData();
 	VALUE mRuby;
-	bool created;
 };
 
 
@@ -107,7 +106,7 @@ void Init_WXEvtHandler(VALUE rb_mWX);
 template <>
 wxEvtHandler* unwrap< wxEvtHandler* >(const VALUE &vhandler);
 
-#define _created static_cast<RubyClientData*>(_self->GetClientObject())->created
+#define _created (_self->GetId() != wxID_ANY)
 
 
 #if wxUSE_XRC

@@ -162,7 +162,7 @@ private:
 #endif
 
 
-RubyClientData::RubyClientData(VALUE obj) : wxClientData(), mRuby(obj),created(false)
+RubyClientData::RubyClientData(VALUE obj) : wxClientData(), mRuby(obj)
 {
 	rwx_refobject(obj);
 }

@@ -251,7 +251,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		if(!loadxrc(_self,name,unwrap<wxWindow*>(parent)))
 #endif
 		_self->Create(unwrap<wxWindow*>(parent),id);
-		_created = true;
+		
 	}
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))

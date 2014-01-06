@@ -60,7 +60,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),message,wxEmptyString,choices,(void **)NULL,style);
-		_created = true;
+		
 
 		_self->SetSelection(selection);
 	}

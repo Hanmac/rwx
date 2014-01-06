@@ -59,7 +59,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	//TODO: Can AnyButton really created?
 	if(!_created) {
 		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
-		_created = true;
+		
 	}
 	rb_call_super(argc,argv);
 

@@ -21,7 +21,7 @@ APP_PROTECT(wxMenuBar)
 
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	_created = true;
+	
 	rb_call_super(argc,argv);
 	return self;
 }

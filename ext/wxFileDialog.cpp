@@ -43,7 +43,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	if(!rb_obj_is_kind_of(hash,rb_cString))
 	{
 		_self->Create(unwrap<wxWindow*>(parent));
-		_created = true;
+		
 	}
 
 	rb_call_super(argc,argv);

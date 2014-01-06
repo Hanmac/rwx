@@ -50,7 +50,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(name,"message",message);
 		}
 		_self->Create(unwrap<wxWindow*>(parent),message,wxEmptyString,choices,style);
-		_created = true;
+		
 	}
 	rb_call_super(argc,argv);
 	return self;

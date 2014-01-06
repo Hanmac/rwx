@@ -66,7 +66,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 		}
 		_self->Create(unwrap<wxWindow*>(parent),data);
-		_created = true;
+		
 	}
 
 	rb_call_super(argc,argv);
