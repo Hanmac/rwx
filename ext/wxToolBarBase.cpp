@@ -104,6 +104,62 @@ DLL_LOCAL VALUE _addRadio(int argc,VALUE *argv,VALUE self)
 	return wrap(tool);
 }
 
+DLL_LOCAL wxToolBarToolBase* _insert_base(VALUE self,VALUE idx, VALUE id,VALUE text, VALUE bitmap,VALUE bmpDisabled,VALUE shorthelp,VALUE longhelp, wxItemKind kind )
+{
+	wxWindowID wxid = unwrapID(id);
+	wxToolBarToolBase *tool = _self->InsertTool(NUM2UINT(idx), wxid, unwrap<wxString>(text),
+			wrapBitmap(bitmap,wxid,WRAP_BITMAP_RAISE,wxART_TOOLBAR),
+			wrapBitmap(bmpDisabled,wxid,WRAP_BITMAP_NULL,wxART_TOOLBAR),kind,
+			unwrap<wxString>(shorthelp), unwrap<wxString>(longhelp));
+	bind_callback(_self,tool->GetId());
+	return tool;
+}
+
+DLL_LOCAL VALUE _insertNormal(int argc,VALUE *argv,VALUE self)
+{
+	VALUE idx,id,text,bitmap,bmpDisabled,shorthelp,longhelp;
+	rb_scan_args(argc, argv, "34",&idx,&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
+
+	return wrap(_insert_base(self,idx,id,text,bitmap,bmpDisabled,shorthelp,longhelp,wxITEM_NORMAL));
+}
+
+DLL_LOCAL VALUE _insertCheck(int argc,VALUE *argv,VALUE self)
+{
+	VALUE idx,id,text,bitmap,bmpDisabled,shorthelp,longhelp;
+	rb_scan_args(argc, argv, "34",&idx,&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
+
+	return wrap(_insert_base(self,idx,id,text,bitmap,bmpDisabled,shorthelp,longhelp,wxITEM_CHECK));
+}
+
+DLL_LOCAL VALUE _insertRadio(int argc,VALUE *argv,VALUE self)
+{
+	VALUE idx,id,text,bitmap,bmpDisabled,shorthelp,longhelp;
+	rb_scan_args(argc, argv, "34",&idx,&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
+
+	return wrap(_insert_base(self,idx,id,text,bitmap,bmpDisabled,shorthelp,longhelp,wxITEM_RADIO));
+}
+
+
+DLL_LOCAL VALUE _insertControl(int argc,VALUE *argv,VALUE self)
+{
+	VALUE idx,id,text,arg;
+	wxControl *c = NULL;
+	rb_scan_args(argc, argv, "21*",&idx,&id,&text,&arg);
+	if(rb_obj_is_kind_of(id,rb_cClass) && rb_class_inherited(id,rb_cWXControl)) {
+		rb_scan_args(argc, argv, "11",&id,&arg);
+		VALUE argv2[] = {self, arg };
+		c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,id));
+	}else
+	{
+		c = unwrap<wxControl*>(id);
+		if(c->GetParent() != _self)
+			rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(id));
+	}
+
+	return wrap( _self->InsertControl(NUM2UINT(idx),c,unwrap<wxString>(text)));
+
+}
+
 
 DLL_LOCAL VALUE _each_size(VALUE self)
 {
@@ -146,12 +202,18 @@ DLL_LOCAL void Init_WXToolBarBase(VALUE rb_mWX)
 //	rb_define_method(rb_cWXToolBarBase,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_method(rb_cWXToolBarBase,"add_normal",RUBY_METHOD_FUNC(_addNormal),-1);
-	rb_define_method(rb_cWXToolBarBase,"add_control",RUBY_METHOD_FUNC(_addNormal),-1);
+	rb_define_method(rb_cWXToolBarBase,"add_control",RUBY_METHOD_FUNC(_addControl),-1);
 	rb_define_method(rb_cWXToolBarBase,"add_check",RUBY_METHOD_FUNC(_addCheck),-1);
 	rb_define_method(rb_cWXToolBarBase,"add_radio",RUBY_METHOD_FUNC(_addRadio),-1);
 
-	rb_define_method(rb_cWXToolBarBase,"addSeparator",RUBY_METHOD_FUNC(_AddSeparator),0);
-	rb_define_method(rb_cWXToolBarBase,"addStretchableSpace",RUBY_METHOD_FUNC(_AddStretchableSpace),0);
+	rb_define_method(rb_cWXToolBarBase,"add_separator",RUBY_METHOD_FUNC(_AddSeparator),0);
+	rb_define_method(rb_cWXToolBarBase,"add_stretchable_space",RUBY_METHOD_FUNC(_AddStretchableSpace),0);
+
+	rb_define_method(rb_cWXToolBarBase,"insert_normal",RUBY_METHOD_FUNC(_insertNormal),-1);
+	rb_define_method(rb_cWXToolBarBase,"insert_control",RUBY_METHOD_FUNC(_insertControl),-1);
+	rb_define_method(rb_cWXToolBarBase,"insert_check",RUBY_METHOD_FUNC(_insertCheck),-1);
+	rb_define_method(rb_cWXToolBarBase,"insert_radio",RUBY_METHOD_FUNC(_insertRadio),-1);
+
 
 	rb_define_method(rb_cWXToolBarBase,"realize",RUBY_METHOD_FUNC(_Realize),0);
 
