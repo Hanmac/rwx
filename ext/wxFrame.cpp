@@ -43,12 +43,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			if(!wxTheApp->GetTopWindow())
 				title = wxTheApp->GetAppName();
 
-			rb_warn("id1 %d",_self->GetId());
-
 			_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,title);
 
-			rb_warn("id2 %d",_self->GetId());
-			
 		}
 	}
 	if(rb_obj_is_kind_of(name,rb_cString)){
@@ -58,7 +54,6 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	}else {
 		rb_call_super(argc,argv);
 	}
-	rb_warn("id3 %d",_self->GetId());
 	return self;
 }
 
