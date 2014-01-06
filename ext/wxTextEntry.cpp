@@ -97,6 +97,97 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 
+
+/* Document-method: copy
+ * call-seq:
+ *   copy -> self
+ *
+ * copy into clipboard.
+ * ===Return value
+ * self
+ */
+
+/* Document-method: cut
+ * call-seq:
+ *   cut -> self
+ *
+ * cut into clipboard.
+ * ===Return value
+ * self
+ */
+
+/* Document-method: paste
+ * call-seq:
+ *   paste -> self
+ *
+ * paste from clipboard.
+ * ===Return value
+ * self
+ */
+
+/* Document-method: undo
+ * call-seq:
+ *   undo -> self
+ *
+ * undo last action
+ * ===Return value
+ * self
+ */
+
+/* Document-method: redo
+ * call-seq:
+ *   redo -> self
+ *
+ * redo last undo'd action.
+ * ===Return value
+ * self
+ */
+
+/* Document-method: can_copy?
+ * call-seq:
+ *   can_copy? -> true/false
+ *
+ *  returns true if copy can be called.
+ * ===Return value
+ * true/false
+ */
+
+/* Document-method: can_cut?
+ * call-seq:
+ *   can_cut? -> true/false
+ *
+ *  returns true if cut can be called.
+ * ===Return value
+ * true/false
+ */
+
+/* Document-method: can_paste?
+ * call-seq:
+ *   can_paste? -> true/false
+ *
+ *  returns true if paste can be called.
+ * ===Return value
+ * true/false
+ */
+
+/* Document-method: can_undo?
+ * call-seq:
+ *   can_undo? -> true/false
+ *
+ *  returns true if copy can be called.
+ * ===Return value
+ * true/false
+ */
+
+/* Document-method: can_redo?
+ * call-seq:
+ *   can_redo? -> true/false
+ *
+ *  returns true if redo can be called.
+ * ===Return value
+ * true/false
+ */
+
 /* Document-attr: hint
  * the hint of the TextEntry. String
  */
