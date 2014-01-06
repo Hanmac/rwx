@@ -45,6 +45,27 @@ DLL_LOCAL VALUE _inspect(VALUE self)
 }
 }
 #endif
+
+
+/* Document-attr: text
+ * the label of the PropertyCell. String
+ */
+
+/* Document-attr: font
+ * the font of the PropertyCell. WX::Font
+ */
+
+/* Document-attr: bitmap
+ * the bitmap of the PropertyCell. WX::Bitmap
+ */
+
+/* Document-attr: fg_col
+ * the foreground of the PropertyCell. WX::Color
+ */
+
+/* Document-attr: bg_col
+ * the background color of the PropertyCell. WX::Color
+ */
 DLL_LOCAL void Init_WXPropertyCell(VALUE rb_mWX)
 {
 #if wxUSE_PROPGRID
