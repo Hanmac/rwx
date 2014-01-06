@@ -157,12 +157,16 @@ macro_attr(ThemeEnabled,bool)
 macro_attr(Sizer,wxSizer*)
 macro_attr(ContainingSizer,wxSizer*)
 
-singlefunc(Show)
-singlefunc(Hide)
+singlereturn_frozen(Show)
+singlereturn_frozen(Hide)
 
-singlefunc(Enable)
-singlefunc(Disable)
+singlereturn(IsShown)
 
+singlereturn_frozen(Enable)
+singlereturn_frozen(Disable)
+
+singlereturn(IsEnabled)
+singlereturn(IsThisEnabled)
 
 singlefunc(Raise)
 singlefunc(Lower)
@@ -170,14 +174,18 @@ singlefunc(Lower)
 singlefunc(Freeze)
 singlefunc(Thaw)
 
+singlereturn(IsFrozen)
 
 singlefunc(CaptureMouse)
 singlefunc(ReleaseMouse)
+
+singlereturn(HasCapture)
 
 singlefunc(Update)
 singlefunc(Refresh)
 
 singlefunc(Fit)
+singlefunc(FitInside)
 singlereturn_frozen(Layout)
 
 singlereturn(GetParent)
@@ -213,7 +221,7 @@ APP_PROTECT(wxWindow)
 
 /*
  * call-seq:
- *   Window.new(parent, name)
+ *   Window.new(parent, name, [options])
  *   Window.new(parent, [options])
  *
  * creates a new Window widget.
@@ -432,6 +440,13 @@ DLL_LOCAL VALUE _GetMousePosition(VALUE self)
 	return wrap(wxGetMousePosition());
 }
 
+DLL_LOCAL VALUE _GetCapture(VALUE self)
+{
+	app_protected();
+
+	return wrap(wxWindow::GetCapture());
+}
+
 
 DLL_LOCAL VALUE _ClientToScreen(VALUE self,VALUE point)
 {
@@ -456,6 +471,105 @@ DLL_LOCAL VALUE _WindowToClientSize(VALUE self,VALUE point)
 }
 }
 
+/* Document-method: show
+ * call-seq:
+ *   show -> true/false
+ *
+ * shows the Window, returns true if the window was hidden before.
+ * ===Return value
+ * true/false
+ */
+
+/* Document-method: hide
+ * call-seq:
+ *   hide -> true/false
+ *
+ * hides the Window, returns true if the window was shown before.
+ * ===Return value
+ * true/false
+ */
+
+/* Document-method: shown?
+ * call-seq:
+ *   shown? -> true/false
+ *
+ * returns true if the window is shown.
+ * ===Return value
+ * true/false
+ */
+
+/* Document-method: enable
+ * call-seq:
+ *   enable -> true/false
+ *
+ * enable the Window, returns true if the window was disabled before.
+ * ===Return value
+ * true/false
+ */
+
+/* Document-method: disable
+ * call-seq:
+ *   disable -> true/false
+ *
+ * disable the Window, returns true if the window was enabled before.
+ * ===Return value
+ * true/false
+ */
+
+/* Document-method: enabled?
+ * call-seq:
+ *   enabled? -> true/false
+ *
+ * returns true if the window and parents are enabled.
+ * ===Return value
+ * true/false
+ */
+
+/* Document-method: this_enabled?
+ * call-seq:
+ *   this_enabled? -> true/false
+ *
+ * returns true if the window is enabled.
+ * ===Return value
+ * true/false
+ */
+
+
+/* Document-method: line_up
+ * call-seq:
+ *   line_up -> true/false
+ *
+ * scrolls this window one line up, returns true if window has changed.
+ * ===Return value
+ * true/false
+ */
+
+/* Document-method: line_down
+ * call-seq:
+ *   line_down -> true/false
+ *
+ * scrolls this window one line down, returns true if window has changed.
+ * ===Return value
+ * true/false
+ */
+
+/* Document-method: page_up
+ * call-seq:
+ *   page_up -> true/false
+ *
+ * scrolls this window one page up, returns true if window has changed.
+ * ===Return value
+ * true/false
+ */
+
+/* Document-method: page_down
+ * call-seq:
+ *   page_down -> true/false
+ *
+ * scrolls this window one page down, returns true if window has changed.
+ * ===Return value
+ * true/false
+ */
 
 /* Document-attr: label
  * the label of the Window, is mostly used for WX::Control windows. String
@@ -544,6 +658,7 @@ DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 	rb_define_attr(rb_cWXWindow, "cursor",1,1);
 
 	rb_define_attr(rb_cWXWindow, "help_text",1,1);
+	rb_define_attr(rb_cWXWindow, "tool_tip",1,1);
 
 #endif
 
@@ -599,6 +714,22 @@ DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 	rb_define_method(rb_cWXWindow,"show",RUBY_METHOD_FUNC(_Show),0);
 	rb_define_method(rb_cWXWindow,"hide",RUBY_METHOD_FUNC(_Hide),0);
 
+	rb_define_method(rb_cWXWindow,"shown?",RUBY_METHOD_FUNC(_IsShown),0);
+
+	rb_define_method(rb_cWXWindow,"enable",RUBY_METHOD_FUNC(_Enable),0);
+	rb_define_method(rb_cWXWindow,"disable",RUBY_METHOD_FUNC(_Disable),0);
+
+	rb_define_method(rb_cWXWindow,"enabled?",RUBY_METHOD_FUNC(_IsEnabled),0);
+	rb_define_method(rb_cWXWindow,"this_enabled?",RUBY_METHOD_FUNC(_IsThisEnabled),0);
+
+	rb_define_method(rb_cWXWindow,"window_raise",RUBY_METHOD_FUNC(_Raise),0);
+	rb_define_method(rb_cWXWindow,"window_lower",RUBY_METHOD_FUNC(_Lower),0);
+
+	rb_define_method(rb_cWXWindow,"window_freeze",RUBY_METHOD_FUNC(_Freeze),0);
+	rb_define_method(rb_cWXWindow,"window_frozen?",RUBY_METHOD_FUNC(_IsFrozen),0);
+	rb_define_method(rb_cWXWindow,"window_thaw",RUBY_METHOD_FUNC(_Thaw),0);
+
+
 	rb_define_method(rb_cWXWindow,"[]",RUBY_METHOD_FUNC(_getchild),1);
 
 	rb_define_method(rb_cWXWindow,"wx_class",RUBY_METHOD_FUNC(_wxClass),0);
@@ -606,10 +737,22 @@ DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 	rb_define_method(rb_cWXWindow,"each_child",RUBY_METHOD_FUNC(_each),0);
 
 	rb_define_method(rb_cWXWindow,"fit",RUBY_METHOD_FUNC(_Fit),0);
+	rb_define_method(rb_cWXWindow,"fit_inside",RUBY_METHOD_FUNC(_FitInside),0);
 	rb_define_method(rb_cWXWindow,"layout",RUBY_METHOD_FUNC(_Layout),0);
 
 	rb_define_method(rb_cWXWindow,"update",RUBY_METHOD_FUNC(_Update),0);
 	rb_define_method(rb_cWXWindow,"refresh",RUBY_METHOD_FUNC(_Refresh),0);
+
+	rb_define_method(rb_cWXWindow,"line_up",RUBY_METHOD_FUNC(_LineUp),0);
+	rb_define_method(rb_cWXWindow,"line_down",RUBY_METHOD_FUNC(_LineDown),0);
+
+	rb_define_method(rb_cWXWindow,"page_up",RUBY_METHOD_FUNC(_PageUp),0);
+	rb_define_method(rb_cWXWindow,"page_down",RUBY_METHOD_FUNC(_PageDown),0);
+
+
+	rb_define_method(rb_cWXWindow,"capture_mouse",RUBY_METHOD_FUNC(_CaptureMouse),0);
+	rb_define_method(rb_cWXWindow,"release_mouse",RUBY_METHOD_FUNC(_ReleaseMouse),0);
+	rb_define_method(rb_cWXWindow,"capture?",RUBY_METHOD_FUNC(_HasCapture),0);
 
 	rb_define_method(rb_cWXWindow,"handle",RUBY_METHOD_FUNC(_GetHandle),0);
 
@@ -624,6 +767,7 @@ DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 #endif
 
 	rb_define_module_function(rb_mWX,"mouse_position",RUBY_METHOD_FUNC(_GetMousePosition),0);
+	rb_define_module_function(rb_mWX,"capture",RUBY_METHOD_FUNC(_GetCapture),0);
 
 	rb_define_method(rb_cWXWindow,"client_to_screen",RUBY_METHOD_FUNC(_ClientToScreen),1);
 	rb_define_method(rb_cWXWindow,"screen_to_client",RUBY_METHOD_FUNC(_ScreenToClient),1);
