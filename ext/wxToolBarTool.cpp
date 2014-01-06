@@ -30,6 +30,9 @@ macro_attr(LongHelp,wxString)
 macro_attr(DropdownMenu,wxMenu*)
 #endif
 
+macro_attr_bool2(Enabled,Enable)
+macro_attr_bool2(Toggled,Toggle)
+
 singlereturn(GetToolBar)
 singlereturn(GetBitmap)
 singlereturn(GetNormalBitmap)
@@ -70,6 +73,24 @@ DLL_LOCAL VALUE _alloc(VALUE self)
 #endif
 
 
+/* Document-method: toolbar
+ * call-seq:
+ *   toolbar -> WX::ToolBar or nil
+ *
+ * returns the toolbar that has this ToolBarTool of nil.
+ * ===Return value
+ * WX::ToolBar or nil
+ */
+
+/* Document-method: bitmap
+ * call-seq:
+ *   bitmap -> WX::Bitmap
+ *
+ * returns the current bitmap of this tool bar item.
+ * ===Return value
+ * WX::Bitmap
+ */
+
 
 /* Document-attr: normal_bitmap
  * returns the default WX::Bitmap
@@ -88,9 +109,25 @@ DLL_LOCAL VALUE _alloc(VALUE self)
  * returns the long help, used in tool tip. Type is String
  */
 
+/* Document-attr: dropdown_menu
+ * returns the dropdown menu WX::Menu
+ */
+
+
+/* Document-attr: enabled
+ * returns if the menu item is enabled. bool
+ */
+
+/* Document-attr: toggled
+ * returns if the menu item is toggled. bool
+ */
+
+
 DLL_LOCAL void Init_WXToolBarTool(VALUE rb_mWX)
 {
 #if 0
+	rb_cWXToolBarBase = rb_define_class_under(rb_mWX,"ToolBarBase",rb_cWXControl);
+
 	rb_define_attr(rb_cWXToolBarTool,"normal_bitmap",1,1);
 	rb_define_attr(rb_cWXToolBarTool,"disabled_bitmap",1,1);
 
@@ -98,17 +135,27 @@ DLL_LOCAL void Init_WXToolBarTool(VALUE rb_mWX)
 	rb_define_attr(rb_cWXToolBarTool,"short_help",1,1);
 	rb_define_attr(rb_cWXToolBarTool,"long_help",1,1);
 
+	rb_define_attr(rb_cWXToolBarTool,"enabled",1,1);
+	rb_define_attr(rb_cWXToolBarTool,"toggled",1,1);
+
 	rb_define_attr(rb_cWXToolBarTool,"dropdown_menu",1,1);
 
 #endif
 
 #if wxUSE_TOOLBAR
 	using namespace RubyWX::ToolBarTool;
-	//rb_cWXMenu = rb_define_class_under(rb_mWX,"Menu",rb_cObject);
 	rb_cWXToolBarTool = rb_define_class_under(rb_cWXToolBarBase,"Tool",rb_cObject);
+
+	//should that really have alloc?
 	rb_define_alloc_func(rb_cWXToolBarTool,_alloc);
 
+	rb_undef_method(rb_cWXToolBarTool,"initialize_copy");
+	rb_undef_method(rb_cWXToolBarTool,"_load");
+	rb_undef_method(rb_cWXToolBarTool,"_dump");
+
 	rb_define_method(rb_cWXToolBarTool,"control",RUBY_METHOD_FUNC(_getControl),0);
+
+	rb_define_method(rb_cWXToolBarTool,"toolbar",RUBY_METHOD_FUNC(_GetToolBar),0);
 
 	rb_define_method(rb_cWXToolBarTool,"bitmap",RUBY_METHOD_FUNC(_GetBitmap),0);
 
@@ -118,6 +165,9 @@ DLL_LOCAL void Init_WXToolBarTool(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXToolBarTool,"label",_getLabel,_setLabel);
 	rb_define_attr_method(rb_cWXToolBarTool,"short_help",_getShortHelp,_setShortHelp);
 	rb_define_attr_method(rb_cWXToolBarTool,"long_help",_getLongHelp,_setLongHelp);
+
+	rb_define_attr_method(rb_cWXToolBarTool,"enabled",_getEnabled,_setEnabled);
+	rb_define_attr_method(rb_cWXToolBarTool,"toggled",_getToggled,_setToggled);
 
 #if wxUSE_MENUS
 	rb_define_attr_method(rb_cWXToolBarTool,"dropdown_menu",_getDropdownMenu,_setDropdownMenu);
