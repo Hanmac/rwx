@@ -97,6 +97,16 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
+
+
+/* Document-attr: value
+ * the value of the SearchCtrl. String
+ */
+
+/* Document-attr: menu
+ * the menu of the SearchCtrl. WX::Menu
+ */
+
 DLL_LOCAL void Init_WXSearchCtrl(VALUE rb_mWX)
 {
 #if 0
