@@ -17,7 +17,11 @@ VALUE rb_cWXNumberEntryDialog;
 namespace RubyWX {
 namespace NumberEntryDialog {
 
+#ifdef HAVE_WXNUMBERENTRYDIALOG
 APP_PROTECT(wxNumberEntryDialog)
+#else
+APP_PROTECT_NULL
+#endif
 
 singlereturn(GetValue)
 
@@ -52,8 +56,13 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"min",min);
 			set_hash_option(hash,"max",max);
 		}
+#ifdef HAVE_WXNUMBERENTRYDIALOG
 		_self->Create(unwrap<wxWindow*>(parent),
 				message,prompt,caption,value,min,max);
+#else
+		DATA_PTR(self) = new wxNumberEntryDialog(unwrap<wxWindow*>(parent),
+				message,prompt,caption,value,min,max);
+#endif
 		_created = true;
 	}
 	rb_call_super(argc,argv);

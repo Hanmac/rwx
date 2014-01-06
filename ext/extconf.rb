@@ -29,6 +29,13 @@ if(wx_config = find_executable('wx-config'))
 
 	have_header("wx/preferences.h")
 	
+	
+	with_cflags(" -x c++ ") {
+    RbConfig::CONFIG["CC"] = CONFIG["CXX"] 
+	  have_func("wxContextHelpButton()","wx/cshelp.h")
+    have_func("wxNumberEntryDialog()","wx/numdlg.h")
+    have_func("wxPasswordEntryDialog()","wx/textdlg.h")
+	}
 else
 		abort("wx-config executable not found")
 

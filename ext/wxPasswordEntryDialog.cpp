@@ -13,13 +13,22 @@
 
 VALUE rb_cWXPasswordEntryDialog;
 #if wxUSE_TEXTDLG
+
+// wxPasswordEntryDialog can not be used directly try to fake it
+#ifdef HAVE_WXPASSWORDENTRYDIALOG
 #define _self unwrap<wxPasswordEntryDialog*>(self)
+#else
+#define _self unwrap<wxTextEntryDialog*>(self)
+#endif
 
 namespace RubyWX {
 namespace PasswordEntryDialog {
 
+#ifdef HAVE_WXPASSWORDENTRYDIALOG
 APP_PROTECT(wxPasswordEntryDialog)
-
+#else
+APP_PROTECT(wxTextEntryDialog)
+#endif
 /*
  * call-seq:
  *   PasswordEntryDialog.new(parent, [options])
@@ -53,8 +62,13 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 			set_hash_option(hash,"style",style);
 		}
+#ifdef HAVE_WXPASSWORDENTRYDIALOG
 		_self->Create(unwrap<wxWindow*>(parent),
 				message,caption,value,style);
+#else
+		_self->Create(unwrap<wxWindow*>(parent),
+				message,caption,value,style | wxTE_PASSWORD);
+#endif
 		_created = true;
 	}
 	rb_call_super(argc,argv);

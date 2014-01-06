@@ -14,7 +14,11 @@ VALUE rb_cWXContextHelpButton;
 namespace RubyWX {
 namespace ContextHelpButton {
 
+#ifdef HAVE_WXCONTEXTHELPBUTTON
 APP_PROTECT(wxContextHelpButton)
+#else
+APP_PROTECT_NULL
+#endif
 
 /*
  * call-seq:
@@ -31,6 +35,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	VALUE parent,hash;
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 
+#ifdef HAVE_WXCONTEXTHELPBUTTON
 	if(!_created) {
 		wxWindowID id(wxID_CONTEXT_HELP);
 
@@ -41,6 +46,17 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		_self->Create(unwrap<wxWindow*>(parent),id);
 		_created = true;
 	}
+#else
+	wxWindowID id(wxID_CONTEXT_HELP);
+
+	if(rb_obj_is_kind_of(hash,rb_cHash)) {
+		set_hash_option(hash,"id",id,unwrapID);
+	}
+
+	DATA_PTR(self) = new wxContextHelpButton(unwrap<wxWindow*>(parent),id);
+	_created = true;
+#endif
+
 
 	rb_call_super(argc,argv);
 	return self;
