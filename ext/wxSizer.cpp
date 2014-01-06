@@ -85,6 +85,18 @@ DLL_LOCAL VALUE _add(int argc,VALUE *argv,VALUE self)
 	}
 }
 
+DLL_LOCAL VALUE _add_spacer(VALUE self,VALUE size)
+{
+	return wrap(_self->AddSpacer(NUM2INT(size)));
+}
+
+DLL_LOCAL VALUE _add_stretch_spacer(int argc,VALUE *argv,VALUE self)
+{
+	VALUE prop;
+	rb_scan_args(argc, argv, "01",&prop);
+
+	return wrap(_self->AddStretchSpacer(NIL_P(prop) ? 1 : NUM2INT(prop)));
+}
 
 DLL_LOCAL VALUE _insert(int argc,VALUE *argv,VALUE self)
 {
@@ -99,6 +111,19 @@ DLL_LOCAL VALUE _insert(int argc,VALUE *argv,VALUE self)
 		const wxSize &size = unwrap<wxSize>(obj);
 		return wrap(_self->Insert(NUM2INT(index),size.GetWidth(),size.GetHeight(),unwrap<wxSizerFlags>(hash)));
 	}
+}
+
+DLL_LOCAL VALUE _insert_spacer(VALUE self,VALUE idx,VALUE size)
+{
+	return wrap(_self->InsertSpacer(NUM2UINT(idx),NUM2INT(size)));
+}
+
+DLL_LOCAL VALUE _insert_stretch_spacer(int argc,VALUE *argv,VALUE self)
+{
+	VALUE idx,prop;
+	rb_scan_args(argc, argv, "11",&idx,&prop);
+
+	return wrap(_self->InsertStretchSpacer(NUM2UINT(idx),NIL_P(prop) ? 1 : NUM2INT(prop)));
 }
 
 
@@ -117,6 +142,21 @@ DLL_LOCAL VALUE _prepend(int argc,VALUE *argv,VALUE self)
 	}
 }
 
+DLL_LOCAL VALUE _prepend_spacer(VALUE self,VALUE size)
+{
+	return wrap(_self->PrependSpacer(NUM2INT(size)));
+}
+
+
+DLL_LOCAL VALUE _prepend_stretch_spacer(int argc,VALUE *argv,VALUE self)
+{
+	VALUE prop;
+	rb_scan_args(argc, argv, "01",&prop);
+
+	return wrap(_self->PrependStretchSpacer(NIL_P(prop) ? 1 : NUM2INT(prop)));
+}
+
+
 
 DLL_LOCAL VALUE _getItem(VALUE self,VALUE index)
 {
@@ -132,8 +172,8 @@ DLL_LOCAL VALUE _each_size(VALUE self)
 DLL_LOCAL VALUE _each(VALUE self)
 {
 	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_size);
-	size_t  count = _self->GetItemCount();
-	for(size_t i = 0; i < count; ++i)
+	std::size_t  count(_self->GetItemCount());
+	for(std::size_t i = 0; i < count; ++i)
 		rb_yield(wrap(_self->GetItem(i)));
 	return self;
 }
@@ -157,6 +197,14 @@ DLL_LOCAL void Init_WXSizer(VALUE rb_mWX)
 	rb_define_method(rb_cWXSizer,"add",RUBY_METHOD_FUNC(_add),-1);
 	rb_define_method(rb_cWXSizer,"insert",RUBY_METHOD_FUNC(_insert),-1);
 	rb_define_method(rb_cWXSizer,"prepend",RUBY_METHOD_FUNC(_prepend),-1);
+
+	rb_define_method(rb_cWXSizer,"add_spacer",RUBY_METHOD_FUNC(_add_spacer),1);
+	rb_define_method(rb_cWXSizer,"insert_spacer",RUBY_METHOD_FUNC(_insert_spacer),1);
+	rb_define_method(rb_cWXSizer,"prepend_spacer",RUBY_METHOD_FUNC(_prepend_spacer),1);
+
+	rb_define_method(rb_cWXSizer,"add_stretch_spacer",RUBY_METHOD_FUNC(_add_stretch_spacer),1);
+	rb_define_method(rb_cWXSizer,"insert_stretch_spacer",RUBY_METHOD_FUNC(_insert_stretch_spacer),1);
+	rb_define_method(rb_cWXSizer,"prepend_stretch_spacer",RUBY_METHOD_FUNC(_prepend_stretch_spacer),1);
 
 	rb_define_method(rb_cWXSizer,"[]",RUBY_METHOD_FUNC(_getItem),1);
 
