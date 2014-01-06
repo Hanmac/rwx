@@ -34,7 +34,17 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "11",&parent,&hash);
 	if(!_created)
 	{
-		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxDefaultPosition,wxDefaultSize,wxArrayInt(),wxArrayString());
+		wxArrayString items;
+		wxArrayInt order;
+
+		if(rb_obj_is_kind_of(hash,rb_cHash))
+		{
+			set_hash_option(hash,"items",items);
+			order.resize(items.size());
+			set_hash_option(hash,"order",order);
+		}
+
+		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxDefaultPosition,wxDefaultSize,order,items);
 		
 	}
 	rb_call_super(argc,argv);
