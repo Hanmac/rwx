@@ -14,8 +14,6 @@
 
 #include "wxStream.hpp"
 
-#include <wx/filename.h>
-
 #if wxUSE_PALETTE
 #include "wxPalette.hpp"
 #endif
@@ -56,8 +54,6 @@ DLL_LOCAL VALUE _load(int argc,VALUE *argv,VALUE self)
 	VALUE name,mime,nr;
 	rb_scan_args(argc, argv, "12",&name,&mime,&nr);
 
-	errno = 0;
-
 	bool result;
 
 	if(NIL_P(nr))
@@ -67,27 +63,11 @@ DLL_LOCAL VALUE _load(int argc,VALUE *argv,VALUE self)
 	if(!rb_respond_to(name,rb_intern("read")))
 	{
 #endif
-		wxFileName dir(wxPathOnly(unwrap<wxString>(name)));
-		dir.MakeAbsolute(wxGetCwd());
+		if(!check_file_loadable(unwrap<wxString>(name)))
+			return Qfalse;
 
 		wxFileName file(unwrap<wxString>(name));
 		file.MakeAbsolute(wxGetCwd());
-
-		if(dir.DirExists())
-		{
-			if(file.FileExists()){
-				if(!file.IsFileReadable())
-					errno = EACCES;
-			}else
-				errno = ENOENT;
-		}else
-			errno = ENOENT;
-
-		if(errno)
-		{
-			rb_sys_fail(unwrap< char* >(name));
-			return Qfalse;
-		}
 
 		if(NIL_P(mime)){
 			result = _self->LoadFile(file.GetFullPath());
@@ -332,27 +312,12 @@ DLL_LOCAL VALUE _save(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "11",&name,&mime);
 	if(!_self->IsOk())
 		return Qfalse;
-	errno = 0;
 
-	wxFileName dir(wxPathOnly(unwrap<wxString>(name)));
-	dir.MakeAbsolute(wxGetCwd());
+	if(!check_file_saveable(unwrap<wxString>(name)))
+		return Qfalse;
 
 	wxFileName file(unwrap<wxString>(name));
 	file.MakeAbsolute(wxGetCwd());
-	if(dir.DirExists())
-	{
-		if(file.FileExists() && !file.IsFileWritable())
-			errno = EACCES;
-		else if(!dir.IsDirWritable())
-			errno = EACCES;
-	}else
-		errno = ENOENT;
-
-	if(errno)
-	{
-		rb_sys_fail(unwrap< char* >(name));
-		return Qfalse;
-	}
 
 	bool result = false;
 

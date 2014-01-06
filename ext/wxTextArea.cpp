@@ -36,6 +36,36 @@ macro_attr_bool(Modified)
 
 macro_attr(DefaultStyle,wxTextAttr)
 
+
+/*
+ * call-seq:
+ *   initialize(parent, [options])
+ *
+ *
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ *
+*/
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
+{
+	VALUE parent,hash;
+	rb_scan_args(argc, argv, "11",&parent,&hash);
+
+	rb_call_super(argc,argv);
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		VALUE temp;
+		set_option(modified,Modified,bool)
+		set_option(default_style,DefaultStyle,wxTextAttr)
+	}
+
+	return self;
+}
+
+
 VALUE _each_line_size(VALUE self)
 {
 	return INT2NUM(_self->GetNumberOfLines());
@@ -56,14 +86,15 @@ VALUE _each_line(VALUE self)
 
 VALUE _load_file(VALUE self,VALUE file)
 {
-	//TODO add file.exist & permission check
-
+	if(!check_file_loadable(unwrap<wxString>(file)))
+		return Qfalse;
 	return wrap(_self->LoadFile(unwrap<wxString>(file)));
 }
 
 VALUE _save_file(VALUE self,VALUE file)
 {
-	//TODO add file.exist & permission check
+	if(!check_file_saveable(unwrap<wxString>(file)))
+		return Qfalse;
 
 	return wrap(_self->SaveFile(unwrap<wxString>(file)));
 }
@@ -86,8 +117,13 @@ DLL_LOCAL void Init_WXTextArea(VALUE rb_mWX)
 	rb_mWXTextArea = rb_define_module_under(rb_mWX,"TextArea");
 	rb_define_method(rb_mWXTextArea,"each_line",RUBY_METHOD_FUNC(_each_line),0);
 
+	rb_define_method(rb_mWXTextArea,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
+
 	rb_define_attr_method(rb_mWXTextArea,"modified",_getModified,_setModified);
 	rb_define_attr_method(rb_mWXTextArea,"default_style",_getDefaultStyle,_setDefaultStyle);
+
+	rb_define_method(rb_mWXTextArea,"load_file",RUBY_METHOD_FUNC(_load_file),1);
+	rb_define_method(rb_mWXTextArea,"save_file",RUBY_METHOD_FUNC(_save_file),1);
 #endif
 
 }

@@ -336,6 +336,8 @@ wxDateTime unwrap< wxDateTime >(const VALUE &val );
 DLL_LOCAL int unwrap_iconflag(const VALUE& val,int mask = wxICON_MASK);
 DLL_LOCAL int unwrap_buttonflag(const VALUE& val);
 
+DLL_LOCAL bool check_file_loadable(const wxString& path);
+DLL_LOCAL bool check_file_saveable(const wxString& path);
 
 #define macro_attr_func(attr,funcget,funcset,wrapget,wrapset) \
 DLL_LOCAL VALUE _get##attr(VALUE self)\

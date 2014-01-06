@@ -9,6 +9,8 @@
 
 #include <wx/arrstr.h>
 
+#include <wx/filename.h>
+
 infoholdertype infoklassholder;
 typeholdertype typeklassholder;
 
@@ -299,3 +301,57 @@ int unwrap_buttonflag(const VALUE& val)
 			return NUM2INT(val);
 	return wxOK;
 }
+
+bool check_file_loadable(const wxString& path)
+{
+	int errno(0);
+	wxFileName dir(wxPathOnly(path));
+	dir.MakeAbsolute(wxGetCwd());
+
+	wxFileName file(path);
+	file.MakeAbsolute(wxGetCwd());
+
+	if(dir.DirExists())
+	{
+		if(file.FileExists()){
+			if(!file.IsFileReadable())
+				errno = EACCES;
+		}else
+			errno = ENOENT;
+	}else
+		errno = ENOENT;
+
+	if(errno)
+	{
+		rb_sys_fail(path.c_str());
+		return false;
+	}
+	return true;
+
+}
+bool check_file_saveable(const wxString& path)
+{
+	errno = 0;
+
+	wxFileName dir(wxPathOnly(path));
+	dir.MakeAbsolute(wxGetCwd());
+
+	wxFileName file(path);
+	file.MakeAbsolute(wxGetCwd());
+	if(dir.DirExists())
+	{
+		if(file.FileExists() && !file.IsFileWritable())
+			errno = EACCES;
+		else if(!dir.IsDirWritable())
+			errno = EACCES;
+	}else
+		errno = ENOENT;
+
+	if(errno)
+	{
+		rb_sys_fail(path.c_str());
+		return false;
+	}
+	return true;
+}
+
