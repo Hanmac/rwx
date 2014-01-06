@@ -54,6 +54,24 @@ DLL_LOCAL VALUE _initialize(int argc, VALUE *argv, VALUE self) {
 	return self;
 }
 
+DLL_LOCAL VALUE _initialize_copy(VALUE self,VALUE other) {
+	wxPalette *cother = unwrap<wxPalette*>(other);
+	std::size_t count(cother->GetColoursCount());
+
+	unsigned char red[count];
+	unsigned char green[count];
+	unsigned char blue[count];
+
+	for(std::size_t i = 0; i < count; ++i)
+	{
+		cother->GetRGB(i,&red[i],&green[i],&blue[i]);
+	}
+
+	_self->Create(count,red,green,blue);
+
+	return self;
+}
+
 DLL_LOCAL VALUE _get(VALUE self,VALUE idx)
 {
 	unsigned char red,green,blue;
@@ -83,6 +101,14 @@ DLL_LOCAL VALUE _each(VALUE self)
 	return self;
 }
 
+/*
+ * call-seq:
+ *   marshal_dump -> Array
+ *
+ * Provides marshalling support for use by the Marshal library.
+ * ===Return value
+ * Array
+ */
 DLL_LOCAL VALUE _marshal_dump(VALUE self)
 {
 	VALUE ary = rb_ary_new(); //2(_self->GetColoursCount()*3);
@@ -98,6 +124,14 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
 	return ary;
 }
 
+/*
+ * call-seq:
+ *   marshal_load(array) -> nil
+ *
+ * Provides marshalling support for use by the Marshal library.
+ *
+ *
+ */
 DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 {
 	std::size_t count = RARRAY_LEN(data) / 3;
@@ -136,6 +170,7 @@ DLL_LOCAL void Init_WXPalette(VALUE rb_mWX)
 	rb_include_module(rb_cWXPalette,rb_mEnumerable);
 
 	rb_define_method(rb_cWXPalette,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
+	rb_define_private_method(rb_cWXPalette,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),1);
 
 	rb_define_method(rb_cWXPalette,"[]",RUBY_METHOD_FUNC(_get),1);
 
