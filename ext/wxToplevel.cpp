@@ -55,11 +55,25 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 
+
+/* Document-attr: title
+ * returns the title of the TopLevel window. Type is String
+ */
+
+/* Document-attr: icon
+ * returns the icon of the TopLevel window. Type is WX::Bitmap
+ */
+
+
 DLL_LOCAL void Init_WXTopLevel(VALUE rb_mWX)
 {
 #if 0
 	rb_define_attr(rb_cWXTopLevel, "title",1,1);
 	rb_define_attr(rb_cWXTopLevel, "icon",1,1);
+
+	rb_define_attr(rb_cWXTopLevel, "default_item",1,1);
+	rb_define_attr(rb_cWXTopLevel, "tmp_default_item",1,1);
+
 #endif
 
 	using namespace RubyWX::TopLevel;
@@ -70,6 +84,9 @@ DLL_LOCAL void Init_WXTopLevel(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXTopLevel, "title",_getTitle,_setTitle);
 	rb_define_attr_method(rb_cWXTopLevel, "icon",_getIcon,_setIcon);
+
+	rb_define_attr_method(rb_cWXTopLevel, "default_item",_getDefaultItem,_setDefaultItem);
+	rb_define_attr_method(rb_cWXTopLevel, "tmp_default_item",_getTmpDefaultItem,_setTmpDefaultItem);
 
 
 	rb_define_const(rb_cWXTopLevel,"STAY_ON_TOP",INT2NUM(wxSTAY_ON_TOP));
