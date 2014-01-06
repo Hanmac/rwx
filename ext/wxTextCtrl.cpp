@@ -20,14 +20,17 @@ namespace TextCtrl {
 
 macro_attr(Value,wxString)
 
+singlereturn(IsSingleLine)
+singlereturn(IsMultiLine)
+
 APP_PROTECT(wxTextCtrl)
 
 
 /*
  * call-seq:
- *   TextEntryDialog.new(parent, [options])
+ *   TextCtrl.new(parent, [options])
  *
- * creates a new TextEntryDialog widget.
+ * creates a new TextCtrl widget.
  * ===Arguments
  * * parent of this window or nil
  *
@@ -85,8 +88,16 @@ DLL_LOCAL void Init_WXTextCtrl(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXTextCtrl,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
+	rb_define_method(rb_cWXTextCtrl,"single_line?",RUBY_METHOD_FUNC(_IsSingleLine),0);
+	rb_define_method(rb_cWXTextCtrl,"multi_line?",RUBY_METHOD_FUNC(_IsMultiLine),0);
+
 	rb_define_attr_method(rb_cWXTextCtrl,"value",_getValue,_setValue);
 
+	rb_define_const(rb_cWXTextCtrl,"READONLY",INT2NUM(wxTE_READONLY));
+	rb_define_const(rb_cWXTextCtrl,"MULTILINE",INT2NUM(wxTE_MULTILINE));
+	rb_define_const(rb_cWXTextCtrl,"PROCESS_TAB",INT2NUM(wxTE_PROCESS_TAB));
+	rb_define_const(rb_cWXTextCtrl,"PROCESS_ENTER",INT2NUM(wxTE_PROCESS_ENTER));
+	rb_define_const(rb_cWXTextCtrl,"PASSWORD",INT2NUM(wxTE_PASSWORD));
 
 	registerInfo<wxTextCtrl>(rb_cWXTextCtrl);
 #endif
