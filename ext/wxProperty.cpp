@@ -186,6 +186,43 @@ VALUE find_prop_class(VALUE self,VALUE name)
 #endif
 
 
+/* Document-method: parent
+ * call-seq:
+ *   parent -> WX::Property or nil
+ *
+ * returns the parent property of this one or nil of this is already the parent.
+ * ===Return value
+ * WX::Property or nil
+ */
+
+/* Document-method: main_parent
+ * call-seq:
+ *   parent -> WX::Property or nil
+ *
+ * returns highest level parent property of this one or nil of this is already the highest.
+ * ===Return value
+ * WX::Property or nil
+ */
+
+/* Document-method: depth
+ * call-seq:
+ *   depth -> Integer
+ *
+ * returns the depth of this property inside a grid.
+ * ===Return value
+ * Integer
+ */
+
+/* Document-method: grid
+ * call-seq:
+ *   grid -> WX::PropertyGrid or nil
+ *
+ * returns the property grid that has this property of nil.
+ * ===Return value
+ * WX::PropertyGrid or nil
+ */
+
+
 /* Document-attr: label
  * the label of the Property. String
  */
