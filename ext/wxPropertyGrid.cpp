@@ -8,6 +8,10 @@
 #include "wxPropertyGrid.hpp"
 #include "wxPropertyGridInterface.hpp"
 
+#include "wxColor.hpp"
+#include "wxFont.hpp"
+#include "wxStatusBar.hpp"
+
 VALUE rb_cWXPropertyGrid;
 
 #if wxUSE_PROPGRID
