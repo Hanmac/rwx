@@ -304,7 +304,7 @@ int unwrap_buttonflag(const VALUE& val)
 
 bool check_file_loadable(const wxString& path)
 {
-	int errno(0);
+	errno = 0;
 	wxFileName dir(wxPathOnly(path));
 	dir.MakeAbsolute(wxGetCwd());
 
