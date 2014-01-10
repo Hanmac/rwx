@@ -24,8 +24,8 @@ macro_attr_with_func(AffirmativeId,wrapID,unwrapID)
 
 /*
  * call-seq:
- *   Dialog.new(parent, name)
- *   Dialog.new(parent, options)
+ *   Dialog.new(parent, name, [options])
+ *   Dialog.new(parent, [options])
  *
  * creates a new Dialog widget.
  * ===Arguments
@@ -37,19 +37,21 @@ macro_attr_with_func(AffirmativeId,wrapID,unwrapID)
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,name;
-	rb_scan_args(argc, argv, "11",&parent,&name);
-
-	int style = wxDEFAULT_DIALOG_STYLE;
-
-
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
 	if(!_created && !rb_obj_is_kind_of(name,rb_cString)){
+		wxWindowID id(wxID_ANY);
+		wxString title(wxEmptyString);
+		int style(wxDEFAULT_DIALOG_STYLE);
+
 		if(rb_obj_is_kind_of(name,rb_cHash))
 		{
+			set_hash_option(name,"id",id,unwrapID);
+			set_hash_option(name,"title",title);
 			set_hash_option(name,"style",style);
 		}
 
-		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,style);
+		_self->Create(unwrap<wxWindow*>(parent),id,title,wxDefaultPosition,wxDefaultSize,style);
 		
 	}
 	rb_call_super(argc,argv);

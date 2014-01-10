@@ -20,20 +20,36 @@ APP_PROTECT(wxStaticText)
 
 /*
  * call-seq:
+ *   StaticText.new(parent, name, [options])
  *   StaticText.new(parent, [options])
  *
  * creates a new StaticText widget.
  * ===Arguments
  * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
  *
  * *options: Hash with possible options to set
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxEmptyString);
+	VALUE parent, name, hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString))
+	{
+		wxWindowID id(wxID_ANY);
+		wxString label(wxEmptyString);
+		int style(0);
+
+		if(rb_obj_is_kind_of(hash,rb_cHash))
+		{
+			set_hash_option(hash,"id",id,unwrapID);
+			set_hash_option(hash,"label",label);
+			set_hash_option(hash,"style",style);
+		}
+
+		_self->Create(unwrap<wxWindow*>(parent),id,label,wxDefaultPosition,wxDefaultSize,style);
+	}
 	
 	rb_call_super(argc,argv);
 	return self;

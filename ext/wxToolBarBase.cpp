@@ -37,19 +37,24 @@ void bind_callback(wxToolBarBase* toolbar,wxWindowID id)
 	}
 }
 
-
-DLL_LOCAL VALUE _addNormal(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL wxToolBarToolBase* _add_base(int argc,VALUE *argv,VALUE self,wxItemKind kind)
 {
 	VALUE id,text,bitmap,bmpDisabled,shorthelp,longhelp;
 	rb_scan_args(argc, argv, "24",&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
 	wxWindowID wxid = unwrapID(id);
 	wxToolBarToolBase *tool = _self->AddTool(wxid, unwrap<wxString>(text),
 				wrapBitmap(bitmap,wxid,WRAP_BITMAP_RAISE,wxART_TOOLBAR),
-				wrapBitmap(bmpDisabled,wxid,WRAP_BITMAP_NULL,wxART_TOOLBAR),wxITEM_NORMAL,
+				wrapBitmap(bmpDisabled,wxid,WRAP_BITMAP_NULL,wxART_TOOLBAR),kind,
 				unwrap<wxString>(shorthelp), unwrap<wxString>(longhelp));
 	bind_callback(_self,tool->GetId());
+	return tool;
+}
 
-	return wrap(tool);
+
+
+DLL_LOCAL VALUE _addNormal(int argc,VALUE *argv,VALUE self)
+{
+	return wrap(_add_base(argc,argv,self,wxITEM_NORMAL));
 }
 
 DLL_LOCAL VALUE _addControl(int argc,VALUE *argv,VALUE self)
@@ -74,38 +79,20 @@ DLL_LOCAL VALUE _addControl(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL VALUE _addCheck(int argc,VALUE *argv,VALUE self)
 {
-	VALUE id,text,bitmap,bmpDisabled,shorthelp,longhelp;
-	rb_scan_args(argc, argv, "24",&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
-	wxWindowID wxid = unwrapID(id);
-
-	wxToolBarToolBase *tool = _self->AddCheckTool(wxid, unwrap<wxString>(text),
-				wrapBitmap(bitmap,wxid,WRAP_BITMAP_RAISE,wxART_TOOLBAR),
-				wrapBitmap(bmpDisabled,wxid,WRAP_BITMAP_NULL,wxART_TOOLBAR),
-				unwrap<wxString>(shorthelp), unwrap<wxString>(longhelp));
-
-	bind_callback(_self,tool->GetId());
-
-	return wrap(tool);
+	return wrap(_add_base(argc,argv,self,wxITEM_CHECK));
 }
 
 
 DLL_LOCAL VALUE _addRadio(int argc,VALUE *argv,VALUE self)
 {
-	VALUE id,text,bitmap,bmpDisabled,shorthelp,longhelp;
-	rb_scan_args(argc, argv, "24",&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
-	wxWindowID wxid = unwrapID(id);
-	wxToolBarToolBase *tool = _self->AddRadioTool(wxid, unwrap<wxString>(text),
-			wrapBitmap(bitmap,wxid,WRAP_BITMAP_RAISE,wxART_TOOLBAR),
-			wrapBitmap(bmpDisabled,wxid,WRAP_BITMAP_NULL,wxART_TOOLBAR),
-			unwrap<wxString>(shorthelp), unwrap<wxString>(longhelp));
-
-	bind_callback(_self,tool->GetId());
-
-	return wrap(tool);
+	return wrap(_add_base(argc,argv,self,wxITEM_RADIO));
 }
 
-DLL_LOCAL wxToolBarToolBase* _insert_base(VALUE self,VALUE idx, VALUE id,VALUE text, VALUE bitmap,VALUE bmpDisabled,VALUE shorthelp,VALUE longhelp, wxItemKind kind )
+DLL_LOCAL wxToolBarToolBase* _insert_base(int argc,VALUE *argv,VALUE self, wxItemKind kind )
 {
+	VALUE idx,id,text,bitmap,bmpDisabled,shorthelp,longhelp;
+	rb_scan_args(argc, argv, "34",&idx,&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
+
 	wxWindowID wxid = unwrapID(id);
 	wxToolBarToolBase *tool = _self->InsertTool(NUM2UINT(idx), wxid, unwrap<wxString>(text),
 			wrapBitmap(bitmap,wxid,WRAP_BITMAP_RAISE,wxART_TOOLBAR),
@@ -117,26 +104,17 @@ DLL_LOCAL wxToolBarToolBase* _insert_base(VALUE self,VALUE idx, VALUE id,VALUE t
 
 DLL_LOCAL VALUE _insertNormal(int argc,VALUE *argv,VALUE self)
 {
-	VALUE idx,id,text,bitmap,bmpDisabled,shorthelp,longhelp;
-	rb_scan_args(argc, argv, "34",&idx,&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
-
-	return wrap(_insert_base(self,idx,id,text,bitmap,bmpDisabled,shorthelp,longhelp,wxITEM_NORMAL));
+	return wrap(_insert_base(argc,argv,self,wxITEM_NORMAL));
 }
 
 DLL_LOCAL VALUE _insertCheck(int argc,VALUE *argv,VALUE self)
 {
-	VALUE idx,id,text,bitmap,bmpDisabled,shorthelp,longhelp;
-	rb_scan_args(argc, argv, "34",&idx,&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
-
-	return wrap(_insert_base(self,idx,id,text,bitmap,bmpDisabled,shorthelp,longhelp,wxITEM_CHECK));
+	return wrap(_insert_base(argc,argv,self,wxITEM_CHECK));
 }
 
 DLL_LOCAL VALUE _insertRadio(int argc,VALUE *argv,VALUE self)
 {
-	VALUE idx,id,text,bitmap,bmpDisabled,shorthelp,longhelp;
-	rb_scan_args(argc, argv, "34",&idx,&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
-
-	return wrap(_insert_base(self,idx,id,text,bitmap,bmpDisabled,shorthelp,longhelp,wxITEM_RADIO));
+	return wrap(_insert_base(argc,argv,self,wxITEM_RADIO));
 }
 
 
@@ -146,7 +124,7 @@ DLL_LOCAL VALUE _insertControl(int argc,VALUE *argv,VALUE self)
 	wxControl *c = NULL;
 	rb_scan_args(argc, argv, "21*",&idx,&id,&text,&arg);
 	if(rb_obj_is_kind_of(id,rb_cClass) && rb_class_inherited(id,rb_cWXControl)) {
-		rb_scan_args(argc, argv, "11",&id,&arg);
+		rb_scan_args(argc, argv, "21",&idx,&id,&arg);
 		VALUE argv2[] = {self, arg };
 		c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,id));
 	}else

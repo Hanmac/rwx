@@ -22,14 +22,35 @@ namespace StatusBar {
 APP_PROTECT(wxStatusBar)
 
 
+/*
+ * call-seq:
+ *   StatusBar.new(parent, name, [options])
+ *   StatusBar.new(parent, [options])
+ *
+ * creates a new StatusBar widget.
+ * ===Arguments
+ * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
+ *
+ * *options: Hash with possible options to set
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
+	VALUE parent, name, hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString))
+	{
+		wxWindowID id(wxID_ANY);
+		int style(wxSTB_DEFAULT_STYLE);
 
-	if(!_created) {
-		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
-		
+		if(rb_obj_is_kind_of(hash,rb_cHash))
+		{
+			set_hash_option(hash,"id",id,unwrapID);
+			set_hash_option(hash,"style",style);
+		}
+
+		_self->Create(unwrap<wxWindow*>(parent),id,style);
 	}
 	rb_call_super(argc,argv);
 	return self;

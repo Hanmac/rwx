@@ -26,11 +26,13 @@ APP_PROTECT(wxSpinButton)
 
 /*
  * call-seq:
+ *   SpinButton.new(parent, name, [options])
  *   SpinButton.new(parent, [options])
  *
  * creates a new SpinButton widget.
  * ===Arguments
  * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
  *
  * *options: Hash with possible options to set:
  *   * min Integer
@@ -40,10 +42,23 @@ APP_PROTECT(wxSpinButton)
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
-	
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString))
+	{
+		wxWindowID id(wxID_ANY);
+		int style(wxSP_VERTICAL);
+
+		if(rb_obj_is_kind_of(hash,rb_cHash))
+		{
+			set_hash_option(hash,"id",id,unwrapID);
+			set_hash_option(hash,"style",style);
+		}
+
+		_self->Create(unwrap<wxWindow*>(parent),id,wxDefaultPosition,wxDefaultSize,style);
+	}
+
+	rb_call_super(argc,argv);
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
@@ -53,7 +68,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		set_option(max,Max,int)
 	}
 
-	rb_call_super(argc,argv);
+
 	return self;
 }
 

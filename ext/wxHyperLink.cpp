@@ -29,11 +29,13 @@ APP_PROTECT(wxHyperlinkCtrl)
 
 /*
  * call-seq:
+ *   HyperLink.new(parent, name, [options])
  *   HyperLink.new(parent, [options])
  *
  * creates a new HyperLink widget.
  * ===Arguments
  * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
  *
  * *options: Hash with possible options to set:
  *   * url String
@@ -44,22 +46,36 @@ APP_PROTECT(wxHyperlinkCtrl)
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
 
-	wxString label("label");
-	wxString url(wxEmptyString);
+	if(NIL_P(hash))
+		name = hash;
 
-	if(rb_obj_is_kind_of(hash,rb_cHash))
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString))
 	{
-		set_hash_option(hash,"label",label);
-		set_hash_option(hash,"url",url);
-	}
+		wxWindowID id(wxID_ANY);
+		wxString label("label");
+		wxString url(wxEmptyString);
+		int style(wxHL_DEFAULT_STYLE);
 
-	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,
-			label,url);
+		if(rb_obj_is_kind_of(hash,rb_cHash))
+		{
+			set_hash_option(hash,"id",id,unwrapID);
+			set_hash_option(hash,"label",label);
+			set_hash_option(hash,"url",url);
+			set_hash_option(hash,"style",style);
+		}
+
+		_self->Create(
+			unwrap<wxWindow*>(parent),id,label,url,
+			wxDefaultPosition,wxDefaultSize,style
+		);
+
+	}
 	
 	rb_call_super(argc,argv);
+
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		VALUE temp;
@@ -67,7 +83,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		set_option(normal_color,NormalColour,wxColour)
 		set_option(visited_color,VisitedColour,wxColour)
 
-		set_option(visited,Visited,int)
+		set_option(visited,Visited,bool)
 	}
 
 	return self;
@@ -96,6 +112,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL void Init_WXHyperLink(VALUE rb_mWX)
 {
 #if 0
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+
 	rb_define_attr(rb_cWXHyperLink,"hover_color",1,1);
 	rb_define_attr(rb_cWXHyperLink,"normal_color",1,1);
 	rb_define_attr(rb_cWXHyperLink,"visited_color",1,1);

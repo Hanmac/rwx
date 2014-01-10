@@ -18,21 +18,22 @@ APP_PROTECT(wxBitmapButton)
 
 /*
  * call-seq:
+ *   BitmapButton.new(parent, name, [options])
  *   BitmapButton.new(parent, [options])
  *
  * creates a new BitmapButton widget.
  * ===Arguments
  * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
  *
  * *options: Hash with possible options to set:
  *   * bitmap WX::Bitmap
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
-
-	if(!_created) {
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString)) {
 		wxWindowID id(wxID_ANY);
 		wxBitmap bitmap(wxNullBitmap);
 

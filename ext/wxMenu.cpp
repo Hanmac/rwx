@@ -129,15 +129,83 @@ DLL_LOCAL VALUE _appendShift(VALUE self,VALUE val)
 }
 
 
+
+DLL_LOCAL VALUE _insert_base(int argc,VALUE *argv,VALUE self,wxItemKind kind)
+{
+	VALUE idx,id,text,help;
+	rb_scan_args(argc, argv, "22",&idx,&id,&text,&help);
+	wxMenuItem *item = _self->Insert(NUM2INT(idx),unwrapID(id),unwrap<wxString>(text),unwrap<wxString>(help),kind);
+	bind_callback(_self,item->GetId());
+	return wrap(item);
+}
+
+
+DLL_LOCAL VALUE _insertNormalItem(int argc,VALUE *argv,VALUE self)
+{
+	return _insert_base(argc,argv,self,wxITEM_NORMAL);
+}
+
+
+DLL_LOCAL VALUE _insertCheckItem(int argc,VALUE *argv,VALUE self)
+{
+	return _insert_base(argc,argv,self,wxITEM_CHECK);
+}
+
+DLL_LOCAL VALUE _insertRadioItem(int argc,VALUE *argv,VALUE self)
+{
+	return _insert_base(argc,argv,self,wxITEM_RADIO);
+}
+
+
+DLL_LOCAL VALUE _prepend_base(int argc,VALUE *argv,VALUE self,wxItemKind kind)
+{
+	VALUE id,text,help;
+	rb_scan_args(argc, argv, "12",&id,&text,&help);
+	wxMenuItem *item = _self->Prepend(unwrapID(id),unwrap<wxString>(text),unwrap<wxString>(help),kind);
+	bind_callback(_self,item->GetId());
+	return wrap(item);
+}
+
+
+DLL_LOCAL VALUE _prependNormalItem(int argc,VALUE *argv,VALUE self)
+{
+	return _prepend_base(argc,argv,self,wxITEM_NORMAL);
+}
+
+
+DLL_LOCAL VALUE _prependCheckItem(int argc,VALUE *argv,VALUE self)
+{
+	return _prepend_base(argc,argv,self,wxITEM_CHECK);
+}
+
+DLL_LOCAL VALUE _prependRadioItem(int argc,VALUE *argv,VALUE self)
+{
+	return _prepend_base(argc,argv,self,wxITEM_RADIO);
+}
+
+#if wxUSE_XRC
+DLL_LOCAL VALUE _load_xrc(VALUE self,VALUE name)
+{
+	return wrap(wxXmlResource::Get()->LoadMenu(unwrap<wxString>(name)));
+}
+#endif
+
 }
 }
 #endif
 
 DLL_LOCAL void Init_WXMenu(VALUE rb_mWX)
 {
+#if 0
+	rb_cWXEvtHandler = rb_define_class_under(rb_mWX,"EvtHandler",rb_cObject);
+
+	rb_define_attr(rb_cWXMenu,"title",1,1);
+	rb_define_attr(rb_cWXMenu,"parent",1,1);
+
+#endif
+
 #if wxUSE_MENUS
 	using namespace RubyWX::Menu;
-	//rb_cWXEvtHandler = rb_define_class_under(rb_mWX,"EvtHandler",rb_cObject);
 	rb_cWXMenu = rb_define_class_under(rb_mWX,"Menu",rb_cObject);
 	rb_define_alloc_func(rb_cWXMenu,_alloc);
 
@@ -155,11 +223,25 @@ DLL_LOCAL void Init_WXMenu(VALUE rb_mWX)
 	rb_define_method(rb_cWXMenu,"append_radio",RUBY_METHOD_FUNC(_appendRadioItem),-1);
 
 	rb_define_method(rb_cWXMenu,"append_separator",RUBY_METHOD_FUNC(_AppendSeparator),0);
+
+	rb_define_method(rb_cWXMenu,"insert_normal",RUBY_METHOD_FUNC(_insertNormalItem),-1);
+	rb_define_method(rb_cWXMenu,"insert_check",RUBY_METHOD_FUNC(_insertCheckItem),-1);
+	rb_define_method(rb_cWXMenu,"insert_radio",RUBY_METHOD_FUNC(_insertRadioItem),-1);
+
+	rb_define_method(rb_cWXMenu,"prepend_normal",RUBY_METHOD_FUNC(_prependNormalItem),-1);
+	rb_define_method(rb_cWXMenu,"prepend_check",RUBY_METHOD_FUNC(_prependCheckItem),-1);
+	rb_define_method(rb_cWXMenu,"prepend_radio",RUBY_METHOD_FUNC(_prependRadioItem),-1);
+
 	rb_define_method(rb_cWXMenu,"prepend_separator",RUBY_METHOD_FUNC(_PrependSeparator),0);
+
 
 	rb_define_method(rb_cWXMenu,"<<",RUBY_METHOD_FUNC(_appendShift),1);
 
 	rb_define_method(rb_cWXMenu,"menubar",RUBY_METHOD_FUNC(_GetMenuBar),0);
+
+#if wxUSE_XRC
+	rb_define_singleton_method(rb_cWXMenu,"load_xrc",RUBY_METHOD_FUNC(_load_xrc),1);
+#endif
 
 	registerEventType<wxCommandEvent>("menu",wxEVT_MENU);
 

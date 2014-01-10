@@ -282,6 +282,10 @@ DLL_LOCAL VALUE _callafter(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL void Init_WXEvtHandler(VALUE rb_mWX)
 {
+#if 0
+	rb_mWX = rb_define_module("WX");
+#endif
+
 	using namespace RubyWX::EvtHandler;
 	rb_mWXEvtHandler = rb_define_module_under(rb_mWX,"EvtHandler");
 

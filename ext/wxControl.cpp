@@ -20,11 +20,13 @@ APP_PROTECT(wxControl)
 
 /*
  * call-seq:
+ *   Control.new(parent, name, [options])
  *   Control.new(parent, [options])
  *
  * creates a new Control widget.
  * ===Arguments
  * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
  *
  * *options: Hash with possible options to set:
  *   * label_text String depends on the control what is shown
@@ -32,12 +34,17 @@ APP_PROTECT(wxControl)
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString)) {
+		wxWindowID id(wxID_ANY);
 
-	if(!_created) {
-		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
-		
+		if(rb_obj_is_kind_of(hash,rb_cHash))
+		{
+			set_hash_option(hash,"id",id,unwrapID);
+		}
+
+		_self->Create(unwrap<wxWindow*>(parent),id);
 	}
 	rb_call_super(argc,argv);
 

@@ -45,11 +45,10 @@ macro_attr(FilterIndex,int)
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
 
 	rb_call_super(argc,argv);
-
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		VALUE temp;
@@ -97,6 +96,8 @@ singlereturn(GetFile)
 DLL_LOCAL void Init_WXFileCtrlBase(VALUE rb_mWX)
 {
 #if 0
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+
 	rb_define_attr(rb_cWXFileCtrlBase,"wildcard",1,1);
 	rb_define_attr(rb_cWXFileCtrlBase,"directory",1,1);
 	rb_define_attr(rb_cWXFileCtrlBase,"filename",1,1);

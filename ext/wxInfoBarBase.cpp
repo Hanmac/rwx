@@ -71,6 +71,10 @@ DLL_LOCAL VALUE _removeButton(VALUE self,VALUE id)
 #endif
 DLL_LOCAL void Init_WXInfoBarBase(VALUE rb_mWX)
 {
+#if 0
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+#endif
+
 #if wxUSE_INFOBAR
 	using namespace RubyWX::InfoBarBase;
 	rb_cWXInfoBarBase = rb_define_class_under(rb_mWX,"InfoBarBase",rb_cWXControl);

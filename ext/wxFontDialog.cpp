@@ -22,11 +22,13 @@ APP_PROTECT(wxFontDialog)
 
 /*
  * call-seq:
+ *   FontDialog.new(parent, name, [options])
  *   FontDialog.new(parent, [options])
  *
  * creates a new FontDialog widget.
  * ===Arguments
  * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
  *
  * *options: Hash with possible options to set:
  *   * font WX::Font
@@ -37,10 +39,9 @@ APP_PROTECT(wxFontDialog)
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
-
-	if(!rb_obj_is_kind_of(hash,rb_cString))
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString))
 	{
 		wxFontData data;
 
@@ -87,12 +88,12 @@ macro_attr_pre(ShowHelp,bool,GetFontData)
 
 DLL_LOCAL VALUE _getUserFont(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,caption;
-	rb_scan_args(argc, argv, "11",&parent,&caption);
+	VALUE parent,caption,font;
+	rb_scan_args(argc, argv, "12",&parent,&caption,&font);
 
 	app_protected();
 
-	wxFont col = wxGetFontFromUser(unwrap<wxWindow*>(parent),wxNullFont,unwrap<wxString>(caption));
+	wxFont col = wxGetFontFromUser(unwrap<wxWindow*>(parent),unwrap<wxFont>(font),unwrap<wxString>(caption));
 	return col.IsOk() ? wrap(col) : Qnil;
 }
 

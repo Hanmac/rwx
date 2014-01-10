@@ -22,11 +22,13 @@ APP_PROTECT(wxGauge)
 
 /*
  * call-seq:
+ *   Gauge.new(parent, name, [options])
  *   Gauge.new(parent, [options])
  *
  * creates a new Gauge widget.
  * ===Arguments
  * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
  *
  * * options: Hash with possible options to set:
  *   * range Integer
@@ -35,20 +37,27 @@ APP_PROTECT(wxGauge)
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
-	if(!rb_obj_is_kind_of(hash,rb_cString))
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
+
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString))
 	{
+		wxWindowID id(wxID_ANY);
+		int style(wxGA_HORIZONTAL);
+
 		int range(0);
 
 		if(rb_obj_is_kind_of(hash,rb_cHash))
 		{
-			set_hash_option(hash,"range",range);
+			set_hash_option(hash,"id",id,unwrapID);
+			set_hash_option(hash,"range",style);
+			set_hash_option(hash,"style",style);
 		}
 
-		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,range);
-		
+		_self->Create(unwrap<wxWindow*>(parent),id,range,wxDefaultPosition,wxDefaultSize,style);
+
 	}
+
 	rb_call_super(argc,argv);
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
@@ -77,6 +86,8 @@ singlefunc(Pulse)
 DLL_LOCAL void Init_WXGauge(VALUE rb_mWX)
 {
 #if 0
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+
 	rb_define_attr(rb_cWXGauge,"range",1,1);
 	rb_define_attr(rb_cWXGauge,"value",1,1);
 #endif

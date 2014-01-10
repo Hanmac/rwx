@@ -229,6 +229,9 @@ VALUE find_prop_class(VALUE self,VALUE name)
 /* Document-attr: name
  * the name of the Property. String
  */
+/* Document-attr: help_string
+ * the help string of the Property. String
+ */
 /* Document-attr: value
  * the value of the Property.
  */
@@ -254,6 +257,7 @@ DLL_LOCAL void Init_WXProperty(VALUE rb_mWX)
 
 	rb_define_attr(rb_cWXProperty,"name",1,1);
 	rb_define_attr(rb_cWXProperty,"label",1,1);
+	rb_define_attr(rb_cWXProperty,"help_string",1,1);
 
 	rb_define_attr(rb_cWXProperty,"value",1,1);
 	rb_define_attr(rb_cWXProperty,"default_value",1,1);
@@ -284,6 +288,7 @@ DLL_LOCAL void Init_WXProperty(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXProperty,"name",_getName,_setName);
 	rb_define_attr_method(rb_cWXProperty,"label",_getLabel,_setLabel);
+	rb_define_attr_method(rb_cWXProperty,"help_string",_getHelpString,_setHelpString);
 
 	rb_define_attr_method(rb_cWXProperty,"value",_GetValue,_setValue);
 	rb_define_attr_method(rb_cWXProperty,"default_value",_GetDefaultValue,_setDefaultValue);

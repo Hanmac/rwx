@@ -35,12 +35,22 @@ APP_PROTECT(wxToolBar)
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,name,hash;
-	rb_scan_args(argc, argv, "12",&parent,&name,&hash);
-	if(!rb_obj_is_kind_of(name,rb_cString)){
-		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
-		
+	VALUE parent, name, hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString))
+	{
+		wxWindowID id(wxID_ANY);
+		int style(wxTB_HORIZONTAL);
+
+		if(rb_obj_is_kind_of(hash,rb_cHash))
+		{
+			set_hash_option(hash,"id",id,unwrapID);
+			set_hash_option(hash,"style",style);
+		}
+
+		_self->Create(unwrap<wxWindow*>(parent),id,wxDefaultPosition,wxDefaultSize,style);
 	}
+
 	rb_call_super(argc,argv);
 	return self;
 

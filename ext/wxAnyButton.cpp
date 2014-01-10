@@ -35,7 +35,7 @@ APP_PROTECT(wxAnyButton)
 
 /*
  * call-seq:
- *   AnyButton.new(parent, [options])
+ *
  *
  * creates a new AnyButton widget.
  * ===Arguments
@@ -49,20 +49,15 @@ APP_PROTECT(wxAnyButton)
  *   * bitmap_focus WX::Bitmap
  *   * bitmap_selected WX::Bitmap
  *   * bitmap_hover WX::Bitmap
+ *   * bitmap_margins WX::Size
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
 
-	//TODO: Can AnyButton really created?
-	if(!_created) {
-		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
-		
-	}
 	rb_call_super(argc,argv);
-
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		VALUE temp;
@@ -73,6 +68,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		set_option(bitmap_focus,BitmapFocus,wxBitmap)
 		set_option(bitmap_selected,BitmapSelected,wxBitmap)
 		set_option(bitmap_hover,BitmapHover,wxBitmap)
+
+		set_option(bitmap_margins,BitmapMargins,wxSize)
 	}
 
 	return self;
@@ -108,6 +105,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL void Init_WXAnyButton(VALUE rb_mWX)
 {
 #if 0
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
 
 	rb_define_attr(rb_cWXAnyButton,"bitmap_label",1,1);
@@ -123,7 +121,7 @@ DLL_LOCAL void Init_WXAnyButton(VALUE rb_mWX)
 #ifdef wxHAS_ANY_BUTTON
 	using namespace RubyWX::AnyButton;
 	rb_cWXAnyButton = rb_define_class_under(rb_mWX,"AnyButton",rb_cWXControl);
-	rb_define_alloc_func(rb_cWXAnyButton,_alloc);
+	rb_undef_alloc_func(rb_cWXAnyButton);
 
 	rb_define_method(rb_cWXAnyButton,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 

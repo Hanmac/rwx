@@ -22,38 +22,44 @@ APP_PROTECT_NULL
 
 /*
  * call-seq:
+ *   ContextHelpButton.new(parent, name, [options])
  *   ContextHelpButton.new(parent, [options])
  *
  * creates a new ContextHelpButton widget.
  * ===Arguments
  * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
  *
  * *options: Hash with possible options to set
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
 
 #ifdef HAVE_WXCONTEXTHELPBUTTON
-	if(!_created) {
+	if(!_created && rb_obj_is_kind_of(name,rb_cString)) {
 		wxWindowID id(wxID_CONTEXT_HELP);
+		int style(wxBU_AUTODRAW);
 
 		if(rb_obj_is_kind_of(hash,rb_cHash)) {
 			set_hash_option(hash,"id",id,unwrapID);
+			set_hash_option(hash,"style",style);
 		}
 
-		_self->Create(unwrap<wxWindow*>(parent),id);
+		_self->Create(unwrap<wxWindow*>(parent),id,wxDefaultPosition,wxDefaultSize,style);
 		
 	}
 #else
 	wxWindowID id(wxID_CONTEXT_HELP);
+	int style(wxBU_AUTODRAW);
 
 	if(rb_obj_is_kind_of(hash,rb_cHash)) {
 		set_hash_option(hash,"id",id,unwrapID);
+		set_hash_option(hash,"style",style);
 	}
 
-	DATA_PTR(self) = new wxContextHelpButton(unwrap<wxWindow*>(parent),id);
+	DATA_PTR(self) = new wxContextHelpButton(unwrap<wxWindow*>(parent),id,wxDefaultPosition,wxDefaultSize,style);
 	
 #endif
 

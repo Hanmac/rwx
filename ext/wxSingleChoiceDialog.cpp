@@ -27,11 +27,13 @@ singlereturn(GetStringSelection)
 
 /*
  * call-seq:
+ *   SingleChoiceDialog.new(parent, name, [options])
  *   SingleChoiceDialog.new(parent, [options])
  *
  * creates a new SingleChoiceDialog widget.
  * ===Arguments
  * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
  *
  * *options: Hash with possible options to set:
  *   * choices [string]
@@ -41,27 +43,26 @@ singlereturn(GetStringSelection)
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,name;
-	rb_scan_args(argc, argv, "11",&parent,&name);
-
-
-
-	if(!_created){
-		int style = wxCHOICEDLG_STYLE,selection = -1;
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
+	if(!_created && !rb_obj_is_kind_of(hash,rb_cString)){
+		int style(wxCHOICEDLG_STYLE);
+		int selection(-1);
 		wxArrayString choices;
 
 		wxString message(wxEmptyString);
+		wxString caption(wxEmptyString);
 
-		if(rb_obj_is_kind_of(name,rb_cHash)){
-			set_hash_option(name,"style",style);
-			set_hash_option(name,"choices",choices);
-			set_hash_option(name,"selection",selection);
-			set_hash_option(name,"message",message);
+		if(rb_obj_is_kind_of(hash,rb_cHash)){
+			set_hash_option(hash,"style",style);
+			set_hash_option(hash,"choices",choices);
+			set_hash_option(hash,"selection",selection);
+			set_hash_option(hash,"message",message);
+			set_hash_option(hash,"caption",caption);
 		}
 
-		_self->Create(unwrap<wxWindow*>(parent),message,wxEmptyString,choices,(void **)NULL,style);
+		_self->Create(unwrap<wxWindow*>(parent),message,caption,choices,(void **)NULL,style);
 		
-
 		_self->SetSelection(selection);
 	}
 	rb_call_super(argc,argv);
@@ -79,13 +80,13 @@ VALUE _GetSingleChoice(int argc,VALUE *argv,VALUE self)
 
 	wxWindow *parent = NULL;
 
-	int x = wxDefaultCoord;
-	int y = wxDefaultCoord;
-	bool centre = true;
-	int width = wxCHOICE_WIDTH;
-	int height = wxCHOICE_HEIGHT;
+	int x(wxDefaultCoord);
+	int y(wxDefaultCoord);
+	bool centre(true);
+	int width(wxCHOICE_WIDTH);
+	int height(wxCHOICE_HEIGHT);
 
-	int selection = -1;
+	int selection(-1);
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{

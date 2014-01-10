@@ -40,10 +40,22 @@ DLL_LOCAL VALUE _start(VALUE self,VALUE msec)
 singlefunc(Stop)
 singlereturn(GetOwner)
 
+singlereturn(GetInterval)
+singlereturn(IsRunning)
+
 DLL_LOCAL VALUE _setOwner(VALUE self,VALUE val)
 {
 	_self->SetOwner(unwrap<wxEvtHandler*>(val),_self->GetId());
 	return val;
+}
+
+namespace Event {
+
+#undef _self
+#define _self unwrapPtr<wxTimerEvent>(self,rb_cWXTimerEvent)
+
+singlereturn(GetInterval)
+
 }
 
 }
@@ -51,8 +63,14 @@ DLL_LOCAL VALUE _setOwner(VALUE self,VALUE val)
 
 #endif
 
+
+
 DLL_LOCAL void Init_WXTimer(VALUE rb_mWX)
 {
+#if 0
+	rb_define_attr(rb_cWXTimer,"owner",1,1);
+#endif
+
 #if wxUSE_TIMER
 	using namespace RubyWX::Timer;
 
@@ -70,13 +88,17 @@ DLL_LOCAL void Init_WXTimer(VALUE rb_mWX)
 	rb_define_method(rb_cWXTimer,"start",RUBY_METHOD_FUNC(_start),1);
 	rb_define_method(rb_cWXTimer,"stop",RUBY_METHOD_FUNC(_Stop),0);
 
+	rb_define_method(rb_cWXTimer,"running?",RUBY_METHOD_FUNC(_IsRunning),0);
+
+	rb_define_method(rb_cWXTimer,"interval",RUBY_METHOD_FUNC(_GetInterval),0);
+
 	rb_define_attr_method(rb_cWXTimer,"owner",_GetOwner,_setOwner);
 
 	rb_cWXTimerEvent = rb_define_class_under(rb_cWXEvent,"Timer",rb_cWXEvent);
-	registerEventType("timer",wxEVT_TIMER,rb_cWXTimerEvent);
 
-	//rb_define_attr_method(rb_cWXFileDirPickerEvent,"path",
-	//		Event::_getPath,Event::_setPath);
+	rb_define_method(rb_cWXTimerEvent,"interval",RUBY_METHOD_FUNC(Event::_GetInterval),0);
+
+	registerEventType("timer",wxEVT_TIMER,rb_cWXTimerEvent);
 
 	registerInfo<wxTimer>(rb_cWXTimer);
 #endif

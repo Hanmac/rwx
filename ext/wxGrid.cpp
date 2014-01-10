@@ -72,23 +72,26 @@ APP_PROTECT(wxGrid)
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash,name;
-	rb_scan_args(argc, argv, "12",&parent,&name,&hash);
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
 
 	if(!_created) {
 #if wxUSE_XRC
 		if(!loadxrc(_self,name,unwrap<wxWindow*>(parent)))
 #endif
-		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
-		_self->SetMargins(0,0);
+		{
+			wxWindowID id(wxID_ANY);
+
+			if(rb_obj_is_kind_of(hash,rb_cHash)) {
+				set_hash_option(hash,"id",id,unwrapID);
+			}
+
+			_self->Create(unwrap<wxWindow*>(parent),id);
+			_self->SetMargins(0,0);
+		}
 		
 	}
-	if(rb_obj_is_kind_of(name,rb_cString)){
-		VALUE args[] = {parent,hash};
 
-		rb_call_super(2,args);
-	}else {
-		rb_call_super(argc,argv);
-	}
+	rb_call_super(argc,argv);
 
 	return self;
 }
@@ -129,6 +132,10 @@ DLL_LOCAL VALUE _setEditable(VALUE self,VALUE val)
 
 DLL_LOCAL void Init_WXGrid(VALUE rb_mWX)
 {
+#if 0
+	rb_cWXPanel = rb_define_class_under(rb_mWX,"Panel",rb_cWXControl);
+#endif
+
 #if wxUSE_GRID
 	using namespace RubyWX::Grid;
 	rb_cWXGrid = rb_define_class_under(rb_mWX,"Grid",rb_cWXPanel);

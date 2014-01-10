@@ -125,6 +125,7 @@
 #include "wxTimePicker.hpp"
 #include "wxFontPicker.hpp"
 #include "wxColorPicker.hpp"
+#include "wxFileDirPicker.hpp"
 #include "wxFilePicker.hpp"
 #include "wxDirPicker.hpp"
 #include "wxDatePicker.hpp"
@@ -275,6 +276,7 @@ extern "C" void Init_rwx()
 	Init_WXTimePicker(rb_mWX);
 	Init_WXColorPicker(rb_mWX);
 	Init_WXFontPicker(rb_mWX);
+	Init_WXFileDirPicker(rb_mWX);
 	Init_WXFilePicker(rb_mWX);
 	Init_WXDirPicker(rb_mWX);
 	Init_WXDatePicker(rb_mWX);

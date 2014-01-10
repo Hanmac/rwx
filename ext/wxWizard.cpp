@@ -29,6 +29,7 @@ APP_PROTECT(wxWizard)
 
 /*
  * call-seq:
+ *   Wizard.new(parent, name, [options])
  *   Wizard.new(parent, [options])
  *
  * creates a new Wizard widget.
@@ -41,18 +42,25 @@ APP_PROTECT(wxWizard)
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
-	if(!rb_obj_is_kind_of(hash,rb_cString)){
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
+	if(!_created && !rb_obj_is_kind_of(hash,rb_cString)){
 
-		wxBitmap bitmap = wxNullBitmap;
+		wxWindowID id(wxID_ANY);
+		wxString title(wxEmptyString);
+		int style(wxDEFAULT_DIALOG_STYLE);
+		wxBitmap bitmap(wxNullBitmap);
 
-		if(rb_obj_is_kind_of(hash,rb_cHash)){
+		if(rb_obj_is_kind_of(hash,rb_cHash))
+		{
+			set_hash_option(hash,"id",id,unwrapID);
+			set_hash_option(hash,"title",title);
+			set_hash_option(hash,"style",style);
 			set_hash_option(hash,"bitmap",bitmap);
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),
-			wxID_ANY,wxEmptyString,bitmap
+			id,title,bitmap,wxDefaultPosition,style
 		);
 		
 	}

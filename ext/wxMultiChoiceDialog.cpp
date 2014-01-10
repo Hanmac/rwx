@@ -26,6 +26,7 @@ macro_attr(Selections,wxArrayInt)
 
 /*
  * call-seq:
+ *   MultiChoiceDialog.new(parent, name, [options])
  *   MultiChoiceDialog.new(parent, [options])
  *
  * creates a new MultiChoiceDialog widget.
@@ -33,29 +34,36 @@ macro_attr(Selections,wxArrayInt)
  * * parent of this window or nil
  *
  * *options: Hash with possible options to set:
- *   * choices [string]
+ *   * choices [String]
+ *   * selections [Integer]
  *   * message String
+ *   * caption String
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,name;
-	rb_scan_args(argc, argv, "11",&parent,&name);
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
 
-	if(!_created){
-		int style = wxCHOICEDLG_STYLE;
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString)){
+		int style(wxCHOICEDLG_STYLE);
 		wxArrayString choices;
+		wxArrayInt selections;
 
 		wxString message(wxEmptyString);
+		wxString caption(wxEmptyString);
 
-		if(rb_obj_is_kind_of(name,rb_cHash))
+		if(rb_obj_is_kind_of(hash,rb_cHash))
 		{
-			set_hash_option(name,"style",style);
-			set_hash_option(name,"choices",choices);
-			set_hash_option(name,"message",message);
+			set_hash_option(hash,"style",style);
+			set_hash_option(hash,"choices",choices);
+			set_hash_option(hash,"selections",selections);
+			set_hash_option(hash,"message",message);
+			set_hash_option(hash,"caption",caption);
 		}
-		_self->Create(unwrap<wxWindow*>(parent),message,wxEmptyString,choices,style);
+		_self->Create(unwrap<wxWindow*>(parent),message,caption,choices,style);
 		
+		_self->SetSelections(selections);
 
 	}
 	rb_call_super(argc,argv);
@@ -75,11 +83,11 @@ VALUE _GetSelectedChoices(int argc,VALUE *argv,VALUE self)
 
 	wxArrayInt selections;
 
-	int x = wxDefaultCoord;
-	int y = wxDefaultCoord;
-	bool centre = true;
-	int width = wxCHOICE_WIDTH;
-	int height = wxCHOICE_HEIGHT;
+	int x(wxDefaultCoord);
+	int y(wxDefaultCoord);
+	bool centre(true);
+	int width(wxCHOICE_WIDTH);
+	int height(wxCHOICE_HEIGHT);
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{

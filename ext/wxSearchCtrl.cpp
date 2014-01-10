@@ -48,13 +48,16 @@ DLL_LOCAL VALUE _setCancelButtonVisible(VALUE self,VALUE val)
 
 /*
  * call-seq:
+ *   SearchCtrl.new(parent, name, [options])
  *   SearchCtrl.new(parent, [options])
  *
  * creates a new SearchCtrl widget.
  * ===Arguments
  * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
  *
  * *options: Hash with possible options to set:
+ *   * value String
  *   * menu WX::Menu
  *   * search true/false
  *   * cancel true/false
@@ -62,12 +65,19 @@ DLL_LOCAL VALUE _setCancelButtonVisible(VALUE self,VALUE val)
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
 
-	if(!rb_obj_is_kind_of(hash,rb_cString))
-	{
-		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString)) {
+		wxWindowID id(wxID_ANY);
+		wxString value(wxEmptyString);
+
+		if(rb_obj_is_kind_of(hash,rb_cHash)) {
+			set_hash_option(hash,"id",id,unwrapID);
+			set_hash_option(hash,"value",value);
+		}
+
+		_self->Create(unwrap<wxWindow*>(parent),id,value);
 		
 	}
 

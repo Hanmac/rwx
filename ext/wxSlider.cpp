@@ -31,11 +31,13 @@ APP_PROTECT(wxSlider)
 
 /*
  * call-seq:
+ *   Slider.new(parent, name, [options])
  *   Slider.new(parent, [options])
  *
  * creates a new Slider widget.
  * ===Arguments
  * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
  *
  * *options: Hash with possible options to set:
  *   * min Integer
@@ -48,24 +50,35 @@ APP_PROTECT(wxSlider)
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
-
-	int value=0, min=0, max=0;
-
-	if(rb_obj_is_kind_of(hash,rb_cHash))
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString))
 	{
-		set_hash_option(hash,"min",min);
-		set_hash_option(hash,"max",max);
-		set_hash_option(hash,"value",value);
-	}
+		wxWindowID id(wxID_ANY);
+		int value(0), min(0), max(0);
+		int style(wxSL_HORIZONTAL);
 
-	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,value,min,max);
-	
+		if(rb_obj_is_kind_of(hash,rb_cHash))
+		{
+			set_hash_option(hash,"id",id,unwrapID);
+			set_hash_option(hash,"min",min);
+			set_hash_option(hash,"max",max);
+			set_hash_option(hash,"value",value);
+			set_hash_option(hash,"style",style);
+		}
+
+		_self->Create(unwrap<wxWindow*>(parent),id,value,min,max,wxDefaultPosition,wxDefaultSize,style);
+	}
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		VALUE temp;
+		if(rb_obj_is_kind_of(name,rb_cString))
+		{
+			set_option(min,Min,int)
+			set_option(max,Max,int)
+			set_option(value,Value,int)
+		}
 		set_option(line_size,LineSize,int)
 		set_option(page_size,PageSize,int)
 		set_option(thumb_length,ThumbLength,int)

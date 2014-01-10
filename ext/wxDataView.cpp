@@ -77,10 +77,8 @@ APP_PROTECT(wxDataViewCtrl)
 
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
-	//_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
-	//
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
 	rb_call_super(argc,argv);
 	return self;
 }
@@ -181,6 +179,9 @@ DLL_LOCAL VALUE _setItem(VALUE self,VALUE item)
 #endif
 DLL_LOCAL void Init_WXDataView(VALUE rb_mWX)
 {
+#if 0
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+#endif
 #if wxUSE_DATAVIEWCTRL
 	using namespace RubyWX::DataView;
 	rb_cWXDataView = rb_define_class_under(rb_mWX,"DataView",rb_cWXControl);

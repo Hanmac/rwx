@@ -27,6 +27,7 @@ singlereturn(GetValue)
 
 /*
  * call-seq:
+ *   NumberEntryDialog.new(parent, name, [options])
  *   NumberEntryDialog.new(parent, [options])
  *
  * creates a new NumberEntryDialog widget.
@@ -40,9 +41,9 @@ singlereturn(GetValue)
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
-	if(!rb_obj_is_kind_of(hash,rb_cString))
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
+	if(!_created && !rb_obj_is_kind_of(hash,rb_cString))
 	{
 		wxString message,prompt,caption;
 		long value = 0, min = 0, max = 0;
@@ -78,8 +79,8 @@ DLL_LOCAL VALUE _getNumber(int argc,VALUE *argv,VALUE self)
 	app_protected();
 
 	wxString message,prompt,caption;
-	long value = 0, min = 0, max = 100;
-	wxPoint pos = wxDefaultPosition;
+	long value(0), min(0), max(100);
+	wxPoint pos(wxDefaultPosition);
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{

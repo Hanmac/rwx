@@ -19,7 +19,7 @@ APP_PROTECT(wxFrame)
 /*
  * call-seq:
  *   Frame.new(parent, name, [options])
- *   Frame.new(parent, options)
+ *   Frame.new(parent, [options])
  *
  * creates a new Frame widget.
  * ===Arguments
@@ -32,28 +32,39 @@ APP_PROTECT(wxFrame)
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash,name;
-	rb_scan_args(argc, argv, "12",&parent,&name,&hash);
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
 
 	if(!_created) {
 #if wxUSE_XRC
 		if(!loadxrc(_self,name,unwrap<wxWindow*>(parent)))
 #endif
 		{
-			wxString title = wxEmptyString;
-			if(!wxTheApp->GetTopWindow())
+			wxWindowID id(wxID_ANY);
+			int style(wxDEFAULT_FRAME_STYLE);
+
+			wxString title(wxEmptyString);
+
+			if(rb_obj_is_kind_of(hash,rb_cHash))
+			{
+				set_hash_option(hash,"id",id,unwrapID);
+				set_hash_option(hash,"style",style);
+
+				set_hash_option(hash,"title",title);
+			}
+
+			if(title.empty() && !wxTheApp->GetTopWindow())
 				title = wxTheApp->GetAppName();
 
-			_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,title);
+			_self->Create(
+				unwrap<wxWindow*>(parent),id,title,
+				wxDefaultPosition,wxDefaultSize,style
+			);
 
 		}
 	}
-	if(rb_obj_is_kind_of(name,rb_cString)){
-		VALUE args[] = {parent,hash};
 
-		rb_call_super(2,args);
-	}else {
-		rb_call_super(argc,argv);
-	}
+	rb_call_super(argc,argv);
+
 	return self;
 }
 

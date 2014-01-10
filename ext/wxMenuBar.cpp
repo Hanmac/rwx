@@ -21,7 +21,6 @@ APP_PROTECT(wxMenuBar)
 
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	
 	rb_call_super(argc,argv);
 	return self;
 }
@@ -79,6 +78,39 @@ DLL_LOCAL VALUE _append(VALUE self,VALUE menu)
 }
 
 
+DLL_LOCAL VALUE _insert(VALUE self,VALUE idx,VALUE menu)
+{
+
+	wxMenu *m;
+	wxString name(wxEmptyString);
+
+	if(!rb_obj_is_kind_of(menu,rb_cWXMenu))
+	{
+		m = new wxMenu;
+		if(rb_block_given_p())
+			rb_yield(wrap(m));
+
+		name = unwrap<wxString>(menu);
+
+		if(SYMBOL_P(menu))
+		{
+			wxWindowID id(unwrapID(menu));
+			if(wxIsStockID(id))
+			{
+				name = wxGetStockLabel(id);
+			}
+		}
+
+	}else
+	{
+		m = unwrap<wxMenu*>(menu);
+	}
+
+	_self->Append(m,name);
+	return self;
+}
+
+
 singlereturn(GetFrame);
 
 }
@@ -97,6 +129,8 @@ DLL_LOCAL void Init_WXMenuBar(VALUE rb_mWX)
 	rb_define_method(rb_cWXMenuBar,"<<",RUBY_METHOD_FUNC(_appendShift),1);
 
 	rb_define_method(rb_cWXMenuBar,"append",RUBY_METHOD_FUNC(_append),1);
+
+	rb_define_method(rb_cWXMenuBar,"insert",RUBY_METHOD_FUNC(_insert),2);
 
 	rb_define_method(rb_cWXMenuBar,"frame",RUBY_METHOD_FUNC(_GetFrame),0);
 

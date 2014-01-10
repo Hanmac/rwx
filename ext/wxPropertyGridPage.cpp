@@ -12,7 +12,7 @@
 VALUE rb_cWXPropertyGridPage;
 
 #if wxUSE_PROPGRID
-#define _self unwrap<wxPropertyGrid*>(self)
+#define _self unwrap<wxPropertyGridPage*>(self)
 
 namespace RubyWX {
 namespace PropertyGridPage {
@@ -24,8 +24,25 @@ singlereturn(GetRoot)
 }
 }
 #endif
+
+
+/* Document-method: root
+ * call-seq:
+ *   root -> WX::Property
+ *
+ * returns the root property of this WX::PropertyGridPage
+ * ===Return value
+ * WX::Property
+ */
+
+
 DLL_LOCAL void Init_WXPropertyGridPage(VALUE rb_mWX)
 {
+#if 0
+	rb_mWXPropertyGridInterface = rb_define_module_under(rb_mWX,"PropertyGridInterface");
+
+	rb_mWXEvtHandler = rb_define_module_under(rb_mWX,"EvtHandler");
+#endif
 #if wxUSE_PROPGRID
 	using namespace RubyWX::PropertyGridPage;
 	rb_cWXPropertyGridPage = rb_define_class_under(rb_mWX,"PropertyGridPage",rb_cObject);

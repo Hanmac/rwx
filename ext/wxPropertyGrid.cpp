@@ -45,23 +45,64 @@ singlereturn(GetSelectionForegroundColour)
 
 singlereturn(GetCaptionFont)
 
+/*
+ * call-seq:
+ *   PropertyGrid.new(parent, name, [options])
+ *   PropertyGrid.new(parent, [options])
+ *
+ * creates a new PropertyGrid widget.
+ * ===Arguments
+ * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
+ *
+ * *options: Hash with possible options to set:
+ *   * caption_background_color WX::Color
+ *   * selection_background_color WX::Color
+ *   * cell_background_color WX::Color
+ *   * cell_text_color WX::Color
+ *   * cell_diabled_text_color WX::Color
+ *   * empty_space_color WX::Color
+ *   * line_color WX::Color
+ *   * margin_color WX::Color
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	int style = wxPG_DEFAULT_STYLE;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
-	if(!rb_obj_is_kind_of(hash,rb_cString))
+	VALUE parent,name,hash;
+
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString))
 	{
+		wxWindowID id(wxID_ANY);
+		int style(wxPG_DEFAULT_STYLE);
+
 		if(rb_obj_is_kind_of(hash,rb_cHash))
 		{
+			set_hash_option(hash,"id",id,unwrapID);
 			set_hash_option(hash,"style",style);
 		}
 
-		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxDefaultPosition,wxDefaultSize,style);
+		_self->Create(unwrap<wxWindow*>(parent),id,wxDefaultPosition,wxDefaultSize,style);
 		
 	}
 
 	rb_call_super(argc,argv);
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		VALUE temp;
+		set_option(caption_background_color,CaptionBackgroundColour,wxColour);
+		set_option(selection_background_color,SelectionBackgroundColour,wxColour);
+
+		set_option(cell_background_color,CellBackgroundColour,wxColour);
+		set_option(cell_text_color,CellTextColour,wxColour);
+		set_option(cell_diabled_text_color,CellDisabledTextColour,wxColour);
+
+		set_option(empty_space_color,EmptySpaceColour,wxColour);
+		set_option(line_color,LineColour,wxColour);
+		set_option(margin_color,MarginColour,wxColour);
+
+	}
 	return self;
 }
 
@@ -134,6 +175,7 @@ DLL_LOCAL void Init_WXPropertyGrid(VALUE rb_mWX)
 {
 #if 0
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+	rb_mWXPropertyGridInterface = rb_define_module_under(rb_mWX,"PropertyGridInterface");
 
 	rb_define_attr(rb_cWXPropertyGrid,"caption_background_color",1,1);
 	rb_define_attr(rb_cWXPropertyGrid,"selection_background_color",1,1);
@@ -158,7 +200,7 @@ DLL_LOCAL void Init_WXPropertyGrid(VALUE rb_mWX)
 	rb_define_method(rb_cWXPropertyGrid,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_method(rb_cWXPropertyGrid,"root",RUBY_METHOD_FUNC(_GetRoot),0);
-	rb_define_method(rb_cWXPropertyGrid,"status_bar",RUBY_METHOD_FUNC(_GetStatusBar),1);
+	rb_define_method(rb_cWXPropertyGrid,"status_bar",RUBY_METHOD_FUNC(_GetStatusBar),0);
 
 	rb_define_method(rb_cWXPropertyGrid,"caption_font",RUBY_METHOD_FUNC(_GetCaptionFont),0);
 
@@ -176,9 +218,12 @@ DLL_LOCAL void Init_WXPropertyGrid(VALUE rb_mWX)
 
 	rb_define_const(rb_cWXPropertyGrid,"DEFAULT_STYLE",INT2NUM(wxPG_DEFAULT_STYLE));
 
+	rb_define_const(rb_cWXPropertyGrid,"EX_MODE_BUTTONS",INT2NUM(wxPG_EX_MODE_BUTTONS));
+
 	rb_define_const(rb_cWXPropertyGrid,"EX_HELP_AS_TOOLTIPS",INT2NUM(wxPG_EX_HELP_AS_TOOLTIPS));
-
-
+	rb_define_const(rb_cWXPropertyGrid,"EX_HIDE_PAGE_BUTTONS",INT2NUM(wxPG_EX_HIDE_PAGE_BUTTONS));
+	rb_define_const(rb_cWXPropertyGrid,"EX_MULTIPLE_SELECTION",INT2NUM(wxPG_EX_MULTIPLE_SELECTION));
+	rb_define_const(rb_cWXPropertyGrid,"EX_TOOLBAR_SEPARATOR",INT2NUM(wxPG_EX_TOOLBAR_SEPARATOR));
 
 	registerInfo<wxPropertyGrid>(rb_cWXPropertyGrid);
 #endif

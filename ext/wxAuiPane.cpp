@@ -53,7 +53,7 @@ wxAuiPaneInfo unwrap< wxAuiPaneInfo >(const VALUE &vinfo)
 		set_aui_option(name,Name,unwrap<wxString>)
 		set_aui_option(icon,Icon,unwrap<wxIcon>)
 		set_aui_option(direction,Direction,unwrapenum< wxAuiManagerDock >)
-		set_aui_option(icon,Layer,NUM2INT)
+		set_aui_option(layer,Layer,NUM2INT)
 
 		return info;
 	}else

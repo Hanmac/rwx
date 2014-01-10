@@ -20,14 +20,14 @@ namespace MessageDialog {
 
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
-	if(!rb_obj_is_kind_of(hash,rb_cString))
-	{
-		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxEmptyString);
-		
-	}
-	rb_call_super(argc,argv);
+//	VALUE parent,hash;
+//	rb_scan_args(argc, argv, "11",&parent,&hash);
+//	if(!rb_obj_is_kind_of(hash,rb_cString))
+//	{
+//		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxEmptyString);
+//
+//	}
+//	rb_call_super(argc,argv);
 	return self;
 }
 

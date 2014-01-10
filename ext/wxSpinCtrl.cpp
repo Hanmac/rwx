@@ -39,11 +39,13 @@ APP_PROTECT(wxSpinCtrl)
 
 /*
  * call-seq:
+ *   SpinButton.new(parent, name, [options])
  *   SpinButton.new(parent, [options])
  *
  * creates a new SpinButton widget.
  * ===Arguments
  * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
  *
  * *options: Hash with possible options to set:
  *   * min Integer
@@ -53,26 +55,32 @@ APP_PROTECT(wxSpinCtrl)
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
-	long style = wxSP_ARROW_KEYS | wxALIGN_RIGHT;
-	int value = 0, min = 0, max = 100;
-
-	if(rb_obj_is_kind_of(hash,rb_cHash))
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
+	if(!_created && !rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		set_hash_option(hash,"style",style);
-		set_hash_option(hash,"value",value);
-		set_hash_option(hash,"min",min);
-		set_hash_option(hash,"max",max);
+		wxWindowID id(wxID_ANY);
+		int value(0), min(0), max(100);
+
+		long style(wxSP_ARROW_KEYS | wxALIGN_RIGHT);
+
+		if(rb_obj_is_kind_of(hash,rb_cHash))
+		{
+			set_hash_option(hash,"id",id,unwrapID);
+			set_hash_option(hash,"value",value);
+			set_hash_option(hash,"min",min);
+			set_hash_option(hash,"max",max);
+			set_hash_option(hash,"style",style);
+		}
+
+		_self->Create(unwrap<wxWindow*>(parent),id,
+			wxEmptyString,wxDefaultPosition,wxDefaultSize,
+			style,min,max,value
+		);
 	}
 
-	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,
-		wxEmptyString,wxDefaultPosition,wxDefaultSize,
-		style,min,max,value
-	);
-	
-
 	rb_call_super(argc,argv);
+
 	return self;
 }
 

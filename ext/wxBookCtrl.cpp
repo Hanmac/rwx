@@ -42,25 +42,23 @@ singlereturn(GetControllerSize)
 
 /*
  * call-seq:
- *   BookCtrl.new(parent, options)
+ *   BookCtrl.new(parent, name, [options])
+ *   BookCtrl.new(parent, [options])
  *
  * creates a new BookCtrl widget.
  * ===Arguments
  * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
  *
  * *options: Hash with possible options to set:
- *   * image_list [wxBitmap*]
+ *   * image_list [WX::Bitmap]
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
-	if(!_created)
-	{
-		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
-		
-	}
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
+
 	rb_call_super(argc,argv);
 
 
@@ -166,6 +164,12 @@ macro_attr(OldSelection,int)
 DLL_LOCAL void Init_WXBookCtrl(VALUE rb_mWX)
 {
 #if 0
+	rb_mWX = rb_define_module("WX");
+	rb_mWXEvtHandler = rb_define_module_under(rb_mWX,"EvtHandler");
+
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+
 	rb_define_attr(rb_cWXBookCtrlBase,"selection",1,1);
 	rb_define_attr(rb_cWXBookCtrlBase,"image_list",1,1);
 

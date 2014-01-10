@@ -21,10 +21,12 @@ APP_PROTECT(wxColourDialog)
 
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
 
-	_self->Create(unwrap<wxWindow*>(parent));
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString)){
+		_self->Create(unwrap<wxWindow*>(parent));
+	}
 	
 	rb_call_super(argc,argv);
 	return self;

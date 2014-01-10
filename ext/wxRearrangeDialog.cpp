@@ -17,13 +17,18 @@ namespace RearrangeDialog {
 
 APP_PROTECT(wxRearrangeDialog)
 
+singlereturn(GetList)
+singlereturn(GetOrder)
+
 /*
  * call-seq:
- *   RearrangeList.new(parent, [options])
+ *   RearrangeDialog.new(parent, name, [options])
+ *   RearrangeDialog.new(parent, [options])
  *
- * creates a new RearrangeList widget.
+ * creates a new RearrangeDialog widget.
  * ===Arguments
  * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
  *
  * *options: Hash with possible options to set:
  *   * items [string]
@@ -33,24 +38,29 @@ APP_PROTECT(wxRearrangeDialog)
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
-
-	wxArrayString items;
-	wxArrayInt order;
-
-	wxString message;
-
-	if(rb_obj_is_kind_of(hash,rb_cHash))
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11",&parent,&name,&hash);
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString))
 	{
-		set_hash_option(hash,"items",items);
-		order.resize(items.size());
-		set_hash_option(hash,"order",order);
-		set_hash_option(hash,"message",message);
-	}
-	if(!_created)
-	{
-		_self->Create(unwrap<wxWindow*>(parent),message,wxEmptyString,order,items);
+		wxArrayString items;
+		wxArrayInt order;
+
+		wxString message;
+		wxString title;
+
+		if(rb_obj_is_kind_of(hash,rb_cHash))
+		{
+			set_hash_option(hash,"items",items);
+
+			set_hash_option(hash,"order",order);
+
+			set_hash_option(hash,"message",message);
+			set_hash_option(hash,"title",title);
+
+			order.resize(items.size());
+		}
+
+		_self->Create(unwrap<wxWindow*>(parent),message,title,order,items);
 		
 	}
 	rb_call_super(argc,argv);

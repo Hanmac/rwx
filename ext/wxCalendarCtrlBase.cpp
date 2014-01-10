@@ -23,33 +23,6 @@ namespace CalendarCtrlBase {
 
 macro_attr(Date,wxDateTime)
 
-/*
- * call-seq:
- *   CalendarCtrlBase.new(parent, options)
- *
- * creates a new CalendarCtrlBase widget.
- * ===Arguments
- * * parent of this window or nil
- *
- * *options: Hash with possible options to set:
- *   * date Time default time
- *
-*/
-DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
-{
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
-
-	rb_call_super(argc,argv);
-
-	if(rb_obj_is_kind_of(hash,rb_cHash))
-	{
-		VALUE temp;
-		set_option(date,Date,wxDateTime)
-	}
-	return self;
-}
-
 }
 }
 #endif
@@ -61,6 +34,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL void Init_WXCalendarCtrlBase(VALUE rb_mWX)
 {
 #if 0
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
 	rb_define_attr(rb_cWXCalendarCtrlBase,"date",1,1);
 #endif
 

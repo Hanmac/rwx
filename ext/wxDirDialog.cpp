@@ -21,11 +21,13 @@ APP_PROTECT(wxDirDialog)
 
 /*
  * call-seq:
+ *   DirDialog.new(parent, name, [options])
  *   DirDialog.new(parent, [options])
  *
  * creates a new DirDialog widget.
  * ===Arguments
  * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
  *
  * *options: Hash with possible options to set:
  *   * path String default path
@@ -34,16 +36,29 @@ APP_PROTECT(wxDirDialog)
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
-	if(!rb_obj_is_kind_of(hash,rb_cString))
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString))
 	{
-		_self->Create(unwrap<wxWindow*>(parent));
+		wxString message(wxDirSelectorPromptStr);
+		wxString path(wxEmptyString);
+		int style(wxDD_DEFAULT_STYLE);
+
+		if(rb_obj_is_kind_of(hash,rb_cHash))
+		{
+			set_hash_option(hash,"message",message);
+			set_hash_option(hash,"path",path);
+			set_hash_option(hash,"style",style);
+		}
+
+		_self->Create(unwrap<wxWindow*>(parent),message,path,style);
 		
 	}
+
 	rb_call_super(argc,argv);
 
-	if(rb_obj_is_kind_of(hash,rb_cHash))
+	if(rb_obj_is_kind_of(hash,rb_cString) &&
+		rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		VALUE temp;
 		set_option(message,Message,wxString)
@@ -64,10 +79,10 @@ DLL_LOCAL VALUE _getUserDir(int argc,VALUE *argv,VALUE self)
 
 	app_protected();
 
-	wxString message = wxDirSelectorPromptStr;
-	wxString defaultPath = wxEmptyString;
-	long style = wxDD_DEFAULT_STYLE;
-	wxPoint pos = wxDefaultPosition;
+	wxString message(wxDirSelectorPromptStr);
+	wxString defaultPath(wxEmptyString);
+	long style(wxDD_DEFAULT_STYLE);
+	wxPoint pos(wxDefaultPosition);
 
 	bool mustExist(false);
 

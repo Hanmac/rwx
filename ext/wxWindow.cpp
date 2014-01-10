@@ -246,11 +246,7 @@ APP_PROTECT(wxWindow)
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,name,hash;
-	rb_scan_args(argc, argv, "12",&parent,&name,&hash);
-
-	if(NIL_P(hash))
-		hash = name;
-
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
 	if(!_created) {
 		wxWindowID id(wxID_ANY);
 		if(rb_obj_is_kind_of(hash,rb_cHash))
@@ -471,6 +467,34 @@ DLL_LOCAL VALUE _WindowToClientSize(VALUE self,VALUE point)
 }
 }
 
+/* Document-method: window_freeze
+ * call-seq:
+ *   window_freeze -> self
+ *
+ * freeze the Window, frozen windows are not redrawn until they are thawed.
+ * ===Return value
+ * self
+ */
+
+/* Document-method: window_thaw
+ * call-seq:
+ *   window_thaw -> self
+ *
+ * thaw the Window, frozen windows are not redrawn until they are thawed.
+ * ===Return value
+ * self
+ */
+
+/* Document-method: window_frozen?
+ * call-seq:
+ *   window_frozen? -> true/false
+ *
+ * returns true if the Window is still frozen.
+ * ===Return value
+ * true/false
+ */
+
+
 /* Document-method: show
  * call-seq:
  *   show -> true/false
@@ -630,6 +654,9 @@ DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 {
 	using namespace RubyWX::Window;
 #if 0
+	rb_mWX = rb_define_module("WX");
+	rb_mWXEvtHandler = rb_define_module_under(rb_mWX,"EvtHandler");
+
 	rb_define_attr(rb_cWXWindow, "label",1,1);
 	rb_define_attr(rb_cWXWindow, "name",1,1);
 	rb_define_attr(rb_cWXWindow, "parent",1,1);

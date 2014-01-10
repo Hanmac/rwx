@@ -22,40 +22,64 @@ APP_PROTECT(wxCheckBox)
 
 /*
  * call-seq:
+ *   CheckBox.new(parent, nanme, [options])
  *   CheckBox.new(parent, [options])
  *
  * creates a new CheckBox widget.
  * ===Arguments
  * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
  *
- * *options: Hash with possible options to set
+ * *options: Hash with possible options to set:
+ *   * value true/false says if this element is checked
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	int style = 0;
-	wxString label(wxEmptyString);
+	VALUE parent,name,hash;
 
-	rb_scan_args(argc, argv, "11",&parent,&hash);
-	if(rb_obj_is_kind_of(hash,rb_cHash))
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString))
 	{
-		set_hash_option(hash,"style",style);
-		set_hash_option(hash,"label",label);
-	}
+		wxWindowID id(wxID_ANY);
+		int style(0);
+		wxString label(wxEmptyString);
 
-	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,label,wxDefaultPosition,wxDefaultSize,style);
+		if(rb_obj_is_kind_of(hash,rb_cHash))
+		{
+			set_hash_option(hash,"id",id,unwrapID);
+			set_hash_option(hash,"style",style);
+			set_hash_option(hash,"label",label);
+		}
+
+		_self->Create(unwrap<wxWindow*>(parent),id,label,wxDefaultPosition,wxDefaultSize,style);
+	}
 	
 	rb_call_super(argc,argv);
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		VALUE temp;
+		set_option(value,Value,bool)
+	}
+
 	return self;
 }
 
 }
 }
 #endif
+
+
+/* Document-attr: value
+ * the value of the CheckBox. bool
+ */
+
 DLL_LOCAL void Init_WXCheckBox(VALUE rb_mWX)
 {
 #if 0
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+
 	rb_define_attr(rb_cWXCheckBox,"value",1,1);
 #endif
 

@@ -28,11 +28,13 @@ APP_PROTECT(wxTextCtrl)
 
 /*
  * call-seq:
+ *   TextCtrl.new(parent, name, [options])
  *   TextCtrl.new(parent, [options])
  *
  * creates a new TextCtrl widget.
  * ===Arguments
  * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
  *
  * *options: Hash with possible options to set:
  *   * value String
@@ -40,17 +42,28 @@ APP_PROTECT(wxTextCtrl)
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
-	if(!rb_obj_is_kind_of(hash,rb_cString))
+	VALUE parent, name, hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString))
 	{
-		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
-		
+		wxWindowID id(wxID_ANY);
+		wxString value(wxEmptyString);
+		int style(0);
+
+		if(rb_obj_is_kind_of(hash,rb_cHash))
+		{
+			set_hash_option(hash,"id",id,unwrapID);
+			set_hash_option(hash,"value",value);
+			set_hash_option(hash,"style",style);
+		}
+
+		_self->Create(unwrap<wxWindow*>(parent),id,value,wxDefaultPosition,wxDefaultSize,style);
 	}
 
 	rb_call_super(argc,argv);
 
-	if(rb_obj_is_kind_of(hash,rb_cHash))
+	if(rb_obj_is_kind_of(name,rb_cString) &&
+		rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		VALUE temp;
 		set_option(value,Value,wxString)

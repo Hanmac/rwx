@@ -20,27 +20,54 @@ macro_attr(Value,bool)
 
 APP_PROTECT(wxRadioButton)
 
+/*
+ * call-seq:
+ *   RadioButton.new(parent, name, [options])
+ *   RadioButton.new(parent, [options])
+ *
+ * creates a new RadioButton widget.
+ * ===Arguments
+ * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
+ *
+ * *options: Hash with possible options to set:
+ *   * group true/false says to start a new Radio group
+ *   * value true/false says if this element is checked
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	int style = 0;
-	bool group = false;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
-	if(rb_obj_is_kind_of(hash,rb_cHash))
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
+	if(!rb_obj_is_kind_of(name,rb_cString))
 	{
-		set_hash_option(hash,"style",style);
-		set_hash_option(hash,"group",group);
-		if(group)
-			style |= wxRB_GROUP;
-	}
+		wxWindowID id(wxID_ANY);
+		int style(0);
+		bool group(false);
+		wxString label(wxEmptyString);
 
-	if(!rb_obj_is_kind_of(hash,rb_cString))
-	{
-		_self->Create(unwrap<wxWindow*>(parent),wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,style);
+		if(rb_obj_is_kind_of(hash,rb_cHash))
+		{
+			set_hash_option(hash,"id",id,unwrapID);
+			set_hash_option(hash,"style",style);
+			set_hash_option(hash,"group",group);
+			set_hash_option(hash,"label",label);
+
+			if(group)
+				style |= wxRB_GROUP;
+		}
+
+		_self->Create(unwrap<wxWindow*>(parent),id,label,wxDefaultPosition,wxDefaultSize,style);
 		
 	}
 
 	rb_call_super(argc,argv);
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		VALUE temp;
+		set_option(value,Value,bool)
+	}
 	return self;
 }
 

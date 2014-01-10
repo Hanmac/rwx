@@ -29,11 +29,24 @@ APP_PROTECT(wxStyledTextCtrl)
 
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,hash;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
-	_self->Create(unwrap<wxWindow*>(parent),wxID_ANY);
+	VALUE parent,name,hash;
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString)) {
+		wxWindowID id(wxID_ANY);
+
+		if(rb_obj_is_kind_of(hash,rb_cHash)) {
+			set_hash_option(hash,"id",id,unwrapID);
+		}
+
+		_self->Create(unwrap<wxWindow*>(parent),id);
+
+	}
 	
 	_self->StyleClearAll();
+
+	rb_call_super(argc,argv);
+
+
 	rb_call_super(argc,argv);
 	return self;
 }
