@@ -69,8 +69,8 @@ LICENCE
 		
 		@frame.menubar = WX::MenuBar.new(nil) {|m|
 			m.append("&Dialogs") {|menu|
-				menu.append_normal("&Choices and selectors") {|select|
-					
+
+			  menu.append_menu("&Choices and selectors") {|select|
 					select.append_normal(:single_choice,"&Single choice\tCtrl-C") {
 						dialog = WX::SingleChoiceDialog.new(@frame,
 							:message => "This is a small sample\nA single-choice convenience dialog",
@@ -117,19 +117,19 @@ LICENCE
 						dialog.show_modal
 					}
 				}
-        menu.append_normal("&File operations") {|file|
+        menu.append_menu("&File operations") {|file|
           file.append_normal(:file_open,"&Open file\tCtrl-O")
           file.append_normal(:file_open2,"&Second open file\tCtrl-2")
           file.append_normal(:files_open,"Open &files\tCtrl-Q")
           file.append_normal(:file_save,"Sa&ve file\tCtrl-S")
         }
         
-        menu.append_normal("&Directory operations") {|file|
+        menu.append_menu("&Directory operations") {|file|
         file.append_normal(:dir_choose,"&Choose a directory\tCtrl-D") {choice_dir(true)}
           file.append_normal(:dir_choose_new,"Choose a directory (with \"Ne&w\" button)\tShift-Ctrl-D") {choice_dir(false)}
         }
 				
-				menu.append_normal("&Informative dialogs") {|info|
+				menu.append_menu("&Informative dialogs") {|info|
 					info.append_normal(:info_simple,"Simple &info bar\tCtrl-I") {
 						@index += 1
 						@info.show_message("Message #%d in the info bar." % @index) 
