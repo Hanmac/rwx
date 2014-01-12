@@ -51,12 +51,91 @@ DLL_LOCAL wxToolBarToolBase* _add_base(int argc,VALUE *argv,VALUE self,wxItemKin
 }
 
 
-
+/*
+ * call-seq:
+ *   add_normal(id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) -> WX::ToolBarBase::Tool
+ *   add_normal(id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) {|event| ... } -> WX::ToolBarBase::Tool
+ *
+ * adds a new normal tool item to the ToolBar widget.
+ * when block is given, bind the block to the event of the tool item.
+ * ===Arguments
+ * * id of the tool item: Symbol/Integer/nil
+ * * text is the Label of the tool item. String
+ * * bitmap is the icon shown for the tool item. WX::Bitmap, when nil try to get bitmap from id
+ * * disabled_bitmap is the icon shown when the tool item is disabled. WX::Bitmap, when nil make one from gray-scaled bitmap.
+ * * short_help shown in WX::StatusBar. String
+ * * long_help shown in ToolTip. String
+ * ===Return value
+ * WX::ToolBarBase::Tool
+ *
+*/
 DLL_LOCAL VALUE _addNormal(int argc,VALUE *argv,VALUE self)
 {
 	return wrap(_add_base(argc,argv,self,wxITEM_NORMAL));
 }
 
+/*
+ * call-seq:
+ *   add_check(id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) -> WX::ToolBarBase::Tool
+ *   add_check(id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) {|event| ... } -> WX::ToolBarBase::Tool
+ *
+ * adds a new normal tool item to the ToolBar widget.
+ * when block is given, bind the block to the event of the tool item.
+ * ===Arguments
+ * * id of the tool item: Symbol/Integer/nil
+ * * text is the Label of the tool item. String
+ * * bitmap is the icon shown for the tool item. WX::Bitmap, when nil try to get bitmap from id
+ * * disabled_bitmap is the icon shown when the tool item is disabled. WX::Bitmap, when nil make one from gray-scaled bitmap.
+ * * short_help shown in WX::StatusBar. String
+ * * long_help shown in ToolTip. String
+ * ===Return value
+ * WX::ToolBarBase::Tool
+ *
+*/
+DLL_LOCAL VALUE _addCheck(int argc,VALUE *argv,VALUE self)
+{
+	return wrap(_add_base(argc,argv,self,wxITEM_CHECK));
+}
+
+/*
+ * call-seq:
+ *   add_radio(id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) -> WX::ToolBarBase::Tool
+ *   add_radio(id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) {|event| ... } -> WX::ToolBarBase::Tool
+ *
+ * adds a new radio tool item to the ToolBar widget.
+ * when block is given, bind the block to the event of the tool item.
+ * ===Arguments
+ * * id of the tool item: Symbol/Integer/nil
+ * * text is the Label of the tool item. String
+ * * bitmap is the icon shown for the tool item. WX::Bitmap, when nil try to get bitmap from id
+ * * disabled_bitmap is the icon shown when the tool item is disabled. WX::Bitmap, when nil make one from gray-scaled bitmap.
+ * * short_help shown in WX::StatusBar. String
+ * * long_help shown in ToolTip. String
+ * ===Return value
+ * WX::ToolBarBase::Tool
+ *
+*/
+DLL_LOCAL VALUE _addRadio(int argc,VALUE *argv,VALUE self)
+{
+	return wrap(_add_base(argc,argv,self,wxITEM_RADIO));
+}
+
+
+/*
+ * call-seq:
+ *   add_control(control, [text]) -> WX::ToolBarBase::Tool
+ *   add_control(klass, [text], ...) [{|control| ... }] -> WX::ToolBarBase::Tool
+ *
+ * adds a new control tool item to the ToolBar widget.
+ * in the second form create the control from the given class.
+ * ===Arguments
+ * * control WX::Control widget that will be added to the tool bar. the Tool bar need to be the parent of the widget.
+ * * text is the Label of the tool item. String
+ * * klass, Class from which the control will be created, it need to inherit from WX::Control
+ * ===Return value
+ * WX::ToolBarBase::Tool
+ *
+*/
 DLL_LOCAL VALUE _addControl(int argc,VALUE *argv,VALUE self)
 {
 	VALUE id,text,arg;
@@ -77,17 +156,6 @@ DLL_LOCAL VALUE _addControl(int argc,VALUE *argv,VALUE self)
 }
 
 
-DLL_LOCAL VALUE _addCheck(int argc,VALUE *argv,VALUE self)
-{
-	return wrap(_add_base(argc,argv,self,wxITEM_CHECK));
-}
-
-
-DLL_LOCAL VALUE _addRadio(int argc,VALUE *argv,VALUE self)
-{
-	return wrap(_add_base(argc,argv,self,wxITEM_RADIO));
-}
-
 DLL_LOCAL wxToolBarToolBase* _insert_base(int argc,VALUE *argv,VALUE self, wxItemKind kind )
 {
 	VALUE idx,id,text,bitmap,bmpDisabled,shorthelp,longhelp;
@@ -102,22 +170,98 @@ DLL_LOCAL wxToolBarToolBase* _insert_base(int argc,VALUE *argv,VALUE self, wxIte
 	return tool;
 }
 
+
+
+/*
+ * call-seq:
+ *   insert_normal(pos, id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) -> WX::ToolBarBase::Tool
+ *   insert_normal(pos, id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) {|event| ... } -> WX::ToolBarBase::Tool
+ *
+ * insert a new normal tool item to the ToolBar widget at the given position.
+ * when block is given, bind the block to the event of the tool item.
+ * ===Arguments
+ * * pos position of the new tool item. Integer
+ * * id of the tool item: Symbol/Integer/nil
+ * * text is the Label of the tool item. String
+ * * bitmap is the icon shown for the tool item. WX::Bitmap, when nil try to get bitmap from id
+ * * disabled_bitmap is the icon shown when the tool item is disabled. WX::Bitmap, when nil make one from gray-scaled bitmap.
+ * * short_help shown in WX::StatusBar. String
+ * * long_help shown in ToolTip. String
+ * ===Return value
+ * WX::ToolBarBase::Tool
+ *
+*/
 DLL_LOCAL VALUE _insertNormal(int argc,VALUE *argv,VALUE self)
 {
 	return wrap(_insert_base(argc,argv,self,wxITEM_NORMAL));
 }
 
+/*
+ * call-seq:
+ *   insert_check(pos, id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) -> WX::ToolBarBase::Tool
+ *   insert_check(pos, id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) {|event| ... } -> WX::ToolBarBase::Tool
+ *
+ * insert a new normal tool item to the ToolBar widget at the given position.
+ * when block is given, bind the block to the event of the tool item.
+ * ===Arguments
+ * * pos position of the new tool item. Integer
+ * * id of the tool item: Symbol/Integer/nil
+ * * text is the Label of the tool item. String
+ * * bitmap is the icon shown for the tool item. WX::Bitmap, when nil try to get bitmap from id
+ * * disabled_bitmap is the icon shown when the tool item is disabled. WX::Bitmap, when nil make one from gray-scaled bitmap.
+ * * short_help shown in WX::StatusBar. String
+ * * long_help shown in ToolTip. String
+ * ===Return value
+ * WX::ToolBarBase::Tool
+ *
+*/
 DLL_LOCAL VALUE _insertCheck(int argc,VALUE *argv,VALUE self)
 {
 	return wrap(_insert_base(argc,argv,self,wxITEM_CHECK));
 }
 
+
+/*
+ * call-seq:
+ *   insert_radio(pos, id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) -> WX::ToolBarBase::Tool
+ *   insert_radio(pos, id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) {|event| ... } -> WX::ToolBarBase::Tool
+ *
+ * insert a new normal tool item to the ToolBar widget at the given position.
+ * when block is given, bind the block to the event of the tool item.
+ * ===Arguments
+ * * pos position of the new tool item. Integer
+ * * id of the tool item: Symbol/Integer/nil
+ * * text is the Label of the tool item. String
+ * * bitmap is the icon shown for the tool item. WX::Bitmap, when nil try to get bitmap from id
+ * * disabled_bitmap is the icon shown when the tool item is disabled. WX::Bitmap, when nil make one from gray-scaled bitmap.
+ * * short_help shown in WX::StatusBar. String
+ * * long_help shown in ToolTip. String
+ * ===Return value
+ * WX::ToolBarBase::Tool
+ *
+*/
 DLL_LOCAL VALUE _insertRadio(int argc,VALUE *argv,VALUE self)
 {
 	return wrap(_insert_base(argc,argv,self,wxITEM_RADIO));
 }
 
 
+/*
+ * call-seq:
+ *   insert_control(pos, control, [text]) -> WX::ToolBarBase::Tool
+ *   insert_control(pos, klass, [text], ...) [{|control| ... }] -> WX::ToolBarBase::Tool
+ *
+ * inserts a new control tool item to the ToolBar widget into the given position.
+ * in the second form create the control from the given class.
+ * ===Arguments
+ * * pos position of the new tool item. Integer
+ * * control WX::Control widget that will be added to the tool bar. the Tool bar need to be the parent of the widget.
+ * * text is the Label of the tool item. String
+ * * klass, Class from which the control will be created, it need to inherit from WX::Control
+ * ===Return value
+ * WX::ToolBarBase::Tool
+ *
+*/
 DLL_LOCAL VALUE _insertControl(int argc,VALUE *argv,VALUE self)
 {
 	VALUE idx,id,text,arg;
@@ -138,6 +282,135 @@ DLL_LOCAL VALUE _insertControl(int argc,VALUE *argv,VALUE self)
 
 }
 
+DLL_LOCAL VALUE _insert_separator(VALUE self,VALUE idx)
+{
+	return wrap(_self->InsertSeparator(NUM2UINT(idx)));
+}
+
+DLL_LOCAL VALUE _insert_stretchable_space(VALUE self,VALUE idx)
+{
+	return wrap(_self->InsertStretchableSpace(NUM2UINT(idx)));
+}
+
+
+
+DLL_LOCAL wxToolBarToolBase* _prepend_base(int argc,VALUE *argv,VALUE self, wxItemKind kind )
+{
+	VALUE id,text,bitmap,bmpDisabled,shorthelp,longhelp;
+	rb_scan_args(argc, argv, "24",&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
+
+	wxWindowID wxid = unwrapID(id);
+	wxToolBarToolBase *tool = _self->InsertTool(0, wxid, unwrap<wxString>(text),
+			wrapBitmap(bitmap,wxid,WRAP_BITMAP_RAISE,wxART_TOOLBAR),
+			wrapBitmap(bmpDisabled,wxid,WRAP_BITMAP_NULL,wxART_TOOLBAR),kind,
+			unwrap<wxString>(shorthelp), unwrap<wxString>(longhelp));
+	bind_callback(_self,tool->GetId());
+	return tool;
+}
+
+
+/*
+ * call-seq:
+ *   prepend_normal(id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) -> WX::ToolBarBase::Tool
+ *   prepend_normal(id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) {|event| ... } -> WX::ToolBarBase::Tool
+ *
+ * prepends a new normal tool item to the ToolBar widget.
+ * when block is given, bind the block to the event of the tool item.
+ * ===Arguments
+ * * id of the tool item: Symbol/Integer/nil
+ * * text is the Label of the tool item. String
+ * * bitmap is the icon shown for the tool item. WX::Bitmap, when nil try to get bitmap from id
+ * * disabled_bitmap is the icon shown when the tool item is disabled. WX::Bitmap, when nil make one from gray-scaled bitmap.
+ * * short_help shown in WX::StatusBar. String
+ * * long_help shown in ToolTip. String
+ * ===Return value
+ * WX::ToolBarBase::Tool
+ *
+*/
+DLL_LOCAL VALUE _prependNormal(int argc,VALUE *argv,VALUE self)
+{
+	return wrap(_prepend_base(argc,argv,self,wxITEM_NORMAL));
+}
+
+/*
+ * call-seq:
+ *   prepend_check(id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) -> WX::ToolBarBase::Tool
+ *   prepend_check(id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) {|event| ... } -> WX::ToolBarBase::Tool
+ *
+ * prepends a new normal tool item to the ToolBar widget.
+ * when block is given, bind the block to the event of the tool item.
+ * ===Arguments
+ * * id of the tool item: Symbol/Integer/nil
+ * * text is the Label of the tool item. String
+ * * bitmap is the icon shown for the tool item. WX::Bitmap, when nil try to get bitmap from id
+ * * disabled_bitmap is the icon shown when the tool item is disabled. WX::Bitmap, when nil make one from gray-scaled bitmap.
+ * * short_help shown in WX::StatusBar. String
+ * * long_help shown in ToolTip. String
+ * ===Return value
+ * WX::ToolBarBase::Tool
+ *
+*/
+DLL_LOCAL VALUE _prependCheck(int argc,VALUE *argv,VALUE self)
+{
+	return wrap(_prepend_base(argc,argv,self,wxITEM_CHECK));
+}
+
+/*
+ * call-seq:
+ *   prepend_radio(id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) -> WX::ToolBarBase::Tool
+ *   prepend_radio(id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) {|event| ... } -> WX::ToolBarBase::Tool
+ *
+ * adds a new radio tool item to the ToolBar widget.
+ * when block is given, bind the block to the event of the tool item.
+ * ===Arguments
+ * * id of the tool item: Symbol/Integer/nil
+ * * text is the Label of the tool item. String
+ * * bitmap is the icon shown for the tool item. WX::Bitmap, when nil try to get bitmap from id
+ * * disabled_bitmap is the icon shown when the tool item is disabled. WX::Bitmap, when nil make one from gray-scaled bitmap.
+ * * short_help shown in WX::StatusBar. String
+ * * long_help shown in ToolTip. String
+ * ===Return value
+ * WX::ToolBarBase::Tool
+ *
+*/
+DLL_LOCAL VALUE _prependRadio(int argc,VALUE *argv,VALUE self)
+{
+	return wrap(_prepend_base(argc,argv,self,wxITEM_RADIO));
+}
+
+/*
+ * call-seq:
+ *   prepends_control(control, [text]) -> WX::ToolBarBase::Tool
+ *   prepends_control(klass, [text], ...) [{|control| ... }] -> WX::ToolBarBase::Tool
+ *
+ * prepends a new control tool item to the ToolBar widget.
+ * in the second form create the control from the given class.
+ * ===Arguments
+ * * control WX::Control widget that will be added to the tool bar. the Tool bar need to be the parent of the widget.
+ * * text is the Label of the tool item. String
+ * * klass, Class from which the control will be created, it need to inherit from WX::Control
+ * ===Return value
+ * WX::ToolBarBase::Tool
+ *
+*/
+DLL_LOCAL VALUE _prependControl(int argc,VALUE *argv,VALUE self)
+{
+	VALUE id,text,arg;
+	wxControl *c = NULL;
+	rb_scan_args(argc, argv, "11*",&id,&text,&arg);
+	if(rb_obj_is_kind_of(id,rb_cClass) && rb_class_inherited(id,rb_cWXControl)) {
+		rb_scan_args(argc, argv, "11",&id,&arg);
+		VALUE argv2[] = {self, arg };
+		c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,id));
+	}else
+	{
+		c = unwrap<wxControl*>(id);
+		if(c->GetParent() != _self)
+			rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(id));
+	}
+
+	return wrap( _self->InsertControl(0,c,unwrap<wxString>(text)));
+}
 
 DLL_LOCAL VALUE _each_size(VALUE self)
 {
@@ -155,11 +428,19 @@ DLL_LOCAL VALUE _each(VALUE self)
 	return self;
 }
 
+DLL_LOCAL VALUE _set_rows(VALUE self,VALUE val)
+{
+	_self->SetRows(NUM2INT(val));
+	return val;
+}
+
 
 singlereturn(AddSeparator)
 singlereturn(AddStretchableSpace)
 
 singlereturn(Realize)
+
+singlereturn(GetMaxRows)
 
 }
 }
@@ -180,18 +461,25 @@ DLL_LOCAL void Init_WXToolBarBase(VALUE rb_mWX)
 //	rb_define_method(rb_cWXToolBarBase,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_method(rb_cWXToolBarBase,"add_normal",RUBY_METHOD_FUNC(_addNormal),-1);
-	rb_define_method(rb_cWXToolBarBase,"add_control",RUBY_METHOD_FUNC(_addControl),-1);
 	rb_define_method(rb_cWXToolBarBase,"add_check",RUBY_METHOD_FUNC(_addCheck),-1);
 	rb_define_method(rb_cWXToolBarBase,"add_radio",RUBY_METHOD_FUNC(_addRadio),-1);
+	rb_define_method(rb_cWXToolBarBase,"add_control",RUBY_METHOD_FUNC(_addControl),-1);
 
 	rb_define_method(rb_cWXToolBarBase,"add_separator",RUBY_METHOD_FUNC(_AddSeparator),0);
 	rb_define_method(rb_cWXToolBarBase,"add_stretchable_space",RUBY_METHOD_FUNC(_AddStretchableSpace),0);
 
 	rb_define_method(rb_cWXToolBarBase,"insert_normal",RUBY_METHOD_FUNC(_insertNormal),-1);
-	rb_define_method(rb_cWXToolBarBase,"insert_control",RUBY_METHOD_FUNC(_insertControl),-1);
 	rb_define_method(rb_cWXToolBarBase,"insert_check",RUBY_METHOD_FUNC(_insertCheck),-1);
 	rb_define_method(rb_cWXToolBarBase,"insert_radio",RUBY_METHOD_FUNC(_insertRadio),-1);
+	rb_define_method(rb_cWXToolBarBase,"insert_control",RUBY_METHOD_FUNC(_insertControl),-1);
 
+	rb_define_method(rb_cWXToolBarBase,"insert_separator",RUBY_METHOD_FUNC(_insert_separator),1);
+	rb_define_method(rb_cWXToolBarBase,"insert_stretchable_space",RUBY_METHOD_FUNC(_insert_stretchable_space),1);
+
+	rb_define_method(rb_cWXToolBarBase,"prepend_normal",RUBY_METHOD_FUNC(_prependNormal),-1);
+	rb_define_method(rb_cWXToolBarBase,"prepend_check",RUBY_METHOD_FUNC(_prependCheck),-1);
+	rb_define_method(rb_cWXToolBarBase,"prepend_radio",RUBY_METHOD_FUNC(_prependRadio),-1);
+	rb_define_method(rb_cWXToolBarBase,"prepend_control",RUBY_METHOD_FUNC(_prependControl),-1);
 
 	rb_define_method(rb_cWXToolBarBase,"realize",RUBY_METHOD_FUNC(_Realize),0);
 
