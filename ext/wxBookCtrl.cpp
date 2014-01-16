@@ -91,23 +91,37 @@ DLL_LOCAL VALUE _each(VALUE self)
 	return self;
 }
 
+
+
+/*
+ * call-seq:
+ *   add_page(window, text, [select], [bitmap]) -> true/false
+ *   add_page(WindowClass, text, [select], [bitmap],**options) [{|window| }] -> true/false
+ *
+ * adds a new page to the BookCtrl widget.
+ *
+ * ===Arguments
+ * * window is a WX::Window instance
+ * * text is the Label of the page. String
+ * * select is true/false and says if the new page should be selected
+ * * bitmap is a Integer and says the position of the bitmap in the image_list
+ * ===Return value
+ * true/false
+ *
+*/
 DLL_LOCAL VALUE _addPage(int argc,VALUE *argv,VALUE self)
 {
 	VALUE window,text,select,imageid,hash;
 	wxWindow *w = NULL;
 	bool sel = false;
 	int iid = -1;
-	rb_scan_args(argc, argv, "23",&window,&text,&select,&imageid,&hash);
-	if(rb_obj_is_kind_of(select,rb_cHash))
-		hash = select;
-	else if(!NIL_P(select))
-	{
+	rb_scan_args(argc, argv, "22:",&window,&text,&select,&imageid,&hash);
+
+	if(!NIL_P(select))
 		sel = RTEST(select);
-		if(rb_obj_is_kind_of(imageid,rb_cHash))
-			hash = imageid;
-		else if(!NIL_P(imageid))
-			iid = NUM2INT(imageid);
-	}
+
+	if(!NIL_P(imageid))
+		iid = NUM2INT(imageid);
 
 	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
 		VALUE argv2[] = {self, hash };
@@ -121,20 +135,36 @@ DLL_LOCAL VALUE _addPage(int argc,VALUE *argv,VALUE self)
 	return wrap(_self->AddPage(w,unwrap<wxString>(text),sel,iid));
 }
 
+
+/*
+ * call-seq:
+ *   insert_page(pos, window, text, [select], [bitmap]) -> true/false
+ *   insert_page(pos, WindowClass, text, [select], [bitmap],**options) [{|window| }] -> true/false
+ *
+ * inserts a new page to the BookCtrl widget into the given position.
+ *
+ * ===Arguments
+ * * pos is a Integer
+ * * window is a WX::Window instance
+ * * text is the Label of the page. String
+ * * select is true/false and says if the new page should be selected
+ * * bitmap is a Integer and says the position of the bitmap in the image_list
+ * ===Return value
+ * true/false
+ *
+*/
 DLL_LOCAL VALUE _insertPage(int argc,VALUE *argv,VALUE self)
 {
 	VALUE n,window,text,select,imageid,hash;
 	wxWindow *w = NULL;
 	bool sel = false;
 	int iid = -1;
-	rb_scan_args(argc, argv, "33",&n,&window,&text,&select,&imageid,&hash);
-	if(rb_obj_is_kind_of(select,rb_cHash))
-		hash = select;
-	else if(!NIL_P(select))
+	rb_scan_args(argc, argv, "32:",&n,&window,&text,&select,&imageid,&hash);
+
+	if(!NIL_P(select))
 		sel = RTEST(select);
-	if(rb_obj_is_kind_of(imageid,rb_cHash))
-		hash = imageid;
-	else if(!NIL_P(select))
+
+	if(!NIL_P(imageid))
 		iid = NUM2INT(imageid);
 
 	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
@@ -147,6 +177,63 @@ DLL_LOCAL VALUE _insertPage(int argc,VALUE *argv,VALUE self)
 	}
 	return wrap(_self->InsertPage(NUM2INT(n),w,unwrap<wxString>(text),sel,iid));
 }
+
+
+/*
+ * call-seq:
+ *   prepend_page(window, text, [select], [bitmap]) -> true/false
+ *   prepend_page(WindowClass, text, [select], [bitmap],**options) [{|window| }] -> true/false
+ *
+ * prepends a new page to the BookCtrl widget.
+ *
+ * ===Arguments
+ * * window is a WX::Window instance
+ * * text is the Label of the page. String
+ * * select is true/false and says if the new page should be selected
+ * * bitmap is a Integer and says the position of the bitmap in the image_list
+ * ===Return value
+ * true/false
+ *
+*/
+DLL_LOCAL VALUE _prependPage(int argc,VALUE *argv,VALUE self)
+{
+	VALUE window,text,select,imageid,hash;
+	wxWindow *w = NULL;
+	bool sel = false;
+	int iid = -1;
+	rb_scan_args(argc, argv, "22:",&window,&text,&select,&imageid,&hash);
+
+	if(!NIL_P(select))
+		sel = RTEST(select);
+
+	if(!NIL_P(imageid))
+		iid = NUM2INT(imageid);
+
+	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
+		VALUE argv2[] = {self, hash };
+		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
+	}else
+	{
+		w = unwrap<wxWindow*>(window);
+//		if(w->GetParent() != _self)
+//			rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(window));
+	}
+	return wrap(_self->InsertPage(0,w,unwrap<wxString>(text),sel,iid));
+}
+
+
+DLL_LOCAL VALUE _deletePage(VALUE self,VALUE idx)
+{
+	std::size_t cidx = NUM2UINT(idx);
+	if(cidx >= _self->GetPageCount())
+		return Qnil;
+	wxWindow *w = _self->GetPage(cidx);
+	if(_self->RemovePage(cidx))
+		return wrap(w);
+	return Qfalse;
+}
+
+
 
 singlefunc(DeleteAllPages)
 
@@ -189,6 +276,7 @@ DLL_LOCAL void Init_WXBookCtrl(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXBookCtrlBase,"add_page",RUBY_METHOD_FUNC(_addPage),-1);
 	rb_define_method(rb_cWXBookCtrlBase,"insert_page",RUBY_METHOD_FUNC(_insertPage),-1);
+	rb_define_method(rb_cWXBookCtrlBase,"prepend_page",RUBY_METHOD_FUNC(_prependPage),-1);
 
 	rb_define_method(rb_cWXBookCtrlBase,"each_page",RUBY_METHOD_FUNC(_each),0);
 
@@ -196,6 +284,7 @@ DLL_LOCAL void Init_WXBookCtrl(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXBookCtrlBase,"current_page",RUBY_METHOD_FUNC(_GetCurrentPage),0);
 
+	rb_define_method(rb_cWXBookCtrlBase,"delete_page",RUBY_METHOD_FUNC(_deletePage),1);
 	rb_define_method(rb_cWXBookCtrlBase,"delete_all_pages",RUBY_METHOD_FUNC(_DeleteAllPages),0);
 
 	rb_cWXBookCtrlEvent = rb_define_class_under(rb_cWXEvent,"BookCtrl",rb_cWXNotifyEvent);
