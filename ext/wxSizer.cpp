@@ -56,6 +56,12 @@ wxSizer* unwrap<wxSizer*>(const VALUE &arg)
 namespace RubyWX {
 namespace Sizer {
 
+macro_attr(MinSize,wxSize)
+singlereturn(GetSize)
+singlereturn(GetPosition)
+
+singlefunc(Layout)
+
 
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -67,29 +73,68 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-
+/*
+ * call-seq:
+ *   add(window, [options])
+ *   add(sizer, [options])
+ *   add(size, [options])
+ *
+ * adds a new WX::Sizer::Item
+ * ===Arguments
+ * * window is a WX::Window
+ * * sizer is a WX::Sizer
+ * * size is a WX::Size
+ *
+ * *options: Hash with possible options to set:
+ *   * expand true/false says if the element should expand to the whole size
+ *   * proportion Integer
+ * ===Return value
+ * WX::Sizer::Item
+ */
 DLL_LOCAL VALUE _add(int argc,VALUE *argv,VALUE self)
 {
 	VALUE obj,hash;
 	rb_scan_args(argc, argv, "11",&obj,&hash);
 
+	wxSizerFlags flags(unwrap<wxSizerFlags>(hash));
 	if(rb_obj_is_kind_of(obj, rb_cWXWindow))
 	{
-		return wrap(_self->Add(unwrap<wxWindow*>(obj),unwrap<wxSizerFlags>(hash)));
+		return wrap(_self->Add(unwrap<wxWindow*>(obj),flags));
 	}else if(rb_obj_is_kind_of(obj, rb_cWXSizer))
 	{
-		return wrap(_self->Add(unwrap<wxSizer*>(obj),unwrap<wxSizerFlags>(hash)));
+		return wrap(_self->Add(unwrap<wxSizer*>(obj),flags));
 	}else {
 		const wxSize &size = unwrap<wxSize>(obj);
-		return wrap(_self->Add(size.GetWidth(),size.GetHeight(),unwrap<wxSizerFlags>(hash)));
+		return wrap(_self->Add(size.GetWidth(),size.GetHeight(),flags));
 	}
 }
 
+
+/*
+ * call-seq:
+ *   add_spacer(size)
+ *
+ * adds a new spacer WX::Sizer::Item
+ * ===Arguments
+ * * size is a Integer
+ * ===Return value
+ * WX::Sizer::Item
+ */
 DLL_LOCAL VALUE _add_spacer(VALUE self,VALUE size)
 {
 	return wrap(_self->AddSpacer(NUM2INT(size)));
 }
 
+/*
+ * call-seq:
+ *   add_stretch_spacer([prop])
+ *
+ * adds a new stretch spacer WX::Sizer::Item
+ * ===Arguments
+ * * prop is a Integer
+ * ===Return value
+ * WX::Sizer::Item
+ */
 DLL_LOCAL VALUE _add_stretch_spacer(int argc,VALUE *argv,VALUE self)
 {
 	VALUE prop;
@@ -98,26 +143,70 @@ DLL_LOCAL VALUE _add_stretch_spacer(int argc,VALUE *argv,VALUE self)
 	return wrap(_self->AddStretchSpacer(NIL_P(prop) ? 1 : NUM2INT(prop)));
 }
 
+
+/*
+ * call-seq:
+ *   insert(pos, window, [options])
+ *   insert(pos, sizer, [options])
+ *   insert(pos, size, [options])
+ *
+ * inserts a new WX::Sizer::Item into the given position.
+ * ===Arguments
+ * * pos is Integer
+ * * window is a WX::Window
+ * * sizer is a WX::Sizer
+ * * size is a WX::Size
+ *
+ * *options: Hash with possible options to set:
+ *   * expand true/false says if the element should expand to the whole size
+ *   * proportion Integer
+ * ===Return value
+ * WX::Sizer::Item
+ */
 DLL_LOCAL VALUE _insert(int argc,VALUE *argv,VALUE self)
 {
 	VALUE index,obj,hash;
 	rb_scan_args(argc, argv, "21",&index,&obj,&hash);
 
+	wxSizerFlags flags(unwrap<wxSizerFlags>(hash));
+
 	if(rb_obj_is_kind_of(obj, rb_cWXWindow))
-		return wrap(_self->Insert(NUM2INT(index),unwrap<wxWindow*>(obj),unwrap<wxSizerFlags>(hash)));
+		return wrap(_self->Insert(NUM2INT(index),unwrap<wxWindow*>(obj),flags));
 	else if(rb_obj_is_kind_of(obj, rb_cWXSizer))
-		return wrap(_self->Insert(NUM2INT(index),unwrap<wxSizer*>(obj),unwrap<wxSizerFlags>(hash)));
+		return wrap(_self->Insert(NUM2INT(index),unwrap<wxSizer*>(obj),flags));
 	else {
 		const wxSize &size = unwrap<wxSize>(obj);
-		return wrap(_self->Insert(NUM2INT(index),size.GetWidth(),size.GetHeight(),unwrap<wxSizerFlags>(hash)));
+		return wrap(_self->Insert(NUM2INT(index),size.GetWidth(),size.GetHeight(),flags));
 	}
 }
 
+/*
+ * call-seq:
+ *   insert_spacer(pos, size)
+ *
+ * inserts a new spacer WX::Sizer::Item into the given position.
+ * ===Arguments
+ * * pos is Integer
+ * * size is a Integer
+ * ===Return value
+ * WX::Sizer::Item
+ */
 DLL_LOCAL VALUE _insert_spacer(VALUE self,VALUE idx,VALUE size)
 {
 	return wrap(_self->InsertSpacer(NUM2UINT(idx),NUM2INT(size)));
 }
 
+/*
+ * call-seq:
+ *   insert_stretch_spacer(pos,[prop])
+ *
+ * inserts a new stretch spacer WX::Sizer::Item
+ * ===Arguments
+ * * pos is Integer
+ * * prop is a Integer
+ * ===Return value
+ * WX::Sizer::Item
+ */
 DLL_LOCAL VALUE _insert_stretch_spacer(int argc,VALUE *argv,VALUE self)
 {
 	VALUE idx,prop;
@@ -127,27 +216,66 @@ DLL_LOCAL VALUE _insert_stretch_spacer(int argc,VALUE *argv,VALUE self)
 }
 
 
+/*
+ * call-seq:
+ *   prepend(window, [options])
+ *   prepend(sizer, [options])
+ *   prepend(size, [options])
+ *
+ * prepends a new WX::Sizer::Item
+ * ===Arguments
+ * * window is a WX::Window
+ * * sizer is a WX::Sizer
+ * * size is a WX::Size
+ *
+ * *options: Hash with possible options to set:
+ *   * expand true/false says if the element should expand to the whole size
+ *   * proportion Integer
+ * ===Return value
+ * WX::Sizer::Item
+ */
 DLL_LOCAL VALUE _prepend(int argc,VALUE *argv,VALUE self)
 {
 	VALUE obj,hash;
 	rb_scan_args(argc, argv, "11",&obj,&hash);
 
+	wxSizerFlags flags(unwrap<wxSizerFlags>(hash));
+
 	if(rb_obj_is_kind_of(obj, rb_cWXWindow))
-		return wrap(_self->Prepend(unwrap<wxWindow*>(obj),unwrap<wxSizerFlags>(hash)));
+		return wrap(_self->Prepend(unwrap<wxWindow*>(obj),flags));
 	else if(rb_obj_is_kind_of(obj, rb_cWXSizer))
-		return wrap(_self->Prepend(unwrap<wxSizer*>(obj),unwrap<wxSizerFlags>(hash)));
+		return wrap(_self->Prepend(unwrap<wxSizer*>(obj),flags));
 	else {
 		const wxSize &size = unwrap<wxSize>(obj);
-		return wrap(_self->Prepend(size.GetWidth(),size.GetHeight(),unwrap<wxSizerFlags>(hash)));
+		return wrap(_self->Prepend(size.GetWidth(),size.GetHeight(),flags));
 	}
 }
 
+/*
+ * call-seq:
+ *   prepend_spacer(size)
+ *
+ * prepend a new spacer WX::Sizer::Item
+ * ===Arguments
+ * * size is a Integer
+ * ===Return value
+ * WX::Sizer::Item
+ */
 DLL_LOCAL VALUE _prepend_spacer(VALUE self,VALUE size)
 {
 	return wrap(_self->PrependSpacer(NUM2INT(size)));
 }
 
-
+/*
+ * call-seq:
+ *   prepend_stretch_spacer([prop])
+ *
+ * prepends a new stretch spacer WX::Sizer::Item
+ * ===Arguments
+ * * prop is a Integer
+ * ===Return value
+ * WX::Sizer::Item
+ */
 DLL_LOCAL VALUE _prepend_stretch_spacer(int argc,VALUE *argv,VALUE self)
 {
 	VALUE prop;
@@ -194,17 +322,22 @@ DLL_LOCAL void Init_WXSizer(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXSizer,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
+	rb_define_method(rb_cWXSizer,"size",RUBY_METHOD_FUNC(_GetSize),0);
+	rb_define_method(rb_cWXSizer,"position",RUBY_METHOD_FUNC(_GetPosition),0);
+
+	rb_define_method(rb_cWXSizer,"layout",RUBY_METHOD_FUNC(_Layout),0);
+
 	rb_define_method(rb_cWXSizer,"add",RUBY_METHOD_FUNC(_add),-1);
 	rb_define_method(rb_cWXSizer,"insert",RUBY_METHOD_FUNC(_insert),-1);
 	rb_define_method(rb_cWXSizer,"prepend",RUBY_METHOD_FUNC(_prepend),-1);
 
 	rb_define_method(rb_cWXSizer,"add_spacer",RUBY_METHOD_FUNC(_add_spacer),1);
-	rb_define_method(rb_cWXSizer,"insert_spacer",RUBY_METHOD_FUNC(_insert_spacer),1);
+	rb_define_method(rb_cWXSizer,"insert_spacer",RUBY_METHOD_FUNC(_insert_spacer),2);
 	rb_define_method(rb_cWXSizer,"prepend_spacer",RUBY_METHOD_FUNC(_prepend_spacer),1);
 
-	rb_define_method(rb_cWXSizer,"add_stretch_spacer",RUBY_METHOD_FUNC(_add_stretch_spacer),1);
-	rb_define_method(rb_cWXSizer,"insert_stretch_spacer",RUBY_METHOD_FUNC(_insert_stretch_spacer),1);
-	rb_define_method(rb_cWXSizer,"prepend_stretch_spacer",RUBY_METHOD_FUNC(_prepend_stretch_spacer),1);
+	rb_define_method(rb_cWXSizer,"add_stretch_spacer",RUBY_METHOD_FUNC(_add_stretch_spacer),-1);
+	rb_define_method(rb_cWXSizer,"insert_stretch_spacer",RUBY_METHOD_FUNC(_insert_stretch_spacer),-1);
+	rb_define_method(rb_cWXSizer,"prepend_stretch_spacer",RUBY_METHOD_FUNC(_prepend_stretch_spacer),-1);
 
 	rb_define_method(rb_cWXSizer,"[]",RUBY_METHOD_FUNC(_getItem),1);
 
