@@ -54,6 +54,160 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
+
+/*
+ * call-seq:
+ *   add_page(window, text, [select], [bitmap]) -> true/false
+ *   add_page(WindowClass, text, [select], [bitmap],**options) [{|window| }] -> true/false
+ *
+ * adds a new page to the BookCtrl widget.
+ *
+ * ===Arguments
+ * * window is a WX::Window instance
+ * * text is the Label of the page. String
+ * * select is true/false and says if the new page should be selected
+ * * bitmap is a Integer and says the position of the bitmap in the image_list or a WX::Bitmap
+ * ===Return value
+ * true/false
+ *
+*/
+DLL_LOCAL VALUE _addPage(int argc,VALUE *argv,VALUE self)
+{
+	VALUE window,text,select,imageid,hash;
+	wxWindow *w = NULL;
+	bool sel = false;
+
+	rb_scan_args(argc, argv, "22:",&window,&text,&select,&imageid,&hash);
+
+	if(!NIL_P(select))
+		sel = RTEST(select);
+
+	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
+		VALUE argv2[] = {self, hash };
+		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
+	}else
+	{
+		w = unwrap<wxWindow*>(window);
+//		if(w->GetParent() != _self)
+//			rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(window));
+	}
+
+	if(NIL_P(imageid) || rb_obj_is_kind_of(imageid,rb_cInteger))
+	{
+		int iid = -1;
+
+		if(!NIL_P(imageid))
+			iid = NUM2INT(imageid);
+
+		return wrap(_self->AddPage(w,unwrap<wxString>(text),sel,iid));
+	}else{
+		return wrap(_self->AddPage(w,unwrap<wxString>(text),sel,unwrap<wxBitmap>(imageid)));
+	}
+}
+
+
+/*
+ * call-seq:
+ *   insert_page(pos, window, text, [select], [bitmap]) -> true/false
+ *   insert_page(pos, WindowClass, text, [select], [bitmap],**options) [{|window| }] -> true/false
+ *
+ * inserts a new page to the BookCtrl widget into the given position.
+ *
+ * ===Arguments
+ * * pos is a Integer
+ * * window is a WX::Window instance
+ * * text is the Label of the page. String
+ * * select is true/false and says if the new page should be selected
+ * * bitmap is a Integer and says the position of the bitmap in the image_list, or a WX::Bitmap
+ * ===Return value
+ * true/false
+ *
+*/
+DLL_LOCAL VALUE _insertPage(int argc,VALUE *argv,VALUE self)
+{
+	VALUE n,window,text,select,imageid,hash;
+	wxWindow *w = NULL;
+	bool sel = false;
+	rb_scan_args(argc, argv, "32:",&n,&window,&text,&select,&imageid,&hash);
+
+	if(!NIL_P(select))
+		sel = RTEST(select);
+
+	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
+		VALUE argv2[] = {self, hash };
+		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
+	}else {
+		w = unwrap<wxWindow*>(window);
+	//		if(w->GetParent() != _self)
+	//			rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(window));
+	}
+
+	if(NIL_P(imageid) || rb_obj_is_kind_of(imageid,rb_cInteger))
+	{
+		int iid = -1;
+
+		if(!NIL_P(imageid))
+			iid = NUM2INT(imageid);
+
+		return wrap(_self->InsertPage(NUM2INT(n),w,unwrap<wxString>(text),sel,iid));
+	}else{
+		return wrap(_self->InsertPage(NUM2INT(n),w,unwrap<wxString>(text),sel,unwrap<wxBitmap>(imageid)));
+	}
+
+}
+
+
+/*
+ * call-seq:
+ *   prepend_page(window, text, [select], [bitmap]) -> true/false
+ *   prepend_page(WindowClass, text, [select], [bitmap],**options) [{|window| }] -> true/false
+ *
+ * prepends a new page to the BookCtrl widget.
+ *
+ * ===Arguments
+ * * window is a WX::Window instance
+ * * text is the Label of the page. String
+ * * select is true/false and says if the new page should be selected
+ * * bitmap is a Integer and says the position of the bitmap in the image_list or a WX::Bitmap
+ * ===Return value
+ * true/false
+ *
+*/
+DLL_LOCAL VALUE _prependPage(int argc,VALUE *argv,VALUE self)
+{
+	VALUE window,text,select,imageid,hash;
+	wxWindow *w = NULL;
+	bool sel = false;
+	rb_scan_args(argc, argv, "22:",&window,&text,&select,&imageid,&hash);
+
+	if(!NIL_P(select))
+		sel = RTEST(select);
+
+	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
+		VALUE argv2[] = {self, hash };
+		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
+	}else
+	{
+		w = unwrap<wxWindow*>(window);
+//		if(w->GetParent() != _self)
+//			rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(window));
+	}
+
+	if(NIL_P(imageid) || rb_obj_is_kind_of(imageid,rb_cInteger))
+	{
+		int iid = -1;
+
+		if(!NIL_P(imageid))
+			iid = NUM2INT(imageid);
+
+		return wrap(_self->InsertPage(0,w,unwrap<wxString>(text),sel,iid));
+	}else{
+		return wrap(_self->InsertPage(0,w,unwrap<wxString>(text),sel,unwrap<wxBitmap>(imageid)));
+	}
+
+}
+
+
 }
 }
 #endif
@@ -65,6 +219,10 @@ DLL_LOCAL void Init_WXAuiNoteBookCtrl(VALUE rb_mWX)
 	rb_define_alloc_func(rb_cWXAuiNotebook,_alloc);
 
 	rb_define_method(rb_cWXAuiNotebook,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
+
+	rb_define_method(rb_cWXAuiNotebook,"add_page",RUBY_METHOD_FUNC(_addPage),-1);
+	rb_define_method(rb_cWXAuiNotebook,"insert_page",RUBY_METHOD_FUNC(_insertPage),-1);
+	rb_define_method(rb_cWXAuiNotebook,"prepend_page",RUBY_METHOD_FUNC(_prependPage),-1);
 
 //	rb_define_method(rb_cWXAuiNotebook,"each_page",RUBY_METHOD_FUNC(_each),0);
 //	rb_define_method(rb_cWXAuiNotebook,"page",RUBY_METHOD_FUNC(_page),1);
