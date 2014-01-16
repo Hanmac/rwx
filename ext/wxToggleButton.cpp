@@ -16,7 +16,7 @@ namespace ToggleButton {
 
 APP_PROTECT(wxToggleButton)
 
-macro_attr(Value,int)
+macro_attr(Value,bool)
 
 /*
  * call-seq:
@@ -28,7 +28,8 @@ macro_attr(Value,int)
  * * parent of this window or nil
  * * name is a String describing a resource in a loaded xrc
  *
- * *options: Hash with possible options to set
+ * *options: Hash with possible options to set:
+ *   * value true/false
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
@@ -49,6 +50,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	}
 
 	rb_call_super(argc,argv);
+
+	if(rb_obj_is_kind_of(hash,rb_cHash)) {
+		VALUE temp;
+		set_option(id,Value,bool);
+	}
 
 	return self;
 }
