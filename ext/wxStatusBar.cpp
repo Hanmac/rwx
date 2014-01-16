@@ -96,6 +96,7 @@ DLL_LOCAL VALUE _getStatusWidth(VALUE self,VALUE num)
 
 DLL_LOCAL VALUE _setStatusWidth(VALUE self,VALUE num,VALUE val)
 {
+	rb_check_frozen(self);
 	const size_t count = _self->GetFieldsCount();
 
 
@@ -119,7 +120,7 @@ DLL_LOCAL VALUE _pushStatusText(int argc,VALUE *argv,VALUE self)
 {
 	VALUE str,num;
 	rb_scan_args(argc, argv, "11",&str,&num);
-
+	rb_check_frozen(self);
 	if(NIL_P(num))
 		_self->PushStatusText(unwrap<wxString>(str));
 	else
@@ -131,7 +132,7 @@ DLL_LOCAL VALUE _popStatusText(int argc,VALUE *argv,VALUE self)
 {
 	VALUE num;
 	rb_scan_args(argc, argv, "01",&num);
-
+	rb_check_frozen(self);
 	if(NIL_P(num))
 		_self->PopStatusText();
 	else
@@ -166,11 +167,13 @@ macro_attr(Text,wxString)
 
 DLL_LOCAL VALUE _pushText(VALUE self,VALUE str)
 {
+	rb_check_frozen(self);
 	return wrap(_self->PushText(unwrap<wxString>(str)));
 }
 
 singlereturn(PopText)
 
+macro_attr_bool2(Ellipsized,SetIsEllipsized)
 
 }
 
@@ -181,6 +184,14 @@ DLL_LOCAL void Init_WXStatusBar(VALUE rb_mWX)
 {
 #if 0
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+
+	rb_define_attr(rb_cWXStatusBar,"status_text",1,1);
+	rb_define_attr(rb_cWXStatusBar,"fields_count",1,1);
+
+	rb_define_attr(rb_cWXStatusBarPane,"width",1,1);
+	rb_define_attr(rb_cWXStatusBarPane,"style",1,1);
+	rb_define_attr(rb_cWXStatusBarPane,"text",1,1);
+
 #endif
 #if wxUSE_STATUSBAR
 	using namespace RubyWX::StatusBar;
