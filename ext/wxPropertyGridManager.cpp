@@ -149,34 +149,6 @@ DLL_LOCAL VALUE _each(VALUE self)
  * WX::ToolBar
  */
 
-/* Document-method: window_freeze
- * call-seq:
- *   window_freeze -> self
- *
- * freeze the Window, frozen windows are not redrawn until they are thawed.
- * ===Return value
- * self
- */
-
-/* Document-method: window_thaw
- * call-seq:
- *   window_thaw -> self
- *
- * thaw the Window, frozen windows are not redrawn until they are thawed.
- * ===Return value
- * self
- */
-
-/* Document-method: window_frozen?
- * call-seq:
- *   window_frozen? -> true/false
- *
- * returns true if the Window is still frozen.
- * ===Return value
- * true/false
- */
-
-
 DLL_LOCAL void Init_WXPropertyGridManager(VALUE rb_mWX)
 {
 #if 0
@@ -195,11 +167,6 @@ DLL_LOCAL void Init_WXPropertyGridManager(VALUE rb_mWX)
 	rb_define_method(rb_cWXPropertyGridManager,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_method(rb_cWXPropertyGridManager,"tool_bar",RUBY_METHOD_FUNC(_GetToolBar),0);
-
-
-	rb_define_method(rb_cWXPropertyGridManager,"window_freeze",RUBY_METHOD_FUNC(_Freeze),0);
-	rb_define_method(rb_cWXPropertyGridManager,"window_frozen?",RUBY_METHOD_FUNC(_IsFrozen),0);
-	rb_define_method(rb_cWXPropertyGridManager,"window_thaw",RUBY_METHOD_FUNC(_Thaw),0);
 
 	rb_define_method(rb_cWXPropertyGridManager,"current_page",RUBY_METHOD_FUNC(_GetCurrentPage),0);
 

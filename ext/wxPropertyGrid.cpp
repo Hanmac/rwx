@@ -45,13 +45,6 @@ singlereturn(GetSelectionForegroundColour)
 
 singlereturn(GetCaptionFont)
 
-
-//need to define them again, stupid shadowing
-singlefunc(Freeze)
-singlefunc(Thaw)
-
-singlereturn(IsFrozen)
-
 /*
  * call-seq:
  *   PropertyGrid.new(parent, name, [options])
@@ -178,34 +171,6 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
  * the margin color of the PropertyGrid. WX::Color
  */
 
-/* Document-method: window_freeze
- * call-seq:
- *   window_freeze -> self
- *
- * freeze the Window, frozen windows are not redrawn until they are thawed.
- * ===Return value
- * self
- */
-
-/* Document-method: window_thaw
- * call-seq:
- *   window_thaw -> self
- *
- * thaw the Window, frozen windows are not redrawn until they are thawed.
- * ===Return value
- * self
- */
-
-/* Document-method: window_frozen?
- * call-seq:
- *   window_frozen? -> true/false
- *
- * returns true if the Window is still frozen.
- * ===Return value
- * true/false
- */
-
-
 DLL_LOCAL void Init_WXPropertyGrid(VALUE rb_mWX)
 {
 #if 0
@@ -238,11 +203,6 @@ DLL_LOCAL void Init_WXPropertyGrid(VALUE rb_mWX)
 	rb_define_method(rb_cWXPropertyGrid,"status_bar",RUBY_METHOD_FUNC(_GetStatusBar),0);
 
 	rb_define_method(rb_cWXPropertyGrid,"caption_font",RUBY_METHOD_FUNC(_GetCaptionFont),0);
-
-	rb_define_method(rb_cWXPropertyGrid,"window_freeze",RUBY_METHOD_FUNC(_Freeze),0);
-	rb_define_method(rb_cWXPropertyGrid,"window_frozen?",RUBY_METHOD_FUNC(_IsFrozen),0);
-	rb_define_method(rb_cWXPropertyGrid,"window_thaw",RUBY_METHOD_FUNC(_Thaw),0);
-
 
 	rb_define_attr_method(rb_cWXPropertyGrid,"caption_background_color",_getCaptionBackgroundColour,_setCaptionBackgroundColour);
 	rb_define_attr_method(rb_cWXPropertyGrid,"selection_background_color",_getSelectionBackgroundColour,_setSelectionBackgroundColour);
