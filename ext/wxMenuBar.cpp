@@ -41,49 +41,9 @@ DLL_LOCAL VALUE _each(VALUE self)
 }
 
 
-DLL_LOCAL VALUE _appendShift(VALUE self,VALUE menu)
+wxMenu* add_base(VALUE menu,wxString &name)
 {
-	wxMenu *m = unwrap<wxMenu*>(menu);
-	if(m->GetTitle().IsEmpty())
-		rb_raise(rb_eTypeError,"menu must have a title to be append.");
-	_self->Append(m,m->GetTitle());
-	return self;
-}
-
-
-
-DLL_LOCAL VALUE _append(VALUE self,VALUE menu)
-{
-	if(rb_obj_is_kind_of(menu,rb_cWXMenu))
-		return _appendShift(self,menu);
-	wxMenu *m = new wxMenu;
-	if(rb_block_given_p())
-		rb_yield(wrap(m));
-
-	wxString name(unwrap<wxString>(menu));
-
-	if(SYMBOL_P(menu))
-	{
-		wxWindowID id(unwrapID(menu));
-		if(wxIsStockID(id))
-		{
-			name = wxGetStockLabel(id);
-		}
-	}
-
-
-
-	_self->Append(m,name);
-	return self;
-}
-
-
-DLL_LOCAL VALUE _insert(VALUE self,VALUE idx,VALUE menu)
-{
-
-	wxMenu *m;
-	wxString name(wxEmptyString);
-
+	wxMenu *m = NULL;
 	if(!rb_obj_is_kind_of(menu,rb_cWXMenu))
 	{
 		m = new wxMenu;
@@ -101,16 +61,82 @@ DLL_LOCAL VALUE _insert(VALUE self,VALUE idx,VALUE menu)
 			}
 		}
 
-	}else
-	{
+	} else {
 		m = unwrap<wxMenu*>(menu);
+		name = m->GetTitle();
 	}
 
-	_self->Append(m,name);
+	if(name.IsEmpty())
+		rb_raise(rb_eTypeError,"Menu must have a title.");
+
+	return m;
+}
+
+DLL_LOCAL VALUE _appendSelf(VALUE self,VALUE menu)
+{
+	wxString name(wxEmptyString);
+
+	_self->Append(add_base(menu,name),name);
 	return self;
 }
 
 
+/*
+ * call-seq:
+ *   append(menu) -> true/false
+ *   append(title) {|menu| } -> true/false
+ * ===Arguments
+ * * menu WX::Menu
+ * * title String
+ *
+ * ===Return value
+ * true/false
+ */
+DLL_LOCAL VALUE _append(VALUE self,VALUE menu)
+{
+	wxString name(wxEmptyString);
+
+	return wrap(_self->Append(add_base(menu,name),name));
+}
+
+
+/*
+ * call-seq:
+ *   insert(idx, menu) -> true/false
+ *   insert(idx, title) {|menu| } -> true/false
+ * ===Arguments
+ * * idx Integer
+ * * menu WX::Menu
+ * * title String
+ *
+ * ===Return value
+ * true/false
+ */
+DLL_LOCAL VALUE _insert(VALUE self,VALUE idx,VALUE menu)
+{
+	wxString name(wxEmptyString);
+
+	return wrap(_self->Insert(NUM2UINT(idx),add_base(menu,name),name));
+}
+
+
+/*
+ * call-seq:
+ *   prepend(menu) -> true/false
+ *   prepend(title) {|menu| } -> true/false
+ * ===Arguments
+ * * menu WX::Menu
+ * * title String
+ *
+ * ===Return value
+ * true/false
+ */
+DLL_LOCAL VALUE _prepend(VALUE self,VALUE menu)
+{
+	wxString name(wxEmptyString);
+
+	return wrap(_self->Insert(0,add_base(menu,name),name));
+}
 singlereturn(GetFrame);
 
 }
@@ -126,11 +152,11 @@ DLL_LOCAL void Init_WXMenuBar(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXMenuBar,"each_menu",RUBY_METHOD_FUNC(_each),0);
 
-	rb_define_method(rb_cWXMenuBar,"<<",RUBY_METHOD_FUNC(_appendShift),1);
+	rb_define_method(rb_cWXMenuBar,"<<",RUBY_METHOD_FUNC(_appendSelf),1);
 
 	rb_define_method(rb_cWXMenuBar,"append",RUBY_METHOD_FUNC(_append),1);
-
 	rb_define_method(rb_cWXMenuBar,"insert",RUBY_METHOD_FUNC(_insert),2);
+	rb_define_method(rb_cWXMenuBar,"prepend",RUBY_METHOD_FUNC(_prepend),1);
 
 	rb_define_method(rb_cWXMenuBar,"frame",RUBY_METHOD_FUNC(_GetFrame),0);
 
