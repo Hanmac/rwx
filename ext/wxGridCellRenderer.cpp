@@ -49,8 +49,8 @@ wxGridCellRenderer* unwrap<wxGridCellRenderer*>(const VALUE &arg)
 }
 
 
-#define typeRenderer(type,klass) \
-VALUE klass; \
+#define typeRenderer(type) \
+VALUE rb_cWXGridCell##type##Renderer; \
 class RubyGridCell##type##Renderer : public wxGridCell##type##Renderer \
 {\
 public :\
@@ -83,16 +83,16 @@ private:\
 bool rubycall;\
 };
 
-typeRenderer(String,rb_cWXGridCellStringRenderer)
-typeRenderer(AutoWrapString,rb_cWXGridCellAutoWrapStringRenderer)
+typeRenderer(String)
+typeRenderer(AutoWrapString)
 
-typeRenderer(Bool,rb_cWXGridCellBoolRenderer)
-typeRenderer(Float,rb_cWXGridCellFloatRenderer)
-typeRenderer(Number,rb_cWXGridCellNumberRenderer)
-typeRenderer(Enum,rb_cWXGridCellEnumRenderer)
+typeRenderer(Bool)
+typeRenderer(Float)
+typeRenderer(Number)
+typeRenderer(Enum)
 
 #if wxUSE_DATETIME
-typeRenderer(DateTime,rb_cWXGridCellDateTimeRenderer)
+typeRenderer(DateTime)
 #endif
 
 namespace RubyWX {
