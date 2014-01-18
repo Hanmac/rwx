@@ -55,9 +55,9 @@ DLL_LOCAL void Init_WXGridCellAttr(VALUE rb_mWX)
 	rb_define_alloc_func(rb_cWXGridCellAttr,_alloc);
 
 	//TODO make GridCellAttr copyable
-	rb_undef_method(rb_cWXWindow,"initialize_copy");
-	rb_undef_method(rb_cWXWindow,"_load");
-	rb_undef_method(rb_cWXWindow,"_dump");
+	rb_undef_method(rb_cWXGridCellAttr,"initialize_copy");
+	rb_undef_method(rb_cWXGridCellAttr,"_load");
+	rb_undef_method(rb_cWXGridCellAttr,"_dump");
 
 	rb_define_attr_method(rb_cWXGridCellAttr,"text_color",_getTextColour,_setTextColour);
 	rb_define_attr_method(rb_cWXGridCellAttr,"background_color",_getBackgroundColour,_setBackgroundColour);

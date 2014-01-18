@@ -14,6 +14,7 @@
 
 #include "wxColor.hpp"
 #include "wxFont.hpp"
+#include "wxPen.hpp"
 
 VALUE rb_cWXGrid, rb_cWXGridEvent;
 #if wxUSE_GRID
@@ -56,9 +57,13 @@ macro_attr(DefaultCellOverflow,bool)
 macro_attr(DefaultRenderer,wxGridCellRenderer*)
 //macro_attr(DefaultEditor,wxGridCellEditor*)
 
+macro_attr_bool2(Editable,EnableEditing)
+
 singlereturn(GetSelectedCells)
 singlereturn(GetSelectedRows)
 singlereturn(GetSelectedCols)
+
+singlereturn(GetDefaultGridLinePen)
 
 singlereturn(GetSelectionBlockTopLeft);
 singlereturn(GetSelectionBlockBottomRight);
@@ -97,12 +102,12 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 DLL_LOCAL VALUE _getRowSize(VALUE self,VALUE row)
 {
-	return INT2NUM(	_self->GetRowSize(NUM2INT(row)));
+	return INT2NUM(_self->GetRowSize(NUM2INT(row)));
 }
 
 DLL_LOCAL VALUE _getColSize(VALUE self,VALUE row)
 {
-	return INT2NUM(	_self->GetColSize(NUM2INT(row)));
+	return INT2NUM(_self->GetColSize(NUM2INT(row)));
 }
 
 DLL_LOCAL VALUE _getCellSize(VALUE self,VALUE x,VALUE y)
@@ -110,18 +115,14 @@ DLL_LOCAL VALUE _getCellSize(VALUE self,VALUE x,VALUE y)
 	return wrap(_self->GetCellSize(wxGridCellCoords(NUM2INT(x),NUM2INT(y))));
 }
 
-
-
-
-DLL_LOCAL VALUE _getEditable(VALUE self)
+DLL_LOCAL VALUE _getRowGridLinePen(VALUE self,VALUE row)
 {
-	return wrap(_self->IsEditable());
+	return wrap(_self->GetRowGridLinePen(NUM2INT(row)));
 }
 
-DLL_LOCAL VALUE _setEditable(VALUE self,VALUE val)
+DLL_LOCAL VALUE _getColGridLinePen(VALUE self,VALUE row)
 {
-	_self->EnableEditing(RTEST(val));
-	return val;
+	return wrap(_self->GetColGridLinePen(NUM2INT(row)));
 }
 
 
@@ -199,6 +200,8 @@ DLL_LOCAL void Init_WXGrid(VALUE rb_mWX)
 	rb_define_method(rb_cWXGrid,"row_size",RUBY_METHOD_FUNC(_getRowSize),1);
 	rb_define_method(rb_cWXGrid,"col_size",RUBY_METHOD_FUNC(_getColSize),1);
 
+	rb_define_method(rb_cWXGrid,"row_grid_line_pen",RUBY_METHOD_FUNC(_getRowGridLinePen),1);
+	rb_define_method(rb_cWXGrid,"col_grid_line_pen",RUBY_METHOD_FUNC(_getColGridLinePen),1);
 
 
 	rb_define_method(rb_cWXGrid,"selection?",RUBY_METHOD_FUNC(_IsSelection),0);
