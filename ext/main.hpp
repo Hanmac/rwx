@@ -103,6 +103,7 @@ VALUE wrapPtr(wxPGProperty *sizer,VALUE klass);
 #endif
 #if wxUSE_GRID
 VALUE wrapPtr(wxGridTableBase *sizer,VALUE klass);
+VALUE wrapPtr(wxGridCellAttr *sizer,VALUE klass);
 #endif
 
 

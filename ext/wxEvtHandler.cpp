@@ -89,6 +89,7 @@ rubyclientdata(wxPGProperty)
 #endif
 #if wxUSE_GRID
 rubyclientdata(wxGridTableBase)
+rubyclientdata(wxGridCellAttr)
 #endif
 
 
