@@ -50,8 +50,23 @@ singlereturn(GetStrings)
 
 DLL_LOCAL VALUE _Append(VALUE self,VALUE items)
 {
-	
+	rb_check_frozen(self);
 	_self->Append(unwrap<wxArrayString>(items));
+	return self;
+}
+
+DLL_LOCAL VALUE _Insert(VALUE self,VALUE idx,VALUE items)
+{
+	rb_check_frozen(self);
+	_self->Insert(unwrap<wxArrayString>(items),NUM2UINT(idx));
+	return self;
+}
+
+
+DLL_LOCAL VALUE _Delete(VALUE self,VALUE idx)
+{
+	rb_check_frozen(self);
+	_self->Delete(NUM2UINT(idx));
 	return self;
 }
 
@@ -62,20 +77,53 @@ DLL_LOCAL VALUE _setItems(VALUE self,VALUE items)
 	return items;
 }
 
+
+
+DLL_LOCAL VALUE _getItemString(VALUE self,VALUE idx)
+{
+	return wrap(_self->GetString(NUM2UINT(idx)));
+}
+
+DLL_LOCAL VALUE _setItemString(VALUE self,VALUE idx,VALUE val)
+{
+	rb_check_frozen(self);
+	_self->SetString(NUM2UINT(idx),unwrap<wxString>(val));
+	return self;
+}
+
+
 }
 }
 #endif
 
 DLL_LOCAL void Init_WXItemContainer(VALUE rb_mWX)
 {
-	using namespace RubyWX::ItemContainer;
+
+#if 0
+	rb_define_attr(rb_mWXItemContainer,"selection",1,1);
+	rb_define_attr(rb_mWXItemContainer,"string_selection",1,1);
+
+	rb_define_attr(rb_mWXItemContainer,"items",1,1);
+#endif
 
 #if wxUSE_CONTROLS
+	using namespace RubyWX::ItemContainer;
+
 	rb_mWXItemContainer = rb_define_module_under(rb_mWX,"ItemContainer");
 
 	rb_define_method(rb_mWXItemContainer,"clear",RUBY_METHOD_FUNC(_Clear),0);
 
-	rb_define_method(rb_mWXItemContainer,"<<",RUBY_METHOD_FUNC(_Append),1);
+	rb_define_method(rb_mWXItemContainer,"append",RUBY_METHOD_FUNC(_Append),1);
+	rb_define_alias(rb_mWXItemContainer,"<<","append");
+
+	rb_define_method(rb_mWXItemContainer,"insert",RUBY_METHOD_FUNC(_Insert),2);
+	rb_define_method(rb_mWXItemContainer,"delete_item",RUBY_METHOD_FUNC(_Delete),1);
+
+	rb_define_method(rb_mWXItemContainer,"get_item_string",RUBY_METHOD_FUNC(_getItemString),1);
+	rb_define_method(rb_mWXItemContainer,"set_item_string",RUBY_METHOD_FUNC(_setItemString),2);
+
+	rb_define_attr_method(rb_mWXItemContainer,"selection",_getSelection,_setSelection);
+	rb_define_attr_method(rb_mWXItemContainer,"string_selection",_getStringSelection,_setStringSelection);
 
 	rb_define_attr_method(rb_mWXItemContainer,"items",_GetStrings,_setItems);
 

@@ -62,6 +62,19 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
+DLL_LOCAL VALUE _getItemString(VALUE self,VALUE idx)
+{
+	return wrap(_self->GetString(NUM2UINT(idx)));
+}
+
+DLL_LOCAL VALUE _setItemString(VALUE self,VALUE idx,VALUE val)
+{
+	rb_check_frozen(self);
+	_self->SetString(NUM2UINT(idx),unwrap<wxString>(val));
+	return self;
+}
+
+
 }
 }
 
@@ -69,7 +82,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL void Init_WXRadioBox(VALUE rb_mWX)
 {
 #if 0
-	rb_mWXItemContainer = rb_define_module_under(rb_mWX,"ItemContainer");
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+
+	rb_define_attr(rb_cWXRadioBox,"selection",1,1);
+	rb_define_attr(rb_cWXRadioBox,"string_selection",1,1);
+
 #endif
 #if wxUSE_RADIOBOX
 	using namespace RubyWX::RadioBox;
@@ -77,6 +94,12 @@ DLL_LOCAL void Init_WXRadioBox(VALUE rb_mWX)
 	rb_define_alloc_func(rb_cWXRadioBox,_alloc);
 
 	rb_define_method(rb_cWXRadioBox,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
+
+	rb_define_method(rb_cWXRadioBox,"get_item_string",RUBY_METHOD_FUNC(_getItemString),1);
+	rb_define_method(rb_cWXRadioBox,"set_item_string",RUBY_METHOD_FUNC(_setItemString),2);
+
+	rb_define_attr_method(rb_cWXRadioBox,"selection",_getSelection,_setSelection);
+	rb_define_attr_method(rb_cWXRadioBox,"string_selection",_getStringSelection,_setStringSelection);
 
 	registerEventType("radiobox", wxEVT_RADIOBOX,rb_cWXCommandEvent);
 
