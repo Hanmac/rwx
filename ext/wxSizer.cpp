@@ -7,6 +7,7 @@
 #include "wxSizer.hpp"
 #include "wxSizerItem.hpp"
 #include "wxWindow.hpp"
+#include "wxPoint.hpp"
 
 #define _self unwrap<wxSizer*>(self)
 
