@@ -94,6 +94,7 @@
 
 #include "wxCheckBox.hpp"
 #include "wxRadioButton.hpp"
+#include "wxRadioBox.hpp"
 
 #include "wxStaticBitmap.hpp"
 #include "wxStaticBitmapGeneric.hpp"
@@ -328,6 +329,7 @@ extern "C" void Init_rwx()
 
 	Init_WXCheckBox(rb_mWX);
 	Init_WXRadioButton(rb_mWX);
+	Init_WXRadioBox(rb_mWX);
 
 	Init_WXTextArea(rb_mWX);
 	Init_WXTextEntry(rb_mWX);
