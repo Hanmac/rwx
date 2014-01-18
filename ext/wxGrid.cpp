@@ -134,6 +134,31 @@ DLL_LOCAL void Init_WXGrid(VALUE rb_mWX)
 {
 #if 0
 	rb_cWXPanel = rb_define_class_under(rb_mWX,"Panel",rb_cWXControl);
+
+	rb_define_attr(rb_cWXGrid,"table",1,1);
+	rb_define_attr(rb_cWXGrid,"line_color",1,1);
+	rb_define_attr(rb_cWXGrid,"label_background_color",1,1);
+	rb_define_attr(rb_cWXGrid,"label_text_color",1,1);
+	rb_define_attr(rb_cWXGrid,"label_font",1,1);
+
+	rb_define_attr(rb_cWXGrid,"row_label_size",1,1);
+	rb_define_attr(rb_cWXGrid,"col_label_size",1,1);
+
+	rb_define_attr(rb_cWXGrid,"default_row_size",1,1);
+	rb_define_attr(rb_cWXGrid,"default_col_size",1,1);
+
+
+	rb_define_attr(rb_cWXGrid,"highlight_color",1,1);
+	rb_define_attr(rb_cWXGrid,"highlight_penwidth",1,1);
+	rb_define_attr(rb_cWXGrid,"highlight_ropen_width",1,1);
+
+	rb_define_attr(rb_cWXGrid,"default_renderer",1,1);
+
+	rb_define_attr(rb_cWXGrid,"minimal_width",1,1);
+	rb_define_attr(rb_cWXGrid,"minimal_height",1,1);
+
+	rb_define_attr(rb_cWXGrid,"editable",1,1);
+
 #endif
 
 #if wxUSE_GRID
