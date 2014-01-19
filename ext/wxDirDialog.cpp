@@ -81,10 +81,8 @@ DLL_LOCAL VALUE _getUserDir(int argc,VALUE *argv,VALUE self)
 
 	wxString message(wxDirSelectorPromptStr);
 	wxString defaultPath(wxEmptyString);
-	long style(wxDD_DEFAULT_STYLE);
+	int style(wxDD_DEFAULT_STYLE);
 	wxPoint pos(wxDefaultPosition);
-
-	bool mustExist(false);
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
@@ -92,10 +90,9 @@ DLL_LOCAL VALUE _getUserDir(int argc,VALUE *argv,VALUE self)
 		set_hash_option(hash,"path",defaultPath);
 		set_hash_option(hash,"style",style);
 		set_hash_option(hash,"pos",pos);
-		set_hash_option(hash,"must_exist",mustExist);
 
-		if(mustExist)
-			style |= wxDD_DIR_MUST_EXIST;
+		set_hash_flag_option(hash,"must_exist",wxDD_DIR_MUST_EXIST,style);
+
 	}
 
 	return wrap(wxDirSelector(message,
