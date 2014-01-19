@@ -26,8 +26,10 @@ APP_PROTECT(wxListBox)
  * creates a new ListBox widget.
  * ===Arguments
  * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
  *
- * *options: Hash with possible options to set
+ * * options: Hash with possible options to set:
+ *   * sort true/false adds the SortStyle to make this
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -39,11 +41,16 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		int style(0);
 		int selection(-1);
 
+
 		if(rb_obj_is_kind_of(hash,rb_cHash)) {
 			set_hash_option(hash,"id",id,unwrapID);
 			set_hash_option(hash,"choices",choices);
 			set_hash_option(hash,"style",style);
 			set_hash_option(hash,"selection",selection);
+
+			set_hash_flag_option(hash,"sort",wxLB_SORT,style);
+			set_hash_flag_option(hash,"multiple",wxLB_MULTIPLE,style);
+
 		}
 		_self->Create(
 			unwrap<wxWindow*>(parent),id,
@@ -88,6 +95,10 @@ DLL_LOCAL void Init_WXListBox(VALUE rb_mWX)
 
 	registerEventType("listbox", wxEVT_LISTBOX,rb_cWXCommandEvent);
 	registerEventType("listbox_dclick",  wxEVT_LISTBOX_DCLICK,rb_cWXCommandEvent);
+
+	rb_define_const(rb_cWXListBox,"SORT",INT2NUM(wxLB_SORT));
+	rb_define_const(rb_cWXListBox,"SINGLE",INT2NUM(wxLB_SINGLE));
+	rb_define_const(rb_cWXListBox,"MULTIPLE",INT2NUM(wxLB_MULTIPLE));
 
 	registerInfo<wxListBox>(rb_cWXListBox);
 #endif
