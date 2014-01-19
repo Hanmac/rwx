@@ -55,6 +55,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"id",id,unwrapID);
 			set_hash_option(hash,"value",value);
 			set_hash_option(hash,"style",style);
+
+			set_hash_flag_option(hash,"readonly",wxTE_READONLY,style);
+			set_hash_flag_option(hash,"multiline",wxTE_MULTILINE,style);
+			set_hash_flag_option(hash,"password",wxTE_PASSWORD,style);
+
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),id,value,wxDefaultPosition,wxDefaultSize,style);
