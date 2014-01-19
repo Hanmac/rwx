@@ -45,6 +45,8 @@ macro_attr(StringSelection,wxString)
 
 singlefunc(Clear)
 
+singlereturn(GetCount)
+singlereturn(IsSorted)
 singlereturn(GetStrings)
 
 
@@ -121,6 +123,9 @@ DLL_LOCAL void Init_WXItemContainer(VALUE rb_mWX)
 
 	rb_define_method(rb_mWXItemContainer,"get_item_string",RUBY_METHOD_FUNC(_getItemString),1);
 	rb_define_method(rb_mWXItemContainer,"set_item_string",RUBY_METHOD_FUNC(_setItemString),2);
+
+	rb_define_method(rb_mWXItemContainer,"item_count",RUBY_METHOD_FUNC(_GetCount),0);
+	rb_define_method(rb_mWXItemContainer,"sorted?",RUBY_METHOD_FUNC(_IsSorted),0);
 
 	rb_define_attr_method(rb_mWXItemContainer,"selection",_getSelection,_setSelection);
 	rb_define_attr_method(rb_mWXItemContainer,"string_selection",_getStringSelection,_setStringSelection);
