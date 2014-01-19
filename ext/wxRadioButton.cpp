@@ -43,18 +43,17 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	{
 		wxWindowID id(wxID_ANY);
 		int style(0);
-		bool group(false);
+
 		wxString label(wxEmptyString);
 
 		if(rb_obj_is_kind_of(hash,rb_cHash))
 		{
 			set_hash_option(hash,"id",id,unwrapID);
 			set_hash_option(hash,"style",style);
-			set_hash_option(hash,"group",group);
+
 			set_hash_option(hash,"label",label);
 
-			if(group)
-				style |= wxRB_GROUP;
+			set_hash_flag_option(hash,"group",wxRB_GROUP,style);
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),id,label,wxDefaultPosition,wxDefaultSize,style);
