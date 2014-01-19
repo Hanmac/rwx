@@ -40,11 +40,12 @@ wxItemContainer* unwrap< wxItemContainer* >(const VALUE &obj)
 namespace RubyWX {
 namespace ItemContainer {
 
-macro_attr(Selection,int)
+//macro_attr(Selection,int)
 macro_attr(StringSelection,wxString)
 
 singlefunc(Clear)
 
+singlereturn(GetSelection)
 singlereturn(GetCount)
 singlereturn(IsSorted)
 singlereturn(GetStrings)
@@ -60,6 +61,12 @@ DLL_LOCAL VALUE _Append(VALUE self,VALUE items)
 DLL_LOCAL VALUE _Insert(VALUE self,VALUE idx,VALUE items)
 {
 	rb_check_frozen(self);
+
+	unsigned int cidx = NUM2UINT(idx);
+
+	if(cidx > _self->GetCount())
+		rb_raise(rb_eIndexError,"%d out of index",cidx);
+
 	_self->Insert(unwrap<wxArrayString>(items),NUM2UINT(idx));
 	return self;
 }
@@ -68,7 +75,12 @@ DLL_LOCAL VALUE _Insert(VALUE self,VALUE idx,VALUE items)
 DLL_LOCAL VALUE _Delete(VALUE self,VALUE idx)
 {
 	rb_check_frozen(self);
-	_self->Delete(NUM2UINT(idx));
+
+	unsigned int cidx = NUM2UINT(idx);
+	if(cidx >= _self->GetCount())
+		rb_raise(rb_eIndexError,"%d out of index",cidx);
+
+	_self->Delete(cidx);
 	return self;
 }
 
@@ -80,16 +92,43 @@ DLL_LOCAL VALUE _setItems(VALUE self,VALUE items)
 }
 
 
+DLL_LOCAL VALUE _setSelection(VALUE self,VALUE idx)
+{
+	rb_check_frozen(self);
+
+	if(NIL_P(idx)) {
+		_self->SetSelection(wxNOT_FOUND);
+	} else {
+		unsigned int cidx = NUM2UINT(idx);
+
+		if(cidx >= _self->GetCount())
+			rb_raise(rb_eIndexError,"%d out of index",cidx);
+
+		_self->SetSelection(cidx);
+	}
+	return idx;
+}
 
 DLL_LOCAL VALUE _getItemString(VALUE self,VALUE idx)
 {
-	return wrap(_self->GetString(NUM2UINT(idx)));
+	unsigned int cidx = NUM2UINT(idx);
+
+	if(cidx >= _self->GetCount())
+		rb_raise(rb_eIndexError,"%d out of index",cidx);
+
+	return wrap(_self->GetString(cidx));
 }
 
 DLL_LOCAL VALUE _setItemString(VALUE self,VALUE idx,VALUE val)
 {
 	rb_check_frozen(self);
-	_self->SetString(NUM2UINT(idx),unwrap<wxString>(val));
+
+	unsigned int cidx = NUM2UINT(idx);
+
+	if(cidx >= _self->GetCount())
+		rb_raise(rb_eIndexError,"%d out of index",cidx);
+
+	_self->SetString(cidx,unwrap<wxString>(val));
 	return self;
 }
 
@@ -127,7 +166,7 @@ DLL_LOCAL void Init_WXItemContainer(VALUE rb_mWX)
 	rb_define_method(rb_mWXItemContainer,"item_count",RUBY_METHOD_FUNC(_GetCount),0);
 	rb_define_method(rb_mWXItemContainer,"sorted?",RUBY_METHOD_FUNC(_IsSorted),0);
 
-	rb_define_attr_method(rb_mWXItemContainer,"selection",_getSelection,_setSelection);
+	rb_define_attr_method(rb_mWXItemContainer,"selection",_GetSelection,_setSelection);
 	rb_define_attr_method(rb_mWXItemContainer,"string_selection",_getStringSelection,_setStringSelection);
 
 	rb_define_attr_method(rb_mWXItemContainer,"items",_GetStrings,_setItems);
