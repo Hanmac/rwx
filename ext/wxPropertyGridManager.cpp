@@ -55,21 +55,14 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		wxWindowID id(wxID_ANY);
 		int style(wxPGMAN_DEFAULT_STYLE);
 
-		bool toolbar(false);
-		bool description(false);
-
 		if(rb_obj_is_kind_of(hash,rb_cHash))
 		{
 			set_hash_option(hash,"id",id,unwrapID);
 			set_hash_option(hash,"style",style);
 
-			set_hash_option(hash,"toolbar",toolbar);
-			set_hash_option(hash,"description",description);
+			set_hash_flag_option(hash,"toolbar",wxPG_TOOLBAR,style);
+			set_hash_flag_option(hash,"description",wxPG_DESCRIPTION,style);
 
-			if(toolbar)
-				style |= wxPG_TOOLBAR;
-			if(description)
-				style |= wxPG_DESCRIPTION;
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),id,wxDefaultPosition,wxDefaultSize,style);
