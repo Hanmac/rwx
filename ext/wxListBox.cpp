@@ -67,9 +67,15 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL VALUE _getSelections(VALUE self)
 {
-	wxArrayInt data;
-	_self->GetSelections(data);
-	return wrap(data);
+	if(_self->HasMultipleSelection())
+	{
+		wxArrayInt data;
+		_self->GetSelections(data);
+		return wrap(data);
+	} else {
+		return wrap(_self->GetSelection());
+	}
+
 }
 
 }
@@ -91,7 +97,7 @@ DLL_LOCAL void Init_WXListBox(VALUE rb_mWX)
 
 	rb_include_module(rb_cWXListBox,rb_mWXItemContainer);
 
-	rb_define_method(rb_cWXListBox,"selections",RUBY_METHOD_FUNC(_getSelections),0);
+	rb_define_method(rb_cWXListBox,"selection",RUBY_METHOD_FUNC(_getSelections),0);
 
 	registerEventType("listbox", wxEVT_LISTBOX,rb_cWXCommandEvent);
 	registerEventType("listbox_dclick",  wxEVT_LISTBOX_DCLICK,rb_cWXCommandEvent);
