@@ -17,7 +17,7 @@ namespace RadioBox {
 
 APP_PROTECT(wxRadioBox)
 
-macro_attr(Selection,int)
+singlereturn(GetSelection)
 macro_attr(StringSelection,wxString)
 
 /*
@@ -62,15 +62,45 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
+
+DLL_LOCAL VALUE _setSelection(VALUE self,VALUE idx)
+{
+	rb_check_frozen(self);
+
+	if(NIL_P(idx)) {
+		_self->SetSelection(wxNOT_FOUND);
+	} else {
+		unsigned int cidx = NUM2UINT(idx);
+
+		if(cidx >= _self->GetCount())
+			rb_raise(rb_eIndexError,"%d out of index",cidx);
+
+		_self->SetSelection(cidx);
+	}
+	return idx;
+}
+
+
 DLL_LOCAL VALUE _getItemString(VALUE self,VALUE idx)
 {
-	return wrap(_self->GetString(NUM2UINT(idx)));
+	unsigned int cidx = NUM2UINT(idx);
+
+	if(cidx >= _self->GetCount())
+		rb_raise(rb_eIndexError,"%d out of index",cidx);
+
+	return wrap(_self->GetString(cidx));
 }
 
 DLL_LOCAL VALUE _setItemString(VALUE self,VALUE idx,VALUE val)
 {
 	rb_check_frozen(self);
-	_self->SetString(NUM2UINT(idx),unwrap<wxString>(val));
+
+	unsigned int cidx = NUM2UINT(idx);
+
+	if(cidx >= _self->GetCount())
+		rb_raise(rb_eIndexError,"%d out of index",cidx);
+
+	_self->SetString(cidx,unwrap<wxString>(val));
 	return self;
 }
 
@@ -98,7 +128,7 @@ DLL_LOCAL void Init_WXRadioBox(VALUE rb_mWX)
 	rb_define_method(rb_cWXRadioBox,"get_item_string",RUBY_METHOD_FUNC(_getItemString),1);
 	rb_define_method(rb_cWXRadioBox,"set_item_string",RUBY_METHOD_FUNC(_setItemString),2);
 
-	rb_define_attr_method(rb_cWXRadioBox,"selection",_getSelection,_setSelection);
+	rb_define_attr_method(rb_cWXRadioBox,"selection",_GetSelection,_setSelection);
 	rb_define_attr_method(rb_cWXRadioBox,"string_selection",_getStringSelection,_setStringSelection);
 
 	registerEventType("radiobox", wxEVT_RADIOBOX,rb_cWXCommandEvent);
