@@ -355,3 +355,10 @@ bool check_file_saveable(const wxString& path)
 	return true;
 }
 
+void set_hash_flag_option(VALUE hash,const char* name,const int& flag,int& val)
+{
+	bool tmp(false);
+	set_hash_option(hash,name,tmp);
+	if(tmp)
+		val |= flag;
+}
