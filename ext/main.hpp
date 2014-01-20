@@ -353,6 +353,24 @@ DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
 	return other;\
 }
 
+//TODO: find a nice way to combine the two macros
+#define macro_attr_func_con(attr,funcget,funcset,wrapget,wrapset,con) \
+DLL_LOCAL VALUE _get##attr(VALUE self)\
+{ \
+	if(_self->con())\
+		return wrapget(_self->funcget);\
+	return Qnil;\
+}\
+\
+DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
+{\
+	rb_check_frozen(self);\
+	if(_self->con())\
+		_self->funcset(wrapset(other));\
+	return other;\
+}
+
+
 template <typename T>
 DLL_LOCAL void set_hash_option(VALUE hash,const char* name,T& val,T func(const VALUE&) = unwrap<T> )
 {
@@ -368,10 +386,13 @@ DLL_LOCAL void set_hash_flag_option(VALUE hash,const char* name,const int& flag,
 #define macro_attr_enum(attr,type) macro_attr_func(attr,Get##attr(),Set##attr,wrapenum<type>,unwrapenum<type>)
 #define macro_attr_with_func(attr,getf,setf) macro_attr_func(attr,Get##attr(),Set##attr,getf,setf)
 
+#define macro_attr_con(attr,type,con) macro_attr_func_con(attr,Get##attr(),Set##attr,wrap,unwrap<type>,con)
+
 #define macro_attr_pre(attr,type,pre) macro_attr_func(attr,pre().Get##attr(),pre().Set##attr,wrap,unwrap<type>)
 
 #define macro_attr_bool(attr) macro_attr_func(attr,Is##attr(),Set##attr,wrap,unwrap<bool>)
 #define macro_attr_bool2(attr,attr2) macro_attr_func(attr,Is##attr(),attr2,wrap,unwrap<bool>)
+#define macro_attr_bool_con(attr,con) macro_attr_func_con(attr,Is##attr(),Set##attr,wrap,unwrap<bool>,con)
 
 //*/
 #define macro_attr_prop(attr,type) macro_attr_func(_##attr,attr,attr = ,wrap,unwrap<type>)
