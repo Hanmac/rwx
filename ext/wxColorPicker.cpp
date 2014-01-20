@@ -31,6 +31,8 @@ APP_PROTECT(wxColourPickerCtrl)
  *
  * *options: Hash with possible options to set:
  *   * color WX::Color default color
+ *   * use_textctrl true/false
+ *   * small true/false
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
@@ -48,6 +50,10 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"id",id,unwrapID);
 			set_hash_option(hash,"color",color);
 			set_hash_option(hash,"style",style);
+
+			set_hash_flag_option(hash,"use_textctrl",wxPB_USE_TEXTCTRL,style);
+			set_hash_flag_option(hash,"small",wxPB_SMALL,style);
+			set_hash_flag_option(hash,"show_label",wxCLRP_SHOW_LABEL,style);
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),id,color,wxDefaultPosition,wxDefaultSize,style);

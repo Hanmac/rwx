@@ -31,6 +31,8 @@ APP_PROTECT(wxDirPickerCtrl)
  * *options: Hash with possible options to set:
  *   * path String default path
  *   * message String
+ *   * use_textctrl true/false
+ *   * small true/false
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
@@ -52,6 +54,10 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 			set_hash_option(hash,"path",path);
 			set_hash_option(hash,"message",message);
+
+			set_hash_flag_option(hash,"use_textctrl",wxPB_USE_TEXTCTRL,style);
+			set_hash_flag_option(hash,"small",wxPB_SMALL,style);
+
 		}
 
 		_self->Create(

@@ -52,6 +52,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"font",font);
 			set_hash_option(hash,"style",style);
 
+			set_hash_flag_option(hash,"use_textctrl",wxPB_USE_TEXTCTRL,style);
+			set_hash_flag_option(hash,"small",wxPB_SMALL,style);
+
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),id,font,wxDefaultPosition,wxDefaultSize,style);
