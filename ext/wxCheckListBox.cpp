@@ -60,6 +60,27 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 
 
+DLL_LOCAL VALUE _each_checked_size(VALUE self)
+{
+	wxArrayInt data;
+	return UINT2NUM(_self->GetCheckedItems(data));
+}
+
+
+DLL_LOCAL VALUE _each_checked(VALUE self)
+{
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_checked_size);
+
+	wxArrayInt data;
+	_self->GetCheckedItems(data);
+
+	for(wxArrayInt::iterator it = data.begin(); it != data.end();++it)
+		rb_yield_values(2,INT2NUM(*it),wrap(_self->GetString(*it)));
+
+	return self;
+}
+
+
 DLL_LOCAL VALUE _getCheckedItems(VALUE self)
 {
 	wxArrayInt data;
@@ -81,6 +102,8 @@ DLL_LOCAL void Init_WXCheckListBox(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXCheckListBox,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
+
+	rb_define_method(rb_cWXCheckListBox,"each_checked",RUBY_METHOD_FUNC(_each_checked),0);
 	rb_define_method(rb_cWXCheckListBox,"checked_items",RUBY_METHOD_FUNC(_getCheckedItems),0);
 
 
