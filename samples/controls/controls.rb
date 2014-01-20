@@ -41,8 +41,8 @@ class A < WX::App
         
         WX::Button.new(panel, :label => "Select #&2", :position => [180,30], :size => [140,30] ) {|button|
           button.bind(:button) {
-            listbox.selection = 2
-            listbox_sorted.selection = 2
+            listbox.selection = 2 if listbox.item_count > 2
+            listbox_sorted.selection = 2 if listbox_sorted.item_count > 2
           }
         }
 
