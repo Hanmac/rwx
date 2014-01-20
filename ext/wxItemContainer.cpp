@@ -50,6 +50,15 @@ singlereturn(GetCount)
 singlereturn(IsSorted)
 singlereturn(GetStrings)
 
+DLL_LOCAL VALUE _each(VALUE self)
+{
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,_GetCount);
+	std::size_t count = _self->GetCount();
+	for(std::size_t i = 0; i < count; ++i)
+		rb_yield(wrap(_self->GetString(i)));
+	return self;
+}
+
 
 DLL_LOCAL VALUE _Append(VALUE self,VALUE items)
 {
@@ -153,6 +162,8 @@ DLL_LOCAL void Init_WXItemContainer(VALUE rb_mWX)
 	rb_mWXItemContainer = rb_define_module_under(rb_mWX,"ItemContainer");
 
 	rb_define_method(rb_mWXItemContainer,"clear",RUBY_METHOD_FUNC(_Clear),0);
+
+	rb_define_method(rb_mWXItemContainer,"each_item",RUBY_METHOD_FUNC(_each),0);
 
 	rb_define_method(rb_mWXItemContainer,"append",RUBY_METHOD_FUNC(_Append),1);
 	rb_define_alias(rb_mWXItemContainer,"<<","append");
