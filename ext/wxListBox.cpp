@@ -78,6 +78,54 @@ DLL_LOCAL VALUE _getSelections(VALUE self)
 
 }
 
+DLL_LOCAL VALUE _getStringSelections(VALUE self)
+{
+	if(_self->HasMultipleSelection())
+	{
+		wxArrayInt data;
+		wxArrayString result;
+		_self->GetSelections(data);
+		for(wxArrayInt::iterator it = data.begin(); it != data.end();++it)
+			result.push_back(_self->GetString(*it));
+		return wrap(result);
+	} else {
+		return wrap(_self->GetStringSelection());
+	}
+
+}
+
+
+DLL_LOCAL VALUE _setStringSelection(VALUE self,VALUE val)
+{
+	rb_check_frozen(self);
+
+	if(NIL_P(val)) {
+		_self->SetSelection(wxNOT_FOUND);
+	} else {
+		wxArrayString data(unwrap<wxArrayString>(val));
+
+		for(wxArrayString::iterator it = data.begin();it != data.end();++it)
+			_self->SetStringSelection(*it);
+	}
+	return val;
+}
+
+DLL_LOCAL VALUE _each_selection_size(VALUE self)
+{
+	wxArrayInt data;
+	return INT2NUM(_self->GetSelections(data));
+}
+
+DLL_LOCAL VALUE _each_selection(VALUE self)
+{
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_selection_size);
+	wxArrayInt data;
+	_self->GetSelections(data);
+	for(wxArrayInt::iterator it = data.begin(); it != data.end();++it)
+		rb_yield_values(2,INT2NUM(*it),wrap(_self->GetString(*it)));
+	return self;
+}
+
 }
 }
 
@@ -87,6 +135,8 @@ DLL_LOCAL void Init_WXListBox(VALUE rb_mWX)
 #if 0
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
 	rb_mWXItemContainer = rb_define_module_under(rb_mWX,"ItemContainer");
+
+	rb_define_attr(rb_cWXListBox,"string_selection",1,1);
 #endif
 #if wxUSE_LISTBOX
 	using namespace RubyWX::ListBox;
@@ -97,7 +147,11 @@ DLL_LOCAL void Init_WXListBox(VALUE rb_mWX)
 
 	rb_include_module(rb_cWXListBox,rb_mWXItemContainer);
 
+	rb_define_method(rb_cWXListBox,"each_selection",RUBY_METHOD_FUNC(_each_selection),0);
+
 	rb_define_method(rb_cWXListBox,"selection",RUBY_METHOD_FUNC(_getSelections),0);
+
+	rb_define_attr_method(rb_cWXListBox,"string_selection",_getStringSelections,_setStringSelection);
 
 	registerEventType("listbox", wxEVT_LISTBOX,rb_cWXCommandEvent);
 	registerEventType("listbox_dclick",  wxEVT_LISTBOX_DCLICK,rb_cWXCommandEvent);
