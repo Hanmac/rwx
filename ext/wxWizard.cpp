@@ -167,7 +167,7 @@ DLL_LOCAL void Init_WXWizard(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXWizard,"add_page",RUBY_METHOD_FUNC(_addPage),-1);
 
-	rb_define_module_function(rb_cWXWizard,"chain_pages",RUBY_METHOD_FUNC(_chainPages),-1);
+	rb_define_singleton_method(rb_cWXWizard,"chain_pages",RUBY_METHOD_FUNC(_chainPages),-1);
 
 	rb_define_method(rb_cWXWizard,"chain_pages",RUBY_METHOD_FUNC(_chainPages),-1);
 
