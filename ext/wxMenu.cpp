@@ -174,11 +174,11 @@ DLL_LOCAL VALUE _append_menu(int argc,VALUE *argv,VALUE self)
 	wxMenu *m = NULL;
 	if(rb_block_given_p()){
 		rb_scan_args(argc, argv, "11",&text,&help);
-		wxMenu *m = new wxMenu;
+		m = new wxMenu;
 		rb_yield(wrap(m));
 	}else{
 		rb_scan_args(argc, argv, "12",&menu,&text,&help);
-		wxMenu *m = unwrap<wxMenu*>(menu);
+		m = unwrap<wxMenu*>(menu);
 
 		if(!m)
 			rb_raise(rb_eTypeError,"menu can't be nil.");
@@ -313,11 +313,11 @@ DLL_LOCAL VALUE _insert_menu(int argc,VALUE *argv,VALUE self)
 	wxMenu *m = NULL;
 	if(rb_block_given_p()){
 		rb_scan_args(argc, argv, "21",&idx,&text,&help);
-		wxMenu *m = new wxMenu;
+		m = new wxMenu;
 		rb_yield(wrap(m));
 	}else{
 		rb_scan_args(argc, argv, "22",&idx,&menu,&text,&help);
-		wxMenu *m = unwrap<wxMenu*>(menu);
+		m = unwrap<wxMenu*>(menu);
 
 		if(!m)
 			rb_raise(rb_eTypeError,"menu can't be nil.");
@@ -434,11 +434,11 @@ DLL_LOCAL VALUE _prepend_menu(int argc,VALUE *argv,VALUE self)
 	wxMenu *m = NULL;
 	if(rb_block_given_p()){
 		rb_scan_args(argc, argv, "11",&text,&help);
-		wxMenu *m = new wxMenu;
+		m = new wxMenu;
 		rb_yield(wrap(m));
 	}else{
 		rb_scan_args(argc, argv, "12",&menu,&text,&help);
-		wxMenu *m = unwrap<wxMenu*>(menu);
+		m = unwrap<wxMenu*>(menu);
 
 		if(!m)
 			rb_raise(rb_eTypeError,"menu can't be nil.");
