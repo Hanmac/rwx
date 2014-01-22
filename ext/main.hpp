@@ -242,7 +242,18 @@ VALUE wrapenum(const T &arg){
 	enumtype::value_type::iterator it = enummap.find((int)arg);
 	if(it != enummap.end())
 		return ID2SYM(it->second);
-	return Qnil;
+	bool found = false;
+
+	VALUE result = rb_ary_new();
+	for(it = enummap.begin();it != enummap.end();++it)
+	{
+		if((arg & it->first) != 0)
+		{
+			found = true;
+			rb_ary_push(result,ID2SYM(it->second));
+		}
+	}
+	return found ? result : Qnil;
 }
 template <typename T>
 VALUE wrapenum(int arg){
@@ -273,7 +284,7 @@ T unwrapenum(const VALUE &arg){
 			int result = 0;
 			size_t count = RARRAY_LEN(arg);
 			for(size_t i = 0; i < count; ++i)
-				result = result || unwrapenum<T>(RARRAY_PTR(arg)[i]);
+				result = result | unwrapenum<T>(RARRAY_PTR(arg)[i]);
 		}else
 			return (T)NUM2INT(arg);
 	}
