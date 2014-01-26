@@ -150,9 +150,7 @@ VALUE _addControl(int argc,VALUE *argv,VALUE self)
 		c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,control));
 	}else
 	{
-		c = unwrap<wxControl*>(control);
-		if(c->GetParent() != _self)
-			rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(control));
+		window_parent_check(control,_self,c);
 	}
 
 	_self->AddControl(c,unwrap<wxSizerFlags>(sizer));

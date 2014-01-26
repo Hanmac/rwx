@@ -128,9 +128,7 @@ DLL_LOCAL VALUE _addPage(int argc,VALUE *argv,VALUE self)
 		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
 	}else
 	{
-		w = unwrap<wxWindow*>(window);
-//		if(w->GetParent() != _self)
-//			rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(window));
+		window_parent_check(window,_self,w);
 	}
 	return wrap(_self->AddPage(w,unwrap<wxString>(text),sel,iid));
 }
@@ -171,9 +169,7 @@ DLL_LOCAL VALUE _insertPage(int argc,VALUE *argv,VALUE self)
 		VALUE argv2[] = {self, hash };
 		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
 	}else {
-		w = unwrap<wxWindow*>(window);
-	//		if(w->GetParent() != _self)
-	//			rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(window));
+		window_parent_check(window,_self,w);
 	}
 	return wrap(_self->InsertPage(NUM2INT(n),w,unwrap<wxString>(text),sel,iid));
 }
@@ -214,9 +210,7 @@ DLL_LOCAL VALUE _prependPage(int argc,VALUE *argv,VALUE self)
 		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
 	}else
 	{
-		w = unwrap<wxWindow*>(window);
-//		if(w->GetParent() != _self)
-//			rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(window));
+		window_parent_check(window,_self,w);
 	}
 	return wrap(_self->InsertPage(0,w,unwrap<wxString>(text),sel,iid));
 }

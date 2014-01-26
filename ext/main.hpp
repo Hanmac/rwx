@@ -351,6 +351,18 @@ DLL_LOCAL int unwrap_buttonflag(const VALUE& val);
 DLL_LOCAL bool check_file_loadable(const wxString& path);
 DLL_LOCAL bool check_file_saveable(const wxString& path);
 
+template <typename T>
+DLL_LOCAL bool window_parent_check(VALUE window, wxWindow* parent, T* &w)
+{
+	w = unwrap<T*>(window);
+	if(w->GetParent() != parent)
+	{
+		rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(window));
+		return false;
+	}
+	return true;
+}
+
 #define macro_attr_func(attr,funcget,funcset,wrapget,wrapset) \
 DLL_LOCAL VALUE _get##attr(VALUE self)\
 { \

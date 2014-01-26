@@ -147,9 +147,7 @@ DLL_LOCAL VALUE _addControl(int argc,VALUE *argv,VALUE self)
 		c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,id));
 	}else
 	{
-		c = unwrap<wxControl*>(id);
-		if(c->GetParent() != _self)
-			rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(id));
+		window_parent_check(id,_self,c);
 	}
 
 	return wrap( _self->AddControl(c,unwrap<wxString>(text)));
@@ -273,9 +271,7 @@ DLL_LOCAL VALUE _insertControl(int argc,VALUE *argv,VALUE self)
 		c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,id));
 	}else
 	{
-		c = unwrap<wxControl*>(id);
-		if(c->GetParent() != _self)
-			rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(id));
+		window_parent_check(id,_self,c);
 	}
 
 	return wrap( _self->InsertControl(NUM2UINT(idx),c,unwrap<wxString>(text)));
@@ -404,9 +400,7 @@ DLL_LOCAL VALUE _prependControl(int argc,VALUE *argv,VALUE self)
 		c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,id));
 	}else
 	{
-		c = unwrap<wxControl*>(id);
-		if(c->GetParent() != _self)
-			rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(id));
+		window_parent_check(id,_self,c);
 	}
 
 	return wrap( _self->InsertControl(0,c,unwrap<wxString>(text)));
