@@ -152,6 +152,13 @@
 #include "wxHyperLink.hpp"
 
 #include "wxBookCtrl.hpp"
+#include "wxChoiceBook.hpp"
+#include "wxNoteBook.hpp"
+#include "wxListBook.hpp"
+#include "wxToolBook.hpp"
+#include "wxAuiBook.hpp"
+#include "wxTreeBook.hpp"
+
 
 #include "wxSTC.hpp"
 #include "wxXRC.hpp"
@@ -371,6 +378,7 @@ extern "C" void Init_rwx()
 	Init_WXNoteBookCtrl(rb_mWX);
 	Init_WXListBookCtrl(rb_mWX);
 	Init_WXAuiNoteBookCtrl(rb_mWX);
+	Init_WXTreeBookCtrl(rb_mWX);
 
 	Init_WXAuiToolBar(rb_mWX);
 

@@ -15,12 +15,6 @@ extern VALUE rb_cWXBookCtrlBase,rb_cWXBookCtrlEvent;
 void Init_WXBookCtrl(VALUE rb_mWX);
 
 #if wxUSE_BOOKCTRL
-#include "wxChoiceBook.hpp"
-#include "wxNoteBook.hpp"
-#include "wxListBook.hpp"
-#include "wxToolBook.hpp"
-#include "wxAuiBook.hpp"
-
 template <>
 wxBookCtrlBase* unwrap<wxBookCtrlBase*>(const VALUE &arg);
 #endif
