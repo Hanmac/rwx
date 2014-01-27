@@ -355,7 +355,7 @@ template <typename T>
 DLL_LOCAL bool window_parent_check(VALUE window, wxWindow* parent, T* &w)
 {
 	w = unwrap<T*>(window);
-	if(w->GetParent() != parent)
+	if(w && w->GetParent() != parent)
 	{
 		rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(window));
 		return false;
