@@ -363,6 +363,8 @@ DLL_LOCAL bool window_parent_check(VALUE window, wxWindow* parent, T* &w)
 	return true;
 }
 
+bool nil_check(VALUE window,bool raise = true);
+
 #define macro_attr_func(attr,funcget,funcset,wrapget,wrapset) \
 DLL_LOCAL VALUE _get##attr(VALUE self)\
 { \
