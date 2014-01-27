@@ -11,6 +11,16 @@
 #include "wxNotifyEvent.hpp"
 #include "wxSizer.hpp"
 
+
+#include "wxBookCtrl.hpp"
+#include "wxChoiceBook.hpp"
+#include "wxNoteBook.hpp"
+#include "wxListBook.hpp"
+#include "wxToolBook.hpp"
+#include "wxAuiBook.hpp"
+#include "wxTreeBook.hpp"
+
+
 #include "wxBitmap.hpp"
 
 VALUE rb_cWXBookCtrlBase,rb_cWXBookCtrlEvent;
@@ -126,7 +136,7 @@ DLL_LOCAL VALUE _addPage(int argc,VALUE *argv,VALUE self)
 	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
 		VALUE argv2[] = {self, hash };
 		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
-	}else
+	}else if(nil_check(window,!rb_obj_is_kind_of(window,rb_cWXTreebook))) //TODO Tree Ctrl allows nil page, but i can't check that
 	{
 		window_parent_check(window,_self,w);
 	}
@@ -168,7 +178,8 @@ DLL_LOCAL VALUE _insertPage(int argc,VALUE *argv,VALUE self)
 	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
 		VALUE argv2[] = {self, hash };
 		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
-	}else {
+	}else if(nil_check(window,!rb_obj_is_kind_of(window,rb_cWXTreebook))) //TODO Tree Ctrl allows nil page, but i can't check that
+	{
 		window_parent_check(window,_self,w);
 	}
 	return wrap(_self->InsertPage(NUM2INT(n),w,unwrap<wxString>(text),sel,iid));
@@ -208,7 +219,7 @@ DLL_LOCAL VALUE _prependPage(int argc,VALUE *argv,VALUE self)
 	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
 		VALUE argv2[] = {self, hash };
 		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
-	}else
+	}else if(nil_check(window,!rb_obj_is_kind_of(window,rb_cWXTreebook))) //TODO Tree Ctrl allows nil page, but i can't check that
 	{
 		window_parent_check(window,_self,w);
 	}

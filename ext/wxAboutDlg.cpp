@@ -148,8 +148,7 @@ VALUE _addControl(int argc,VALUE *argv,VALUE self)
 		rb_scan_args(argc, argv, "11",&control,&arg);
 		VALUE argv2[] = {self, arg };
 		c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,control));
-	}else
-	{
+	} else if(nil_check(control)) {
 		window_parent_check(control,_self,c);
 	}
 

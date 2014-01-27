@@ -85,8 +85,7 @@ DLL_LOCAL VALUE _addPage(int argc,VALUE *argv,VALUE self)
 	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
 		VALUE argv2[] = {self, hash };
 		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
-	}else
-	{
+	}else if(nil_check(window)) {
 		window_parent_check(window,_self,w);
 	}
 
@@ -134,7 +133,7 @@ DLL_LOCAL VALUE _insertPage(int argc,VALUE *argv,VALUE self)
 	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
 		VALUE argv2[] = {self, hash };
 		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
-	}else {
+	}else if(nil_check(window)) {
 		window_parent_check(window,_self,w);
 	}
 
@@ -182,8 +181,7 @@ DLL_LOCAL VALUE _prependPage(int argc,VALUE *argv,VALUE self)
 	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
 		VALUE argv2[] = {self, hash };
 		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
-	}else
-	{
+	}else if(nil_check(window)) {
 		window_parent_check(window,_self,w);
 	}
 

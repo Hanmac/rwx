@@ -145,8 +145,7 @@ DLL_LOCAL VALUE _addControl(int argc,VALUE *argv,VALUE self)
 		rb_scan_args(argc, argv, "11",&id,&arg);
 		VALUE argv2[] = {self, arg };
 		c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,id));
-	}else
-	{
+	}else if(nil_check(window)) {
 		window_parent_check(id,_self,c);
 	}
 
@@ -269,8 +268,7 @@ DLL_LOCAL VALUE _insertControl(int argc,VALUE *argv,VALUE self)
 		rb_scan_args(argc, argv, "21",&idx,&id,&arg);
 		VALUE argv2[] = {self, arg };
 		c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,id));
-	}else
-	{
+	}else if(nil_check(window)) {
 		window_parent_check(id,_self,c);
 	}
 
@@ -398,8 +396,7 @@ DLL_LOCAL VALUE _prependControl(int argc,VALUE *argv,VALUE self)
 		rb_scan_args(argc, argv, "11",&id,&arg);
 		VALUE argv2[] = {self, arg };
 		c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,id));
-	}else
-	{
+	}else if(nil_check(window)) {
 		window_parent_check(id,_self,c);
 	}
 
