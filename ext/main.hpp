@@ -365,6 +365,8 @@ DLL_LOCAL bool window_parent_check(VALUE window, wxWindow* parent, T* &w)
 
 bool nil_check(VALUE window,bool raise = true);
 
+bool check_index(unsigned int index,std::size_t count);
+
 #define macro_attr_func(attr,funcget,funcset,wrapget,wrapset) \
 DLL_LOCAL VALUE _get##attr(VALUE self)\
 { \
@@ -423,6 +425,28 @@ DLL_LOCAL void set_hash_flag_option(VALUE hash,const char* name,const int& flag,
 #define macro_attr_prop(attr,type) macro_attr_func(_##attr,attr,attr = ,wrap,unwrap<type>)
 #define macro_attr_prop_enum(attr,type) macro_attr_func(_##attr,attr,attr = ,wrapenum<type>,unwrapenum<type>)
 #define macro_attr_prop_with_func(attr,getf,setf) macro_attr_func(_##attr,attr,attr = ,getf,setf)
+
+
+/*
+ * special macro for select attributes that manages wxNOT_FOUND
+ */
+#define macro_attr_selection(attr,count) \
+DLL_LOCAL VALUE _get##attr(VALUE self)\
+{ \
+	int val = _self->Get##attr();\
+	return val == wxNOT_FOUND ? Qnil : UINT2NUM(val);\
+}\
+\
+DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
+{\
+	rb_check_frozen(self);\
+	if(NIL_P(other))\
+		_self->Set##attr(wxNOT_FOUND);\
+	int cother = NUM2INT(other);\
+	if(check_index(cother,_self->count()))\
+		_self->Set##attr(cother);\
+	return other;\
+}
 
 
 DLL_LOCAL void rb_define_attr_method(VALUE klass,std::string name,VALUE(get)(VALUE),VALUE(set)(VALUE,VALUE));

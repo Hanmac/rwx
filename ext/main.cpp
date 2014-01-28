@@ -363,10 +363,19 @@ void set_hash_flag_option(VALUE hash,const char* name,const int& flag,int& val)
 		val |= flag;
 }
 
-bool nil_check(VALUE window,bool raise = true)
+bool nil_check(VALUE window,bool raise)
 {
 	bool result = NIL_P(window);
 	if(result && raise)
 		rb_raise(rb_eTypeError,"window can't be nil.");
 	return !result;
+}
+
+bool check_index(unsigned int cidx,std::size_t count)
+{
+	if(cidx >= count){
+		rb_raise(rb_eIndexError,"%d out of index",cidx);
+		return false;
+	}
+	return true;
 }
