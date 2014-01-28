@@ -14,20 +14,21 @@ VALUE rb_cWXBoxSizer;
 namespace RubyWX {
 namespace BoxSizer {
 
+macro_attr_enum(Orientation,wxOrientation)
+
 DLL_LOCAL VALUE _alloc(VALUE self)
 {
 	return wrapPtr(new wxBoxSizer(wxHORIZONTAL),self);
 }
 
-DLL_LOCAL VALUE _getOrientation(VALUE self)
-{
-	return wrap(_self->GetOrientation() == wxVERTICAL);
-}
 
-DLL_LOCAL VALUE _setOrientation(VALUE self,VALUE val)
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	_self->SetOrientation(RTEST(val) ? wxVERTICAL : wxHORIZONTAL );
-	return val;
+	VALUE orient;
+	rb_scan_args(argc, argv, "01",&orient);
+	if(!NIL_P(orient))
+		_setOrientation(self,orient);
+	return self;
 }
 
 
@@ -45,4 +46,11 @@ DLL_LOCAL void Init_WXBoxSizer(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXBoxSizer,"orientation",_getOrientation,_setOrientation);
 
 	registerInfo<wxBoxSizer>(rb_cWXBoxSizer);
+
+	registerEnum<wxOrientation>("wxOrientation")
+			->add(wxHORIZONTAL, "horizontal")
+			->add(wxVERTICAL, "vertical")
+			->add(wxBOTH, "both");
+
+
 }
