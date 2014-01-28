@@ -39,7 +39,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,name,hash;
 	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
-		if(!_created && !rb_obj_is_kind_of(name,rb_cString))
+
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString))
 	{
 		wxWindowID id(wxID_ANY);
 		wxColor color(*wxBLACK);
@@ -54,6 +55,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_flag_option(hash,"use_textctrl",wxPB_USE_TEXTCTRL,style);
 			set_hash_flag_option(hash,"small",wxPB_SMALL,style);
 			set_hash_flag_option(hash,"show_label",wxCLRP_SHOW_LABEL,style);
+
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),id,color,wxDefaultPosition,wxDefaultSize,style);
@@ -106,6 +108,9 @@ DLL_LOCAL void Init_WXColorPicker(VALUE rb_mWX)
 	rb_define_method(rb_cWXColorPicker,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_attr_method(rb_cWXColorPicker,"color",_getColour,_setColour);
+
+	rb_define_const(rb_cWXColorPicker,"DEFAULT_STYLE",INT2NUM(wxCLRP_DEFAULT_STYLE));
+	rb_define_const(rb_cWXColorPicker,"SHOW_LABEL",INT2NUM(wxCLRP_SHOW_LABEL));
 
 	rb_cWXColorPickerEvent = rb_define_class_under(rb_cWXEvent,"ColorPicker",rb_cWXEvent);
 	registerEventType("colorpicker_changed",wxEVT_COLOURPICKER_CHANGED,rb_cWXColorPickerEvent);
