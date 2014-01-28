@@ -199,6 +199,8 @@ singlereturn_frozen(LineDown)
 singlereturn_frozen(PageUp)
 singlereturn_frozen(PageDown)
 
+singlereturn_frozen(Destroy)
+
 singlereturn(GetRect)
 
 DLL_LOCAL VALUE _SetParent(VALUE self,VALUE parent)
@@ -785,6 +787,7 @@ DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXWindow,"draw",RUBY_METHOD_FUNC(_draw),-1);
 	rb_define_method(rb_cWXWindow,"close",RUBY_METHOD_FUNC(_Close),-1);
+	rb_define_method(rb_cWXWindow,"destroy",RUBY_METHOD_FUNC(_Destroy),0);
 
 #if wxUSE_MENUS
 	rb_define_method(rb_cWXWindow,"popup_menu",RUBY_METHOD_FUNC(_popupmenu),-1);
