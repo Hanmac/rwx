@@ -84,8 +84,12 @@ DLL_LOCAL VALUE _addSubPage(int argc,VALUE *argv,VALUE self)
 	if(!NIL_P(select))
 		sel = RTEST(select);
 
-	if(!NIL_P(imageid))
+	if(!NIL_P(imageid)){
 		iid = NUM2INT(imageid);
+		wxImageList *imglist = _self->GetImageList();
+		if(imglist)
+			check_index(iid,imglist->GetImageCount());
+	}
 
 	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
 		VALUE argv2[] = {self, hash };
@@ -125,8 +129,12 @@ DLL_LOCAL VALUE _insertSubPage(int argc,VALUE *argv,VALUE self)
 	if(!NIL_P(select))
 		sel = RTEST(select);
 
-	if(!NIL_P(imageid))
+	if(!NIL_P(imageid)){
 		iid = NUM2INT(imageid);
+		wxImageList *imglist = _self->GetImageList();
+		if(imglist)
+			check_index(iid,imglist->GetImageCount());
+	}
 
 	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
 		VALUE argv2[] = {self, hash };
@@ -165,8 +173,12 @@ DLL_LOCAL VALUE _prependSubPage(int argc,VALUE *argv,VALUE self)
 	if(!NIL_P(select))
 		sel = RTEST(select);
 
-	if(!NIL_P(imageid))
+	if(!NIL_P(imageid)){
 		iid = NUM2INT(imageid);
+		wxImageList *imglist = _self->GetImageList();
+		if(imglist)
+			check_index(iid,imglist->GetImageCount());
+	}
 
 	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
 		VALUE argv2[] = {self, hash };

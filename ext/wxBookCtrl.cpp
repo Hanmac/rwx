@@ -41,7 +41,7 @@ namespace BookCtrl {
 macro_attr(ImageList,wxImageList*)
 macro_attr(InternalBorder,unsigned int)
 macro_attr(ControlMargin,int)
-macro_attr(Selection,int)
+macro_attr_selection(Selection,GetPageCount)
 
 macro_attr(FitToCurrentPage,bool)
 
@@ -130,13 +130,17 @@ DLL_LOCAL VALUE _addPage(int argc,VALUE *argv,VALUE self)
 	if(!NIL_P(select))
 		sel = RTEST(select);
 
-	if(!NIL_P(imageid))
+	if(!NIL_P(imageid)){
 		iid = NUM2INT(imageid);
+		wxImageList *imglist = _self->GetImageList();
+		if(imglist)
+			check_index(iid,imglist->GetImageCount());
+	}
 
 	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
 		VALUE argv2[] = {self, hash };
 		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
-	}else if(nil_check(window,!rb_obj_is_kind_of(window,rb_cWXTreebook))) //TODO Tree Ctrl allows nil page, but i can't check that
+	}else if(nil_check(window,!rb_obj_is_kind_of(self,rb_cWXTreebook))) //TODO Tree Ctrl allows nil page, but i can't check that
 	{
 		window_parent_check(window,_self,w);
 	}
@@ -172,13 +176,17 @@ DLL_LOCAL VALUE _insertPage(int argc,VALUE *argv,VALUE self)
 	if(!NIL_P(select))
 		sel = RTEST(select);
 
-	if(!NIL_P(imageid))
+	if(!NIL_P(imageid)){
 		iid = NUM2INT(imageid);
+		wxImageList *imglist = _self->GetImageList();
+		if(imglist)
+			check_index(iid,imglist->GetImageCount());
+	}
 
 	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
 		VALUE argv2[] = {self, hash };
 		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
-	}else if(nil_check(window,!rb_obj_is_kind_of(window,rb_cWXTreebook))) //TODO Tree Ctrl allows nil page, but i can't check that
+	}else if(nil_check(window,!rb_obj_is_kind_of(self,rb_cWXTreebook))) //TODO Tree Ctrl allows nil page, but i can't check that
 	{
 		window_parent_check(window,_self,w);
 	}
@@ -213,13 +221,17 @@ DLL_LOCAL VALUE _prependPage(int argc,VALUE *argv,VALUE self)
 	if(!NIL_P(select))
 		sel = RTEST(select);
 
-	if(!NIL_P(imageid))
+	if(!NIL_P(imageid)){
 		iid = NUM2INT(imageid);
+		wxImageList *imglist = _self->GetImageList();
+		if(imglist)
+			check_index(iid,imglist->GetImageCount());
+	}
 
 	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
 		VALUE argv2[] = {self, hash };
 		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
-	}else if(nil_check(window,!rb_obj_is_kind_of(window,rb_cWXTreebook))) //TODO Tree Ctrl allows nil page, but i can't check that
+	}else if(nil_check(window,!rb_obj_is_kind_of(self,rb_cWXTreebook))) //TODO Tree Ctrl allows nil page, but i can't check that
 	{
 		window_parent_check(window,_self,w);
 	}

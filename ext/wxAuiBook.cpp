@@ -93,8 +93,12 @@ DLL_LOCAL VALUE _addPage(int argc,VALUE *argv,VALUE self)
 	{
 		int iid = -1;
 
-		if(!NIL_P(imageid))
+		if(!NIL_P(imageid)){
 			iid = NUM2INT(imageid);
+			wxImageList *imglist = _self->GetImageList();
+			if(imglist)
+				check_index(iid,imglist->GetImageCount());
+		}
 
 		return wrap(_self->AddPage(w,unwrap<wxString>(text),sel,iid));
 	}else{
@@ -141,8 +145,12 @@ DLL_LOCAL VALUE _insertPage(int argc,VALUE *argv,VALUE self)
 	{
 		int iid = -1;
 
-		if(!NIL_P(imageid))
+		if(!NIL_P(imageid)){
 			iid = NUM2INT(imageid);
+			wxImageList *imglist = _self->GetImageList();
+			if(imglist)
+				check_index(iid,imglist->GetImageCount());
+		}
 
 		return wrap(_self->InsertPage(NUM2INT(n),w,unwrap<wxString>(text),sel,iid));
 	}else{
@@ -189,8 +197,12 @@ DLL_LOCAL VALUE _prependPage(int argc,VALUE *argv,VALUE self)
 	{
 		int iid = -1;
 
-		if(!NIL_P(imageid))
+		if(!NIL_P(imageid)){
 			iid = NUM2INT(imageid);
+			wxImageList *imglist = _self->GetImageList();
+			if(imglist)
+				check_index(iid,imglist->GetImageCount());
+		}
 
 		return wrap(_self->InsertPage(0,w,unwrap<wxString>(text),sel,iid));
 	}else{
