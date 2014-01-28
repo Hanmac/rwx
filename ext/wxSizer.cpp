@@ -291,7 +291,10 @@ DLL_LOCAL VALUE _prepend_stretch_spacer(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL VALUE _getItem(VALUE self,VALUE index)
 {
-	return wrap(_self->GetItem(NUM2UINT(index)));
+	unsigned int cidx = NUM2UINT(index);
+	if(check_index(cidx,_self->GetItemCount()))
+		return wrap(_self->GetItem(cidx));
+	return Qnil;
 }
 
 DLL_LOCAL VALUE _each_size(VALUE self)
@@ -307,6 +310,16 @@ DLL_LOCAL VALUE _each(VALUE self)
 	for(std::size_t i = 0; i < count; ++i)
 		rb_yield(wrap(_self->GetItem(i)));
 	return self;
+}
+
+
+DLL_LOCAL VALUE _remove(VALUE self,VALUE index)
+{
+	rb_check_frozen(self);
+	unsigned int cidx = NUM2UINT(index);
+	if(check_index(cidx,_self->GetItemCount()))
+		return wrap(_self->Remove(cidx));
+	return Qnil;
 }
 
 
@@ -346,6 +359,8 @@ DLL_LOCAL void Init_WXSizer(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXSizer,"each",RUBY_METHOD_FUNC(_each),0);
 	rb_include_module(rb_cWXSizer,rb_mEnumerable);
+
+	rb_define_method(rb_cWXSizer,"remove",RUBY_METHOD_FUNC(_remove),1);
 
 	registerInfo<wxSizer>(rb_cWXSizer);
 }
