@@ -30,7 +30,7 @@ wxTextAttr unwrap< wxTextAttr >(const VALUE &vcolor)
 
 
 //use this macro to automatically check the Has Methods
-#define macro_textattr2(attr,attr2,type,w) \
+#define macro_textattr2(attr,attr2,type,flag,w) \
 DLL_LOCAL VALUE _get##attr(VALUE self)\
 { \
 	return _self->Has##attr2() ? w<type>(_self->Get##attr()) : Qnil;\
@@ -38,10 +38,13 @@ DLL_LOCAL VALUE _get##attr(VALUE self)\
 \
 DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
 {\
-	_self->Set##attr(un##w<type>(other));\
+	if(NIL_P(other))\
+		_self->RemoveFlag(wxTEXT_ATTR_##flag);\
+	else\
+		_self->Set##attr(un##w<type>(other));\
 	return other;\
 }
-#define macro_textattr(attr,type,w) macro_textattr2(attr,attr,type,w)
+#define macro_textattr(attr,type,flag,w) macro_textattr2(attr,attr,type,flag,w)
 
 
 namespace RubyWX {
@@ -49,39 +52,41 @@ namespace TextAttr {
 
 APP_PROTECT(wxTextAttr)
 
-macro_textattr(TextColour,wxColour,wrap)
-macro_textattr(BackgroundColour,wxColour,wrap)
-macro_textattr(Alignment,wxTextAttrAlignment,wrapenum)
+macro_textattr(TextColour,wxColour,TEXT_COLOUR,wrap)
+macro_textattr(BackgroundColour,wxColour,BACKGROUND_COLOUR,wrap)
+macro_textattr(Alignment,wxTextAttrAlignment,ALIGNMENT,wrapenum)
 
-macro_textattr(Tabs,wxArrayInt,wrap)
-macro_textattr(LeftIndent,int,wrap)
-macro_textattr(RightIndent,int,wrap)
+macro_textattr(Tabs,wxArrayInt,TABS,wrap)
+macro_textattr(LeftIndent,int,LEFT_INDENT,wrap)
+macro_textattr(RightIndent,int,RIGHT_INDENT,wrap)
 
-macro_textattr(FontSize,int,wrap)
+macro_textattr(FontSize,int,FONT_SIZE,wrap)
 //macro_textattr(FontPointSize,int,wrap)
 //macro_textattr(FontPixelSize,int,wrap)
-macro_textattr2(FontStyle,Font,wxFontStyle,wrapenum)
-macro_textattr(FontWeight,wxFontWeight,wrapenum)
-macro_textattr(FontFaceName,wxString,wrap)
-macro_textattr(FontUnderlined,bool,wrap)
-macro_textattr(FontStrikethrough,bool,wrap)
-macro_textattr(FontEncoding,wxFontEncoding,wrapenum)
-macro_textattr(FontFamily,wxFontFamily,wrapenum)
+macro_textattr2(FontStyle,Font,wxFontStyle,FONT_ITALIC,wrapenum)
+macro_textattr(FontWeight,wxFontWeight,FONT_WEIGHT,wrapenum)
+macro_textattr(FontFaceName,wxString,FONT_FACE,wrap)
+macro_textattr(FontUnderlined,bool,FONT_UNDERLINE,wrap)
+macro_textattr(FontStrikethrough,bool,FONT_STRIKETHROUGH,wrap)
+macro_textattr(FontEncoding,wxFontEncoding,FONT_ENCODING,wrapenum)
+macro_textattr(FontFamily,wxFontFamily,FONT_FAMILY,wrapenum)
 
-macro_textattr(Font,wxFont,wrap)
+macro_textattr(Font,wxFont,FONT,wrap)
 
-macro_textattr(CharacterStyleName,wxString,wrap)
-macro_textattr(ParagraphStyleName,wxString,wrap)
-macro_textattr(ListStyleName,wxString,wrap)
-macro_textattr(ParagraphSpacingAfter,int,wrap)
-macro_textattr(ParagraphSpacingBefore,int,wrap)
-macro_textattr(LineSpacing,int,wrap)
-macro_textattr(BulletStyle,wxTextAttrBulletStyle,wrapenum)
-macro_textattr(BulletNumber,int,wrap)
-macro_textattr(BulletText,wxString,wrap)
+macro_textattr(CharacterStyleName,wxString,CHARACTER_STYLE_NAME,wrap)
+macro_textattr(ParagraphStyleName,wxString,PARAGRAPH_STYLE_NAME,wrap)
+macro_textattr(ListStyleName,wxString,LIST_STYLE_NAME,wrap)
+macro_textattr(ParagraphSpacingAfter,int,PARA_SPACING_AFTER,wrap)
+macro_textattr(ParagraphSpacingBefore,int,PARA_SPACING_BEFORE,wrap)
+macro_textattr(LineSpacing,int,LINE_SPACING,wrap)
+
+macro_textattr(BulletStyle,wxTextAttrBulletStyle,BULLET_STYLE,wrapenum)
+macro_textattr(BulletNumber,int,BULLET_NUMBER,wrap)
+macro_textattr(BulletText,wxString,BULLET_TEXT,wrap)
 macro_attr(BulletFont,wxString)
-macro_textattr(BulletName,wxString,wrap)
-macro_textattr(URL,wxString,wrap)
+macro_textattr(BulletName,wxString,BULLET_NAME,wrap)
+
+macro_textattr(URL,wxString,URL,wrap)
 
 
 }
@@ -127,6 +132,32 @@ macro_textattr(URL,wxString,wrap)
  * the font encoding of the TextAttr, Encoding
  */
 
+/* Document-attr: font
+ * the font of the TextAttr, WX::Font
+ */
+
+
+/* Document-attr: bullet_style
+ * the bullet style of the TextAttr, Symbol
+ */
+/* Document-attr: bullet_number
+ * the bullet number of the TextAttr, Integer
+ */
+/* Document-attr: bullet_text
+ * the bullet text of the TextAttr, String
+ */
+/* Document-attr: bullet_font
+ * the bullet font of the TextAttr, String
+ */
+/* Document-attr: bullet_name
+ * the bullet name of the TextAttr, String
+ */
+
+/* Document-attr: url
+ * the URL of the TextAttr, String
+ */
+
+
 DLL_LOCAL void Init_WXTextAttr(VALUE rb_mWX)
 {
 #if 0
@@ -158,6 +189,14 @@ DLL_LOCAL void Init_WXTextAttr(VALUE rb_mWX)
 	rb_define_attr(rb_cWXTextAttr,"paragraph_spacing_after",1,1);
 	rb_define_attr(rb_cWXTextAttr,"paragraph_Spacing_before",1,1);
 	rb_define_attr(rb_cWXTextAttr,"line_spacing",1,1);
+
+	rb_define_attr(rb_cWXTextAttr,"bullet_style",1,1);
+	rb_define_attr(rb_cWXTextAttr,"bullet_number",1,1);
+	rb_define_attr(rb_cWXTextAttr,"bullet_text",1,1);
+	rb_define_attr(rb_cWXTextAttr,"bullet_font",1,1);
+	rb_define_attr(rb_cWXTextAttr,"bullet_name",1,1);
+
+	rb_define_attr(rb_cWXTextAttr,"url",1,1);
 
 #endif
 
@@ -196,6 +235,13 @@ DLL_LOCAL void Init_WXTextAttr(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXTextAttr,"paragraph_Spacing_before",_getParagraphSpacingBefore,_setParagraphSpacingBefore);
 	rb_define_attr_method(rb_cWXTextAttr,"line_spacing",_getLineSpacing,_setLineSpacing);
 
+	rb_define_attr_method(rb_cWXTextAttr,"bullet_style",_getBulletStyle,_setBulletStyle);
+	rb_define_attr_method(rb_cWXTextAttr,"bullet_number",_getBulletNumber,_setBulletNumber);
+	rb_define_attr_method(rb_cWXTextAttr,"bullet_text",_getBulletText,_setBulletText);
+	rb_define_attr_method(rb_cWXTextAttr,"bullet_font",_getBulletFont,_setBulletFont);
+	rb_define_attr_method(rb_cWXTextAttr,"bullet_name",_getBulletName,_setBulletName);
+
+	rb_define_attr_method(rb_cWXTextAttr,"url",_getURL,_setURL);
 
 	registerType<wxTextAttr>(rb_cWXTextAttr);
 
@@ -205,6 +251,27 @@ DLL_LOCAL void Init_WXTextAttr(VALUE rb_mWX)
 		->add(wxTEXT_ALIGNMENT_CENTER,"center")
 		->add(wxTEXT_ALIGNMENT_RIGHT,"right")
 		->add(wxTEXT_ALIGNMENT_JUSTIFIED,"justified");
+
+	registerEnum<wxTextAttrBulletStyle>("wxTextAttrBulletStyle")
+		->add(wxTEXT_ATTR_BULLET_STYLE_NONE,"none")
+		->add(wxTEXT_ATTR_BULLET_STYLE_ARABIC,"arabic")
+		->add(wxTEXT_ATTR_BULLET_STYLE_LETTERS_UPPER,"letters_upper")
+		->add(wxTEXT_ATTR_BULLET_STYLE_LETTERS_LOWER,"letters_lower")
+		->add(wxTEXT_ATTR_BULLET_STYLE_ROMAN_UPPER,"roman_upper")
+		->add(wxTEXT_ATTR_BULLET_STYLE_ROMAN_LOWER,"roman_lower")
+		->add(wxTEXT_ATTR_BULLET_STYLE_SYMBOL,"symbol")
+		->add(wxTEXT_ATTR_BULLET_STYLE_BITMAP,"bitmap")
+		->add(wxTEXT_ATTR_BULLET_STYLE_PARENTHESES,"parentheses")
+		->add(wxTEXT_ATTR_BULLET_STYLE_PERIOD,"period")
+		->add(wxTEXT_ATTR_BULLET_STYLE_STANDARD,"standard")
+		->add(wxTEXT_ATTR_BULLET_STYLE_RIGHT_PARENTHESIS,"right_parentheses")
+		->add(wxTEXT_ATTR_BULLET_STYLE_OUTLINE,"outline")
+
+		->add(wxTEXT_ATTR_BULLET_STYLE_ALIGN_LEFT,"align_left")
+		->add(wxTEXT_ATTR_BULLET_STYLE_ALIGN_RIGHT,"align_right")
+		->add(wxTEXT_ATTR_BULLET_STYLE_ALIGN_CENTRE,"align_center")
+
+		->add(wxTEXT_ATTR_BULLET_STYLE_CONTINUATION,"continuation");
 
 #endif
 
