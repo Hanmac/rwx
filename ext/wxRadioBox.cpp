@@ -82,6 +82,47 @@ DLL_LOCAL VALUE _setItemString(VALUE self,VALUE idx,VALUE val)
 	return self;
 }
 
+
+
+DLL_LOCAL VALUE _getItemShown(VALUE self,VALUE idx)
+{
+	int cidx = NUM2INT(idx);
+	if(check_index(idx,_self->GetCount()))
+		return wrap(_self->IsItemShown(cidx));
+	return Qnil;
+}
+
+DLL_LOCAL VALUE _setItemShown(VALUE self,VALUE idx,VALUE val)
+{
+	rb_check_frozen(self);
+
+	int cidx = NUM2INT(idx);
+	if(check_index(idx,_self->GetCount()))
+		_self->Show(cidx,RTEST(val));
+
+	return self;
+}
+
+
+DLL_LOCAL VALUE _getItemEnabled(VALUE self,VALUE idx)
+{
+	int cidx = NUM2INT(idx);
+	if(check_index(idx,_self->GetCount()))
+		return wrap(_self->IsItemEnabled(cidx));
+	return Qnil;
+}
+
+DLL_LOCAL VALUE _setItemEnabled(VALUE self,VALUE idx,VALUE val)
+{
+	rb_check_frozen(self);
+
+	int cidx = NUM2INT(idx);
+	if(check_index(idx,_self->GetCount()))
+		_self->Enable(cidx,RTEST(val));
+
+	return self;
+}
+
 }
 }
 
@@ -104,6 +145,16 @@ DLL_LOCAL void Init_WXRadioBox(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXRadioBox,"get_item_string",RUBY_METHOD_FUNC(_getItemString),1);
 	rb_define_method(rb_cWXRadioBox,"set_item_string",RUBY_METHOD_FUNC(_setItemString),2);
+
+	rb_define_method(rb_cWXRadioBox,"get_item_shown",RUBY_METHOD_FUNC(_getItemShown),1);
+	rb_define_method(rb_cWXRadioBox,"set_item_shown",RUBY_METHOD_FUNC(_setItemShown),2);
+
+	rb_define_alias(rb_cWXRadioBox,"item_shown?","get_item_shown");
+
+	rb_define_method(rb_cWXRadioBox,"get_item_enabled",RUBY_METHOD_FUNC(_getItemEnabled),1);
+	rb_define_method(rb_cWXRadioBox,"set_item_enabled",RUBY_METHOD_FUNC(_setItemEnabled),2);
+
+	rb_define_alias(rb_cWXRadioBox,"item_enabled?","get_item_enabled");
 
 	rb_define_attr_method(rb_cWXRadioBox,"selection",_getSelection,_setSelection);
 	rb_define_attr_method(rb_cWXRadioBox,"string_selection",_getStringSelection,_setStringSelection);
