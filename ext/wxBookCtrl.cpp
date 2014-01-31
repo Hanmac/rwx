@@ -81,9 +81,13 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-DLL_LOCAL VALUE _page(VALUE self,VALUE i)
+DLL_LOCAL VALUE _page(VALUE self,VALUE idx)
 {
-	return wrap(_self->GetPage(NUM2UINT(i)));
+	unsigned int cidx(NUM2UINT(idx));
+
+	if(check_index(cidx,_self->GetPageCount()))
+		return wrap(_self->GetPage(NUM2UINT(cidx)));
+	return Qnil;
 }
 
 DLL_LOCAL VALUE _each_size(VALUE self)
@@ -98,6 +102,49 @@ DLL_LOCAL VALUE _each(VALUE self)
 	std::size_t count = _self->GetPageCount();
 	for(std::size_t i = 0; i < count; ++i)
 		rb_yield(wrap(_self->GetPage(i)));
+	return self;
+}
+
+
+DLL_LOCAL VALUE _get_page_text(VALUE self,VALUE idx)
+{
+	unsigned int cidx(NUM2UINT(idx));
+	if(check_index(cidx,_self->GetPageCount()))
+		return wrap(_self->GetPageText(cidx));
+	return Qnil;
+}
+
+DLL_LOCAL VALUE _set_page_text(VALUE self,VALUE idx,VALUE str)
+{
+	rb_check_frozen(self);
+	unsigned int cidx(NUM2UINT(idx));
+	if(check_index(cidx,_self->GetPageCount()))
+		_self->SetPageText(cidx,unwrap<wxString>(str));
+	return self;
+}
+
+DLL_LOCAL VALUE _get_page_image(VALUE self,VALUE idx)
+{
+	unsigned int cidx(NUM2UINT(idx));
+	if(check_index(cidx,_self->GetPageCount()))
+		return INT2NUM(_self->GetPageImage(cidx));
+	return Qnil;
+}
+
+DLL_LOCAL VALUE _set_page_image(VALUE self,VALUE idx,VALUE iid)
+{
+	rb_check_frozen(self);
+	unsigned int cidx(NUM2UINT(idx));
+
+	if(check_index(cidx,_self->GetPageCount()))
+	{
+		unsigned int ciid(NUM2UINT(iid));
+		wxImageList *imglist = _self->GetImageList();
+		if(imglist && check_index(iid,imglist->GetImageCount()))
+		{
+			_self->SetPageImage(cidx,ciid);
+		}
+	}
 	return self;
 }
 
@@ -298,6 +345,12 @@ DLL_LOCAL void Init_WXBookCtrl(VALUE rb_mWX)
 	rb_define_method(rb_cWXBookCtrlBase,"each_page",RUBY_METHOD_FUNC(_each),0);
 
 	rb_define_method(rb_cWXBookCtrlBase,"page",RUBY_METHOD_FUNC(_page),1);
+
+	rb_define_method(rb_cWXBookCtrlBase,"get_page_text",RUBY_METHOD_FUNC(_get_page_text),1);
+	rb_define_method(rb_cWXBookCtrlBase,"set_page_text",RUBY_METHOD_FUNC(_set_page_text),2);
+
+	rb_define_method(rb_cWXBookCtrlBase,"get_page_image",RUBY_METHOD_FUNC(_get_page_image),1);
+	rb_define_method(rb_cWXBookCtrlBase,"set_page_image",RUBY_METHOD_FUNC(_set_page_image),2);
 
 	rb_define_method(rb_cWXBookCtrlBase,"current_page",RUBY_METHOD_FUNC(_GetCurrentPage),0);
 
