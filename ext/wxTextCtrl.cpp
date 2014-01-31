@@ -59,7 +59,13 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_flag_option(hash,"readonly",wxTE_READONLY,style);
 			set_hash_flag_option(hash,"multiline",wxTE_MULTILINE,style);
 			set_hash_flag_option(hash,"password",wxTE_PASSWORD,style);
+			set_hash_flag_option(hash,"process_tab",wxTE_PROCESS_TAB,style);
+			set_hash_flag_option(hash,"process_enter",wxTE_PROCESS_ENTER,style);
 
+			if(((style & wxTE_MULTILINE) != 0) && ((style & (wxTE_PASSWORD|wxTE_PROCESS_ENTER)) != 0) )
+			{
+				rb_raise(rb_eArgError,"password style and process enter style are for singleline only");
+			}
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),id,value,wxDefaultPosition,wxDefaultSize,style);
