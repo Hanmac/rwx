@@ -7,7 +7,7 @@
 
 #include "wxFilePicker.hpp"
 #include "wxFileDirPicker.hpp"
-
+#include "wxFileCtrlBase.hpp"
 
 VALUE rb_cWXFilePicker;
 
@@ -57,7 +57,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 			set_hash_option(hash,"path",path);
 			set_hash_option(hash,"message",message);
-			set_hash_option(hash,"wildcard",wildCard);
+			set_hash_option(hash,"wildcard",wildCard,unwrapWildCard);
 
 			set_hash_flag_option(hash,"use_textctrl",wxPB_USE_TEXTCTRL,style);
 			set_hash_flag_option(hash,"small",wxPB_SMALL,style);

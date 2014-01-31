@@ -9,6 +9,19 @@
 
 VALUE rb_cWXFileCtrlBase,rb_cWXFileCtrlEvent;
 
+wxString unwrapWildCard(const VALUE &val)
+{
+	wxString wildcard(unwrap<wxString>(val));
+	wxArrayString wild,desc;
+
+	if(!wxParseCommonDialogsFilter(wildcard,wild,desc)){
+		rb_raise(rb_eArgError,"'%s' is not a valid wildcard",wildcard.c_str());
+		return wxEmptyString;
+	}
+	return wildcard;
+
+}
+
 #if wxUSE_FILECTRL
 template <>
 wxFileCtrlBase* unwrap<wxFileCtrlBase*>(const VALUE &arg)
@@ -21,7 +34,7 @@ wxFileCtrlBase* unwrap<wxFileCtrlBase*>(const VALUE &arg)
 namespace RubyWX {
 namespace FileCtrlBase {
 
-macro_attr(Wildcard,wxString)
+macro_attr_with_func(Wildcard,wrap,unwrapWildCard)
 macro_attr(Directory,wxString)
 macro_attr(Filename,wxString)
 macro_attr(Path,wxString)
@@ -52,7 +65,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		VALUE temp;
-		set_option(wildcard,Wildcard,wxString)
+		set_option_func(wildcard,Wildcard,unwrapWildCard)
 		set_option(directory,Directory,wxString)
 		set_option(filename,Filename,wxString)
 		set_option(path,Path,wxString)

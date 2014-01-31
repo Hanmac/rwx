@@ -13,6 +13,9 @@
 extern VALUE rb_cWXFileCtrlBase;
 
 void Init_WXFileCtrlBase(VALUE rb_mWX);
+
+wxString unwrapWildCard(const VALUE& val);
+
 #if wxUSE_FILECTRL
 #include <wx/filectrl.h>
 #endif

@@ -54,7 +54,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 			set_hash_option(hash,"default_directory",defaultDirectory);
 			set_hash_option(hash,"default_filename",defaultFilename);
-			set_hash_option(hash,"default_wildcard",defaultWildCard);
+			set_hash_option(hash,"default_wildcard",defaultWildCard,unwrapWildCard);
+
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),id,defaultDirectory,defaultFilename,defaultWildCard,style);

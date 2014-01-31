@@ -7,6 +7,7 @@
 
 
 #include "wxFileDialog.hpp"
+#include "wxFileCtrlBase.hpp"
 #include "wxApp.hpp"
 
 VALUE rb_cWXFileDialog;
@@ -55,7 +56,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"directory",directory);
 			set_hash_option(hash,"filename",filename);
 			set_hash_option(hash,"style",style);
-			set_hash_option(hash,"wildcard",wildcard);
+			set_hash_option(hash,"wildcard",wildcard,unwrapWildCard);
+
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),message,directory,filename,wildcard,style);
@@ -69,7 +71,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	{
 		VALUE temp;
 
-		set_option(wildcard,Wildcard,wxString)
+		set_option_func(wildcard,Wildcard,unwrapWildCard)
 		set_option(message,Message,wxString)
 		set_option(directory,Directory,wxString)
 		set_option(filename,Filename,wxString)
@@ -82,7 +84,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 macro_attr(Directory,wxString)
 macro_attr(Filename,wxString)
-macro_attr(Wildcard,wxString)
+macro_attr_with_func(Wildcard,wrap,unwrapWildCard)
 macro_attr(Message,wxString)
 macro_attr(Path,wxString)
 
