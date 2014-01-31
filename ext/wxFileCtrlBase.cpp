@@ -15,7 +15,7 @@ wxString unwrapWildCard(const VALUE &val)
 	wxArrayString wild,desc;
 
 	if(!wxParseCommonDialogsFilter(wildcard,wild,desc)){
-		rb_raise(rb_eArgError,"'%s' is not a valid wildcard",wildcard.c_str());
+		rb_raise(rb_eArgError,"'%s' is not a valid wildcard",unwrap<char*>(val));
 		return wxEmptyString;
 	}
 	return wildcard;
