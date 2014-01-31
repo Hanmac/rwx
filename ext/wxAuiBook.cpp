@@ -7,6 +7,7 @@
 
 
 #include "wxBookCtrl.hpp"
+#include "wxBitmap.hpp"
 
 VALUE rb_cWXAuiNotebook;
 
@@ -53,6 +54,44 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_call_super(argc,argv);
 	return self;
 }
+
+
+
+DLL_LOCAL VALUE _get_page_bitmap(VALUE self,VALUE idx)
+{
+	unsigned int cidx(NUM2UINT(idx));
+	if(check_index(cidx,_self->GetPageCount()))
+		return wrap(_self->GetPageBitmap(cidx));
+	return Qnil;
+}
+
+DLL_LOCAL VALUE _set_page_bitmap(VALUE self,VALUE idx,VALUE str)
+{
+	rb_check_frozen(self);
+	unsigned int cidx(NUM2UINT(idx));
+	if(check_index(cidx,_self->GetPageCount()))
+		_self->SetPageBitmap(cidx,unwrap<wxBitmap>(str));
+	return self;
+}
+
+
+DLL_LOCAL VALUE _get_page_tooltip(VALUE self,VALUE idx)
+{
+	unsigned int cidx(NUM2UINT(idx));
+	if(check_index(cidx,_self->GetPageCount()))
+		return wrap(_self->GetPageToolTip(cidx));
+	return Qnil;
+}
+
+DLL_LOCAL VALUE _set_page_tooltip(VALUE self,VALUE idx,VALUE str)
+{
+	rb_check_frozen(self);
+	unsigned int cidx(NUM2UINT(idx));
+	if(check_index(cidx,_self->GetPageCount()))
+		_self->SetPageToolTip(cidx,unwrap<wxString>(str));
+	return self;
+}
+
 
 
 /*
@@ -227,6 +266,12 @@ DLL_LOCAL void Init_WXAuiNoteBookCtrl(VALUE rb_mWX)
 	rb_define_method(rb_cWXAuiNotebook,"add_page",RUBY_METHOD_FUNC(_addPage),-1);
 	rb_define_method(rb_cWXAuiNotebook,"insert_page",RUBY_METHOD_FUNC(_insertPage),-1);
 	rb_define_method(rb_cWXAuiNotebook,"prepend_page",RUBY_METHOD_FUNC(_prependPage),-1);
+
+	rb_define_method(rb_cWXAuiNotebook,"get_page_tooltip",RUBY_METHOD_FUNC(_get_page_tooltip),1);
+	rb_define_method(rb_cWXAuiNotebook,"set_page_tooltip",RUBY_METHOD_FUNC(_set_page_tooltip),2);
+
+	rb_define_method(rb_cWXAuiNotebook,"get_page_bitmap",RUBY_METHOD_FUNC(_get_page_bitmap),1);
+	rb_define_method(rb_cWXAuiNotebook,"set_page_bitmap",RUBY_METHOD_FUNC(_set_page_bitmap),2);
 
 //	rb_define_method(rb_cWXAuiNotebook,"each_page",RUBY_METHOD_FUNC(_each),0);
 //	rb_define_method(rb_cWXAuiNotebook,"page",RUBY_METHOD_FUNC(_page),1);
