@@ -7,6 +7,7 @@
 
 #include "wxDirPicker.hpp"
 #include "wxFileDirPicker.hpp"
+#include "wxPickerBase.hpp"
 
 VALUE rb_cWXDirPicker;
 
@@ -55,8 +56,10 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"path",path);
 			set_hash_option(hash,"message",message);
 
-			set_hash_flag_option(hash,"use_textctrl",wxPB_USE_TEXTCTRL,style);
-			set_hash_flag_option(hash,"small",wxPB_SMALL,style);
+			PickerBase::set_style_flags(hash,style);
+
+			set_hash_flag_option(hash,"must_exist",wxDIRP_DIR_MUST_EXIST,style);
+			set_hash_flag_option(hash,"change_dir",wxDIRP_CHANGE_DIR,style);
 
 		}
 
@@ -91,6 +94,9 @@ DLL_LOCAL void Init_WXDirPicker(VALUE rb_mWX)
 	rb_define_alloc_func(rb_cWXDirPicker,_alloc);
 
 	rb_define_method(rb_cWXDirPicker,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
+
+	rb_define_const(rb_cWXDirPicker,"MUST_EXIST",INT2NUM(wxDIRP_DIR_MUST_EXIST));
+	rb_define_const(rb_cWXDirPicker,"CHANGE_DIR",INT2NUM(wxDIRP_CHANGE_DIR));
 
 	registerEventType("dirpicker_changed",wxEVT_DIRPICKER_CHANGED,rb_cWXFileDirPickerEvent);
 
