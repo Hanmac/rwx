@@ -58,6 +58,16 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"style",style);
 			set_hash_option(hash,"wildcard",wildcard,unwrapWildCard);
 
+			TopLevel::set_style_flags(hash,style);
+			set_hash_flag_option(hash,"open",wxFD_OPEN,style);
+			set_hash_flag_option(hash,"save",wxFD_SAVE,style);
+			set_hash_flag_option(hash,"overwrite_prompt",wxFD_OVERWRITE_PROMPT,style);
+			set_hash_flag_option(hash,"must_exist",wxFD_FILE_MUST_EXIST,style);
+			set_hash_flag_option(hash,"multiple",wxFD_MULTIPLE,style);
+			set_hash_flag_option(hash,"change_dir",wxFD_CHANGE_DIR,style);
+			set_hash_flag_option(hash,"preview",wxFD_PREVIEW,style);
+
+
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),message,directory,filename,wildcard,style);
@@ -173,6 +183,14 @@ DLL_LOCAL void Init_WXFileDialog(VALUE rb_mWX)
 
 	rb_define_module_function(rb_mWX,"load_dialog",RUBY_METHOD_FUNC(_loadFileSelector),-1);
 	rb_define_module_function(rb_mWX,"save_dialog",RUBY_METHOD_FUNC(_saveFileSelector),-1);
+
+	rb_define_const(rb_cWXFileDialog,"OPEN",INT2NUM(wxFD_OPEN));
+	rb_define_const(rb_cWXFileDialog,"SAVE",INT2NUM(wxFD_SAVE));
+	rb_define_const(rb_cWXFileDialog,"OVERWRITE_PROMPT",INT2NUM(wxFD_OVERWRITE_PROMPT));
+	rb_define_const(rb_cWXFileDialog,"MUST_EXIST",INT2NUM(wxFD_FILE_MUST_EXIST));
+	rb_define_const(rb_cWXFileDialog,"MULTIPLE",INT2NUM(wxFD_MULTIPLE));
+	rb_define_const(rb_cWXFileDialog,"CHANGE_DIR",INT2NUM(wxFD_CHANGE_DIR));
+	rb_define_const(rb_cWXFileDialog,"PREVIEW",INT2NUM(wxFD_PREVIEW));
 
 	registerInfo<wxFileDialog>(rb_cWXFileDialog);
 #endif
