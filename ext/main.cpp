@@ -357,10 +357,14 @@ bool check_file_saveable(const wxString& path)
 
 void set_hash_flag_option(VALUE hash,const char* name,const int& flag,int& val)
 {
-	bool tmp(false);
-	set_hash_option(hash,name,tmp);
-	if(tmp)
-		val |= flag;
+	VALUE temp;
+	if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern(name)))))
+	{
+		if(RTEST(temp))
+			val |= flag;
+		else
+			val &= ~flag;
+	}
 }
 
 bool nil_check(VALUE window,bool raise)
