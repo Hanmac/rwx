@@ -20,6 +20,22 @@ macro_attr(Icon,wxIcon)
 macro_attr(DefaultItem,wxWindow*)
 macro_attr(TmpDefaultItem,wxWindow*)
 
+void set_style_flags(VALUE hash,int& flags)
+{
+
+	set_hash_flag_option(hash,"stay_on_top",wxSTAY_ON_TOP,flags);
+	set_hash_flag_option(hash,"iconize",wxICONIZE,flags);
+	set_hash_flag_option(hash,"minimize",wxMINIMIZE,flags);
+	set_hash_flag_option(hash,"maximize",wxMAXIMIZE,flags);
+	set_hash_flag_option(hash,"close_box",wxCLOSE_BOX,flags);
+	set_hash_flag_option(hash,"system_menu",wxSYSTEM_MENU,flags);
+	set_hash_flag_option(hash,"minimize_box",wxMINIMIZE_BOX,flags);
+	set_hash_flag_option(hash,"maximize_box",wxMAXIMIZE_BOX,flags);
+	set_hash_flag_option(hash,"tiny_caption",wxTINY_CAPTION,flags);
+	set_hash_flag_option(hash,"resize_border",wxRESIZE_BORDER,flags);
+
+}
+
 //APP_PROTECT(wxTopLevelWindow)
 
 /*
