@@ -78,6 +78,24 @@ DLL_LOCAL VALUE _getSelections(VALUE self)
 
 }
 
+
+DLL_LOCAL VALUE _setSelections(VALUE self,VALUE val)
+{
+	rb_check_frozen(self);
+
+	if(NIL_P(val)) {
+		_self->SetSelection(wxNOT_FOUND);
+	} else {
+		wxArrayInt data(unwrap<wxArrayInt>(val));
+
+		for(wxArrayInt::iterator it = data.begin();it != data.end();++it)
+			if(check_index(*it,_self->GetCount()))
+				_self->SetSelection(*it);
+	}
+	return val;
+}
+
+
 DLL_LOCAL VALUE _getStringSelections(VALUE self)
 {
 	if(_self->HasMultipleSelection())
@@ -136,6 +154,7 @@ DLL_LOCAL void Init_WXListBox(VALUE rb_mWX)
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
 	rb_mWXItemContainer = rb_define_module_under(rb_mWX,"ItemContainer");
 
+	rb_define_attr(rb_cWXListBox,"selection",1,1);
 	rb_define_attr(rb_cWXListBox,"string_selection",1,1);
 #endif
 #if wxUSE_LISTBOX
@@ -149,7 +168,7 @@ DLL_LOCAL void Init_WXListBox(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXListBox,"each_selection",RUBY_METHOD_FUNC(_each_selection),0);
 
-	rb_define_method(rb_cWXListBox,"selection",RUBY_METHOD_FUNC(_getSelections),0);
+	rb_define_attr_method(rb_cWXListBox,"selection",_getSelections,_setSelections);
 
 	rb_define_attr_method(rb_cWXListBox,"string_selection",_getStringSelections,_setStringSelection);
 
