@@ -45,7 +45,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		wxString message(wxEmptyString);
 		wxString caption(wxGetTextFromUserPromptStr);
 		wxString value(wxEmptyString);
-		long style(wxTextEntryDialogStyle);
+		int style(wxTextEntryDialogStyle);
 
 		if(rb_obj_is_kind_of(hash,rb_cHash))
 		{
@@ -55,6 +55,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"value",value);
 
 			set_hash_option(hash,"style",style);
+
+			TopLevel::set_style_flags(hash,style);
 		}
 		_self->Create(unwrap<wxWindow*>(parent),
 				message,caption,value,style);
