@@ -41,6 +41,18 @@ macro_attr(Path,wxString)
 
 macro_attr(FilterIndex,int)
 
+
+void set_style_flags(VALUE hash,int& flags)
+{
+
+	set_hash_flag_option(hash,"open",wxFC_OPEN,flags);
+	set_hash_flag_option(hash,"save",wxFC_SAVE,flags);
+	set_hash_flag_option(hash,"multiple",wxFC_MULTIPLE,flags);
+	set_hash_flag_option(hash,"no_show_hidden",wxFC_NOSHOWHIDDEN,flags);
+
+}
+
+
 /*
  * call-seq:
  *   FileCtrlBase.new(parent, [options])
@@ -134,6 +146,11 @@ DLL_LOCAL void Init_WXFileCtrlBase(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXFileCtrlBase,"directory",_getDirectory,_setDirectory);
 	rb_define_attr_method(rb_cWXFileCtrlBase,"filename",_getFilename,_setFilename);
 	rb_define_attr_method(rb_cWXFileCtrlBase,"filter_index",_getFilterIndex,_setFilterIndex);
+
+	rb_define_const(rb_cWXFileCtrlBase,"OPEN",INT2NUM(wxFC_OPEN));
+	rb_define_const(rb_cWXFileCtrlBase,"SAVE",INT2NUM(wxFC_SAVE));
+	rb_define_const(rb_cWXFileCtrlBase,"MULTIPLE",INT2NUM(wxFC_MULTIPLE));
+	rb_define_const(rb_cWXFileCtrlBase,"NOSHOWHIDDEN",INT2NUM(wxFC_NOSHOWHIDDEN));
 
 	rb_cWXFileCtrlEvent = rb_define_class_under(rb_cWXEvent,"FileCtrl",rb_cWXEvent);
 	registerEventType("filectrl_selectionchanged",wxEVT_FILECTRL_SELECTIONCHANGED,rb_cWXFileCtrlEvent);

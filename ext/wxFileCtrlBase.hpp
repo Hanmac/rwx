@@ -20,4 +20,13 @@ wxString unwrapWildCard(const VALUE& val);
 #include <wx/filectrl.h>
 #endif
 
+
+namespace RubyWX {
+namespace FileCtrlBase {
+
+void set_style_flags(VALUE hash,int& flags);
+
+}
+}
+
 #endif /* WXFILECTRLBASE_HPP_ */
