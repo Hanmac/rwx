@@ -16,4 +16,13 @@ extern VALUE rb_cWXPickerBase;
 void Init_WXPickerBase(VALUE rb_mWX);
 
 
+namespace RubyWX {
+namespace PickerBase {
+
+void set_style_flags(VALUE hash,int& flags);
+
+}
+}
+
+
 #endif /* WXPICKERBASE_HPP_ */

@@ -31,6 +31,16 @@ macro_attr_bool(PickerCtrlGrowable)
 macro_attr(TextCtrl,wxTextCtrl*)
 macro_attr(PickerCtrl,wxControl*)
 
+
+void set_style_flags(VALUE hash,int& flags)
+{
+
+	set_hash_flag_option(hash,"use_textctrl",wxPB_USE_TEXTCTRL,flags);
+	set_hash_flag_option(hash,"small",wxPB_SMALL,flags);
+
+}
+
+
 }
 }
 
@@ -70,6 +80,7 @@ DLL_LOCAL void Init_WXPickerBase(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXPickerBase,"picker_ctrl_growable",_getPickerCtrlGrowable,_setPickerCtrlGrowable);
 
 	rb_define_const(rb_cWXPickerBase,"USE_TEXTCTRL",INT2NUM(wxPB_USE_TEXTCTRL));
+	rb_define_const(rb_cWXPickerBase,"SMALL",INT2NUM(wxPB_SMALL));
 #endif
 
 }
