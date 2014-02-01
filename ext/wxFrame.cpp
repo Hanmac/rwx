@@ -50,6 +50,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 				set_hash_option(hash,"style",style);
 
 				set_hash_option(hash,"title",title);
+
+				TopLevel::set_style_flags(hash,style);
 			}
 
 			if(title.empty() && !wxTheApp->GetTopWindow())
