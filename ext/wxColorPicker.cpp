@@ -52,8 +52,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"color",color);
 			set_hash_option(hash,"style",style);
 
-			set_hash_flag_option(hash,"use_textctrl",wxPB_USE_TEXTCTRL,style);
-			set_hash_flag_option(hash,"small",wxPB_SMALL,style);
+			PickerBase::set_style_flags(hash,style);
+
 			set_hash_flag_option(hash,"show_label",wxCLRP_SHOW_LABEL,style);
 
 		}
