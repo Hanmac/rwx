@@ -49,6 +49,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(name,"id",id,unwrapID);
 			set_hash_option(name,"title",title);
 			set_hash_option(name,"style",style);
+
+			TopLevel::set_style_flags(hash,style);
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),id,title,wxDefaultPosition,wxDefaultSize,style);
