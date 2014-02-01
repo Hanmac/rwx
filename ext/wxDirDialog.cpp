@@ -49,6 +49,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"message",message);
 			set_hash_option(hash,"path",path);
 			set_hash_option(hash,"style",style);
+
+			TopLevel::set_style_flags(hash,style);
+			set_hash_flag_option(hash,"must_exist",wxDD_DIR_MUST_EXIST,style);
+			set_hash_flag_option(hash,"change_dir",wxDD_CHANGE_DIR,style);
+
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),message,path,style);
@@ -92,6 +97,7 @@ DLL_LOCAL VALUE _getUserDir(int argc,VALUE *argv,VALUE self)
 		set_hash_option(hash,"pos",pos);
 
 		set_hash_flag_option(hash,"must_exist",wxDD_DIR_MUST_EXIST,style);
+		set_hash_flag_option(hash,"change_dir",wxDD_CHANGE_DIR,style);
 
 	}
 
@@ -119,7 +125,8 @@ DLL_LOCAL void Init_WXDirDialog(VALUE rb_mWX)
 	rb_define_module_function(rb_mWX,"dir_dialog",RUBY_METHOD_FUNC(_getUserDir),-1);
 
 	rb_define_const(rb_cWXDirDialog,"DEFAULT_STYLE",INT2NUM(wxDD_DEFAULT_STYLE));
-	rb_define_const(rb_cWXDirDialog,"DIR_MUST_EXIST",INT2NUM(wxDD_DIR_MUST_EXIST));
+	rb_define_const(rb_cWXDirDialog,"MUST_EXIST",INT2NUM(wxDD_DIR_MUST_EXIST));
+	rb_define_const(rb_cWXDirDialog,"CHANGE_DIR",INT2NUM(wxDD_CHANGE_DIR));
 
 	registerInfo<wxDirDialog>(rb_cWXDirDialog);
 #endif
