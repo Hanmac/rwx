@@ -70,8 +70,8 @@ DLL_LOCAL VALUE _Insert(VALUE self,VALUE idx,VALUE items)
 {
 	rb_check_frozen(self);
 
-	int cidx = NUM2INT(idx);
-	if(check_index(cidx,_self->GetCount()))
+	unsigned int cidx = NUM2UINT(idx);
+	if(check_index(cidx+1,_self->GetCount()))
 		_self->Insert(unwrap<wxArrayString>(items),cidx);
 
 	return self;
@@ -82,7 +82,7 @@ DLL_LOCAL VALUE _Delete(VALUE self,VALUE idx)
 {
 	rb_check_frozen(self);
 
-	int cidx = NUM2INT(idx);
+	unsigned int cidx = NUM2UINT(idx);
 	if(check_index(cidx,_self->GetCount()))
 		_self->Delete(cidx);
 	return self;
@@ -97,8 +97,8 @@ DLL_LOCAL VALUE _setItems(VALUE self,VALUE items)
 
 DLL_LOCAL VALUE _getItemString(VALUE self,VALUE idx)
 {
-	int cidx = NUM2INT(idx);
-	if(check_index(idx,_self->GetCount()))
+	unsigned int cidx = NUM2UINT(idx);
+	if(check_index(cidx,_self->GetCount()))
 		return wrap(_self->GetString(cidx));
 	return Qnil;
 }
@@ -107,7 +107,7 @@ DLL_LOCAL VALUE _setItemString(VALUE self,VALUE idx,VALUE val)
 {
 	rb_check_frozen(self);
 
-	int cidx = NUM2INT(idx);
+	unsigned int cidx = NUM2UINT(idx);
 	if(check_index(cidx,_self->GetCount()))
 		_self->SetString(cidx,unwrap<wxString>(val));
 
