@@ -35,6 +35,7 @@ if(wx_config = find_executable('wx-config'))
 	  have_func("wxContextHelpButton()","wx/cshelp.h")
     have_func("wxNumberEntryDialog()","wx/numdlg.h")
     have_func("wxPasswordEntryDialog()","wx/textdlg.h")
+    have_func("wxProgressDialog()","wx/progdlg.h")
 	}
 else
 		abort("wx-config executable not found")
