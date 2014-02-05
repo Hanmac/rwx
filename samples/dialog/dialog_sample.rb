@@ -184,8 +184,7 @@ LICENCE
 			}
 		}
 		
-		@frame.sizer = WX::BoxSizer.new {|box|
-			box.orientation = true
+		@frame.sizer = WX::BoxSizer.new(:vertical) {|box|
 			
 			box.add(@info = WX::InfoBar.new(@frame),:expand => true)
 			box.add(@info_adv = WX::InfoBar.new(@frame),:expand => true)

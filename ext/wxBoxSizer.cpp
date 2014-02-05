@@ -16,6 +16,8 @@ namespace BoxSizer {
 
 macro_attr_enum(Orientation,wxOrientation)
 
+singlereturn(IsVertical)
+
 DLL_LOCAL VALUE _alloc(VALUE self)
 {
 	return wrapPtr(new wxBoxSizer(wxHORIZONTAL),self);
@@ -44,6 +46,8 @@ DLL_LOCAL void Init_WXBoxSizer(VALUE rb_mWX)
 	rb_define_alloc_func(rb_cWXBoxSizer,_alloc);
 
 	rb_define_attr_method(rb_cWXBoxSizer,"orientation",_getOrientation,_setOrientation);
+
+	rb_define_method(rb_cWXBoxSizer,"vertical?",RUBY_METHOD_FUNC(_IsVertical),0);
 
 	registerInfo<wxBoxSizer>(rb_cWXBoxSizer);
 

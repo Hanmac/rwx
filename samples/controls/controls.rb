@@ -123,8 +123,7 @@ class A < WX::App
         }
       }
       
-      @frame.sizer = WX::BoxSizer.new {|box|
-        box.orientation = true
+      @frame.sizer = WX::BoxSizer.new(:vertical) {|box|
         
         box.add(@book,:border => true, :expand => true)
         box.add(@text,:proportion => 1, :border => true,  :expand => true)
