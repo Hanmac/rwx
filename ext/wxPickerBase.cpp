@@ -23,7 +23,7 @@ namespace RubyWX {
 namespace PickerBase {
 
 macro_attr(InternalMargin,int)
-macro_attr_con(TextCtrlProportion,int,HasTextCtrl)
+macro_attr_con(TextCtrlProportion,int,_self->HasTextCtrl())
 macro_attr(PickerCtrlProportion,int)
 macro_attr_bool_con(TextCtrlGrowable,HasTextCtrl)
 macro_attr_bool(PickerCtrlGrowable)
