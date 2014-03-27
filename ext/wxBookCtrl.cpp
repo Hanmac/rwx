@@ -86,7 +86,7 @@ DLL_LOCAL VALUE _page(VALUE self,VALUE idx)
 	unsigned int cidx(NUM2UINT(idx));
 
 	if(check_index(cidx,_self->GetPageCount()))
-		return wrap(_self->GetPage(NUM2UINT(cidx)));
+		return wrap(_self->GetPage(cidx));
 	return Qnil;
 }
 
@@ -150,6 +150,32 @@ DLL_LOCAL VALUE _set_page_image(VALUE self,VALUE idx,VALUE iid)
 
 
 
+DLL_LOCAL bool check_imagelist(wxBookCtrlBase* self, VALUE imageid, int& iid)
+{
+	if(NIL_P(imageid))
+		return true;
+
+	iid = NUM2INT(imageid);
+	wxImageList *imglist = self->GetImageList();
+	if(imglist)
+		return check_index(iid,imglist->GetImageCount());
+	return true;
+}
+
+DLL_LOCAL bool check_window(VALUE self,VALUE hash, VALUE window, wxWindow*& w)
+{
+
+	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
+		VALUE argv2[] = {self, hash };
+		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
+		return true;
+	}else if(nil_check(window,!rb_obj_is_kind_of(self,rb_cWXTreebook))) //TODO Tree Ctrl allows nil page, but i can't check that
+	{
+		return window_parent_check(window,_self,w);
+	}
+	return false;
+}
+
 /*
  * call-seq:
  *   add_page(window, text, [select], [bitmap]) -> true/false
@@ -164,6 +190,13 @@ DLL_LOCAL VALUE _set_page_image(VALUE self,VALUE idx,VALUE iid)
  * * bitmap is a Integer and says the position of the bitmap in the image_list
  * ===Return value
  * true/false
+ * === Exceptions
+ * [IndexError]
+ * * bitmap is greater than the list of bitmaps in the image_list
+ * [TypeError]
+ * * window is nil when the BookCtrl does not support it (currently only supported for TreeBookCtrl)
+ * [ArgumentError]
+ * * window does not have this BookCtrl as parent
  *
 */
 DLL_LOCAL VALUE _addPage(int argc,VALUE *argv,VALUE self)
@@ -177,20 +210,9 @@ DLL_LOCAL VALUE _addPage(int argc,VALUE *argv,VALUE self)
 	if(!NIL_P(select))
 		sel = RTEST(select);
 
-	if(!NIL_P(imageid)){
-		iid = NUM2INT(imageid);
-		wxImageList *imglist = _self->GetImageList();
-		if(imglist)
-			check_index(iid,imglist->GetImageCount());
-	}
+	check_imagelist(_self,imageid,iid);
+	check_window(self,hash,window,w);
 
-	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
-		VALUE argv2[] = {self, hash };
-		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
-	}else if(nil_check(window,!rb_obj_is_kind_of(self,rb_cWXTreebook))) //TODO Tree Ctrl allows nil page, but i can't check that
-	{
-		window_parent_check(window,_self,w);
-	}
 	return wrap(_self->AddPage(w,unwrap<wxString>(text),sel,iid));
 }
 
@@ -210,34 +232,36 @@ DLL_LOCAL VALUE _addPage(int argc,VALUE *argv,VALUE self)
  * * bitmap is a Integer and says the position of the bitmap in the image_list
  * ===Return value
  * true/false
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of pages
+ * * bitmap is greater than the list of bitmaps in the image_list
+ * [TypeError]
+ * * window is nil when the BookCtrl does not support it (currently only supported for TreeBookCtrl)
+ * [ArgumentError]
+ * * window does not have this BookCtrl as parent
  *
 */
 DLL_LOCAL VALUE _insertPage(int argc,VALUE *argv,VALUE self)
 {
-	VALUE n,window,text,select,imageid,hash;
+	VALUE idx,window,text,select,imageid,hash;
 	wxWindow *w = NULL;
 	bool sel = false;
 	int iid = -1;
-	rb_scan_args(argc, argv, "32:",&n,&window,&text,&select,&imageid,&hash);
+	rb_scan_args(argc, argv, "32:",&idx,&window,&text,&select,&imageid,&hash);
 
-	if(!NIL_P(select))
-		sel = RTEST(select);
-
-	if(!NIL_P(imageid)){
-		iid = NUM2INT(imageid);
-		wxImageList *imglist = _self->GetImageList();
-		if(imglist)
-			check_index(iid,imglist->GetImageCount());
-	}
-
-	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
-		VALUE argv2[] = {self, hash };
-		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
-	}else if(nil_check(window,!rb_obj_is_kind_of(self,rb_cWXTreebook))) //TODO Tree Ctrl allows nil page, but i can't check that
+	std::size_t cidx = NUM2UINT(idx);
+	if(check_index(cidx,_self->GetPageCount()+1))
 	{
-		window_parent_check(window,_self,w);
+		if(!NIL_P(select))
+			sel = RTEST(select);
+
+		check_imagelist(_self,imageid,iid);
+		check_window(self,hash,window,w);
+
+		return wrap(_self->InsertPage(cidx,w,unwrap<wxString>(text),sel,iid));
 	}
-	return wrap(_self->InsertPage(NUM2INT(n),w,unwrap<wxString>(text),sel,iid));
+	return Qnil;
 }
 
 
@@ -255,6 +279,13 @@ DLL_LOCAL VALUE _insertPage(int argc,VALUE *argv,VALUE self)
  * * bitmap is a Integer and says the position of the bitmap in the image_list
  * ===Return value
  * true/false
+ * === Exceptions
+ * [IndexError]
+ * * bitmap is greater than the list of bitmaps in the image_list
+ * [TypeError]
+ * * window is nil when the BookCtrl does not support it (currently only supported for TreeBookCtrl)
+ * [ArgumentError]
+ * * window does not have this BookCtrl as parent
  *
 */
 DLL_LOCAL VALUE _prependPage(int argc,VALUE *argv,VALUE self)
@@ -268,20 +299,9 @@ DLL_LOCAL VALUE _prependPage(int argc,VALUE *argv,VALUE self)
 	if(!NIL_P(select))
 		sel = RTEST(select);
 
-	if(!NIL_P(imageid)){
-		iid = NUM2INT(imageid);
-		wxImageList *imglist = _self->GetImageList();
-		if(imglist)
-			check_index(iid,imglist->GetImageCount());
-	}
+	check_imagelist(_self,imageid,iid);
+	check_window(self,hash,window,w);
 
-	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
-		VALUE argv2[] = {self, hash };
-		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
-	}else if(nil_check(window,!rb_obj_is_kind_of(self,rb_cWXTreebook))) //TODO Tree Ctrl allows nil page, but i can't check that
-	{
-		window_parent_check(window,_self,w);
-	}
 	return wrap(_self->InsertPage(0,w,unwrap<wxString>(text),sel,iid));
 }
 
@@ -289,11 +309,12 @@ DLL_LOCAL VALUE _prependPage(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL VALUE _deletePage(VALUE self,VALUE idx)
 {
 	std::size_t cidx = NUM2UINT(idx);
-	if(cidx >= _self->GetPageCount())
-		return Qnil;
-	wxWindow *w = _self->GetPage(cidx);
-	if(_self->RemovePage(cidx))
-		return wrap(w);
+	if(check_index(cidx,_self->GetPageCount()))
+	{
+		wxWindow *w = _self->GetPage(cidx);
+		if(_self->RemovePage(cidx))
+			return wrap(w);
+	}
 	return Qfalse;
 }
 
