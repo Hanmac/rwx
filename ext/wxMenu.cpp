@@ -77,6 +77,31 @@ void bind_callback(wxMenu* menu,wxWindowID id)
 	}
 }
 
+DLL_LOCAL bool check_title(wxWindowID wid, VALUE id, VALUE text)
+{
+	if(!wxIsStockID(wid) && (NIL_P(text) || rb_str_length(text) == INT2FIX(0)))
+	{
+		rb_raise(rb_eArgError,"id %s (%d) needs an text",unwrap<char*>(id),wid);
+		return false;
+	}
+	return true;
+}
+
+DLL_LOCAL bool check_menu_mitle(wxMenu *m,wxString &wtext)
+{
+	if(wtext.empty())
+	{
+		if(m->GetTitle().empty())
+		{
+			rb_raise(rb_eArgError,"menu must have a title");
+			return false;
+		}
+
+		wtext = m->GetTitle();
+	}
+	return true;
+}
+
 DLL_LOCAL VALUE _append_base(int argc,VALUE *argv,VALUE self,wxItemKind kind)
 {
 	VALUE id,text,help;
@@ -84,12 +109,13 @@ DLL_LOCAL VALUE _append_base(int argc,VALUE *argv,VALUE self,wxItemKind kind)
 	rb_scan_args(argc, argv, "12",&id,&text,&help);
 	wxWindowID wid(unwrapID(id));
 
-	if(!wxIsStockID(wid) && (NIL_P(text) || rb_str_length(text) == INT2FIX(0)))
-		rb_raise(rb_eArgError,"id %s (%d) needs an text",unwrap<char*>(id),wid);
-
-	wxMenuItem *item = _self->Append(wid,unwrap<wxString>(text),unwrap<wxString>(help),kind);
-	bind_callback(_self,item->GetId());
-	return wrap(item);
+	if(check_title(wid,id,text))
+	{
+		wxMenuItem *item = _self->Append(wid,unwrap<wxString>(text),unwrap<wxString>(help),kind);
+		bind_callback(_self,item->GetId());
+		return wrap(item);
+	}
+	return Qnil;
 }
 
 
@@ -102,10 +128,13 @@ DLL_LOCAL VALUE _append_base(int argc,VALUE *argv,VALUE self,wxItemKind kind)
  * when block is given, bind the block to the event of the menu item.
  * ===Arguments
  * * id of the menu item: Symbol/Integer/nil
- * * text is the Label of the menu item. String (can be nil if id is one of the pre defined)
+ * * text is the Label of the menu item. String (can be nil if id is one of the system defined)
  * * help shown in WX::StatusBar. String
  * ===Return value
  * WX::Menu::Item
+ * === Exceptions
+ * [ArgumentError]
+ * * when id is not a StockID and text is nil or empty
  *
 */
 DLL_LOCAL VALUE _appendNormalItem(int argc,VALUE *argv,VALUE self)
@@ -126,6 +155,9 @@ DLL_LOCAL VALUE _appendNormalItem(int argc,VALUE *argv,VALUE self)
  * * help shown in WX::StatusBar. String
  * ===Return value
  * WX::Menu::Item
+ * === Exceptions
+ * [ArgumentError]
+ * * when id is not a StockID and text is nil or empty
  *
 */
 DLL_LOCAL VALUE _appendCheckItem(int argc,VALUE *argv,VALUE self)
@@ -146,6 +178,9 @@ DLL_LOCAL VALUE _appendCheckItem(int argc,VALUE *argv,VALUE self)
  * * help shown in WX::StatusBar. String
  * ===Return value
  * WX::Menu::Item
+ * === Exceptions
+ * [ArgumentError]
+ * * when id is not a StockID and text is nil or empty
  *
 */
 DLL_LOCAL VALUE _appendRadioItem(int argc,VALUE *argv,VALUE self)
@@ -165,6 +200,11 @@ DLL_LOCAL VALUE _appendRadioItem(int argc,VALUE *argv,VALUE self)
  * * help shown in WX::StatusBar. String
  * ===Return value
  * WX::Menu::Item
+ * === Exceptions
+ * [ArgumentError]
+ * * when either menu hasn't a title and text is empty
+ * [TypeError]
+ * * when menu is nil
  *
 */
 DLL_LOCAL VALUE _append_menu(int argc,VALUE *argv,VALUE self)
@@ -178,22 +218,19 @@ DLL_LOCAL VALUE _append_menu(int argc,VALUE *argv,VALUE self)
 		rb_yield(wrap(m));
 	}else{
 		rb_scan_args(argc, argv, "12",&menu,&text,&help);
-		m = unwrap<wxMenu*>(menu);
 
-		if(!m)
-			rb_raise(rb_eTypeError,"menu can't be nil.");
+		if(!nil_check(menu,"menu"))
+			return Qnil;
+
+		m = unwrap<wxMenu*>(menu);
 	}
 
 	wxString wtext(unwrap<wxString>(text));
 
-	if(wtext.empty())
-	{
-		if(m->GetTitle().empty())
-			rb_raise(rb_eArgError,"menu must have a title");
+	if(check_menu_mitle(m,wtext))
+		return wrap(_self->AppendSubMenu(m,wtext,unwrap<wxString>(help)));
 
-		wtext = m->GetTitle();
-	}
-	return wrap(_self->AppendSubMenu(m,wtext,unwrap<wxString>(help)));
+	return Qnil;
 
 }
 
@@ -219,12 +256,17 @@ DLL_LOCAL VALUE _insert_base(int argc,VALUE *argv,VALUE self,wxItemKind kind)
 
 	wxWindowID wid(unwrapID(id));
 
-	if(!wxIsStockID(wid) && (NIL_P(text) || rb_str_length(text) == INT2FIX(0)))
-		rb_raise(rb_eArgError,"id %s (%d) needs an text",unwrap<char*>(id),wid);
-
-	wxMenuItem *item = _self->Insert(NUM2INT(idx),wid,unwrap<wxString>(text),unwrap<wxString>(help),kind);
-	bind_callback(_self,item->GetId());
-	return wrap(item);
+	if(check_title(wid,id,text))
+	{
+		unsigned int cidx = NUM2UINT(idx);
+		if(check_index(cidx,_self->GetMenuItemCount()+1))
+		{
+			wxMenuItem *item = _self->Insert(cidx,wid,unwrap<wxString>(text),unwrap<wxString>(help),kind);
+			bind_callback(_self,item->GetId());
+			return wrap(item);
+		}
+	}
+	return Qnil;
 }
 
 
@@ -242,6 +284,11 @@ DLL_LOCAL VALUE _insert_base(int argc,VALUE *argv,VALUE self,wxItemKind kind)
  * * help shown in WX::StatusBar. String
  * ===Return value
  * WX::Menu::Item
+ * === Exceptions
+ * [ArgumentError]
+ * * when id is not a StockID and text is nil or empty
+ * [IndexError]
+ * * pos is greater than the count of MenuItems
  *
 */
 DLL_LOCAL VALUE _insertNormalItem(int argc,VALUE *argv,VALUE self)
@@ -263,6 +310,11 @@ DLL_LOCAL VALUE _insertNormalItem(int argc,VALUE *argv,VALUE self)
  * * help shown in WX::StatusBar. String
  * ===Return value
  * WX::Menu::Item
+ * === Exceptions
+ * [ArgumentError]
+ * * when id is not a StockID and text is nil or empty
+ * [IndexError]
+ * * pos is greater than the count of MenuItems
  *
 */
 DLL_LOCAL VALUE _insertCheckItem(int argc,VALUE *argv,VALUE self)
@@ -284,6 +336,11 @@ DLL_LOCAL VALUE _insertCheckItem(int argc,VALUE *argv,VALUE self)
  * * help shown in WX::StatusBar. String
  * ===Return value
  * WX::Menu::Item
+ * === Exceptions
+ * [ArgumentError]
+ * * when id is not a StockID and text is nil or empty
+ * [IndexError]
+ * * pos is greater than the count of MenuItems
  *
 */
 DLL_LOCAL VALUE _insertRadioItem(int argc,VALUE *argv,VALUE self)
@@ -304,6 +361,13 @@ DLL_LOCAL VALUE _insertRadioItem(int argc,VALUE *argv,VALUE self)
  * * help shown in WX::StatusBar. String
  * ===Return value
  * WX::Menu::Item
+ * === Exceptions
+ * [ArgumentError]
+ * * when either menu hasn't a title and text is empty
+ * [TypeError]
+ * * when menu is nil
+ * [IndexError]
+ * * pos is greater than the count of MenuItems
  *
 */
 DLL_LOCAL VALUE _insert_menu(int argc,VALUE *argv,VALUE self)
@@ -317,23 +381,24 @@ DLL_LOCAL VALUE _insert_menu(int argc,VALUE *argv,VALUE self)
 		rb_yield(wrap(m));
 	}else{
 		rb_scan_args(argc, argv, "22",&idx,&menu,&text,&help);
-		m = unwrap<wxMenu*>(menu);
 
-		if(!m)
-			rb_raise(rb_eTypeError,"menu can't be nil.");
+		if(!nil_check(menu,"menu"))
+			return Qnil;
+
+		m = unwrap<wxMenu*>(menu);
 	}
 
 	wxString wtext(unwrap<wxString>(text));
 
-	if(wtext.empty())
+	if(check_menu_mitle(m,wtext))
 	{
-		if(m->GetTitle().empty())
-			rb_raise(rb_eArgError,"menu must have a title");
-
-		wtext = m->GetTitle();
+		unsigned int cidx = NUM2UINT(idx);
+		if(check_index(cidx,_self->GetMenuItemCount()+1))
+		{
+			return wrap(_self->Insert(cidx,wxID_ANY,wtext,m,unwrap<wxString>(help)));
+		}
 	}
-	return wrap(_self->Insert(NUM2UINT(idx),wxID_ANY,wtext,m,unwrap<wxString>(help)));
-
+	return Qnil;
 }
 
 
@@ -344,13 +409,13 @@ DLL_LOCAL VALUE _prepend_base(int argc,VALUE *argv,VALUE self,wxItemKind kind)
 
 	wxWindowID wid(unwrapID(id));
 
-	if(!wxIsStockID(wid) && (NIL_P(text) || rb_str_length(text) == INT2FIX(0)))
-		rb_raise(rb_eArgError,"id %s (%d) needs an text",unwrap<char*>(id),wid);
-
-
-	wxMenuItem *item = _self->Prepend(wid,unwrap<wxString>(text),unwrap<wxString>(help),kind);
-	bind_callback(_self,item->GetId());
-	return wrap(item);
+	if(check_title(wid,id,text))
+	{
+		wxMenuItem *item = _self->Prepend(wid,unwrap<wxString>(text),unwrap<wxString>(help),kind);
+		bind_callback(_self,item->GetId());
+		return wrap(item);
+	}
+	return Qnil;
 }
 
 /*
@@ -366,6 +431,9 @@ DLL_LOCAL VALUE _prepend_base(int argc,VALUE *argv,VALUE self,wxItemKind kind)
  * * help shown in WX::StatusBar. String
  * ===Return value
  * WX::Menu::Item
+ * === Exceptions
+ * [ArgumentError]
+ * * when id is not a StockID and text is nil or empty
  *
 */
 DLL_LOCAL VALUE _prependNormalItem(int argc,VALUE *argv,VALUE self)
@@ -386,6 +454,9 @@ DLL_LOCAL VALUE _prependNormalItem(int argc,VALUE *argv,VALUE self)
  * * help shown in WX::StatusBar. String
  * ===Return value
  * WX::Menu::Item
+ * === Exceptions
+ * [ArgumentError]
+ * * when id is not a StockID and text is nil or empty
  *
 */
 DLL_LOCAL VALUE _prependCheckItem(int argc,VALUE *argv,VALUE self)
@@ -406,6 +477,9 @@ DLL_LOCAL VALUE _prependCheckItem(int argc,VALUE *argv,VALUE self)
  * * help shown in WX::StatusBar. String
  * ===Return value
  * WX::Menu::Item
+ * === Exceptions
+ * [ArgumentError]
+ * * when id is not a StockID and text is nil or empty
  *
 */
 DLL_LOCAL VALUE _prependRadioItem(int argc,VALUE *argv,VALUE self)
@@ -425,6 +499,11 @@ DLL_LOCAL VALUE _prependRadioItem(int argc,VALUE *argv,VALUE self)
  * * help shown in WX::StatusBar. String
  * ===Return value
  * WX::Menu::Item
+ * === Exceptions
+ * [ArgumentError]
+ * * when either menu hasn't a title and text is empty
+ * [TypeError]
+ * * when menu is nil
  *
 */
 DLL_LOCAL VALUE _prepend_menu(int argc,VALUE *argv,VALUE self)
@@ -438,23 +517,19 @@ DLL_LOCAL VALUE _prepend_menu(int argc,VALUE *argv,VALUE self)
 		rb_yield(wrap(m));
 	}else{
 		rb_scan_args(argc, argv, "12",&menu,&text,&help);
-		m = unwrap<wxMenu*>(menu);
 
-		if(!m)
-			rb_raise(rb_eTypeError,"menu can't be nil.");
+		if(!nil_check(menu,"menu"))
+			return Qnil;
+
+		m = unwrap<wxMenu*>(menu);
 	}
 
 	wxString wtext(unwrap<wxString>(text));
 
-	if(wtext.empty())
-	{
-		if(m->GetTitle().empty())
-			rb_raise(rb_eArgError,"menu must have a title");
+	if(check_menu_mitle(m,wtext))
+		return wrap(_self->Prepend(wxID_ANY,wtext,m,unwrap<wxString>(help)));
 
-		wtext = m->GetTitle();
-	}
-	return wrap(_self->Prepend(wxID_ANY,wtext,m,unwrap<wxString>(help)));
-
+	return Qnil;
 }
 
 
