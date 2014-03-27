@@ -10,6 +10,8 @@ VALUE rb_cWXSize;
 
 #define _self unwrap<wxSize*>(self)
 
+ID rwxID_width,rwxID_height;
+
 template <>
 VALUE wrap< wxSize >(wxSize *size )
 {
@@ -21,8 +23,8 @@ bool is_wrapable< wxSize >(const VALUE &vsize)
 {
 	if (rb_obj_is_kind_of(vsize, rb_cWXSize)){
 		return true;
-	}else if(rb_respond_to(vsize,rb_intern("width")) &&
-		rb_respond_to(vsize,rb_intern("height"))){
+	}else if(rb_respond_to(vsize,rwxID_width) &&
+		rb_respond_to(vsize,rwxID_height)){
 		return true;
 	}else
 		return false;
@@ -37,11 +39,11 @@ wxSize unwrap< wxSize >(const VALUE &vsize)
 			size.SetHeight(NUM2INT(rb_ary_entry(vsize,1)));
 			return size;
 	}else if(!rb_obj_is_kind_of(vsize, rb_cWXSize) &&
-		rb_respond_to(vsize,rb_intern("width")) &&
-		rb_respond_to(vsize,rb_intern("height"))){
+		rb_respond_to(vsize,rwxID_width) &&
+		rb_respond_to(vsize,rwxID_height)){
 		wxSize size;
-		size.SetWidth(NUM2INT(rb_funcall(vsize,rb_intern("width"),0)));
-		size.SetHeight(NUM2INT(rb_funcall(vsize,rb_intern("height"),0)));
+		size.SetWidth(NUM2INT(rb_funcall(vsize,rwxID_width,0)));
+		size.SetHeight(NUM2INT(rb_funcall(vsize,rwxID_height,0)));
 		return size;
 	}else{
 		return *unwrap<wxSize*>(vsize);
@@ -165,4 +167,7 @@ DLL_LOCAL void Init_WXSize(VALUE rb_mWX)
 	rb_define_method(rb_cWXSize,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
 	registerType<wxSize>(rb_cWXSize);
+
+	rwxID_width = rb_intern("width");
+	rwxID_height = rb_intern("height");
 }
