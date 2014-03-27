@@ -67,7 +67,7 @@ wxMenu* add_base(VALUE menu,wxString &name)
 	}
 
 	if(name.IsEmpty())
-		rb_raise(rb_eTypeError,"Menu must have a title.");
+		rb_raise(rb_eArgError,"Menu must have a title.");
 
 	return m;
 }
@@ -115,8 +115,12 @@ DLL_LOCAL VALUE _append(VALUE self,VALUE menu)
 DLL_LOCAL VALUE _insert(VALUE self,VALUE idx,VALUE menu)
 {
 	wxString name(wxEmptyString);
+	unsigned int cidx = NUM2UINT(idx);
 
-	return wrap(_self->Insert(NUM2UINT(idx),add_base(menu,name),name));
+	if(check_index(cidx,_self->GetMenuCount()+1))
+		return wrap(_self->Insert(cidx,add_base(menu,name),name));
+
+	return Qnil;
 }
 
 
