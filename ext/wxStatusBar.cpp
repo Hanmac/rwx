@@ -48,6 +48,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		{
 			set_hash_option(hash,"id",id,unwrapID);
 			set_hash_option(hash,"style",style);
+
+			set_hash_flag_option(hash,"size_grip",wxSTB_SIZEGRIP,style);
+			set_hash_flag_option(hash,"show_tips",wxSTB_SHOW_TIPS,style);
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),id,style);
@@ -61,7 +64,7 @@ macro_attr(FieldsCount,int)
 
 DLL_LOCAL VALUE _GetFieldRect(VALUE self,VALUE num)
 {
-	if(NUM2INT(num) < _self->GetFieldsCount())
+	if(check_index(NUM2INT(num),_self->GetFieldsCount()))
 	{
 		wxRect rect;
 		if(_self->GetFieldRect(NUM2INT(num),rect))
@@ -72,7 +75,7 @@ DLL_LOCAL VALUE _GetFieldRect(VALUE self,VALUE num)
 
 DLL_LOCAL VALUE _getStatusText2(VALUE self,VALUE num)
 {
-	if(NUM2INT(num) < _self->GetFieldsCount())
+	if(check_index(NUM2INT(num),_self->GetFieldsCount()))
 		return wrap(_self->GetStatusText(NUM2INT(num)));
 	return Qnil;
 }
@@ -80,7 +83,7 @@ DLL_LOCAL VALUE _getStatusText2(VALUE self,VALUE num)
 DLL_LOCAL VALUE _setStatusText2(VALUE self,VALUE str,VALUE num)
 {
 	rb_check_frozen(self);
-	if(NUM2INT(num) < _self->GetFieldsCount())
+	if(check_index(NUM2INT(num),_self->GetFieldsCount()))
 		_self->SetStatusText(unwrap<wxString>(str),NUM2INT(num));
 	//const_cast<wxStatusBarPane&>(_self->GetField(NUM2INT(num))).SetText(unwrap<wxString>(str));
 	//_self->Update();
@@ -89,7 +92,7 @@ DLL_LOCAL VALUE _setStatusText2(VALUE self,VALUE str,VALUE num)
 
 DLL_LOCAL VALUE _getStatusWidth(VALUE self,VALUE num)
 {
-	if(NUM2INT(num) < _self->GetFieldsCount())
+	if(check_index(NUM2INT(num),_self->GetFieldsCount()))
 		return INT2NUM(_self->GetStatusWidth(NUM2INT(num)));
 	return Qnil;
 }
@@ -100,7 +103,7 @@ DLL_LOCAL VALUE _setStatusWidth(VALUE self,VALUE num,VALUE val)
 	const size_t count = _self->GetFieldsCount();
 
 
-	if(NUM2INT(num) < (int)count)
+	if(check_index(NUM2INT(num),count))
 	{
 		int w[count];
 		for(size_t i = 0; i < count; ++i )
@@ -123,7 +126,7 @@ DLL_LOCAL VALUE _pushStatusText(int argc,VALUE *argv,VALUE self)
 	rb_check_frozen(self);
 	if(NIL_P(num))
 		_self->PushStatusText(unwrap<wxString>(str));
-	else
+	else if(check_index(NUM2INT(num),_self->GetFieldsCount()))
 		_self->PushStatusText(unwrap<wxString>(str),NUM2INT(num));
 	return Qnil;
 }
@@ -135,7 +138,7 @@ DLL_LOCAL VALUE _popStatusText(int argc,VALUE *argv,VALUE self)
 	rb_check_frozen(self);
 	if(NIL_P(num))
 		_self->PopStatusText();
-	else
+	else if(check_index(NUM2INT(num),_self->GetFieldsCount()))
 		_self->PopStatusText(NUM2INT(num));
 	return Qnil;
 }
@@ -229,6 +232,9 @@ DLL_LOCAL void Init_WXStatusBar(VALUE rb_mWX)
 	rb_define_method(rb_cWXStatusBarPane,"push_text",RUBY_METHOD_FUNC(_pushText),1);
 	rb_define_method(rb_cWXStatusBarPane,"pop_text",RUBY_METHOD_FUNC(_PopText),0);
 
+	rb_define_const(rb_cWXStatusBar,"DEFAULT_STYLE",INT2NUM(wxSTB_DEFAULT_STYLE));
+	rb_define_const(rb_cWXStatusBar,"SIZEGRIP",INT2NUM(wxSTB_SIZEGRIP));
+	rb_define_const(rb_cWXStatusBar,"SHOW_TIPS",INT2NUM(wxSTB_SHOW_TIPS));
 
 	registerInfo<wxStatusBar>(rb_cWXStatusBar);
 
