@@ -8,6 +8,8 @@
 #include "wxPoint.hpp"
 VALUE rb_cWXPoint;
 
+ID rwxID_x,rwxID_y;
+
 #define _self unwrap<wxPoint*>(self)
 
 
@@ -22,8 +24,8 @@ bool is_wrapable< wxPoint >(const VALUE &vpoint)
 {
 	if (rb_obj_is_kind_of(vpoint, rb_cWXPoint)){
 		return true;
-	}else if(rb_respond_to(vpoint,rb_intern("x")) &&
-		rb_respond_to(vpoint,rb_intern("y"))){
+	}else if(rb_respond_to(vpoint,rwxID_x) &&
+		rb_respond_to(vpoint,rwxID_y)){
 		return true;
 	}else
 		return false;
@@ -38,11 +40,11 @@ wxPoint unwrap< wxPoint >(const VALUE &vpoint)
 		point.y = NUM2INT(rb_ary_entry(vpoint,1));
 		return point;
 	}else if(!rb_obj_is_kind_of(vpoint, rb_cWXPoint) &&
-		rb_respond_to(vpoint,rb_intern("x")) &&
-		rb_respond_to(vpoint,rb_intern("y"))){
+		rb_respond_to(vpoint,rwxID_x) &&
+		rb_respond_to(vpoint,rwxID_y)){
 		wxPoint point;
-		point.x = NUM2INT(rb_funcall(vpoint,rb_intern("x"),0));
-		point.y = NUM2INT(rb_funcall(vpoint,rb_intern("y"),0));
+		point.x = NUM2INT(rb_funcall(vpoint,rwxID_x,0));
+		point.y = NUM2INT(rb_funcall(vpoint,rwxID_y,0));
 		return point;
 	}else{
 		return *unwrap<wxPoint*>(vpoint);
@@ -181,6 +183,9 @@ DLL_LOCAL void Init_WXPoint(VALUE rb_mWX)
 	rb_define_method(rb_cWXPoint,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
 	registerType<wxPoint>(rb_cWXPoint);
+
+	rwxID_x = rb_intern("x");
+	rwxID_y = rb_intern("y");
 }
 
 
