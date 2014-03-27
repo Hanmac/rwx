@@ -10,6 +10,7 @@
 #define _self unwrap<wxColor*>(self)
 
 VALUE rb_cWXColor;
+ID rwxID_red,rwxID_blue,rwxID_green,rwxID_alpha;
 
 template <>
 VALUE wrap< wxColor >(wxColor *color )
@@ -23,10 +24,10 @@ bool is_wrapable< wxColor >(const VALUE &vcolor)
 	if (rb_obj_is_kind_of(vcolor, rb_cWXColor) ||
 		rb_obj_is_kind_of(vcolor, rb_cString) || FIXNUM_P(vcolor)){
 		return true;
-	} else if(rb_respond_to(vcolor,rb_intern("red")) &&
-		rb_respond_to(vcolor,rb_intern("blue")) &&
-		rb_respond_to(vcolor,rb_intern("green")) &&
-		rb_respond_to(vcolor,rb_intern("alpha"))){
+	} else if(rb_respond_to(vcolor,rwxID_red) &&
+		rb_respond_to(vcolor,rwxID_blue) &&
+		rb_respond_to(vcolor,rwxID_green) &&
+		rb_respond_to(vcolor,rwxID_alpha)){
 		return true;
 	}else
 		return false;
@@ -46,25 +47,25 @@ wxColor unwrap< wxColor >(const VALUE &vcolor)
 	}else if(FIXNUM_P(vcolor))
 		return wxColor(NUM2INT(vcolor));
 	else if(!rb_obj_is_kind_of(vcolor, rb_cWXColor) &&
-		rb_respond_to(vcolor,rb_intern("red")) &&
-		rb_respond_to(vcolor,rb_intern("blue")) &&
-		rb_respond_to(vcolor,rb_intern("green")) &&
-		rb_respond_to(vcolor,rb_intern("alpha"))){
+		rb_respond_to(vcolor,rwxID_red) &&
+		rb_respond_to(vcolor,rwxID_blue) &&
+		rb_respond_to(vcolor,rwxID_green) &&
+		rb_respond_to(vcolor,rwxID_alpha)){
 		double red,blue,green,alpha;
 		wxColor color;
-		red = NUM2DBL(rb_funcall(vcolor,rb_intern("red"),0));
+		red = NUM2DBL(rb_funcall(vcolor,rwxID_red,0));
 		if(red < 1.0)
 			red *=256;
 
-		blue = NUM2DBL(rb_funcall(vcolor,rb_intern("blue"),0));
+		blue = NUM2DBL(rb_funcall(vcolor,rwxID_blue,0));
 		if(blue < 1.0)
 			blue *=256;
 
-		green = NUM2DBL(rb_funcall(vcolor,rb_intern("green"),0));
+		green = NUM2DBL(rb_funcall(vcolor,rwxID_green,0));
 		if(green < 1.0)
 			green *=256;
 
-		alpha = NUM2DBL(rb_funcall(vcolor,rb_intern("alpha"),0));
+		alpha = NUM2DBL(rb_funcall(vcolor,rwxID_alpha,0));
 		if(alpha < 1.0)
 			alpha *=256;
 
@@ -311,4 +312,9 @@ DLL_LOCAL void Init_WXColor(VALUE rb_mWX)
 	rb_define_method(rb_cWXColor,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
 	rb_define_method(rb_cWXColor,"==",RUBY_METHOD_FUNC(_equal),1);
+
+	rwxID_red = rb_intern("red");
+	rwxID_blue = rb_intern("blue");
+	rwxID_green = rb_intern("green");
+	rwxID_alpha = rb_intern("alpha");
 }
