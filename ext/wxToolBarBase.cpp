@@ -79,7 +79,7 @@ DLL_LOCAL VALUE _addNormal(int argc,VALUE *argv,VALUE self)
  *   add_check(id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) -> WX::ToolBarBase::Tool
  *   add_check(id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) {|event| ... } -> WX::ToolBarBase::Tool
  *
- * adds a new normal tool item to the ToolBar widget.
+ * adds a new check tool item to the ToolBar widget.
  * when block is given, bind the block to the event of the tool item.
  * ===Arguments
  * * id of the tool item: Symbol/Integer/nil
@@ -134,6 +134,11 @@ DLL_LOCAL VALUE _addRadio(int argc,VALUE *argv,VALUE self)
  * * klass, Class from which the control will be created, it need to inherit from WX::Control
  * ===Return value
  * WX::ToolBarBase::Tool
+ * === Exceptions
+ * [TypeError]
+ * * control is nil or can't be converted into an WX::Control instance
+ * [ArgumentError]
+ * * control does not have this ToolBar as parent
  *
 */
 DLL_LOCAL VALUE _addControl(int argc,VALUE *argv,VALUE self)
@@ -158,13 +163,20 @@ DLL_LOCAL wxToolBarToolBase* _insert_base(int argc,VALUE *argv,VALUE self, wxIte
 	VALUE idx,id,text,bitmap,bmpDisabled,shorthelp,longhelp;
 	rb_scan_args(argc, argv, "34",&idx,&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
 
-	wxWindowID wxid = unwrapID(id);
-	wxToolBarToolBase *tool = _self->InsertTool(NUM2UINT(idx), wxid, unwrap<wxString>(text),
-			wrapBitmap(bitmap,wxid,WRAP_BITMAP_RAISE,wxART_TOOLBAR),
-			wrapBitmap(bmpDisabled,wxid,WRAP_BITMAP_NULL,wxART_TOOLBAR),kind,
-			unwrap<wxString>(shorthelp), unwrap<wxString>(longhelp));
-	bind_callback(_self,tool->GetId());
-	return tool;
+
+	unsigned int cidx = NUM2UINT(idx);
+	if(check_index(cidx,_self->GetToolsCount()+1))
+	{
+		wxWindowID wxid = unwrapID(id);
+
+		wxToolBarToolBase *tool = _self->InsertTool(cidx, wxid, unwrap<wxString>(text),
+				wrapBitmap(bitmap,wxid,WRAP_BITMAP_RAISE,wxART_TOOLBAR),
+				wrapBitmap(bmpDisabled,wxid,WRAP_BITMAP_NULL,wxART_TOOLBAR),kind,
+				unwrap<wxString>(shorthelp), unwrap<wxString>(longhelp));
+		bind_callback(_self,tool->GetId());
+		return tool;
+	}
+	return NULL;
 }
 
 
@@ -186,6 +198,11 @@ DLL_LOCAL wxToolBarToolBase* _insert_base(int argc,VALUE *argv,VALUE self, wxIte
  * * long_help shown in ToolTip. String
  * ===Return value
  * WX::ToolBarBase::Tool
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of ToolBarItems
+ * [ArgumentError]
+ * * does raise when either bitmap or disabled_bitmap can't converted into an WX::Bitmap
  *
 */
 DLL_LOCAL VALUE _insertNormal(int argc,VALUE *argv,VALUE self)
@@ -198,7 +215,7 @@ DLL_LOCAL VALUE _insertNormal(int argc,VALUE *argv,VALUE self)
  *   insert_check(pos, id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) -> WX::ToolBarBase::Tool
  *   insert_check(pos, id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) {|event| ... } -> WX::ToolBarBase::Tool
  *
- * insert a new normal tool item to the ToolBar widget at the given position.
+ * insert a new check tool item to the ToolBar widget at the given position.
  * when block is given, bind the block to the event of the tool item.
  * ===Arguments
  * * pos position of the new tool item. Integer
@@ -210,6 +227,11 @@ DLL_LOCAL VALUE _insertNormal(int argc,VALUE *argv,VALUE self)
  * * long_help shown in ToolTip. String
  * ===Return value
  * WX::ToolBarBase::Tool
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of ToolBarItems
+ * [ArgumentError]
+ * * does raise when either bitmap or disabled_bitmap can't converted into an WX::Bitmap
  *
 */
 DLL_LOCAL VALUE _insertCheck(int argc,VALUE *argv,VALUE self)
@@ -223,7 +245,7 @@ DLL_LOCAL VALUE _insertCheck(int argc,VALUE *argv,VALUE self)
  *   insert_radio(pos, id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) -> WX::ToolBarBase::Tool
  *   insert_radio(pos, id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) {|event| ... } -> WX::ToolBarBase::Tool
  *
- * insert a new normal tool item to the ToolBar widget at the given position.
+ * insert a new radio tool item to the ToolBar widget at the given position.
  * when block is given, bind the block to the event of the tool item.
  * ===Arguments
  * * pos position of the new tool item. Integer
@@ -235,6 +257,11 @@ DLL_LOCAL VALUE _insertCheck(int argc,VALUE *argv,VALUE self)
  * * long_help shown in ToolTip. String
  * ===Return value
  * WX::ToolBarBase::Tool
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of ToolBarItems
+ * [ArgumentError]
+ * * does raise when either bitmap or disabled_bitmap can't converted into an WX::Bitmap
  *
 */
 DLL_LOCAL VALUE _insertRadio(int argc,VALUE *argv,VALUE self)
@@ -257,33 +284,53 @@ DLL_LOCAL VALUE _insertRadio(int argc,VALUE *argv,VALUE self)
  * * klass, Class from which the control will be created, it need to inherit from WX::Control
  * ===Return value
  * WX::ToolBarBase::Tool
- *
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of ToolBarItems
+ * [TypeError]
+ * * control is nil or can't be converted into an WX::Control instance
+ * [ArgumentError]
+ * * control does not have this ToolBar as parent
 */
 DLL_LOCAL VALUE _insertControl(int argc,VALUE *argv,VALUE self)
 {
 	VALUE idx,id,text,arg;
 	wxControl *c = NULL;
 	rb_scan_args(argc, argv, "21*",&idx,&id,&text,&arg);
-	if(rb_obj_is_kind_of(id,rb_cClass) && rb_class_inherited(id,rb_cWXControl)) {
-		rb_scan_args(argc, argv, "21",&idx,&id,&arg);
-		VALUE argv2[] = {self, arg };
-		c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,id));
-	}else if(nil_check(id)) {
-		window_parent_check(id,_self,c);
+	unsigned int cidx = NUM2UINT(idx);
+	if(check_index(cidx,_self->GetToolsCount()+1))
+	{
+		if(rb_obj_is_kind_of(id,rb_cClass) && rb_class_inherited(id,rb_cWXControl)) {
+			rb_scan_args(argc, argv, "21",&idx,&id,&arg);
+			VALUE argv2[] = {self, arg };
+			c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,id));
+		}else if(nil_check(id)) {
+			window_parent_check(id,_self,c);
+		}
+
+		return wrap( _self->InsertControl(NUM2UINT(idx),c,unwrap<wxString>(text)));
 	}
-
-	return wrap( _self->InsertControl(NUM2UINT(idx),c,unwrap<wxString>(text)));
-
+	return Qnil;
 }
 
 DLL_LOCAL VALUE _insert_separator(VALUE self,VALUE idx)
 {
-	return wrap(_self->InsertSeparator(NUM2UINT(idx)));
+	unsigned int cidx = NUM2UINT(idx);
+	if(check_index(cidx,_self->GetToolsCount()+1))
+	{
+		return wrap(_self->InsertSeparator(cidx));
+	}
+	return Qnil;
 }
 
 DLL_LOCAL VALUE _insert_stretchable_space(VALUE self,VALUE idx)
 {
-	return wrap(_self->InsertStretchableSpace(NUM2UINT(idx)));
+	unsigned int cidx = NUM2UINT(idx);
+	if(check_index(cidx,_self->GetToolsCount()+1))
+	{
+		return wrap(_self->InsertStretchableSpace(cidx));
+	}
+	return Qnil;
 }
 
 
@@ -331,7 +378,7 @@ DLL_LOCAL VALUE _prependNormal(int argc,VALUE *argv,VALUE self)
  *   prepend_check(id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) -> WX::ToolBarBase::Tool
  *   prepend_check(id, text, [bitmap], [disabled_bitmap], [short_help], [long_help]) {|event| ... } -> WX::ToolBarBase::Tool
  *
- * prepends a new normal tool item to the ToolBar widget.
+ * prepends a new check tool item to the ToolBar widget.
  * when block is given, bind the block to the event of the tool item.
  * ===Arguments
  * * id of the tool item: Symbol/Integer/nil
@@ -385,6 +432,11 @@ DLL_LOCAL VALUE _prependRadio(int argc,VALUE *argv,VALUE self)
  * * klass, Class from which the control will be created, it need to inherit from WX::Control
  * ===Return value
  * WX::ToolBarBase::Tool
+ * === Exceptions
+ * [TypeError]
+ * * control is nil or can't be converted into an WX::Control instance
+ * [ArgumentError]
+ * * control does not have this ToolBar as parent
  *
 */
 DLL_LOCAL VALUE _prependControl(int argc,VALUE *argv,VALUE self)
@@ -402,6 +454,18 @@ DLL_LOCAL VALUE _prependControl(int argc,VALUE *argv,VALUE self)
 
 	return wrap( _self->InsertControl(0,c,unwrap<wxString>(text)));
 }
+
+
+DLL_LOCAL VALUE _prepend_separator(VALUE self)
+{
+	return wrap(_self->InsertSeparator(0));
+}
+
+DLL_LOCAL VALUE _prepend_stretchable_space(VALUE self)
+{
+	return wrap(_self->InsertStretchableSpace(0));
+}
+
 
 DLL_LOCAL VALUE _each_size(VALUE self)
 {
@@ -430,6 +494,8 @@ singlereturn(AddSeparator)
 singlereturn(AddStretchableSpace)
 
 singlereturn(Realize)
+
+singlereturn(IsVertical)
 
 singlereturn(GetMaxRows)
 
@@ -472,7 +538,13 @@ DLL_LOCAL void Init_WXToolBarBase(VALUE rb_mWX)
 	rb_define_method(rb_cWXToolBarBase,"prepend_radio",RUBY_METHOD_FUNC(_prependRadio),-1);
 	rb_define_method(rb_cWXToolBarBase,"prepend_control",RUBY_METHOD_FUNC(_prependControl),-1);
 
+	rb_define_method(rb_cWXToolBarBase,"prepend_separator",RUBY_METHOD_FUNC(_prepend_separator),0);
+	rb_define_method(rb_cWXToolBarBase,"prepend_stretchable_space",RUBY_METHOD_FUNC(_prepend_stretchable_space),0);
+
+
 	rb_define_method(rb_cWXToolBarBase,"realize",RUBY_METHOD_FUNC(_Realize),0);
+
+	rb_define_method(rb_cWXToolBarBase,"vertical?",RUBY_METHOD_FUNC(_IsVertical),0);
 
 
 	rb_define_method(rb_cWXToolBarBase,"each_tool",RUBY_METHOD_FUNC(_each),0);
