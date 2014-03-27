@@ -367,12 +367,17 @@ void set_hash_flag_option(VALUE hash,const char* name,const int& flag,int& val)
 	}
 }
 
-bool nil_check(VALUE window,bool raise)
+bool nil_check(VALUE window,const char* type,bool raise)
 {
 	bool result = NIL_P(window);
 	if(result && raise)
-		rb_raise(rb_eTypeError,"window can't be nil.");
+		rb_raise(rb_eTypeError,"%s can't be nil.",type);
 	return !result;
+}
+
+bool nil_check(VALUE window, bool raise)
+{
+	return nil_check(window,"window",raise);
 }
 
 bool check_index(unsigned int cidx,std::size_t count)

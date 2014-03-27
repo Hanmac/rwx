@@ -363,6 +363,7 @@ DLL_LOCAL bool window_parent_check(VALUE window, wxWindow* parent, T* &w)
 	return true;
 }
 
+bool nil_check(VALUE window,const char* type,bool raise = true);
 bool nil_check(VALUE window,bool raise = true);
 
 bool check_index(unsigned int index,std::size_t count);
