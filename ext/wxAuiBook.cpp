@@ -45,6 +45,18 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		{
 			set_hash_option(hash,"id",id,unwrapID);
 			set_hash_option(hash,"style",style);
+
+			set_hash_flag_option(hash,"tap_split",wxAUI_NB_TAB_SPLIT,style);
+			set_hash_flag_option(hash,"tap_move",wxAUI_NB_TAB_MOVE,style);
+			set_hash_flag_option(hash,"tap_external_move",wxAUI_NB_TAB_EXTERNAL_MOVE,style);
+			set_hash_flag_option(hash,"tap_fixed_with",wxAUI_NB_TAB_FIXED_WIDTH,style);
+			set_hash_flag_option(hash,"scroll_buttons",wxAUI_NB_SCROLL_BUTTONS,style);
+			set_hash_flag_option(hash,"windowlist_button",wxAUI_NB_WINDOWLIST_BUTTON,style);
+			set_hash_flag_option(hash,"close_button",wxAUI_NB_CLOSE_BUTTON,style);
+			set_hash_flag_option(hash,"close_on_active_tab",wxAUI_NB_CLOSE_ON_ACTIVE_TAB,style);
+			set_hash_flag_option(hash,"close_on_all_tabs",wxAUI_NB_CLOSE_ON_ALL_TABS,style);
+			set_hash_flag_option(hash,"middle_click_close",wxAUI_NB_MIDDLE_CLICK_CLOSE,style);
+
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),id,wxDefaultPosition,wxDefaultSize,style);
@@ -93,6 +105,34 @@ DLL_LOCAL VALUE _set_page_tooltip(VALUE self,VALUE idx,VALUE str)
 }
 
 
+DLL_LOCAL bool check_imagelist(wxAuiNotebook* self, VALUE imageid, int& iid)
+{
+	if(NIL_P(imageid))
+		return true;
+	if(rb_obj_is_kind_of(imageid,rb_cInteger))
+	{
+		iid = NUM2INT(imageid);
+		wxImageList *imglist = self->GetImageList();
+		if(imglist)
+			return check_index(iid,imglist->GetImageCount());
+	}
+	return false;
+}
+
+
+DLL_LOCAL bool check_window(VALUE self,VALUE hash, VALUE window, wxWindow*& w)
+{
+
+	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
+		VALUE argv2[] = {self, hash };
+		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
+		return true;
+	}else if(nil_check(window))
+	{
+		return window_parent_check(window,_self,w);
+	}
+	return false;
+}
 
 /*
  * call-seq:
@@ -108,6 +148,13 @@ DLL_LOCAL VALUE _set_page_tooltip(VALUE self,VALUE idx,VALUE str)
  * * bitmap is a Integer and says the position of the bitmap in the image_list or a WX::Bitmap
  * ===Return value
  * true/false
+ * === Exceptions
+ * [IndexError]
+ * * bitmap is Integer and greater than the list of bitmaps in the image_list
+ * [TypeError]
+ * * window is nil
+ * [ArgumentError]
+ * * window does not have this BookCtrl as parent
  *
 */
 DLL_LOCAL VALUE _addPage(int argc,VALUE *argv,VALUE self)
@@ -121,24 +168,12 @@ DLL_LOCAL VALUE _addPage(int argc,VALUE *argv,VALUE self)
 	if(!NIL_P(select))
 		sel = RTEST(select);
 
-	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
-		VALUE argv2[] = {self, hash };
-		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
-	}else if(nil_check(window)) {
-		window_parent_check(window,_self,w);
-	}
+	check_window(self,hash,window,w);
 
-	if(NIL_P(imageid) || rb_obj_is_kind_of(imageid,rb_cInteger))
+	int iid = -1;
+
+	if(check_imagelist(_self,imageid,iid))
 	{
-		int iid = -1;
-
-		if(!NIL_P(imageid)){
-			iid = NUM2INT(imageid);
-			wxImageList *imglist = _self->GetImageList();
-			if(imglist)
-				check_index(iid,imglist->GetImageCount());
-		}
-
 		return wrap(_self->AddPage(w,unwrap<wxString>(text),sel,iid));
 	}else{
 		return wrap(_self->AddPage(w,unwrap<wxString>(text),sel,unwrap<wxBitmap>(imageid)));
@@ -161,41 +196,40 @@ DLL_LOCAL VALUE _addPage(int argc,VALUE *argv,VALUE self)
  * * bitmap is a Integer and says the position of the bitmap in the image_list, or a WX::Bitmap
  * ===Return value
  * true/false
+ * === Exceptions
+ * [IndexError]
+ * * bitmap is Integer and greater than the list of bitmaps in the image_list
+ * [TypeError]
+ * * window is nil
+ * [ArgumentError]
+ * * window does not have this BookCtrl as parent
  *
 */
 DLL_LOCAL VALUE _insertPage(int argc,VALUE *argv,VALUE self)
 {
-	VALUE n,window,text,select,imageid,hash;
+	VALUE idx,window,text,select,imageid,hash;
 	wxWindow *w = NULL;
 	bool sel = false;
-	rb_scan_args(argc, argv, "32:",&n,&window,&text,&select,&imageid,&hash);
+	rb_scan_args(argc, argv, "32:",&idx,&window,&text,&select,&imageid,&hash);
 
 	if(!NIL_P(select))
 		sel = RTEST(select);
 
-	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
-		VALUE argv2[] = {self, hash };
-		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
-	}else if(nil_check(window)) {
-		window_parent_check(window,_self,w);
-	}
+	check_window(self,hash,window,w);
 
-	if(NIL_P(imageid) || rb_obj_is_kind_of(imageid,rb_cInteger))
+	unsigned int cidx = NUM2UINT(idx);
+	if(check_index(cidx,_self->GetPageCount()+1))
 	{
 		int iid = -1;
 
-		if(!NIL_P(imageid)){
-			iid = NUM2INT(imageid);
-			wxImageList *imglist = _self->GetImageList();
-			if(imglist)
-				check_index(iid,imglist->GetImageCount());
+		if(check_imagelist(_self,imageid,iid))
+		{
+			return wrap(_self->InsertPage(cidx,w,unwrap<wxString>(text),sel,iid));
+		}else{
+			return wrap(_self->InsertPage(cidx,w,unwrap<wxString>(text),sel,unwrap<wxBitmap>(imageid)));
 		}
-
-		return wrap(_self->InsertPage(NUM2INT(n),w,unwrap<wxString>(text),sel,iid));
-	}else{
-		return wrap(_self->InsertPage(NUM2INT(n),w,unwrap<wxString>(text),sel,unwrap<wxBitmap>(imageid)));
 	}
-
+	return Qnil;
 }
 
 
@@ -213,6 +247,13 @@ DLL_LOCAL VALUE _insertPage(int argc,VALUE *argv,VALUE self)
  * * bitmap is a Integer and says the position of the bitmap in the image_list or a WX::Bitmap
  * ===Return value
  * true/false
+ * === Exceptions
+ * [IndexError]
+ * * bitmap is Integer and greater than the list of bitmaps in the image_list
+ * [TypeError]
+ * * window is nil
+ * [ArgumentError]
+ * * window does not have this BookCtrl as parent
  *
 */
 DLL_LOCAL VALUE _prependPage(int argc,VALUE *argv,VALUE self)
@@ -225,24 +266,12 @@ DLL_LOCAL VALUE _prependPage(int argc,VALUE *argv,VALUE self)
 	if(!NIL_P(select))
 		sel = RTEST(select);
 
-	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow)) {
-		VALUE argv2[] = {self, hash };
-		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
-	}else if(nil_check(window)) {
-		window_parent_check(window,_self,w);
-	}
+	check_window(self,hash,window,w);
 
-	if(NIL_P(imageid) || rb_obj_is_kind_of(imageid,rb_cInteger))
+	int iid = -1;
+
+	if(check_imagelist(_self,imageid,iid))
 	{
-		int iid = -1;
-
-		if(!NIL_P(imageid)){
-			iid = NUM2INT(imageid);
-			wxImageList *imglist = _self->GetImageList();
-			if(imglist)
-				check_index(iid,imglist->GetImageCount());
-		}
-
 		return wrap(_self->InsertPage(0,w,unwrap<wxString>(text),sel,iid));
 	}else{
 		return wrap(_self->InsertPage(0,w,unwrap<wxString>(text),sel,unwrap<wxBitmap>(imageid)));
@@ -275,6 +304,18 @@ DLL_LOCAL void Init_WXAuiNoteBookCtrl(VALUE rb_mWX)
 
 //	rb_define_method(rb_cWXAuiNotebook,"each_page",RUBY_METHOD_FUNC(_each),0);
 //	rb_define_method(rb_cWXAuiNotebook,"page",RUBY_METHOD_FUNC(_page),1);
+
+	rb_define_const(rb_cWXAuiNotebook,"TAB_SPLIT",INT2NUM(wxAUI_NB_TAB_SPLIT));
+	rb_define_const(rb_cWXAuiNotebook,"TAB_MOVE",INT2NUM(wxAUI_NB_TAB_MOVE));
+	rb_define_const(rb_cWXAuiNotebook,"TAB_EXTERNAL_MOVE",INT2NUM(wxAUI_NB_TAB_EXTERNAL_MOVE));
+	rb_define_const(rb_cWXAuiNotebook,"TAB_FIXED_WIDTH",INT2NUM(wxAUI_NB_TAB_FIXED_WIDTH));
+	rb_define_const(rb_cWXAuiNotebook,"SCROLLBUTTONS",INT2NUM(wxAUI_NB_SCROLL_BUTTONS));
+	rb_define_const(rb_cWXAuiNotebook,"WINDOWLIST_BUTTON",INT2NUM(wxAUI_NB_WINDOWLIST_BUTTON));
+	rb_define_const(rb_cWXAuiNotebook,"CLOSE_BUTTON",INT2NUM(wxAUI_NB_CLOSE_BUTTON));
+	rb_define_const(rb_cWXAuiNotebook,"CLOSE_ON_ACTIVE_TAB",INT2NUM(wxAUI_NB_CLOSE_ON_ACTIVE_TAB));
+	rb_define_const(rb_cWXAuiNotebook,"CLOSE_ON_ALL_TABS",INT2NUM(wxAUI_NB_CLOSE_ON_ALL_TABS));
+	rb_define_const(rb_cWXAuiNotebook,"MIDDLE_CLICK_CLOSE",INT2NUM(wxAUI_NB_MIDDLE_CLICK_CLOSE));
+	rb_define_const(rb_cWXAuiNotebook,"DEFAULT_STYLE",INT2NUM(wxAUI_NB_DEFAULT_STYLE));
 
 	registerInfo<wxAuiNotebook>(rb_cWXAuiNotebook);
 
