@@ -17,12 +17,16 @@ namespace RubyWX {
 namespace CheckBox {
 
 macro_attr(Value,bool)
+macro_attr_enum_con(3StateValue,wxCheckBoxState,Is3State)
+
+singlereturn(Is3State)
+singlereturn(Is3rdStateAllowedForUser)
 
 APP_PROTECT(wxCheckBox)
 
 /*
  * call-seq:
- *   CheckBox.new(parent, nanme, [options])
+ *   CheckBox.new(parent, name, [options])
  *   CheckBox.new(parent, [options])
  *
  * creates a new CheckBox widget.
@@ -50,6 +54,16 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"id",id,unwrapID);
 			set_hash_option(hash,"style",style);
 			set_hash_option(hash,"label",label);
+
+			set_hash_flag_option(hash,"third_state",wxCHK_3STATE,style);
+			set_hash_flag_option(hash,"third_state_user",wxCHK_ALLOW_3RD_STATE_FOR_USER,style);
+
+			//add wxCHK_3STATE style if for user is used
+			if((style & wxCHK_ALLOW_3RD_STATE_FOR_USER) != 0)
+			{
+				style |= wxCHK_3STATE;
+			}
+
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),id,label,wxDefaultPosition,wxDefaultSize,style);
@@ -81,6 +95,7 @@ DLL_LOCAL void Init_WXCheckBox(VALUE rb_mWX)
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
 
 	rb_define_attr(rb_cWXCheckBox,"value",1,1);
+	rb_define_attr(rb_cWXCheckBox,"third_state",1,1);
 #endif
 
 #if wxUSE_CHECKBOX
@@ -91,9 +106,22 @@ DLL_LOCAL void Init_WXCheckBox(VALUE rb_mWX)
 	rb_define_method(rb_cWXCheckBox,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_attr_method(rb_cWXCheckBox,"value",_getValue,_setValue);
+	rb_define_attr_method(rb_cWXCheckBox,"third_state",_get3StateValue,_set3StateValue);
+
+	rb_define_method(rb_cWXCheckBox,"third_state?",RUBY_METHOD_FUNC(_Is3State),0);
+	rb_define_method(rb_cWXCheckBox,"third_state_user?",RUBY_METHOD_FUNC(_Is3rdStateAllowedForUser),0);
+
+	rb_define_const(rb_cWXCheckBox,"THIRD_STATE",INT2NUM(wxCHK_3STATE));
+	rb_define_const(rb_cWXCheckBox,"THIRD_STATE_USER",INT2NUM(wxCHK_ALLOW_3RD_STATE_FOR_USER));
 
 	registerInfo<wxCheckBox>(rb_cWXCheckBox);
 	registerEventType("checkbox",wxEVT_CHECKBOX);
+
+	registerEnum<wxCheckBoxState>("wxCheckBoxState")
+		->add(wxCHK_UNCHECKED,"unchecked")
+		->add(wxCHK_CHECKED,"checked")
+		->add(wxCHK_UNDETERMINED,"undetermined");
+
 #endif
 
 }
