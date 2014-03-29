@@ -366,7 +366,7 @@ DLL_LOCAL bool window_parent_check(VALUE window, wxWindow* parent, T* &w)
 bool nil_check(VALUE window,const char* type,bool raise = true);
 bool nil_check(VALUE window,bool raise = true);
 
-bool check_index(unsigned int index,std::size_t count);
+bool check_index(int &cidx,const std::size_t &count);
 
 #define macro_attr_func(attr,funcget,funcset,wrapget,wrapset,con) \
 DLL_LOCAL VALUE _get##attr(VALUE self)\

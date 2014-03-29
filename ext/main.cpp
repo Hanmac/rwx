@@ -380,11 +380,21 @@ bool nil_check(VALUE window, bool raise)
 	return nil_check(window,"window",raise);
 }
 
-bool check_index(unsigned int cidx,std::size_t count)
+bool check_index(int &cidx,const std::size_t &count)
 {
-	if(cidx >= count){
-		rb_raise(rb_eIndexError,"%d out of index",cidx);
-		return false;
+	bool raise = false;
+	if(cidx >= (int)count){
+		raise = true;
+	}else if(cidx < 0)
+	{
+		int tmp = cidx + count;
+		if(tmp > 0 && tmp <= (int)count)
+			cidx = tmp;
+		else
+			raise = true;
 	}
-	return true;
+
+	if(raise)
+		rb_raise(rb_eIndexError,"%d out of index",cidx);
+	return !raise;
 }
