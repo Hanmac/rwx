@@ -37,6 +37,18 @@ void bind_callback(wxToolBarBase* toolbar,wxWindowID id)
 	}
 }
 
+wxControl* create_control(VALUE self,VALUE ctrl,VALUE hash)
+{
+	wxControl *c = NULL;
+	if(rb_obj_is_kind_of(ctrl,rb_cClass) && rb_class_inherited(ctrl,rb_cWXControl)) {
+		VALUE argv2[] = {self, hash };
+		c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,ctrl));
+	}else if(nil_check(ctrl)) {
+		window_parent_check(ctrl,_self,c);
+	}
+	return c;
+}
+
 DLL_LOCAL wxToolBarToolBase* _add_base(int argc,VALUE *argv,VALUE self,wxItemKind kind)
 {
 	VALUE id,text,bitmap,bmpDisabled,shorthelp,longhelp;
@@ -144,15 +156,10 @@ DLL_LOCAL VALUE _addRadio(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL VALUE _addControl(int argc,VALUE *argv,VALUE self)
 {
 	VALUE id,text,arg;
-	wxControl *c = NULL;
-	rb_scan_args(argc, argv, "11*",&id,&text,&arg);
-	if(rb_obj_is_kind_of(id,rb_cClass) && rb_class_inherited(id,rb_cWXControl)) {
-		rb_scan_args(argc, argv, "11",&id,&arg);
-		VALUE argv2[] = {self, arg };
-		c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,id));
-	}else if(nil_check(id)) {
-		window_parent_check(id,_self,c);
-	}
+
+	rb_scan_args(argc, argv, "11:",&id,&text,&arg);
+
+	wxControl *c = create_control(self,id,arg);
 
 	return wrap( _self->AddControl(c,unwrap<wxString>(text)));
 }
@@ -164,7 +171,7 @@ DLL_LOCAL wxToolBarToolBase* _insert_base(int argc,VALUE *argv,VALUE self, wxIte
 	rb_scan_args(argc, argv, "34",&idx,&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
 
 
-	unsigned int cidx = NUM2UINT(idx);
+	int cidx = NUM2INT(idx);
 	if(check_index(cidx,_self->GetToolsCount()+1))
 	{
 		wxWindowID wxid = unwrapID(id);
@@ -295,27 +302,34 @@ DLL_LOCAL VALUE _insertRadio(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL VALUE _insertControl(int argc,VALUE *argv,VALUE self)
 {
 	VALUE idx,id,text,arg;
-	wxControl *c = NULL;
-	rb_scan_args(argc, argv, "21*",&idx,&id,&text,&arg);
-	unsigned int cidx = NUM2UINT(idx);
+	rb_scan_args(argc, argv, "21:",&idx,&id,&text,&arg);
+	int cidx = NUM2INT(idx);
 	if(check_index(cidx,_self->GetToolsCount()+1))
 	{
-		if(rb_obj_is_kind_of(id,rb_cClass) && rb_class_inherited(id,rb_cWXControl)) {
-			rb_scan_args(argc, argv, "21",&idx,&id,&arg);
-			VALUE argv2[] = {self, arg };
-			c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,id));
-		}else if(nil_check(id)) {
-			window_parent_check(id,_self,c);
-		}
+
+		wxControl *c = create_control(self,id,arg);
 
 		return wrap( _self->InsertControl(NUM2UINT(idx),c,unwrap<wxString>(text)));
 	}
 	return Qnil;
 }
 
+/*
+ * call-seq:
+ *   insert_separator(pos) -> WX::ToolBarBase::Tool
+ *
+ * insert a new separator tool item to the ToolBar widget at the given position.
+ * ===Arguments
+ * * pos position of the new tool item. Integer
+ * ===Return value
+ * WX::ToolBarBase::Tool
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of ToolBarItems
+*/
 DLL_LOCAL VALUE _insert_separator(VALUE self,VALUE idx)
 {
-	unsigned int cidx = NUM2UINT(idx);
+	int cidx = NUM2INT(idx);
 	if(check_index(cidx,_self->GetToolsCount()+1))
 	{
 		return wrap(_self->InsertSeparator(cidx));
@@ -323,9 +337,22 @@ DLL_LOCAL VALUE _insert_separator(VALUE self,VALUE idx)
 	return Qnil;
 }
 
+/*
+ * call-seq:
+ *   insert_stretchable_space(pos) -> WX::ToolBarBase::Tool
+ *
+ * insert a new stretchable space tool item to the ToolBar widget at the given position.
+ * ===Arguments
+ * * pos position of the new tool item. Integer
+ * ===Return value
+ * WX::ToolBarBase::Tool
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of ToolBarItems
+*/
 DLL_LOCAL VALUE _insert_stretchable_space(VALUE self,VALUE idx)
 {
-	unsigned int cidx = NUM2UINT(idx);
+	int cidx = NUM2INT(idx);
 	if(check_index(cidx,_self->GetToolsCount()+1))
 	{
 		return wrap(_self->InsertStretchableSpace(cidx));
@@ -442,25 +469,34 @@ DLL_LOCAL VALUE _prependRadio(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL VALUE _prependControl(int argc,VALUE *argv,VALUE self)
 {
 	VALUE id,text,arg;
-	wxControl *c = NULL;
-	rb_scan_args(argc, argv, "11*",&id,&text,&arg);
-	if(rb_obj_is_kind_of(id,rb_cClass) && rb_class_inherited(id,rb_cWXControl)) {
-		rb_scan_args(argc, argv, "11",&id,&arg);
-		VALUE argv2[] = {self, arg };
-		c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,id));
-	}else if(nil_check(id)) {
-		window_parent_check(id,_self,c);
-	}
+	rb_scan_args(argc, argv, "11:",&id,&text,&arg);
+
+	wxControl *c = create_control(self,id,arg);
 
 	return wrap( _self->InsertControl(0,c,unwrap<wxString>(text)));
 }
 
-
+/*
+ * call-seq:
+ *   prepend_separator -> WX::ToolBarBase::Tool
+ *
+ * prepends a new separator tool item to the ToolBar widget.
+ * ===Return value
+ * WX::ToolBarBase::Tool
+*/
 DLL_LOCAL VALUE _prepend_separator(VALUE self)
 {
 	return wrap(_self->InsertSeparator(0));
 }
 
+/*
+ * call-seq:
+ *   prepend_stretchable_space -> WX::ToolBarBase::Tool
+ *
+ * prepends a new stretchable space tool item to the ToolBar widget.
+ * ===Return value
+ * WX::ToolBarBase::Tool
+*/
 DLL_LOCAL VALUE _prepend_stretchable_space(VALUE self)
 {
 	return wrap(_self->InsertStretchableSpace(0));
@@ -498,6 +534,24 @@ singlereturn(Realize)
 singlereturn(IsVertical)
 
 singlereturn(GetMaxRows)
+
+/* Document-method: add_separator
+ * call-seq:
+ *   add_separator -> WX::ToolBarBase::Tool
+ *
+ * adds a new separator tool item to the ToolBar widget.
+ * ===Return value
+ * WX::ToolBarBase::Tool
+*/
+
+/* Document-method: add_stretchable_space
+ * call-seq:
+ *   add_stretchable_space -> WX::ToolBarBase::Tool
+ *
+ * adds a new stretchable space tool item to the ToolBar widget.
+ * ===Return value
+ * WX::ToolBarBase::Tool
+*/
 
 }
 }
