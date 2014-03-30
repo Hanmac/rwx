@@ -42,20 +42,21 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		wxArrayString choices;
 		int style(wxRA_SPECIFY_COLS);
 		int selection(-1);
+		bool selset(false);
 
 		if(rb_obj_is_kind_of(hash,rb_cHash)) {
 			set_hash_option(hash,"id",id,unwrapID);
 			set_hash_option(hash,"label",label);
 			set_hash_option(hash,"choices",choices);
 			set_hash_option(hash,"style",style);
-			set_hash_option(hash,"selection",selection);
+			selset = set_hash_option(hash,"selection",selection);
 		}
 		_self->Create(
 			unwrap<wxWindow*>(parent),id,label,
 			wxDefaultPosition,wxDefaultSize,
 			choices,0,style
 		);
-		if(check_index(selection,_self->GetCount()))
+		if(selset && check_index(selection,_self->GetCount()))
 			_self->SetSelection(selection);
 
 	}
@@ -63,61 +64,149 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
+/*
+ * call-seq:
+ *   get_item_string(pos) -> String
+ *
+ * returns the String of the item at the given position.
+ * ===Arguments
+ * * pos of the item. Integer
+ * ===Return value
+ * String
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of items
+ *
+*/
 DLL_LOCAL VALUE _getItemString(VALUE self,VALUE idx)
 {
 	int cidx = NUM2INT(idx);
-	if(check_index(idx,_self->GetCount()))
+	if(check_index(cidx,_self->GetCount()))
 		return wrap(_self->GetString(cidx));
 	return Qnil;
 }
 
+
+/*
+ * call-seq:
+ *   set_item_string(pos,text) -> self
+ *
+ * sets the String of the item at the given position.
+ * ===Arguments
+ * * pos of the item. Integer
+ * * text of the item. String
+ * ===Return value
+ * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of items
+ *
+*/
 DLL_LOCAL VALUE _setItemString(VALUE self,VALUE idx,VALUE val)
 {
 	rb_check_frozen(self);
 
 	int cidx = NUM2INT(idx);
-	if(check_index(idx,_self->GetCount()))
+	if(check_index(cidx,_self->GetCount()))
 		_self->SetString(cidx,unwrap<wxString>(val));
 
 	return self;
 }
 
-
-
+/*
+ * call-seq:
+ *   get_item_shown(pos) -> true/false
+ *
+ * returns if the item at the given position is shown.
+ * ===Arguments
+ * * pos of the item. Integer
+ * ===Return value
+ * true/false
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of items
+ *
+*/
 DLL_LOCAL VALUE _getItemShown(VALUE self,VALUE idx)
 {
 	int cidx = NUM2INT(idx);
-	if(check_index(idx,_self->GetCount()))
+	if(check_index(cidx,_self->GetCount()))
 		return wrap(_self->IsItemShown(cidx));
 	return Qnil;
 }
 
+
+/*
+ * call-seq:
+ *   set_item_shown(pos, val) -> self
+ *
+ * sets if the item at the given position is shown.
+ * ===Arguments
+ * * pos of the item. Integer
+ * * val if item should be shown true/false
+ * ===Return value
+ * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of items
+ *
+*/
 DLL_LOCAL VALUE _setItemShown(VALUE self,VALUE idx,VALUE val)
 {
 	rb_check_frozen(self);
 
 	int cidx = NUM2INT(idx);
-	if(check_index(idx,_self->GetCount()))
+	if(check_index(cidx,_self->GetCount()))
 		_self->Show(cidx,RTEST(val));
 
 	return self;
 }
 
 
+/*
+ * call-seq:
+ *   get_item_enabled(pos) -> true/false
+ *
+ * returns if the item at the given position is enabled.
+ * ===Arguments
+ * * pos of the item. Integer
+ * ===Return value
+ * true/false
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of items
+ *
+*/
 DLL_LOCAL VALUE _getItemEnabled(VALUE self,VALUE idx)
 {
 	int cidx = NUM2INT(idx);
-	if(check_index(idx,_self->GetCount()))
+	if(check_index(cidx,_self->GetCount()))
 		return wrap(_self->IsItemEnabled(cidx));
 	return Qnil;
 }
 
+
+/*
+ * call-seq:
+ *   set_item_enabled(pos, val) -> self
+ *
+ * sets if the item at the given position is enabled.
+ * ===Arguments
+ * * pos of the item. Integer
+ * * val if item should be shown true/false
+ * ===Return value
+ * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of items
+ *
+*/
 DLL_LOCAL VALUE _setItemEnabled(VALUE self,VALUE idx,VALUE val)
 {
 	rb_check_frozen(self);
 
 	int cidx = NUM2INT(idx);
-	if(check_index(idx,_self->GetCount()))
+	if(check_index(cidx,_self->GetCount()))
 		_self->Enable(cidx,RTEST(val));
 
 	return self;
