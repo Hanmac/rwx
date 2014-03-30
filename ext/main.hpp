@@ -386,11 +386,15 @@ DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
 
 
 template <typename T>
-DLL_LOCAL void set_hash_option(VALUE hash,const char* name,T& val,T func(const VALUE&) = unwrap<T> )
+DLL_LOCAL bool set_hash_option(VALUE hash,const char* name,T& val,T func(const VALUE&) = unwrap<T> )
 {
 	VALUE temp;
 	if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern(name)))))
+	{
 		val = func(temp);
+		return true;
+	}
+	return false;
 
 }
 
