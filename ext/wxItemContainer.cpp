@@ -59,6 +59,17 @@ DLL_LOCAL VALUE _each(VALUE self)
 }
 
 
+/*
+ * call-seq:
+ *   append(items) -> self
+ *
+ * adds new items to item container.
+ * ===Arguments
+ * * string items added to item container [String]
+ * ===Return value
+ * self
+ *
+*/
 DLL_LOCAL VALUE _Append(VALUE self,VALUE items)
 {
 	rb_check_frozen(self);
@@ -66,13 +77,55 @@ DLL_LOCAL VALUE _Append(VALUE self,VALUE items)
 	return self;
 }
 
+/*
+ * call-seq:
+ *   items(pos,items) -> self
+ *
+ * insert new items to item container at the given position.
+ * ===Arguments
+ * * pos where the item should be added.
+ * * string items added to item container [String]
+ * ===Return value
+ * * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of items
+ *
+*/
 DLL_LOCAL VALUE _Insert(VALUE self,VALUE idx,VALUE items)
 {
 	rb_check_frozen(self);
 
-	unsigned int cidx = NUM2UINT(idx);
-	if(check_index(cidx+1,_self->GetCount()))
-		_self->Insert(unwrap<wxArrayString>(items),cidx);
+	if(!_self->IsSorted())
+	{
+		int cidx = NUM2INT(idx);
+		if(check_index(cidx,_self->GetCount()+1))
+			_self->Insert(unwrap<wxArrayString>(items),cidx);
+	}else
+		_self->Append(unwrap<wxArrayString>(items));
+
+	return self;
+}
+
+/*
+ * call-seq:
+ *   prepend(items) -> self
+ *
+ * prepends new items to item container.
+ * ===Arguments
+ * * string items prepend to item container [String]
+ * ===Return value
+ * self
+ *
+*/
+DLL_LOCAL VALUE _Prepend(VALUE self,VALUE items)
+{
+	rb_check_frozen(self);
+
+	if(!_self->IsSorted())
+		_self->Insert(unwrap<wxArrayString>(items),0);
+	else
+		_self->Append(unwrap<wxArrayString>(items));
 
 	return self;
 }
@@ -82,7 +135,7 @@ DLL_LOCAL VALUE _Delete(VALUE self,VALUE idx)
 {
 	rb_check_frozen(self);
 
-	unsigned int cidx = NUM2UINT(idx);
+	int cidx = NUM2INT(idx);
 	if(check_index(cidx,_self->GetCount()))
 		_self->Delete(cidx);
 	return self;
@@ -95,19 +148,49 @@ DLL_LOCAL VALUE _setItems(VALUE self,VALUE items)
 	return items;
 }
 
+
+/*
+ * call-seq:
+ *   get_item_string(pos) -> String
+ *
+ * returns the String of the item at the given position.
+ * ===Arguments
+ * * pos of the item. Integer
+ * ===Return value
+ * String
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of items
+ *
+*/
 DLL_LOCAL VALUE _getItemString(VALUE self,VALUE idx)
 {
-	unsigned int cidx = NUM2UINT(idx);
+	int cidx = NUM2INT(idx);
 	if(check_index(cidx,_self->GetCount()))
 		return wrap(_self->GetString(cidx));
 	return Qnil;
 }
 
+/*
+ * call-seq:
+ *   set_item_string(pos,text) -> self
+ *
+ * sets the String of the item at the given position.
+ * ===Arguments
+ * * pos of the item. Integer
+ * * text of the item. String
+ * ===Return value
+ * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of items
+ *
+*/
 DLL_LOCAL VALUE _setItemString(VALUE self,VALUE idx,VALUE val)
 {
 	rb_check_frozen(self);
 
-	unsigned int cidx = NUM2UINT(idx);
+	int cidx = NUM2INT(idx);
 	if(check_index(cidx,_self->GetCount()))
 		_self->SetString(cidx,unwrap<wxString>(val));
 
@@ -142,6 +225,9 @@ DLL_LOCAL void Init_WXItemContainer(VALUE rb_mWX)
 	rb_define_alias(rb_mWXItemContainer,"<<","append");
 
 	rb_define_method(rb_mWXItemContainer,"insert",RUBY_METHOD_FUNC(_Insert),2);
+
+	rb_define_method(rb_mWXItemContainer,"prepend",RUBY_METHOD_FUNC(_Prepend),1);
+
 	rb_define_method(rb_mWXItemContainer,"delete_item",RUBY_METHOD_FUNC(_Delete),1);
 
 	rb_define_method(rb_mWXItemContainer,"get_item_string",RUBY_METHOD_FUNC(_getItemString),1);
