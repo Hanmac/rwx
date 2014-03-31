@@ -81,9 +81,23 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
+/*
+ * call-seq:
+ *   page(pos) -> WX::Window
+ *
+ * returns the page with the given index.
+ * ===Arguments
+ * * pos is a Integer
+ *
+ * ===Return value
+ * WX::Window
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of pages
+*/
 DLL_LOCAL VALUE _page(VALUE self,VALUE idx)
 {
-	unsigned int cidx(NUM2UINT(idx));
+	int cidx(NUM2INT(idx));
 
 	if(check_index(cidx,_self->GetPageCount()))
 		return wrap(_self->GetPage(cidx));
@@ -105,42 +119,100 @@ DLL_LOCAL VALUE _each(VALUE self)
 	return self;
 }
 
-
+/*
+ * call-seq:
+ *   get_page_text(pos) -> String
+ *
+ * returns the text of the given page.
+ * ===Arguments
+ * * pos is a Integer
+ *
+ * ===Return value
+ * String
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of pages
+*/
 DLL_LOCAL VALUE _get_page_text(VALUE self,VALUE idx)
 {
-	unsigned int cidx(NUM2UINT(idx));
+	int cidx(NUM2INT(idx));
 	if(check_index(cidx,_self->GetPageCount()))
 		return wrap(_self->GetPageText(cidx));
 	return Qnil;
 }
 
+/*
+ * call-seq:
+ *   set_page_text(pos,text) -> self
+ *
+ * returns the text of the given page.
+ * ===Arguments
+ * * pos is a Integer
+ * * text is a String
+ *
+ * ===Return value
+ * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of pages
+*/
 DLL_LOCAL VALUE _set_page_text(VALUE self,VALUE idx,VALUE str)
 {
 	rb_check_frozen(self);
-	unsigned int cidx(NUM2UINT(idx));
+	int cidx(NUM2INT(idx));
 	if(check_index(cidx,_self->GetPageCount()))
 		_self->SetPageText(cidx,unwrap<wxString>(str));
 	return self;
 }
 
+/*
+ * call-seq:
+ *   get_page_image(pos) -> Integer
+ *
+ * returns the image idx of the given page.
+ * ===Arguments
+ * * pos is a Integer
+ *
+ * ===Return value
+ * Integer
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of pages
+*/
 DLL_LOCAL VALUE _get_page_image(VALUE self,VALUE idx)
 {
-	unsigned int cidx(NUM2UINT(idx));
+	int cidx(NUM2INT(idx));
 	if(check_index(cidx,_self->GetPageCount()))
 		return INT2NUM(_self->GetPageImage(cidx));
 	return Qnil;
 }
 
+/*
+ * call-seq:
+ *   set_page_image(pos,iid) -> self
+ *
+ * sets the image idx of the given page.
+ * ===Arguments
+ * * pos is a Integer
+ * * iid Integer index of the image in the image_list
+ *
+ * ===Return value
+ * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of pages
+ * * iid is greater than the count of images in the image_list
+*/
 DLL_LOCAL VALUE _set_page_image(VALUE self,VALUE idx,VALUE iid)
 {
 	rb_check_frozen(self);
-	unsigned int cidx(NUM2UINT(idx));
+	int cidx(NUM2INT(idx));
 
 	if(check_index(cidx,_self->GetPageCount()))
 	{
-		unsigned int ciid(NUM2UINT(iid));
+		int ciid(NUM2INT(iid));
 		wxImageList *imglist = _self->GetImageList();
-		if(imglist && check_index(iid,imglist->GetImageCount()))
+		if(imglist && check_index(ciid,imglist->GetImageCount()))
 		{
 			_self->SetPageImage(cidx,ciid);
 		}
@@ -207,6 +279,8 @@ DLL_LOCAL VALUE _addPage(int argc,VALUE *argv,VALUE self)
 	int iid = -1;
 	rb_scan_args(argc, argv, "22:",&window,&text,&select,&imageid,&hash);
 
+	rb_check_frozen(self);
+
 	if(!NIL_P(select))
 		sel = RTEST(select);
 
@@ -250,7 +324,9 @@ DLL_LOCAL VALUE _insertPage(int argc,VALUE *argv,VALUE self)
 	int iid = -1;
 	rb_scan_args(argc, argv, "32:",&idx,&window,&text,&select,&imageid,&hash);
 
-	std::size_t cidx = NUM2UINT(idx);
+	rb_check_frozen(self);
+
+	int cidx = NUM2INT(idx);
 	if(check_index(cidx,_self->GetPageCount()+1))
 	{
 		if(!NIL_P(select))
@@ -296,6 +372,8 @@ DLL_LOCAL VALUE _prependPage(int argc,VALUE *argv,VALUE self)
 	int iid = -1;
 	rb_scan_args(argc, argv, "22:",&window,&text,&select,&imageid,&hash);
 
+	rb_check_frozen(self);
+
 	if(!NIL_P(select))
 		sel = RTEST(select);
 
@@ -305,23 +383,70 @@ DLL_LOCAL VALUE _prependPage(int argc,VALUE *argv,VALUE self)
 	return wrap(_self->InsertPage(0,w,unwrap<wxString>(text),sel,iid));
 }
 
-
+/*
+ * call-seq:
+ *   delete_page(pos) -> WX::Window
+ *
+ * deletes and returns the page with the given index from the BookCtrl.
+ * ===Arguments
+ * * pos is a Integer
+ *
+ * ===Return value
+ * WX::Window
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of pages
+*/
 DLL_LOCAL VALUE _deletePage(VALUE self,VALUE idx)
 {
-	std::size_t cidx = NUM2UINT(idx);
+	rb_check_frozen(self);
+	int cidx = NUM2INT(idx);
 	if(check_index(cidx,_self->GetPageCount()))
 	{
 		wxWindow *w = _self->GetPage(cidx);
 		if(_self->RemovePage(cidx))
 			return wrap(w);
 	}
-	return Qfalse;
+	return Qnil;
 }
 
 
 
 singlefunc(DeleteAllPages)
+singlefunc(AdvanceSelection)
 
+/*
+ * call-seq:
+ *   prev_page -> self
+ *
+ * selects the previous page of the current selected.
+ * ===Return value
+ * self
+*/
+DLL_LOCAL VALUE _prev_page(VALUE self)
+{
+	rb_check_frozen(self);
+	_self->AdvanceSelection(false);
+	return self;
+}
+
+/* Document-method: delete_all_pages
+ * call-seq:
+ *   delete_all_pages -> self
+ *
+ * deletes all pages from the BookCtrl. Returns self.
+ * ===Return value
+ * self
+*/
+
+/* Document-method: next_page
+ * call-seq:
+ *   next_page -> self
+ *
+ * selects the next page of the current selected.
+ * ===Return value
+ * self
+*/
 
 namespace Event {
 #undef _self
@@ -377,6 +502,9 @@ DLL_LOCAL void Init_WXBookCtrl(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXBookCtrlBase,"delete_page",RUBY_METHOD_FUNC(_deletePage),1);
 	rb_define_method(rb_cWXBookCtrlBase,"delete_all_pages",RUBY_METHOD_FUNC(_DeleteAllPages),0);
+
+	rb_define_method(rb_cWXBookCtrlBase,"next_page",RUBY_METHOD_FUNC(_AdvanceSelection),0);
+	rb_define_method(rb_cWXBookCtrlBase,"prev_page",RUBY_METHOD_FUNC(_prev_page),0);
 
 	rb_cWXBookCtrlEvent = rb_define_class_under(rb_cWXEvent,"BookCtrl",rb_cWXNotifyEvent);
 
