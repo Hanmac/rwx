@@ -68,37 +68,93 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 
 
-
+/*
+ * call-seq:
+ *   get_page_bitmap(pos) -> WX::Bitmap
+ *
+ * returns the bitmap of the given page.
+ * ===Arguments
+ * * pos is a Integer
+ *
+ * ===Return value
+ * WX::Bitmap
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of pages
+*/
 DLL_LOCAL VALUE _get_page_bitmap(VALUE self,VALUE idx)
 {
-	unsigned int cidx(NUM2UINT(idx));
+	int cidx(NUM2INT(idx));
 	if(check_index(cidx,_self->GetPageCount()))
 		return wrap(_self->GetPageBitmap(cidx));
 	return Qnil;
 }
 
+/*
+ * call-seq:
+ *   set_page_bitmap(pos,bitmap) -> self
+ *
+ * sets the bitmap of the given page.
+ * ===Arguments
+ * * pos is a Integer
+ * * bitmap is a WX::Bitmap
+ *
+ * ===Return value
+ * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of pages
+*/
 DLL_LOCAL VALUE _set_page_bitmap(VALUE self,VALUE idx,VALUE str)
 {
 	rb_check_frozen(self);
-	unsigned int cidx(NUM2UINT(idx));
+	int cidx(NUM2INT(idx));
 	if(check_index(cidx,_self->GetPageCount()))
 		_self->SetPageBitmap(cidx,unwrap<wxBitmap>(str));
 	return self;
 }
 
-
+/*
+ * call-seq:
+ *   get_page_tooltip(pos) -> String
+ *
+ * returns the tool tip of the given page.
+ * ===Arguments
+ * * pos is a Integer
+ *
+ * ===Return value
+ * String
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of pages
+*/
 DLL_LOCAL VALUE _get_page_tooltip(VALUE self,VALUE idx)
 {
-	unsigned int cidx(NUM2UINT(idx));
+	int cidx(NUM2INT(idx));
 	if(check_index(cidx,_self->GetPageCount()))
 		return wrap(_self->GetPageToolTip(cidx));
 	return Qnil;
 }
 
+/*
+ * call-seq:
+ *   set_page_tooltip(pos,tooltip) -> self
+ *
+ * sets the tool tip of the given page.
+ * ===Arguments
+ * * pos is a Integer
+ * * tooltip is a String
+ *
+ * ===Return value
+ * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of pages
+*/
 DLL_LOCAL VALUE _set_page_tooltip(VALUE self,VALUE idx,VALUE str)
 {
 	rb_check_frozen(self);
-	unsigned int cidx(NUM2UINT(idx));
+	int cidx(NUM2INT(idx));
 	if(check_index(cidx,_self->GetPageCount()))
 		_self->SetPageToolTip(cidx,unwrap<wxString>(str));
 	return self;
@@ -165,6 +221,8 @@ DLL_LOCAL VALUE _addPage(int argc,VALUE *argv,VALUE self)
 
 	rb_scan_args(argc, argv, "22:",&window,&text,&select,&imageid,&hash);
 
+	rb_check_frozen(self);
+
 	if(!NIL_P(select))
 		sel = RTEST(select);
 
@@ -198,6 +256,7 @@ DLL_LOCAL VALUE _addPage(int argc,VALUE *argv,VALUE self)
  * true/false
  * === Exceptions
  * [IndexError]
+ * * pos is greater than the count of pages
  * * bitmap is Integer and greater than the list of bitmaps in the image_list
  * [TypeError]
  * * window is nil
@@ -212,12 +271,14 @@ DLL_LOCAL VALUE _insertPage(int argc,VALUE *argv,VALUE self)
 	bool sel = false;
 	rb_scan_args(argc, argv, "32:",&idx,&window,&text,&select,&imageid,&hash);
 
+	rb_check_frozen(self);
+
 	if(!NIL_P(select))
 		sel = RTEST(select);
 
 	check_window(self,hash,window,w);
 
-	unsigned int cidx = NUM2UINT(idx);
+	int cidx = NUM2INT(idx);
 	if(check_index(cidx,_self->GetPageCount()+1))
 	{
 		int iid = -1;
@@ -262,6 +323,8 @@ DLL_LOCAL VALUE _prependPage(int argc,VALUE *argv,VALUE self)
 	wxWindow *w = NULL;
 	bool sel = false;
 	rb_scan_args(argc, argv, "22:",&window,&text,&select,&imageid,&hash);
+
+	rb_check_frozen(self);
 
 	if(!NIL_P(select))
 		sel = RTEST(select);
