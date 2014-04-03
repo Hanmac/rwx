@@ -62,9 +62,24 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 macro_attr(StatusText,wxString)
 macro_attr(FieldsCount,int)
 
+/*
+ * call-seq:
+ *   get_field_rect(pos) -> WX::Rect
+ *
+ * returns the rect of the given pane.
+ * ===Arguments
+ * * pos is a Integer
+ *
+ * ===Return value
+ * WX::Rect
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of panes
+*/
 DLL_LOCAL VALUE _GetFieldRect(VALUE self,VALUE num)
 {
-	if(check_index(NUM2INT(num),_self->GetFieldsCount()))
+	int cidx = NUM2INT(num);
+	if(check_index(cidx,_self->GetFieldsCount()))
 	{
 		wxRect rect;
 		if(_self->GetFieldRect(NUM2INT(num),rect))
@@ -73,74 +88,179 @@ DLL_LOCAL VALUE _GetFieldRect(VALUE self,VALUE num)
 	return Qnil;
 }
 
+
+/*
+ * call-seq:
+ *   get_status_text(pos) -> String
+ *
+ * returns the text of the given pane.
+ * ===Arguments
+ * * pos is a Integer
+ *
+ * ===Return value
+ * String
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of panes
+*/
 DLL_LOCAL VALUE _getStatusText2(VALUE self,VALUE num)
 {
-	if(check_index(NUM2INT(num),_self->GetFieldsCount()))
+	int cidx = NUM2INT(num);
+	if(check_index(cidx,_self->GetFieldsCount()))
 		return wrap(_self->GetStatusText(NUM2INT(num)));
 	return Qnil;
 }
 
+
+/*
+ * call-seq:
+ *   set_status_text(pos,text) -> self
+ *
+ * sets the status text of the given pane.
+ * ===Arguments
+ * * pos is a Integer
+ * * text is a String
+ *
+ * ===Return value
+ * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of pages
+*/
 DLL_LOCAL VALUE _setStatusText2(VALUE self,VALUE str,VALUE num)
 {
 	rb_check_frozen(self);
-	if(check_index(NUM2INT(num),_self->GetFieldsCount()))
+	int cidx = NUM2INT(num);
+	if(check_index(cidx,_self->GetFieldsCount()))
 		_self->SetStatusText(unwrap<wxString>(str),NUM2INT(num));
-	//const_cast<wxStatusBarPane&>(_self->GetField(NUM2INT(num))).SetText(unwrap<wxString>(str));
-	//_self->Update();
+
 	return Qnil;
 }
 
+
+
+/*
+ * call-seq:
+ *   get_status_width(pos) -> Integer
+ *
+ * returns the width of the given pane.
+ * ===Arguments
+ * * pos is a Integer
+ *
+ * ===Return value
+ * Integer
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of panes
+*/
 DLL_LOCAL VALUE _getStatusWidth(VALUE self,VALUE num)
 {
-	if(check_index(NUM2INT(num),_self->GetFieldsCount()))
+	int cidx = NUM2INT(num);
+	if(check_index(cidx,_self->GetFieldsCount()))
 		return INT2NUM(_self->GetStatusWidth(NUM2INT(num)));
 	return Qnil;
 }
 
+
+/*
+ * call-seq:
+ *   set_status_width(pos,size) -> self
+ *
+ * sets the status width of the given pane.
+ * ===Arguments
+ * * pos is a Integer
+ * * size is a Integer
+ *
+ * ===Return value
+ * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of pages
+*/
 DLL_LOCAL VALUE _setStatusWidth(VALUE self,VALUE num,VALUE val)
 {
 	rb_check_frozen(self);
-	const size_t count = _self->GetFieldsCount();
+	const std::size_t count = _self->GetFieldsCount();
 
+	int cidx = NUM2INT(num);
 
-	if(check_index(NUM2INT(num),count))
+	if(check_index(cidx,count))
 	{
 		int w[count];
-		for(size_t i = 0; i < count; ++i )
+		for(std::size_t i = 0; i < count; ++i )
 		{
 			int v = _self->GetStatusWidth(i);
 			w[i] = v ? v : -1;
 		}
 		w[NUM2INT(num)] = NUM2INT(val);
 		_self->SetStatusWidths(count,w);
-		//const_cast<wxStatusBarPane&>(_self->GetField(NUM2INT(num))).SetWidth(w);
-		//_self->Refresh();
 	}
 	return Qnil;
 }
 
+
+/*
+ * call-seq:
+ *   push_status_text(text,[pos]) -> self
+ *
+ * pushes status text to the given pane.
+ * ===Arguments
+ * * text String
+ * * pos is a Integer
+ *
+ * ===Return value
+ * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of panes
+*/
 DLL_LOCAL VALUE _pushStatusText(int argc,VALUE *argv,VALUE self)
 {
 	VALUE str,num;
 	rb_scan_args(argc, argv, "11",&str,&num);
 	rb_check_frozen(self);
-	if(NIL_P(num))
-		_self->PushStatusText(unwrap<wxString>(str));
-	else if(check_index(NUM2INT(num),_self->GetFieldsCount()))
-		_self->PushStatusText(unwrap<wxString>(str),NUM2INT(num));
-	return Qnil;
+
+	int cidx(0);
+
+	if(!NIL_P(num))
+		cidx = NUM2INT(num);
+
+	if(check_index(cidx,_self->GetFieldsCount()))
+		_self->PushStatusText(unwrap<wxString>(str),cidx);
+
+	return self;
 }
 
+
+/*
+ * call-seq:
+ *   pop_status_text([pos]) -> self
+ *
+ * pops status text from the given pane.
+ * ===Arguments
+ * * pos is a Integer
+ *
+ * ===Return value
+ * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of panes
+*/
 DLL_LOCAL VALUE _popStatusText(int argc,VALUE *argv,VALUE self)
 {
 	VALUE num;
 	rb_scan_args(argc, argv, "01",&num);
 	rb_check_frozen(self);
-	if(NIL_P(num))
-		_self->PopStatusText();
-	else if(check_index(NUM2INT(num),_self->GetFieldsCount()))
-		_self->PopStatusText(NUM2INT(num));
-	return Qnil;
+
+	int cidx(0);
+
+	if(!NIL_P(num))
+		cidx = NUM2INT(num);
+
+	if(check_index(cidx,_self->GetFieldsCount()))
+		_self->PopStatusText(cidx);
+
+	return self;
 }
 
 DLL_LOCAL VALUE _each_size(VALUE self)
