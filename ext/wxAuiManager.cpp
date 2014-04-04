@@ -58,6 +58,10 @@ DLL_LOCAL VALUE _addPane(int argc,VALUE *argv,VALUE self)
 #endif
 DLL_LOCAL void Init_WXAuiManager(VALUE rb_mWX)
 {
+#if 0
+	rb_mWXEvtHandler = rb_define_module_under(rb_mWX,"EvtHandler");
+#endif
+
 #if wxUSE_AUI
 	using namespace RubyWX::AuiManager;
 	rb_cWXAuiManager = rb_define_class_under(rb_mWX,"AuiManager",rb_cObject);

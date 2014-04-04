@@ -25,6 +25,12 @@ singlefunc(Veto)
 
 DLL_LOCAL void Init_WXNotifyEvent(VALUE rb_mWX)
 {
+#if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXEvent = rb_define_class_under(rb_mWX,"Event",rb_cObject);
+	rb_cWXCommandEvent = rb_define_class_under(rb_cWXEvent,"Command",rb_cWXEvent);
+#endif
+
 	using namespace RubyWX::NotifyEvent;
 
 	rb_cWXNotifyEvent = rb_define_class_under(rb_cWXEvent,"Notify",rb_cWXCommandEvent);

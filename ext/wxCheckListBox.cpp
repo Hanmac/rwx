@@ -95,6 +95,14 @@ DLL_LOCAL VALUE _getCheckedItems(VALUE self)
 #endif
 DLL_LOCAL void Init_WXCheckListBox(VALUE rb_mWX)
 {
+#if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+	rb_cWXListBox = rb_define_class_under(rb_mWX,"ListBox",rb_cWXControl);
+#endif
+
 #if wxUSE_CHECKLISTBOX
 	using namespace RubyWX::CheckListBox;
 	rb_cWXCheckListBox = rb_define_class_under(rb_mWX,"CheckListBox",rb_cWXListBox);

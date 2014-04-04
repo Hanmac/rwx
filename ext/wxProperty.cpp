@@ -41,14 +41,13 @@ DLL_LOCAL VALUE _alloc(VALUE self)
 {
 	app_protected();
 
-	VALUE klass = self;
-	while(true)
+	for(VALUE klass = self; klass !=rb_cObject; klass = rb_class_get_superclass(klass))
 	{
 		for(infoholdertype::const_iterator it = infoklassholder.begin(); it != infoklassholder.end();++it)
 			if(it->second == klass)
 				return wrapPtr(it->first->CreateObject(),self);
-		klass = rb_class_get_superclass(klass);
 	}
+
 	return Qnil;
 }
 
@@ -65,6 +64,8 @@ singlereturn(GetDepth)
 singlereturn(GetGrid)
 
 singlereturn(IsVisible)
+singlereturn(IsRoot)
+singlereturn(IsCategory)
 
 singlereturn(GetValue)
 singlereturn(GetDefaultValue)
@@ -144,9 +145,8 @@ DLL_LOCAL VALUE _each_choices(VALUE self)
 	if(!choices.IsOk())
 		return self;
 
-	size_t count = choices.GetCount();
-	//return INT2NUM(count);
-	for(size_t i = 0; i < count; ++i)
+	std::size_t count = choices.GetCount();
+	for(std::size_t i = 0; i < count; ++i)
 	{
 		rb_yield(wrap(&dynamic_cast<wxPGCell&>(choices[i])));
 	}
@@ -154,6 +154,91 @@ DLL_LOCAL VALUE _each_choices(VALUE self)
 
 	return self;
 }
+
+
+DLL_LOCAL VALUE _add_choice(int argc,VALUE *argv,VALUE self)
+{
+	VALUE label,value;
+
+	rb_scan_args(argc, argv, "11",&label,&value);
+
+	int cvalue = wxPG_INVALID_VALUE;
+
+	if(!NIL_P(value))
+		cvalue = NUM2INT(value);
+
+	return INT2NUM(_self->AddChoice(unwrap<wxString>(label),cvalue));
+
+}
+
+DLL_LOCAL VALUE _insert_choice(int argc,VALUE *argv,VALUE self)
+{
+	VALUE label,idx,value;
+
+	rb_scan_args(argc, argv, "21",&label,&idx,&value);
+
+	int cvalue = wxPG_INVALID_VALUE;
+
+	int cidx = NUM2INT(idx);
+
+	std::size_t size = 0;
+
+	const wxPGChoices& choices = _self->GetChoices();
+	if(choices.IsOk())
+		size = choices.GetCount();
+
+	if(!NIL_P(value))
+		cvalue = NUM2INT(value);
+
+	if(check_index(cidx,size+1))
+		return INT2NUM(_self->InsertChoice(unwrap<wxString>(label),cidx,cvalue));
+	return Qnil;
+}
+
+DLL_LOCAL VALUE delete_choice(VALUE self,VALUE idx)
+{
+
+	int cidx = NUM2INT(idx);
+
+	std::size_t size = 0;
+
+	const wxPGChoices& choices = _self->GetChoices();
+	if(choices.IsOk())
+		size = choices.GetCount();
+
+	if(check_index(cidx,size))
+		_self->DeleteChoice(cidx);
+
+	return self;
+}
+
+
+DLL_LOCAL VALUE _add_child(VALUE self,VALUE prop)
+{
+	return wrap(_self->AppendChild(unwrap<wxPGProperty*>(prop)));
+}
+
+DLL_LOCAL VALUE _add_private_child(VALUE self,VALUE prop)
+{
+	_self->AddPrivateChild(unwrap<wxPGProperty*>(prop));
+	return self;
+}
+DLL_LOCAL VALUE _insert_child(VALUE self,VALUE idx,VALUE prop)
+{
+	int cidx = NUM2INT(idx);
+
+	if(check_index(cidx,_self->GetChildCount()+1))
+		return wrap(_self->InsertChild(cidx,unwrap<wxPGProperty*>(prop)));
+
+	return Qnil;
+}
+DLL_LOCAL VALUE _prepend_child(VALUE self,VALUE prop)
+{
+	return wrap(_self->InsertChild(0,unwrap<wxPGProperty*>(prop)));
+}
+
+
+
 
 DLL_LOCAL VALUE _each_attributes_size(VALUE self)
 {

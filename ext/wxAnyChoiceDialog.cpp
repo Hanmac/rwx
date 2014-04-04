@@ -65,6 +65,16 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 #endif
 DLL_LOCAL void Init_WXAnyChoiceDialog(VALUE rb_mWX)
 {
+
+#if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+
+	rb_cWXTopLevel = rb_define_class_under(rb_mWX,"TopLevel",rb_cWXWindow);
+	rb_cWXDialog = rb_define_class_under(rb_mWX,"Dialog",rb_cWXTopLevel);
+
+#endif
+
 #if wxUSE_CHOICEDLG
 	using namespace RubyWX::AnyChoiceDialog;
 	rb_cWXAnyChoiceDialog = rb_define_class_under(rb_mWX,"AnyChoiceDialog",rb_cWXDialog);

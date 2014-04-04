@@ -348,6 +348,16 @@ DLL_LOCAL VALUE _prependPage(int argc,VALUE *argv,VALUE self)
 #endif
 DLL_LOCAL void Init_WXAuiNoteBookCtrl(VALUE rb_mWX)
 {
+
+#if 0
+	rb_mWX = rb_define_module("WX");
+	rb_mWXEvtHandler = rb_define_module_under(rb_mWX,"EvtHandler");
+
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+	rb_cWXBookCtrlBase = rb_define_class_under(rb_mWX,"BookCtrl",rb_cWXControl);
+#endif
+
 #if wxUSE_AUI
 	using namespace RubyWX::AuiNotebook;
 	rb_cWXAuiNotebook = rb_define_class_under(rb_mWX,"AuiNoteBookCtrl",rb_cWXBookCtrlBase);

@@ -16,6 +16,18 @@ DLL_LOCAL void Init_WXPropertyGridInterface(VALUE rb_mWX);
 
 #if wxUSE_PROPGRID
 #include <wx/propgrid/manager.h>
+
+template <>
+wxPGPropArgCls unwrap< wxPGPropArgCls >(const VALUE &obj);
+
+namespace RubyWX {
+namespace PropertyGridInterface {
+
+DLL_LOCAL void _set_extra_style(wxWindow *wnd,VALUE hash);
+
+}
+}
+
 #endif
 
 #endif /* WXPROPERTYGRIDINTERFACE_HPP_ */

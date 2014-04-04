@@ -24,12 +24,6 @@ singlereturn(GetCurrentPage)
 singlereturn(GetGrid)
 singlereturn(GetToolBar)
 
-//need to define them again, stupid shadowing
-singlefunc(Freeze)
-singlefunc(Thaw)
-
-singlereturn(IsFrozen)
-
 /*
  * call-seq:
  *   PropertyGridManager.new(parent, name, [options])
@@ -70,46 +64,123 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	}
 
 	rb_call_super(argc,argv);
+
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		PropertyGridInterface::_set_extra_style(_self,hash);
+	}
 	return self;
 }
 
+wxPropertyGridPage* create_page(VALUE self,VALUE page,VALUE hash)
+{
+	if(NIL_P(page))
+		return NULL;
 
+	if(rb_obj_is_kind_of(page,rb_cClass) && rb_class_inherited(page,rb_cWXPropertyGridPage)) {
+		VALUE argv2[] = {self, hash };
+		page = rb_class_new_instance(2,argv2,page);
+	}
+
+	return unwrap<wxPropertyGridPage*>(page);
+}
+
+
+/*
+ * call-seq:
+ *   add_page(label, [bitmap], [page]) -> WX::PropertyGridPage
+ *   add_page(label, [bitmap], page, **options) [{|page| ... }] -> WX::PropertyGridPage
+ *
+ * adds a new page to the PropertyGridManager widget.
+ *
+ * ===Arguments
+ * * label is the Label of the page. String
+ * * bitmap is a WX::Bitmap
+ * * page is a WX::PropertyGridPage, or a Class inherited from WX::PropertyGridPage
+ * ===Return value
+ * WX::PropertyGridPage
+ *
+*/
 DLL_LOCAL VALUE _add_page(int argc,VALUE *argv,VALUE self)
 {
 	VALUE label,bitmap,page,hash;
 
 	rb_scan_args(argc, argv, "13",&label,&bitmap,&page,&hash);
 
-	wxPropertyGridPage* cpage = NULL;
+	rb_check_frozen(self);
 
-	if(rb_obj_is_kind_of(page,rb_cClass) && rb_class_inherited(page,rb_cWXPropertyGridPage)) {
-		VALUE argv2[] = {self, hash };
-		cpage = unwrap<wxPropertyGridPage*>(rb_class_new_instance(2,argv2,page));
-	} else {
-		cpage = unwrap<wxPropertyGridPage*>(page);
-	}
+	wxPropertyGridPage* cpage = create_page(self,page,hash);
 
 	return wrap(_self->AddPage(unwrap<wxString>(label),unwrap<wxBitmap>(bitmap),cpage));
 }
 
-
+/*
+ * call-seq:
+ *   insert_page(pos, label, [bitmap], [page]) -> WX::PropertyGridPage
+ *   insert_page(pos, label, [bitmap], page, **options) [{|page| ... }] -> WX::PropertyGridPage
+ *
+ * inserts a new page to the PropertyGridManager widget.
+ *
+ * ===Arguments
+ * * pos is a Integer
+ * * label is the Label of the page. String
+ * * bitmap is a WX::Bitmap
+ * * page is a WX::PropertyGridPage, or a Class inherited from WX::PropertyGridPage
+ * ===Return value
+ * WX::PropertyGridPage
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of pages
+ *
+*/
 DLL_LOCAL VALUE _insert_page(int argc,VALUE *argv,VALUE self)
 {
 	VALUE idx,label,bitmap,page,hash;
 
 	rb_scan_args(argc, argv, "23",&idx,&label,&bitmap,&page,&hash);
 
-	wxPropertyGridPage* cpage = NULL;
+	rb_check_frozen(self);
 
-	if(rb_obj_is_kind_of(page,rb_cClass) && rb_class_inherited(page,rb_cWXPropertyGridPage)) {
-		VALUE argv2[] = {self, hash };
-		cpage = unwrap<wxPropertyGridPage*>(rb_class_new_instance(2,argv2,page));
-	} else {
-		cpage = unwrap<wxPropertyGridPage*>(page);
+	int cidx = NUM2INT(idx);
+	if(check_index(cidx,_self->GetPageCount()))
+	{
+		wxPropertyGridPage* cpage = create_page(self,page,hash);
+
+		return wrap(_self->InsertPage(cidx,unwrap<wxString>(label),unwrap<wxBitmap>(bitmap),cpage));
 	}
-
-	return wrap(_self->InsertPage(NUM2INT(idx),unwrap<wxString>(label),unwrap<wxBitmap>(bitmap),cpage));
+	return Qnil;
 }
+
+
+/*
+ * call-seq:
+ *   prepend_page(label, [bitmap], [page]) -> WX::PropertyGridPage
+ *   prepend_page(label, [bitmap], page, **options) [{|page| ... }] -> WX::PropertyGridPage
+ *
+ * prepends a new page to the PropertyGridManager widget.
+ *
+ * ===Arguments
+ * * label is the Label of the page. String
+ * * bitmap is a WX::Bitmap
+ * * page is a WX::PropertyGridPage, or a Class inherited from WX::PropertyGridPage
+ * ===Return value
+ * WX::PropertyGridPage
+ *
+*/
+DLL_LOCAL VALUE _prepend_page(int argc,VALUE *argv,VALUE self)
+{
+	VALUE label,bitmap,page,hash;
+
+	rb_scan_args(argc, argv, "13",&label,&bitmap,&page,&hash);
+
+	rb_check_frozen(self);
+
+	wxPropertyGridPage* cpage = create_page(self,page,hash);
+
+	return wrap(_self->InsertPage(0,unwrap<wxString>(label),unwrap<wxBitmap>(bitmap),cpage));
+}
+
 
 DLL_LOCAL VALUE _each_size(VALUE self)
 {
@@ -142,6 +213,14 @@ DLL_LOCAL VALUE _each(VALUE self)
  * WX::ToolBar
  */
 
+/* Document-method: grid
+ * call-seq:
+ *   grid -> WX::PropertyGrid
+ *
+ * returns the grid of this WX::PropertyGridManager.
+ * ===Return value
+ * WX::PropertyGrid
+ */
 DLL_LOCAL void Init_WXPropertyGridManager(VALUE rb_mWX)
 {
 #if 0
@@ -160,6 +239,7 @@ DLL_LOCAL void Init_WXPropertyGridManager(VALUE rb_mWX)
 	rb_define_method(rb_cWXPropertyGridManager,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_method(rb_cWXPropertyGridManager,"tool_bar",RUBY_METHOD_FUNC(_GetToolBar),0);
+	rb_define_method(rb_cWXPropertyGridManager,"grid",RUBY_METHOD_FUNC(_GetGrid),0);
 
 	rb_define_method(rb_cWXPropertyGridManager,"current_page",RUBY_METHOD_FUNC(_GetCurrentPage),0);
 
@@ -170,8 +250,6 @@ DLL_LOCAL void Init_WXPropertyGridManager(VALUE rb_mWX)
 	rb_define_const(rb_cWXPropertyGridManager,"DEFAULT_STYLE",INT2NUM(wxPGMAN_DEFAULT_STYLE));
 	rb_define_const(rb_cWXPropertyGridManager,"TOOLBAR",INT2NUM(wxPG_TOOLBAR));
 	rb_define_const(rb_cWXPropertyGridManager,"DESCRIPTION",INT2NUM(wxPG_DESCRIPTION));
-
-	rb_define_const(rb_cWXPropertyGridManager,"EX_MODE_BUTTONS",INT2NUM(wxPG_EX_MODE_BUTTONS));
 
 	registerInfo<wxPropertyGridManager>(rb_cWXPropertyGridManager);
 #endif

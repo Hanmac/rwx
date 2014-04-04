@@ -150,6 +150,14 @@ DLL_LOCAL VALUE _InsertItem(int argc,VALUE *argv,VALUE self)
 #endif
 DLL_LOCAL void Init_WXDataViewList(VALUE rb_mWX)
 {
+#if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+	rb_cWXDataView = rb_define_class_under(rb_mWX,"DataView",rb_cWXControl);
+
+#endif
 #if wxUSE_DATAVIEWCTRL
 	using namespace RubyWX::DataViewList;
 	rb_cWXDataViewList = rb_define_class_under(rb_mWX,"DataViewList",rb_cWXDataView);

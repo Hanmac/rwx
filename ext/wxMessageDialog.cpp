@@ -37,7 +37,17 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 #endif
 DLL_LOCAL void Init_WXMessageDialog(VALUE rb_mWX)
 {
-#if wxUSE_FILECTRL
+
+#if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+
+	rb_cWXTopLevel = rb_define_class_under(rb_mWX,"TopLevel",rb_cWXWindow);
+	rb_cWXDialog = rb_define_class_under(rb_mWX,"Dialog",rb_cWXTopLevel);
+	rb_cWXMessageDialogBase = rb_define_class_under(rb_mWX,"MessageDialogBase",rb_cWXDialog);
+#endif
+
+#if wxUSE_MSGDLG
 	using namespace RubyWX::MessageDialog;
 	rb_cWXMessageDialog = rb_define_class_under(rb_mWX,"MessageDialog",rb_cWXMessageDialogBase);
 	//rb_define_alloc_func(rb_cWXMessageDialog,_alloc);

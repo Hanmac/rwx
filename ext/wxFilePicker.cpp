@@ -91,6 +91,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL void Init_WXFilePicker(VALUE rb_mWX)
 {
 #if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+	rb_cWXPickerBase = rb_define_class_under(rb_mWX,"PickerBase",rb_cWXControl);
+
 	rb_cWXFileDirPicker = rb_define_class_under(rb_mWX,"FileDirPicker",rb_cWXPickerBase);
 
 #endif

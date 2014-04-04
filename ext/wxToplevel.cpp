@@ -84,6 +84,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL void Init_WXTopLevel(VALUE rb_mWX)
 {
 #if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+
 	rb_define_attr(rb_cWXTopLevel, "title",1,1);
 	rb_define_attr(rb_cWXTopLevel, "icon",1,1);
 

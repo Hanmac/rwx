@@ -91,6 +91,13 @@ DLL_LOCAL VALUE _CreateTextSizer(VALUE self,VALUE text)
 
 DLL_LOCAL void Init_WXDialog(VALUE rb_mWX)
 {
+#if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+
+	rb_cWXTopLevel = rb_define_class_under(rb_mWX,"TopLevel",rb_cWXWindow);
+#endif
+
 	using namespace RubyWX::Dialog;
 	rb_cWXDialog = rb_define_class_under(rb_mWX,"Dialog",rb_cWXTopLevel);
 	rb_define_alloc_func(rb_cWXDialog,_alloc);

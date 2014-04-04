@@ -58,6 +58,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"title",title);
 
 			order.resize(items.size());
+
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),message,title,order,items);
@@ -69,16 +70,20 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL VALUE _AddExtraControls(int argc,VALUE *argv,VALUE self)
 {
-	VALUE wnd;
+	rb_check_frozen(self);
+
+	VALUE wnd,hash;
 	wxWindow *cwnd;
-	rb_scan_args(argc, argv, "01",&wnd);
+	rb_scan_args(argc, argv, "01:",&wnd,&hash);
 	if(rb_obj_is_kind_of(wnd,rb_cClass) && rb_class_inherited(wnd,rb_cWXWindow)) {
-		VALUE args[] = {self};
-		cwnd = unwrap<wxWindow*>(rb_class_new_instance(1,args,wnd));
-	}else
-		cwnd = unwrap<wxWindow*>(wnd);
+		VALUE args[] = {self,hash};
+		cwnd = unwrap<wxWindow*>(rb_class_new_instance(2,args,wnd));
+	}else if(nil_check(wnd)) {
+		window_parent_check(wnd,_self,cwnd);
+	}
 
 	_self->AddExtraControls(cwnd);
+
 	return self;
 }
 
@@ -88,12 +93,24 @@ DLL_LOCAL VALUE _AddExtraControls(int argc,VALUE *argv,VALUE self)
 #endif
 DLL_LOCAL void Init_WXRearrangeDialog(VALUE rb_mWX)
 {
+#if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+
+	rb_cWXTopLevel = rb_define_class_under(rb_mWX,"TopLevel",rb_cWXWindow);
+	rb_cWXDialog = rb_define_class_under(rb_mWX,"Dialog",rb_cWXTopLevel);
+
+#endif
+
 #if wxUSE_REARRANGECTRL
 	using namespace RubyWX::RearrangeDialog;
 	rb_cWXRearrangeDialog = rb_define_class_under(rb_mWX,"RearrangeDialog",rb_cWXDialog);
 	rb_define_alloc_func(rb_cWXRearrangeDialog,_alloc);
 
 	rb_define_method(rb_cWXRearrangeDialog,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
+
+	rb_define_method(rb_cWXRearrangeDialog,"list",RUBY_METHOD_FUNC(_GetList),0);
+	rb_define_method(rb_cWXRearrangeDialog,"order",RUBY_METHOD_FUNC(_GetOrder),0);
 
 	rb_define_method(rb_cWXRearrangeDialog,"add_extra_controls",RUBY_METHOD_FUNC(_AddExtraControls),-1);
 

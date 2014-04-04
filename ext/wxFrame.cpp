@@ -103,6 +103,11 @@ singlereturn(CreateToolBar)
 DLL_LOCAL void Init_WXFrame(VALUE rb_mWX)
 {
 #if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+
+	rb_cWXTopLevel = rb_define_class_under(rb_mWX,"TopLevel",rb_cWXWindow);
+
 	rb_define_attr(rb_cWXFrame,"menubar",1,1);
 	rb_define_attr(rb_cWXFrame,"statusbar",1,1);
 	rb_define_attr(rb_cWXFrame,"statusbar_pane",1,1);

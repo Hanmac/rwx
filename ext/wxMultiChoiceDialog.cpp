@@ -118,6 +118,8 @@ VALUE _GetSelectedChoices(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL void Init_WXMultiChoiceDialog(VALUE rb_mWX)
 {
 #if 0
+	rb_cWXAnyChoiceDialog = rb_define_class_under(rb_mWX,"AnyChoiceDialog",rb_cWXDialog);
+
 	rb_define_attr(rb_cWXMultiChoiceDialog,"selections",1,1);
 #endif
 

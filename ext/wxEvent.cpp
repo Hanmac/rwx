@@ -40,6 +40,10 @@ singlefunc(Skip)
 
 DLL_LOCAL void Init_WXEvent(VALUE rb_mWX)
 {
+#if 0
+	rb_mWX = rb_define_module("WX");
+#endif
+
 	using namespace RubyWX::Event;
 	rb_cWXEvent = rb_define_class_under(rb_mWX,"Event",rb_cObject);
 	rb_undef_alloc_func(rb_cWXEvent);

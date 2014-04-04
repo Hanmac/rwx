@@ -472,6 +472,11 @@ DLL_LOCAL void Init_WXBookCtrl(VALUE rb_mWX)
 
 	rb_define_attr(rb_cWXBookCtrlEvent,"selection",1,1);
 	rb_define_attr(rb_cWXBookCtrlEvent,"old_selection",1,1);
+
+	rb_cWXEvent = rb_define_class_under(rb_mWX,"Event",rb_cObject);
+	rb_cWXCommandEvent = rb_define_class_under(rb_cWXEvent,"Command",rb_cWXEvent);
+	rb_cWXNotifyEvent = rb_define_class_under(rb_cWXEvent,"Notify",rb_cWXCommandEvent);
+
 #endif
 
 #if wxUSE_BOOKCTRL

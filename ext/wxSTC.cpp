@@ -81,6 +81,14 @@ DLL_LOCAL VALUE _UndoAction(VALUE self)
 #endif
 DLL_LOCAL void Init_WXSTC(VALUE rb_mWX)
 {
+#if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+
+#endif
+
 #if wxUSE_STC
 	using namespace RubyWX::STC;
 	rb_cWXSTC = rb_define_class_under(rb_mWX,"STC",rb_cWXControl);

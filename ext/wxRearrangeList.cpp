@@ -70,6 +70,15 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 #endif
 DLL_LOCAL void Init_WXRearrangeList(VALUE rb_mWX)
 {
+#if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+	rb_cWXListBox = rb_define_class_under(rb_mWX,"ListBox",rb_cWXControl);
+	rb_cWXCheckListBox = rb_define_class_under(rb_mWX,"CheckListBox",rb_cWXListBox);
+#endif
+
 #if wxUSE_REARRANGECTRL
 	using namespace RubyWX::RearrangeList;
 	rb_cWXRearrangeList = rb_define_class_under(rb_mWX,"RearrangeList",rb_cWXCheckListBox);

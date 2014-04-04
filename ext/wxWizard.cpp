@@ -148,6 +148,12 @@ singlereturn(GetPage)
 DLL_LOCAL void Init_WXWizard(VALUE rb_mWX)
 {
 #if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+
+	rb_cWXTopLevel = rb_define_class_under(rb_mWX,"TopLevel",rb_cWXWindow);
+	rb_cWXDialog = rb_define_class_under(rb_mWX,"Dialog",rb_cWXTopLevel);
+
 	rb_define_attr(rb_cWXWizard, "bitmap",1,1);
 #endif
 

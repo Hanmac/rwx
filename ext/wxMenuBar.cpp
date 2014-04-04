@@ -12,6 +12,7 @@
 
 VALUE rb_cWXMenuBar;
 
+#if wxUSE_MENUS
 #define _self unwrap<wxMenuBar*>(self)
 
 namespace RubyWX {
@@ -115,7 +116,7 @@ DLL_LOCAL VALUE _append(VALUE self,VALUE menu)
 DLL_LOCAL VALUE _insert(VALUE self,VALUE idx,VALUE menu)
 {
 	wxString name(wxEmptyString);
-	unsigned int cidx = NUM2UINT(idx);
+	int cidx = NUM2INT(idx);
 
 	if(check_index(cidx,_self->GetMenuCount()+1))
 		return wrap(_self->Insert(cidx,add_base(menu,name),name));
@@ -146,8 +147,16 @@ singlereturn(GetFrame);
 }
 }
 
+#endif
+
 DLL_LOCAL void Init_WXMenuBar(VALUE rb_mWX)
 {
+#if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+
+#endif
+#if wxUSE_MENUS
 	using namespace RubyWX::MenuBar;
 	rb_cWXMenuBar = rb_define_class_under(rb_mWX,"MenuBar",rb_cWXWindow);
 	rb_define_alloc_func(rb_cWXMenuBar,_alloc);
@@ -165,4 +174,5 @@ DLL_LOCAL void Init_WXMenuBar(VALUE rb_mWX)
 	rb_define_method(rb_cWXMenuBar,"frame",RUBY_METHOD_FUNC(_GetFrame),0);
 
 	registerInfo<wxMenuBar>(rb_cWXMenuBar);
+#endif
 }

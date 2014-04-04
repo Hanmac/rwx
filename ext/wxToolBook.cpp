@@ -18,6 +18,9 @@ namespace Toolbook {
 
 APP_PROTECT(wxToolbook)
 
+singlereturn(GetToolBar)
+singlefunc(Realize)
+
 /*
  * call-seq:
  *   ToggleButton.new(parent, name, [options])
@@ -60,12 +63,23 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 #endif
 DLL_LOCAL void Init_WXToolBookCtrl(VALUE rb_mWX)
 {
+#if 0
+	rb_mWX = rb_define_module("WX");
+	rb_mWXEvtHandler = rb_define_module_under(rb_mWX,"EvtHandler");
+
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+	rb_cWXBookCtrlBase = rb_define_class_under(rb_mWX,"BookCtrl",rb_cWXControl);
+#endif
 #if wxUSE_TOOLBOOK
 	using namespace RubyWX::Toolbook;
 	rb_cWXToolbook = rb_define_class_under(rb_mWX,"ToolBookCtrl",rb_cWXBookCtrlBase);
 	rb_define_alloc_func(rb_cWXToolbook,_alloc);
 
 	rb_define_method(rb_cWXToolbook,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
+
+	rb_define_method(rb_cWXToolbook,"toolbar",RUBY_METHOD_FUNC(_GetToolBar),0);
+	rb_define_method(rb_cWXToolbook,"realize",RUBY_METHOD_FUNC(_Realize),0);
 
 	registerInfo<wxToolbook>(rb_cWXToolbook);
 

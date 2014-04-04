@@ -93,6 +93,15 @@ DLL_LOCAL VALUE _pulse(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL void Init_WXProgressDialog(VALUE rb_mWX)
 {
+#if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+
+	rb_cWXTopLevel = rb_define_class_under(rb_mWX,"TopLevel",rb_cWXWindow);
+	rb_cWXDialog = rb_define_class_under(rb_mWX,"Dialog",rb_cWXTopLevel);
+
+#endif
+
 #if wxUSE_PROGRESSDLG
 	using namespace RubyWX::ProgressDialog;
 	rb_cWXProgressDialog = rb_define_class_under(rb_mWX,"ProgressDialog",rb_cWXDialog);

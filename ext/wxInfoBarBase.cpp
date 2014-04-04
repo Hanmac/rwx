@@ -72,6 +72,9 @@ DLL_LOCAL VALUE _removeButton(VALUE self,VALUE id)
 DLL_LOCAL void Init_WXInfoBarBase(VALUE rb_mWX)
 {
 #if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
 #endif
 

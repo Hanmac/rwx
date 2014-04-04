@@ -102,6 +102,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		set_option(line_color,LineColour,wxColour);
 		set_option(margin_color,MarginColour,wxColour);
 
+		PropertyGridInterface::_set_extra_style(_self,hash);
 	}
 	return self;
 }
@@ -174,7 +175,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL void Init_WXPropertyGrid(VALUE rb_mWX)
 {
 #if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+
 	rb_mWXPropertyGridInterface = rb_define_module_under(rb_mWX,"PropertyGridInterface");
 
 	rb_define_attr(rb_cWXPropertyGrid,"caption_background_color",1,1);
@@ -200,7 +205,10 @@ DLL_LOCAL void Init_WXPropertyGrid(VALUE rb_mWX)
 	rb_define_method(rb_cWXPropertyGrid,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_method(rb_cWXPropertyGrid,"root",RUBY_METHOD_FUNC(_GetRoot),0);
+
+#if wxUSE_STATUSBAR
 	rb_define_method(rb_cWXPropertyGrid,"status_bar",RUBY_METHOD_FUNC(_GetStatusBar),0);
+#endif
 
 	rb_define_method(rb_cWXPropertyGrid,"caption_font",RUBY_METHOD_FUNC(_GetCaptionFont),0);
 
@@ -217,13 +225,6 @@ DLL_LOCAL void Init_WXPropertyGrid(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXPropertyGrid,"margin_color",_getMarginColour,_setMarginColour);
 
 	rb_define_const(rb_cWXPropertyGrid,"DEFAULT_STYLE",INT2NUM(wxPG_DEFAULT_STYLE));
-
-	rb_define_const(rb_cWXPropertyGrid,"EX_MODE_BUTTONS",INT2NUM(wxPG_EX_MODE_BUTTONS));
-
-	rb_define_const(rb_cWXPropertyGrid,"EX_HELP_AS_TOOLTIPS",INT2NUM(wxPG_EX_HELP_AS_TOOLTIPS));
-	rb_define_const(rb_cWXPropertyGrid,"EX_HIDE_PAGE_BUTTONS",INT2NUM(wxPG_EX_HIDE_PAGE_BUTTONS));
-	rb_define_const(rb_cWXPropertyGrid,"EX_MULTIPLE_SELECTION",INT2NUM(wxPG_EX_MULTIPLE_SELECTION));
-	rb_define_const(rb_cWXPropertyGrid,"EX_TOOLBAR_SEPARATOR",INT2NUM(wxPG_EX_TOOLBAR_SEPARATOR));
 
 	registerInfo<wxPropertyGrid>(rb_cWXPropertyGrid);
 #endif

@@ -142,10 +142,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 VALUE _addControl(int argc,VALUE *argv,VALUE self)
 {
 	VALUE control,sizer,arg;
-	rb_scan_args(argc, argv, "11*",&control,&sizer,&arg);
+	rb_scan_args(argc, argv, "11:",&control,&sizer,&arg);
 	wxControl *c = NULL;
 	if(rb_obj_is_kind_of(control,rb_cClass) && rb_class_inherited(control,rb_cWXControl)) {
-		rb_scan_args(argc, argv, "11",&control,&arg);
 		VALUE argv2[] = {self, arg };
 		c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,control));
 	} else if(nil_check(control)) {
@@ -179,6 +178,14 @@ VALUE _addCollapsiblePane(VALUE self,VALUE title,VALUE text)
 
 DLL_LOCAL void Init_WXAboutDlg(VALUE rb_mWX)
 {
+#if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+
+	rb_cWXTopLevel = rb_define_class_under(rb_mWX,"TopLevel",rb_cWXWindow);
+	rb_cWXDialog = rb_define_class_under(rb_mWX,"Dialog",rb_cWXTopLevel);
+
+#endif
 #if wxUSE_ABOUTDLG
 	using namespace RubyWX::AboutDlg;
 

@@ -291,7 +291,7 @@ DLL_LOCAL VALUE _prepend_stretch_spacer(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL VALUE _getItem(VALUE self,VALUE index)
 {
-	unsigned int cidx = NUM2UINT(index);
+	int cidx = NUM2INT(index);
 	if(check_index(cidx,_self->GetItemCount()))
 		return wrap(_self->GetItem(cidx));
 	return Qnil;
@@ -316,7 +316,7 @@ DLL_LOCAL VALUE _each(VALUE self)
 DLL_LOCAL VALUE _remove(VALUE self,VALUE index)
 {
 	rb_check_frozen(self);
-	unsigned int cidx = NUM2UINT(index);
+	int cidx = NUM2INT(index);
 	if(check_index(cidx,_self->GetItemCount()))
 		return wrap(_self->Remove(cidx));
 	return Qnil;

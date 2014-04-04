@@ -79,6 +79,15 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL void Init_WXFileCtrlGeneric(VALUE rb_mWX)
 {
+
+#if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+	rb_cWXFileCtrlBase = rb_define_class_under(rb_mWX,"FileCtrlBase",rb_cWXControl);
+#endif
+
 #if wxUSE_FILECTRL
 #if defined(__WXGTK20__) && !defined(__WXUNIVERSAL__)
 	using namespace RubyWX::FileCtrlGeneric;

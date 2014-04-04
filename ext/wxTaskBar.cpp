@@ -68,6 +68,8 @@ DLL_LOCAL void Init_WXTaskBar(VALUE rb_mWX)
 	rb_define_attr(rb_cWXTaskBar,"menu",1,1);
 	rb_define_attr(rb_cWXTaskBar,"icon",1,1);
 	rb_define_attr(rb_cWXTaskBar,"tooltip",1,1);
+
+	rb_mWXEvtHandler = rb_define_module_under(rb_mWX,"EvtHandler");
 #endif
 	using namespace RubyWX::TaskBar;
 

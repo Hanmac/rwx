@@ -134,6 +134,8 @@ DLL_LOCAL void Init_WXRect(VALUE rb_mWX)
 {
 
 #if 0
+	rb_mWX = rb_define_module("WX");
+
 	rb_define_attr(rb_cWXRect,"x",1,1);
 	rb_define_attr(rb_cWXRect,"y",1,1);
 	rb_define_attr(rb_cWXRect,"width",1,1);

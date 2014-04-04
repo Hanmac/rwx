@@ -69,6 +69,8 @@ DLL_LOCAL void Init_WXTimer(VALUE rb_mWX)
 {
 #if 0
 	rb_define_attr(rb_cWXTimer,"owner",1,1);
+
+	rb_mWXEvtHandler = rb_define_module_under(rb_mWX,"EvtHandler");
 #endif
 
 #if wxUSE_TIMER

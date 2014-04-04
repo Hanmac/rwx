@@ -121,7 +121,12 @@ singlereturn(GetFile)
 DLL_LOCAL void Init_WXFileCtrlBase(VALUE rb_mWX)
 {
 #if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+
+	rb_cWXEvent = rb_define_class_under(rb_mWX,"Event",rb_cObject);
 
 	rb_define_attr(rb_cWXFileCtrlBase,"wildcard",1,1);
 	rb_define_attr(rb_cWXFileCtrlBase,"directory",1,1);

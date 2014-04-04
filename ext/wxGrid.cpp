@@ -134,6 +134,10 @@ DLL_LOCAL VALUE _getColGridLinePen(VALUE self,VALUE row)
 DLL_LOCAL void Init_WXGrid(VALUE rb_mWX)
 {
 #if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+
 	rb_cWXPanel = rb_define_class_under(rb_mWX,"Panel",rb_cWXControl);
 
 	rb_define_attr(rb_cWXGrid,"table",1,1);

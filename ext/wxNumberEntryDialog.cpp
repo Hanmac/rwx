@@ -108,6 +108,14 @@ DLL_LOCAL VALUE _getNumber(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL void Init_WXNumberEntryDialog(VALUE rb_mWX)
 {
+#if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+
+	rb_cWXTopLevel = rb_define_class_under(rb_mWX,"TopLevel",rb_cWXWindow);
+	rb_cWXDialog = rb_define_class_under(rb_mWX,"Dialog",rb_cWXTopLevel);
+#endif
+
 #if wxUSE_NUMBERDLG
 	using namespace RubyWX::NumberEntryDialog;
 	rb_cWXNumberEntryDialog = rb_define_class_under(rb_mWX,"NumberEntryDialog",rb_cWXDialog);

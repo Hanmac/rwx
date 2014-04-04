@@ -258,7 +258,7 @@ DLL_LOCAL VALUE _insert_base(int argc,VALUE *argv,VALUE self,wxItemKind kind)
 
 	if(check_title(wid,id,text))
 	{
-		unsigned int cidx = NUM2UINT(idx);
+		int cidx = NUM2INT(idx);
 		if(check_index(cidx,_self->GetMenuItemCount()+1))
 		{
 			wxMenuItem *item = _self->Insert(cidx,wid,unwrap<wxString>(text),unwrap<wxString>(help),kind);
@@ -392,7 +392,7 @@ DLL_LOCAL VALUE _insert_menu(int argc,VALUE *argv,VALUE self)
 
 	if(check_menu_mitle(m,wtext))
 	{
-		unsigned int cidx = NUM2UINT(idx);
+		int cidx = NUM2INT(idx);
 		if(check_index(cidx,_self->GetMenuItemCount()+1))
 		{
 			return wrap(_self->Insert(cidx,wxID_ANY,wtext,m,unwrap<wxString>(help)));
@@ -547,7 +547,7 @@ DLL_LOCAL VALUE _load_xrc(VALUE self,VALUE name)
 DLL_LOCAL void Init_WXMenu(VALUE rb_mWX)
 {
 #if 0
-	rb_cWXEvtHandler = rb_define_class_under(rb_mWX,"EvtHandler",rb_cObject);
+	rb_mWXEvtHandler = rb_define_module_under(rb_mWX,"EvtHandler");
 
 	rb_define_attr(rb_cWXMenu,"title",1,1);
 	rb_define_attr(rb_cWXMenu,"parent",1,1);

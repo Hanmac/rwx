@@ -48,6 +48,9 @@ void set_style_flags(VALUE hash,int& flags)
 DLL_LOCAL void Init_WXPickerBase(VALUE rb_mWX)
 {
 #if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
 
 	rb_define_attr(rb_cWXPickerBase,"internal_margin",1,1);

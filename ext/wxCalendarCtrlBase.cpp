@@ -34,7 +34,11 @@ macro_attr(Date,wxDateTime)
 DLL_LOCAL void Init_WXCalendarCtrlBase(VALUE rb_mWX)
 {
 #if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+
 	rb_define_attr(rb_cWXCalendarCtrlBase,"date",1,1);
 #endif
 

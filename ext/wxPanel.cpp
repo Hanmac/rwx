@@ -57,6 +57,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL void Init_WXPanel(VALUE rb_mWX)
 {
+#if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+#endif
+
 	using namespace RubyWX::Panel;
 	rb_cWXPanel = rb_define_class_under(rb_mWX,"Panel",rb_cWXWindow);
 	rb_define_alloc_func(rb_cWXPanel,_alloc);

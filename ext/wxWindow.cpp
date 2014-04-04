@@ -184,6 +184,8 @@ singlereturn(HasCapture)
 singlefunc(Update)
 singlefunc(Refresh)
 
+singlereturn(HasMultiplePages)
+
 singlefunc(Fit)
 singlefunc(FitInside)
 singlereturn_frozen(Layout)

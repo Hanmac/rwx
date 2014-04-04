@@ -83,7 +83,12 @@ macro_attr(Font,wxFont)
 DLL_LOCAL void Init_WXFontPicker(VALUE rb_mWX)
 {
 #if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
+	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
 	rb_cWXPickerBase = rb_define_class_under(rb_mWX,"PickerBase",rb_cWXControl);
+
+	rb_cWXEvent = rb_define_class_under(rb_mWX,"Event",rb_cObject);
 
 	rb_define_attr(rb_cWXFontPicker,"selected_font",1,1);
 	rb_define_attr(rb_cWXFontPickerEvent,"font",1,1);
