@@ -9,6 +9,8 @@
 #include "wxPropertyGrid.hpp"
 #include "wxVariant.hpp"
 #include "wxBitmap.hpp"
+#include "wxColor.hpp"
+#include "wxFont.hpp"
 #include "wxApp.hpp"
 
 VALUE rb_cWXProperty;
@@ -67,13 +69,19 @@ singlereturn(IsVisible)
 singlereturn(IsRoot)
 singlereturn(IsCategory)
 
+singlereturn(HasVisibleChildren)
+
 singlereturn(GetValue)
 singlereturn(GetDefaultValue)
 singlereturn(GetValueImage)
 
 singlereturn(GetValueType)
 
+singlefunc(DeleteChildren)
+
 macro_attr(ValueImage,wxBitmap&)
+
+macro_attr_selection(ChoiceSelection,GetChoices().GetCount)
 
 macro_attr_bool(Expanded)
 macro_attr_bool2(Enabled,Enable)
@@ -110,6 +118,65 @@ DLL_LOCAL VALUE _getClass(VALUE self)
 	return wrap(wxString(_self->GetClassInfo()->GetClassName()));
 }
 
+
+DLL_LOCAL VALUE _setVisible(VALUE self,VALUE val)
+{
+	rb_check_frozen(self);
+	_self->Hide(!RTEST(val));
+	return val;
+}
+
+/*
+ * call-seq:
+ *   show([recurse]) -> self
+ *
+ * makes this property visible, children too if recurse is set.
+ * ===Arguments
+ * * recurse true/false
+ * ===Return value
+ * self
+ *
+*/
+DLL_LOCAL VALUE _show(int argc,VALUE *argv,VALUE self)
+{
+	rb_check_frozen(self);
+
+	VALUE recurse;
+
+	rb_scan_args(argc, argv, "01",&recurse);
+
+	bool rec = NIL_P(recurse) || RTEST(recurse);
+	_self->Hide(false, rec ? wxPG_RECURSE : wxPG_DONT_RECURSE );
+	return self;
+}
+
+
+/*
+ * call-seq:
+ *   hide([recurse]) -> self
+ *
+ * hides this property, children too if recurse is set.
+ * ===Arguments
+ * * recurse true/false
+ * ===Return value
+ * self
+ *
+*/
+DLL_LOCAL VALUE _hide(int argc,VALUE *argv,VALUE self)
+{
+	rb_check_frozen(self);
+
+	VALUE recurse;
+
+	rb_scan_args(argc, argv, "01",&recurse);
+
+	bool rec = NIL_P(recurse) || RTEST(recurse);
+	_self->Hide(true, rec ? wxPG_RECURSE : wxPG_DONT_RECURSE );
+	return self;
+}
+
+
+
 DLL_LOCAL VALUE _each_child_size(VALUE self)
 {
 	return UINT2NUM(_self->GetChildCount());
@@ -117,6 +184,16 @@ DLL_LOCAL VALUE _each_child_size(VALUE self)
 
 
 
+/*
+ * call-seq:
+ *   each_child -> Enumerator
+ *   each_child { |child| } -> self
+ *
+ * iterates the children in this property.
+ * ===Return value
+ * self
+ *
+*/
 DLL_LOCAL VALUE _each_child(VALUE self)
 {
 	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_child_size);
@@ -126,7 +203,7 @@ DLL_LOCAL VALUE _each_child(VALUE self)
 	return self;
 }
 
-DLL_LOCAL VALUE _each_choices_count(VALUE self)
+DLL_LOCAL VALUE _each_choice_count(VALUE self)
 {
 	const wxPGChoices& choices = _self->GetChoices();
 	if(!choices.IsOk())
@@ -137,9 +214,19 @@ DLL_LOCAL VALUE _each_choices_count(VALUE self)
 
 
 
-DLL_LOCAL VALUE _each_choices(VALUE self)
+/*
+ * call-seq:
+ *   each_choice -> Enumerator
+ *   each_choice { |child| } -> self
+ *
+ * iterates the choices in this property.
+ * ===Return value
+ * self
+ *
+*/
+DLL_LOCAL VALUE _each_choice(VALUE self)
 {
-	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_choices_count);
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_choice_count);
 	wxPGChoices& choices = const_cast<wxPGChoices&>(_self->GetChoices());
 
 	if(!choices.IsOk())
@@ -156,26 +243,93 @@ DLL_LOCAL VALUE _each_choices(VALUE self)
 }
 
 
+VALUE _set_choice(wxPGProperty* self,int idx,VALUE hash)
+{
+	wxPGChoices& choices = const_cast<wxPGChoices&>(self->GetChoices());
+
+	if(!choices.IsOk())
+		return Qnil;
+
+	wxPGChoiceEntry& item = choices[idx];
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		wxBitmap bitmap;
+		wxColour fg,bg;
+		wxFont font(wxNullFont);
+
+		if(set_hash_option(hash,"bitmap",bitmap))
+			item.SetBitmap(bitmap);
+
+		if(set_hash_option(hash,"bg_col",bg))
+			item.SetBgCol(bg);
+		if(set_hash_option(hash,"fg_col",fg))
+			item.SetFgCol(fg);
+		if(set_hash_option(hash,"font",font))
+			item.SetFont(font);
+	}
+	return wrap(&dynamic_cast<wxPGCell&>(item));
+}
+
+
+/*
+ * call-seq:
+ *   add_choice(label,[value],**options) -> WX::PropertyCell
+ *
+ * adds a new choice into this property
+ * ===Arguments
+ * * label String
+ * * value Integer/nil
+ * * options:
+ *   * bitmap WX::Bitmap
+ *   * bg_col WX::Color
+ *   * fg_col WX::Color
+ *   * font WX::Font
+ * ===Return value
+ * WX::PropertyCell
+ *
+*/
 DLL_LOCAL VALUE _add_choice(int argc,VALUE *argv,VALUE self)
 {
-	VALUE label,value;
+	VALUE label,value,hash;
 
-	rb_scan_args(argc, argv, "11",&label,&value);
+	rb_scan_args(argc, argv, "11:",&label,&value,&hash);
 
 	int cvalue = wxPG_INVALID_VALUE;
 
 	if(!NIL_P(value))
 		cvalue = NUM2INT(value);
 
-	return INT2NUM(_self->AddChoice(unwrap<wxString>(label),cvalue));
+	return _set_choice(_self,_self->AddChoice(unwrap<wxString>(label),cvalue),hash);
 
 }
 
+/*
+ * call-seq:
+ *   prepend_choice(pos,label,[value],**options) -> WX::PropertyCell
+ *
+ * prepends a new choice into this property
+ * ===Arguments
+ * * pos position of the new choice. Integer
+ * * label String
+ * * value Integer/nil
+ * * options:
+ *   * bitmap WX::Bitmap
+ *   * bg_col WX::Color
+ *   * fg_col WX::Color
+ *   * font WX::Font
+ * ===Return value
+ * WX::PropertyCell
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of choices
+ *
+*/
 DLL_LOCAL VALUE _insert_choice(int argc,VALUE *argv,VALUE self)
 {
-	VALUE label,idx,value;
+	VALUE label,idx,value,hash;
 
-	rb_scan_args(argc, argv, "21",&label,&idx,&value);
+	rb_scan_args(argc, argv, "21:",&idx,&label,&value,&hash);
 
 	int cvalue = wxPG_INVALID_VALUE;
 
@@ -191,11 +345,59 @@ DLL_LOCAL VALUE _insert_choice(int argc,VALUE *argv,VALUE self)
 		cvalue = NUM2INT(value);
 
 	if(check_index(cidx,size+1))
-		return INT2NUM(_self->InsertChoice(unwrap<wxString>(label),cidx,cvalue));
+		return _set_choice(_self,_self->InsertChoice(unwrap<wxString>(label),cidx,cvalue),hash);
 	return Qnil;
 }
 
-DLL_LOCAL VALUE delete_choice(VALUE self,VALUE idx)
+
+/*
+ * call-seq:
+ *   prepend_choice(label,[value],**options) -> WX::PropertyCell
+ *
+ * prepends a new choice into this property
+ * ===Arguments
+ * * label String
+ * * value Integer/nil
+ * * options:
+ *   * bitmap WX::Bitmap
+ *   * bg_col WX::Color
+ *   * fg_col WX::Color
+ *   * font WX::Font
+ * ===Return value
+ * WX::PropertyCell
+ *
+*/
+DLL_LOCAL VALUE _prepend_choice(int argc,VALUE *argv,VALUE self)
+{
+	VALUE label,value,hash;
+
+	rb_scan_args(argc, argv, "11:",&label,&value,&hash);
+
+	int cvalue = wxPG_INVALID_VALUE;
+
+	if(!NIL_P(value))
+		cvalue = NUM2INT(value);
+
+	return _set_choice(_self,_self->InsertChoice(unwrap<wxString>(label),0,cvalue),hash);
+
+}
+
+
+/*
+ * call-seq:
+ *   delete_choice(pos) -> self
+ *
+ * delete the choice at the given position.
+ * ===Arguments
+ * * pos position of the deleting choice. Integer
+ * ===Return value
+ * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of choices
+ *
+*/
+DLL_LOCAL VALUE _delete_choice(VALUE self,VALUE idx)
 {
 
 	int cidx = NUM2INT(idx);
@@ -213,16 +415,58 @@ DLL_LOCAL VALUE delete_choice(VALUE self,VALUE idx)
 }
 
 
+/*
+ * call-seq:
+ *   add_child(property) -> WX::Property
+ *   add_child(property) { |property| } -> WX::Property
+ *
+ * adds a new Property as child into this one
+ * ===Arguments
+ * * property WX::Property or class that inherits from WX::Property
+ * ===Return value
+ * WX::Property
+ *
+*/
 DLL_LOCAL VALUE _add_child(VALUE self,VALUE prop)
 {
 	return wrap(_self->AppendChild(unwrap<wxPGProperty*>(prop)));
 }
 
+
+/*
+ * call-seq:
+ *   add_private_child(property) -> self
+ *
+ * adds a new Property as private child into this one
+ * ===Arguments
+ * * property WX::Property or class that inherits from WX::Property
+ * ===Return value
+ * self
+ *
+*/
 DLL_LOCAL VALUE _add_private_child(VALUE self,VALUE prop)
 {
 	_self->AddPrivateChild(unwrap<wxPGProperty*>(prop));
 	return self;
 }
+
+
+/*
+ * call-seq:
+ *   insert_child(pos,property) -> WX::Property
+ *   insert_child(pos,property) { |property| } -> WX::Property
+ *
+ * adds a new Property as child into this one
+ * ===Arguments
+ * * pos position of the new child property. Integer
+ * * property WX::Property or class that inherits from WX::Property
+ * ===Return value
+ * WX::Property
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of children
+ *
+*/
 DLL_LOCAL VALUE _insert_child(VALUE self,VALUE idx,VALUE prop)
 {
 	int cidx = NUM2INT(idx);
@@ -232,6 +476,20 @@ DLL_LOCAL VALUE _insert_child(VALUE self,VALUE idx,VALUE prop)
 
 	return Qnil;
 }
+
+
+/*
+ * call-seq:
+ *   prepend_child(property) -> WX::Property
+ *   prepend_child(property) { |property| } -> WX::Property
+ *
+ * prepends a new Property as child into this one
+ * ===Arguments
+ * * property WX::Property or class that inherits from WX::Property
+ * ===Return value
+ * WX::Property
+ *
+*/
 DLL_LOCAL VALUE _prepend_child(VALUE self,VALUE prop)
 {
 	return wrap(_self->InsertChild(0,unwrap<wxPGProperty*>(prop)));
@@ -240,15 +498,25 @@ DLL_LOCAL VALUE _prepend_child(VALUE self,VALUE prop)
 
 
 
-DLL_LOCAL VALUE _each_attributes_size(VALUE self)
+DLL_LOCAL VALUE _each_attribute_size(VALUE self)
 {
 	return wrap(_self->GetAttributes().GetCount());
 }
 
 
-DLL_LOCAL VALUE _each_attributes(VALUE self)
+/*
+ * call-seq:
+ *   each_attribute -> Enumerator
+ *   each_attribute { |name, value| } -> self
+ *
+ * iterates the attributes in this property.
+ * ===Return value
+ * self
+ *
+*/
+DLL_LOCAL VALUE _each_attribute(VALUE self)
 {
-	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_attributes_size);
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_attribute_size);
 
 	const wxPGAttributeStorage& attrs = _self->GetAttributes();
 
@@ -327,6 +595,9 @@ VALUE find_prop_class(VALUE self,VALUE name)
  * the image of the Property. WX::Bitmap
  */
 
+/* Document-attr: visible
+ * the visible of the Property. bool
+ */
 
 /* Document-attr: expanded
  * the expanded of the Property. bool
@@ -336,6 +607,9 @@ VALUE find_prop_class(VALUE self,VALUE name)
  * the enabled of the Property. bool
  */
 
+/* Document-attr: choice_selection
+ * the index with choice of the Property is selected. Integer/nil
+ */
 DLL_LOCAL void Init_WXProperty(VALUE rb_mWX)
 {
 #if 0
@@ -348,8 +622,11 @@ DLL_LOCAL void Init_WXProperty(VALUE rb_mWX)
 	rb_define_attr(rb_cWXProperty,"default_value",1,1);
 	rb_define_attr(rb_cWXProperty,"value_image",1,1);
 
+	rb_define_attr(rb_cWXProperty,"visible",1,1);
 	rb_define_attr(rb_cWXProperty,"expanded",1,1);
 	rb_define_attr(rb_cWXProperty,"enabled",1,1);
+
+	rb_define_attr(rb_cWXProperty,"choice_selection",1,1);
 
 #endif
 
@@ -371,6 +648,10 @@ DLL_LOCAL void Init_WXProperty(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXProperty,"grid",RUBY_METHOD_FUNC(_GetGrid),0);
 
+	rb_define_method(rb_cWXProperty,"visible_children?",RUBY_METHOD_FUNC(_HasVisibleChildren),0);
+	rb_define_method(rb_cWXProperty,"root?",RUBY_METHOD_FUNC(_IsRoot),0);
+	rb_define_method(rb_cWXProperty,"category?",RUBY_METHOD_FUNC(_IsCategory),0);
+
 	rb_define_attr_method(rb_cWXProperty,"name",_getName,_setName);
 	rb_define_attr_method(rb_cWXProperty,"label",_getLabel,_setLabel);
 	rb_define_attr_method(rb_cWXProperty,"help_string",_getHelpString,_setHelpString);
@@ -379,12 +660,30 @@ DLL_LOCAL void Init_WXProperty(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXProperty,"default_value",_GetDefaultValue,_setDefaultValue);
 	rb_define_attr_method(rb_cWXProperty,"value_image",_getValueImage,_setValueImage);
 
+	rb_define_attr_method(rb_cWXProperty,"visible",_IsVisible,_setVisible);
 	rb_define_attr_method(rb_cWXProperty,"expanded",_getExpanded,_setExpanded);
 	rb_define_attr_method(rb_cWXProperty,"enabled",_getEnabled,_setEnabled);
 
+	rb_define_attr_method(rb_cWXProperty,"choice_selection",_getChoiceSelection,_setChoiceSelection);
+
+	rb_define_method(rb_cWXProperty,"show",RUBY_METHOD_FUNC(_show),-1);
+	rb_define_method(rb_cWXProperty,"hide",RUBY_METHOD_FUNC(_hide),-1);
+
+	rb_define_method(rb_cWXProperty,"add_child",RUBY_METHOD_FUNC(_add_child),1);
+	rb_define_method(rb_cWXProperty,"add_private_child",RUBY_METHOD_FUNC(_add_private_child),1);
+	rb_define_method(rb_cWXProperty,"insert_child",RUBY_METHOD_FUNC(_insert_child),2);
+	rb_define_method(rb_cWXProperty,"prepend_child",RUBY_METHOD_FUNC(_prepend_child),1);
+
+	rb_define_method(rb_cWXProperty,"add_choice",RUBY_METHOD_FUNC(_add_choice),-1);
+	rb_define_method(rb_cWXProperty,"insert_choice",RUBY_METHOD_FUNC(_insert_choice),-1);
+	rb_define_method(rb_cWXProperty,"prepend_choice",RUBY_METHOD_FUNC(_prepend_choice),-1);
+
+	rb_define_method(rb_cWXProperty,"delete_children",RUBY_METHOD_FUNC(_DeleteChildren),0);
+	rb_define_method(rb_cWXProperty,"delete_choice",RUBY_METHOD_FUNC(_delete_choice),1);
+
 	rb_define_method(rb_cWXProperty,"each_child",RUBY_METHOD_FUNC(_each_child),0);
-	rb_define_method(rb_cWXProperty,"each_choices",RUBY_METHOD_FUNC(_each_choices),0);
-	rb_define_method(rb_cWXProperty,"each_attributes",RUBY_METHOD_FUNC(_each_attributes),0);
+	rb_define_method(rb_cWXProperty,"each_choice",RUBY_METHOD_FUNC(_each_choice),0);
+	rb_define_method(rb_cWXProperty,"each_attribute",RUBY_METHOD_FUNC(_each_attribute),0);
 
 	rb_define_method(rb_cWXProperty,"wxclass",RUBY_METHOD_FUNC(_getClass),0);
 	rb_define_method(rb_cWXProperty,"type",RUBY_METHOD_FUNC(_GetValueType),0);
