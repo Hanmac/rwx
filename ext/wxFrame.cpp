@@ -78,12 +78,141 @@ macro_attr(MenuBar,wxMenuBar*)
 #if wxUSE_STATUSBAR
 macro_attr(StatusBar,wxStatusBar*)
 macro_attr(StatusBarPane,int)
-singlereturn(CreateStatusBar)
+
+
+/*
+ * call-seq:
+ *   create_statusbar(**options) -> WX::StatusBar
+ *
+ * creates a new status bar and add it to this frame.
+ * ===Arguments
+ * * options
+ *   * number Integer
+ *   * style  Integer
+ *   * id     Symbol/Integer
+ *
+ * ===Return value
+ * WX::StatusBar
+*/
+DLL_LOCAL VALUE _CreateStatusBar(int argc,VALUE *argv,VALUE self)
+{
+	VALUE hash;
+	rb_scan_args(argc, argv, ":",&hash);
+
+	int number = 1;
+	long style = wxSTB_DEFAULT_STYLE;
+	wxWindowID wid = wxID_ANY;
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		set_hash_option(hash,"number",number);
+		set_hash_option(hash,"style",style);
+		set_hash_option(hash,"id",wid,unwrapID);
+	}
+
+	return wrap(_self->CreateStatusBar(number,style,wid));
+
+}
+
+/*
+ * call-seq:
+ *   push_status_text(text,[pos]) -> self
+ *
+ * pushes status text to the given pane.
+ * ===Arguments
+ * * text String
+ * * pos is a Integer
+ *
+ * ===Return value
+ * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of panes
+*/
+DLL_LOCAL VALUE _pushStatusText(int argc,VALUE *argv,VALUE self)
+{
+	VALUE str,num;
+	rb_scan_args(argc, argv, "11",&str,&num);
+	rb_check_frozen(self);
+
+	int cidx(0);
+
+	if(!NIL_P(num))
+		cidx = NUM2INT(num);
+
+	if(check_index(cidx,_self->GetStatusBar()->GetFieldsCount()))
+		_self->PushStatusText(unwrap<wxString>(str),cidx);
+
+	return self;
+}
+
+
+/*
+ * call-seq:
+ *   pop_status_text([pos]) -> self
+ *
+ * pops status text from the given pane.
+ * ===Arguments
+ * * pos is a Integer
+ *
+ * ===Return value
+ * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of panes
+*/
+DLL_LOCAL VALUE _popStatusText(int argc,VALUE *argv,VALUE self)
+{
+	VALUE num;
+	rb_scan_args(argc, argv, "01",&num);
+	rb_check_frozen(self);
+
+	int cidx(0);
+
+	if(!NIL_P(num))
+		cidx = NUM2INT(num);
+
+	if(check_index(cidx,_self->GetStatusBar()->GetFieldsCount()))
+		_self->PopStatusText(cidx);
+
+	return self;
+}
 #endif // wxUSE_STATUSBAR
 
 #if wxUSE_TOOLBAR
 macro_attr(ToolBar,wxToolBar*)
-singlereturn(CreateToolBar)
+
+/*
+ * call-seq:
+ *   create_statusbar(**options) -> WX::StatusBar
+ *
+ * creates a new status bar and add it to this frame.
+ * ===Arguments
+ * * options
+ *   * style  Integer
+ *   * id     Symbol/Integer
+ *
+ * ===Return value
+ * WX::StatusBar
+*/
+DLL_LOCAL VALUE _CreateToolBar(int argc,VALUE *argv,VALUE self)
+{
+	VALUE hash;
+	rb_scan_args(argc, argv, ":",&hash);
+
+	long style = -1;
+	wxWindowID wid = wxID_ANY;
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		set_hash_option(hash,"style",style);
+		set_hash_option(hash,"id",wid,unwrapID);
+	}
+
+	return wrap(_self->CreateToolBar(style,wid));
+
+}
+
 #endif // wxUSE_TOOLBAR
 }
 }
@@ -100,6 +229,9 @@ singlereturn(CreateToolBar)
  */
 
 
+/* Document-attr: statusbar_pane
+ * the status bar pane where the help text are showing. Integer
+ */
 DLL_LOCAL void Init_WXFrame(VALUE rb_mWX)
 {
 #if 0
@@ -126,11 +258,16 @@ DLL_LOCAL void Init_WXFrame(VALUE rb_mWX)
 #if wxUSE_STATUSBAR
 	rb_define_attr_method(rb_cWXFrame,"statusbar",_getStatusBar,_setStatusBar);
 	rb_define_attr_method(rb_cWXFrame,"statusbar_pane",_getStatusBarPane,_setStatusBarPane);
-	rb_define_method(rb_cWXFrame,"create_statusbar",RUBY_METHOD_FUNC(_CreateStatusBar),0);
+	rb_define_method(rb_cWXFrame,"create_statusbar",RUBY_METHOD_FUNC(_CreateStatusBar),-1);
+
+
+	rb_define_method(rb_cWXFrame,"push_status_text",RUBY_METHOD_FUNC(_pushStatusText),-1);
+	rb_define_method(rb_cWXFrame,"pop_status_text",RUBY_METHOD_FUNC(_popStatusText),-1);
+
 #endif // wxUSE_STATUSBAR
 #if wxUSE_TOOLBAR
 	rb_define_attr_method(rb_cWXFrame,"toolbar",_getToolBar,_setToolBar);
-	rb_define_method(rb_cWXFrame,"create_toolbar",RUBY_METHOD_FUNC(_CreateToolBar),0);
+	rb_define_method(rb_cWXFrame,"create_toolbar",RUBY_METHOD_FUNC(_CreateToolBar),-1);
 #endif // wxUSE_TOOLBAR
 
 	registerInfo<wxFrame>(rb_cWXFrame);
