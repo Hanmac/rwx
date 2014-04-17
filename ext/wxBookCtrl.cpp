@@ -45,6 +45,7 @@ macro_attr_selection(Selection,GetPageCount)
 
 macro_attr(FitToCurrentPage,bool)
 
+singlereturn(IsVertical)
 singlereturn(GetControlSizer)
 singlereturn(GetCurrentPage)
 singlereturn(GetControllerSize)
@@ -110,6 +111,16 @@ DLL_LOCAL VALUE _each_size(VALUE self)
 }
 
 
+/*
+ * call-seq:
+ *   each_page -> Enumerator
+ *   each_page { |child| } -> self
+ *
+ * iterates the pages in this book control.
+ * ===Return value
+ * self
+ *
+*/
 DLL_LOCAL VALUE _each(VALUE self)
 {
 	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_size);
@@ -448,6 +459,79 @@ DLL_LOCAL VALUE _prev_page(VALUE self)
  * self
 */
 
+
+
+/* Document-method: vertical?
+ * call-seq:
+ *   vertical? -> true/false
+ *
+ * returns true is vertical orientation is used.
+ * ===Return value
+ * true/false
+*/
+
+/* Document-method: current_page
+ * call-seq:
+ *   current_page -> WX::Window/nil
+ *
+ * returns the current selected page or nil if none is selected.
+ * ===Return value
+ * WX::Window/nil
+*/
+
+
+/* Document-method: control_sizer
+ * call-seq:
+ *   current_page -> WX::Sizer/nil
+ *
+ * returns the sizer containing the control, if any
+ * ===Return value
+ * WX::Sizer/nil
+*/
+/* Document-method: controller_size
+ * call-seq:
+ *   controller_size -> WX::Size
+ *
+ * return the size of the area needed to accommodate the controller
+ * ===Return value
+ * WX::Size
+*/
+
+
+
+/* Document-attr: image_list
+ * [WX::Bitmap] array of bitmap images,
+ * bitmap parameter for add, insert & prepend of pages must be smaller than size of array.
+ */
+/* Document-attr: selection
+ * Integer/nil returns the index of the current selected page, or nil if none is selected.
+ */
+/* Document-attr: internal_border
+ * Integer returns how many pixel the pages are depart of each other.
+ */
+/* Document-attr: control_margin
+ * Integer returns the margin of the pages.
+ */
+
+/* Document-const: TOP
+ * orient the book ctrl pages on top.
+ */
+/* Document-const: BOTTOM
+ * orient the book ctrl pages on bottom.
+ */
+/* Document-const: LEFT
+ * orient the book ctrl pages on left.
+ */
+/* Document-const: RIGHT
+ * orient the book ctrl pages on right.
+ */
+
+//for event
+
+/* Document-attr: old_selection
+ * Integer/nil returns the index of the current selected page, or nil if none is selected.
+ */
+
 namespace Event {
 #undef _self
 #define _self unwrapPtr<wxBookCtrlEvent>(self,rb_cWXBookCtrlEvent)
@@ -469,6 +553,8 @@ DLL_LOCAL void Init_WXBookCtrl(VALUE rb_mWX)
 
 	rb_define_attr(rb_cWXBookCtrlBase,"selection",1,1);
 	rb_define_attr(rb_cWXBookCtrlBase,"image_list",1,1);
+	rb_define_attr(rb_cWXBookCtrlBase,"intenal_border",1,1);
+	rb_define_attr(rb_cWXBookCtrlBase,"control_margin",1,1);
 
 	rb_define_attr(rb_cWXBookCtrlEvent,"selection",1,1);
 	rb_define_attr(rb_cWXBookCtrlEvent,"old_selection",1,1);
@@ -488,6 +574,8 @@ DLL_LOCAL void Init_WXBookCtrl(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXBookCtrlBase,"selection",_getSelection,_setSelection);
 	rb_define_attr_method(rb_cWXBookCtrlBase,"image_list",_getImageList,_setImageList);
+	rb_define_attr_method(rb_cWXBookCtrlBase,"intenal_border",_getInternalBorder,_setInternalBorder);
+	rb_define_attr_method(rb_cWXBookCtrlBase,"control_margin",_getControlMargin,_setControlMargin);
 
 	rb_define_method(rb_cWXBookCtrlBase,"add_page",RUBY_METHOD_FUNC(_addPage),-1);
 	rb_define_method(rb_cWXBookCtrlBase,"insert_page",RUBY_METHOD_FUNC(_insertPage),-1);
@@ -503,13 +591,23 @@ DLL_LOCAL void Init_WXBookCtrl(VALUE rb_mWX)
 	rb_define_method(rb_cWXBookCtrlBase,"get_page_image",RUBY_METHOD_FUNC(_get_page_image),1);
 	rb_define_method(rb_cWXBookCtrlBase,"set_page_image",RUBY_METHOD_FUNC(_set_page_image),2);
 
+	rb_define_method(rb_cWXBookCtrlBase,"vertical?",RUBY_METHOD_FUNC(_IsVertical),0);
+
 	rb_define_method(rb_cWXBookCtrlBase,"current_page",RUBY_METHOD_FUNC(_GetCurrentPage),0);
+	rb_define_method(rb_cWXBookCtrlBase,"controller_size",RUBY_METHOD_FUNC(_GetControllerSize),0);
+	rb_define_method(rb_cWXBookCtrlBase,"control_sizer",RUBY_METHOD_FUNC(_GetControlSizer),0);
 
 	rb_define_method(rb_cWXBookCtrlBase,"delete_page",RUBY_METHOD_FUNC(_deletePage),1);
 	rb_define_method(rb_cWXBookCtrlBase,"delete_all_pages",RUBY_METHOD_FUNC(_DeleteAllPages),0);
 
 	rb_define_method(rb_cWXBookCtrlBase,"next_page",RUBY_METHOD_FUNC(_AdvanceSelection),0);
 	rb_define_method(rb_cWXBookCtrlBase,"prev_page",RUBY_METHOD_FUNC(_prev_page),0);
+
+	rb_define_const(rb_cWXBookCtrlBase,"TOP",INT2NUM(wxBK_TOP));
+	rb_define_const(rb_cWXBookCtrlBase,"BOTTOM",INT2NUM(wxBK_BOTTOM));
+	rb_define_const(rb_cWXBookCtrlBase,"LEFT",INT2NUM(wxBK_LEFT));
+	rb_define_const(rb_cWXBookCtrlBase,"RIGHT",INT2NUM(wxBK_RIGHT));
+
 
 	rb_cWXBookCtrlEvent = rb_define_class_under(rb_cWXEvent,"BookCtrl",rb_cWXNotifyEvent);
 
