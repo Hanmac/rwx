@@ -411,6 +411,7 @@ DLL_LOCAL void set_hash_flag_option(VALUE hash,const char* name,const int& flag,
 
 #define macro_attr_bool(attr) macro_attr_func(attr,Is##attr(),Set##attr,wrap,RTEST,true)
 #define macro_attr_bool2(attr,attr2) macro_attr_func(attr,Is##attr(),attr2,wrap,RTEST,true)
+#define macro_attr_bool3(attr,attr2) macro_attr_func(attr,Has##attr(),attr2,wrap,RTEST,true)
 #define macro_attr_bool_con(attr,con) macro_attr_func(attr,Is##attr(),Set##attr,wrap,RTEST,_self->con())
 
 //*/
