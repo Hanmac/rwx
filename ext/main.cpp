@@ -78,6 +78,18 @@ VALUE wrap< int >(const int &st )
 {
 	return INT2NUM(st);
 }
+template <>
+double unwrap< double >(const VALUE &val )
+{
+	return NUM2DBL(val);
+}
+
+template <>
+VALUE wrap< double >(const double &st )
+{
+	return DBL2NUM(st);
+}
+
 
 template <>
 unsigned int unwrap< unsigned int >(const VALUE &val )

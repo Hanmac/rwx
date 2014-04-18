@@ -300,6 +300,11 @@ template <>
 int unwrap< int >(const VALUE &val );
 template <>
 VALUE wrap< int >(const int &st );
+template <>
+double unwrap< double >(const VALUE &val );
+template <>
+VALUE wrap< double >(const double &st );
+
 
 template <>
 unsigned int unwrap< unsigned int >(const VALUE &val );

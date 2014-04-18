@@ -15,7 +15,16 @@ DLL_LOCAL void Init_WXPoint(VALUE rb_mWX);
 
 
 template <>
-VALUE wrap< wxPoint >(wxPoint *point );
+VALUE wrap< wxRealPoint >(wxRealPoint *point );
+
+template <>
+bool is_wrapable< wxRealPoint >(const VALUE &vpoint);
+
+template <>
+wxRealPoint unwrap< wxRealPoint >(const VALUE &vpoint);
+
+template <>
+VALUE wrap< wxPoint >(const wxPoint &point );
 
 template <>
 bool is_wrapable< wxPoint >(const VALUE &vpoint);

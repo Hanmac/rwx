@@ -1,28 +1,33 @@
 /*
- * wxPoint.cpp
+ * wxRealPoint.cpp
  *
  *  Created on: 21.04.2012
  *      Author: hanmac
  */
 
 #include "wxPoint.hpp"
-VALUE rb_cWXPoint;
+VALUE rb_cwxRealPoint;
 
 ID rwxID_x,rwxID_y;
 
-#define _self unwrap<wxPoint*>(self)
+#define _self unwrap<wxRealPoint*>(self)
 
 
 template <>
-VALUE wrap< wxPoint >(wxPoint *point )
+VALUE wrap< wxRealPoint >(wxRealPoint *point )
 {
-	return Data_Wrap_Struct(rb_cWXPoint, NULL, free, point);
+	return Data_Wrap_Struct(rb_cwxRealPoint, NULL, free, point);
+}
+template <>
+VALUE wrap< wxPoint >(const wxPoint &point )
+{
+	return wrap(new wxRealPoint(point));
 }
 
 template <>
-bool is_wrapable< wxPoint >(const VALUE &vpoint)
+bool is_wrapable< wxRealPoint >(const VALUE &vpoint)
 {
-	if (rb_obj_is_kind_of(vpoint, rb_cWXPoint)){
+	if (rb_obj_is_kind_of(vpoint, rb_cwxRealPoint)){
 		return true;
 	}else if(rb_respond_to(vpoint,rwxID_x) &&
 		rb_respond_to(vpoint,rwxID_y)){
@@ -30,6 +35,33 @@ bool is_wrapable< wxPoint >(const VALUE &vpoint)
 	}else
 		return false;
 }
+template <>
+bool is_wrapable< wxPoint >(const VALUE &vpoint)
+{
+	return is_wrapable< wxRealPoint >(vpoint);
+}
+
+template <>
+wxRealPoint unwrap< wxRealPoint >(const VALUE &vpoint)
+{
+	if(rb_obj_is_kind_of(vpoint, rb_cArray)){
+		wxRealPoint point;
+		point.x = NUM2DBL(rb_ary_entry(vpoint,0));
+		point.y = NUM2DBL(rb_ary_entry(vpoint,1));
+		return point;
+	}else if(!rb_obj_is_kind_of(vpoint, rb_cwxRealPoint) &&
+		rb_respond_to(vpoint,rwxID_x) &&
+		rb_respond_to(vpoint,rwxID_y)){
+		wxRealPoint point;
+		point.x = NUM2DBL(rb_funcall(vpoint,rwxID_x,0));
+		point.y = NUM2DBL(rb_funcall(vpoint,rwxID_y,0));
+		return point;
+	}else{
+		return *unwrap<wxRealPoint*>(vpoint);
+	}
+
+}
+
 
 template <>
 wxPoint unwrap< wxPoint >(const VALUE &vpoint)
@@ -39,7 +71,7 @@ wxPoint unwrap< wxPoint >(const VALUE &vpoint)
 		point.x = NUM2INT(rb_ary_entry(vpoint,0));
 		point.y = NUM2INT(rb_ary_entry(vpoint,1));
 		return point;
-	}else if(!rb_obj_is_kind_of(vpoint, rb_cWXPoint) &&
+	}else if(!rb_obj_is_kind_of(vpoint, rb_cwxRealPoint) &&
 		rb_respond_to(vpoint,rwxID_x) &&
 		rb_respond_to(vpoint,rwxID_y)){
 		wxPoint point;
@@ -47,7 +79,7 @@ wxPoint unwrap< wxPoint >(const VALUE &vpoint)
 		point.y = NUM2INT(rb_funcall(vpoint,rwxID_y,0));
 		return point;
 	}else{
-		return *unwrap<wxPoint*>(vpoint);
+		return *unwrap<wxRealPoint*>(vpoint);
 	}
 
 }
@@ -66,12 +98,12 @@ wxPointList* unwrap< wxPointList* >(const VALUE &val)
 namespace RubyWX {
 namespace Point {
 
-macro_attr_prop(x,int)
-macro_attr_prop(y,int)
+macro_attr_prop(x,double)
+macro_attr_prop(y,double)
 
 DLL_LOCAL VALUE _alloc(VALUE self)
 {
-	return wrap(new wxPoint());
+	return wrap(new wxRealPoint());
 }
 
 DLL_LOCAL VALUE _initialize(VALUE self,VALUE x,VALUE y)
@@ -162,27 +194,27 @@ DLL_LOCAL void Init_WXPoint(VALUE rb_mWX)
 {
 
 #if 0
-	rb_define_attr(rb_cWXPoint,"x",1,1);
-	rb_define_attr(rb_cWXPoint,"y",1,1);
+	rb_define_attr(rb_cwxRealPoint,"x",1,1);
+	rb_define_attr(rb_cwxRealPoint,"y",1,1);
 #endif
 
 	using namespace RubyWX::Point;
-	rb_cWXPoint = rb_define_class_under(rb_mWX,"Point",rb_cObject);
+	rb_cwxRealPoint = rb_define_class_under(rb_mWX,"Point",rb_cObject);
 
-	rb_define_alloc_func(rb_cWXPoint,_alloc);
+	rb_define_alloc_func(rb_cwxRealPoint,_alloc);
 
-	rb_define_method(rb_cWXPoint,"initialize",RUBY_METHOD_FUNC(_initialize),2);
-	rb_define_private_method(rb_cWXPoint,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),1);
+	rb_define_method(rb_cwxRealPoint,"initialize",RUBY_METHOD_FUNC(_initialize),2);
+	rb_define_private_method(rb_cwxRealPoint,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),1);
 
-	rb_define_attr_method(rb_cWXPoint,"x",_get_x,_set_x);
-	rb_define_attr_method(rb_cWXPoint,"y",_get_y,_set_y);
+	rb_define_attr_method(rb_cwxRealPoint,"x",_get_x,_set_x);
+	rb_define_attr_method(rb_cwxRealPoint,"y",_get_y,_set_y);
 
-	rb_define_method(rb_cWXPoint,"inspect",RUBY_METHOD_FUNC(_inspect),0);
+	rb_define_method(rb_cwxRealPoint,"inspect",RUBY_METHOD_FUNC(_inspect),0);
 
-	rb_define_method(rb_cWXPoint,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
-	rb_define_method(rb_cWXPoint,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
+	rb_define_method(rb_cwxRealPoint,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
+	rb_define_method(rb_cwxRealPoint,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
-	registerType<wxPoint>(rb_cWXPoint);
+	registerType<wxRealPoint>(rb_cwxRealPoint);
 
 	rwxID_x = rb_intern("x");
 	rwxID_y = rb_intern("y");
