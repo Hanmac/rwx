@@ -398,7 +398,7 @@ DLL_LOCAL bool set_hash_option(VALUE hash,const char* name,T& val,T func(const V
 
 }
 
-DLL_LOCAL void set_hash_flag_option(VALUE hash,const char* name,const int& flag,int& val);
+DLL_LOCAL bool set_hash_flag_option(VALUE hash,const char* name,const int& flag,int& val);
 
 #define macro_attr(attr,type) macro_attr_func(attr,Get##attr(),Set##attr,wrap,unwrap<type>,true)
 #define macro_attr_enum(attr,type) macro_attr_func(attr,Get##attr(),Set##attr,wrapenum<type>,unwrapenum<type>,true)

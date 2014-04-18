@@ -355,7 +355,7 @@ bool check_file_saveable(const wxString& path)
 	return true;
 }
 
-void set_hash_flag_option(VALUE hash,const char* name,const int& flag,int& val)
+bool set_hash_flag_option(VALUE hash,const char* name,const int& flag,int& val)
 {
 	VALUE temp;
 	if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern(name)))))
@@ -364,7 +364,10 @@ void set_hash_flag_option(VALUE hash,const char* name,const int& flag,int& val)
 			val |= flag;
 		else
 			val &= ~flag;
+
+		return true;
 	}
+	return false;
 }
 
 bool nil_check(VALUE window,const char* type,bool raise)
