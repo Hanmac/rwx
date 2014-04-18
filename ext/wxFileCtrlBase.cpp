@@ -105,7 +105,7 @@ singlereturn(GetFile)
 #endif
 
 /* Document-attr: wildcard
- * the wildcard of the FileCtrl. String
+ * the wildcard of the FileCtrl. String, raise an ArgumentError if wildcard has wrong format
  */
 /* Document-attr: directory
  * the directory of the FileCtrl. String
@@ -117,6 +117,21 @@ singlereturn(GetFile)
  * the filter_index of the FileCtrl. Integer
  */
 
+/* Document-const: OPEN
+ * creates control in "open" mode
+ */
+/* Document-const: SAVE
+ * creates control in "save" mode
+ */
+/* Document-const: MULTIPLE
+ * allows to select multiple files
+ */
+/* Document-const: NOSHOWHIDDEN
+ * hides files that are marked hidden.
+ */
+/* Document-const: DEFAULT_STYLE
+ * default style for this control.
+ */
 
 DLL_LOCAL void Init_WXFileCtrlBase(VALUE rb_mWX)
 {
@@ -156,6 +171,9 @@ DLL_LOCAL void Init_WXFileCtrlBase(VALUE rb_mWX)
 	rb_define_const(rb_cWXFileCtrlBase,"SAVE",INT2NUM(wxFC_SAVE));
 	rb_define_const(rb_cWXFileCtrlBase,"MULTIPLE",INT2NUM(wxFC_MULTIPLE));
 	rb_define_const(rb_cWXFileCtrlBase,"NOSHOWHIDDEN",INT2NUM(wxFC_NOSHOWHIDDEN));
+
+	rb_define_const(rb_cWXFileCtrlBase,"DEFAULT_STYLE",INT2NUM(wxFC_DEFAULT_STYLE));
+
 
 	rb_cWXFileCtrlEvent = rb_define_class_under(rb_cWXEvent,"FileCtrl",rb_cWXEvent);
 	registerEventType("filectrl_selectionchanged",wxEVT_FILECTRL_SELECTIONCHANGED,rb_cWXFileCtrlEvent);
