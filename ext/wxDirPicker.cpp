@@ -63,6 +63,17 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 		}
 
+		//can happen so check it too
+		if((style & wxFLP_OPEN) && (style & wxFLP_SAVE))
+			rb_raise(rb_eArgError,"style can't have both OPEN and SAVE flags");
+
+		if((style & wxFLP_OPEN) && (style & wxFLP_OVERWRITE_PROMPT))
+			rb_raise(rb_eArgError,"style can't have both OVERWRITE_PROMPT and OPEN flags");
+
+		if((style & wxFLP_SAVE) && (style & wxFLP_FILE_MUST_EXIST))
+			rb_raise(rb_eArgError,"style can't have both MUST_EXIST and SAVE flags");
+
+
 		_self->Create(
 			unwrap<wxWindow*>(parent),id,path,
 			message,wxDefaultPosition,wxDefaultSize,style
@@ -80,6 +91,17 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 #endif
 
+
+/* Document-const: MUST_EXIST
+ *  Creates a picker which allows to select only existing directories.
+ *  wxGTK control always adds this flag internally as it does not support its absence.
+ */
+/* Document-const: CHANGE_DIR
+ *   Change current working directory on each user directory selection change.
+ */
+/* Document-const: DEFAULT_STYLE
+ * default style for this control.
+ */
 
 DLL_LOCAL void Init_WXDirPicker(VALUE rb_mWX)
 {
