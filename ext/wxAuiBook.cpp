@@ -346,6 +346,44 @@ DLL_LOCAL VALUE _prependPage(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
+
+
+/* Document-const: TAB_SPLIT
+ *  Allows the tab control to be split by dragging a tab.
+ */
+/* Document-const: TAB_MOVE
+ *  Allows a tab to be moved horizontally by dragging.
+ */
+/* Document-const: TAB_EXTERNAL_MOVE
+ *  Allows a tab to be moved to another tab control.
+ */
+/* Document-const: TAB_FIXED_WIDTH
+ *  With this style, all tabs have the same width.
+ */
+
+/* Document-const: SCROLLBUTTONS
+ *  With this style, left and right scroll buttons are displayed.
+ */
+/* Document-const: WINDOWLIST_BUTTON
+ *  With this style, a drop-down list of windows is available.
+ */
+/* Document-const: CLOSE_BUTTON
+ *  With this style, a close button is available on the tab bar.
+ */
+/* Document-const: CLOSE_ON_ACTIVE_TAB
+ *  With this style, the close button is visible on the active tab.
+ */
+/* Document-const: CLOSE_ON_ALL_TABS
+ *  With this style, the close button is visible on all tabs.
+ */
+/* Document-const: MIDDLE_CLICK_CLOSE
+ *  With this style, middle click on a tab closes the tab.
+ */
+
+/* Document-const: DEFAULT_STYLE
+ * default style for this control.
+ */
+
 DLL_LOCAL void Init_WXAuiNoteBookCtrl(VALUE rb_mWX)
 {
 
