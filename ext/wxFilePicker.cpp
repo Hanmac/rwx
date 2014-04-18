@@ -62,13 +62,29 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 			PickerBase::set_style_flags(hash,style);
 
-			set_hash_flag_option(hash,"open",wxFLP_OPEN,style);
-			set_hash_flag_option(hash,"save",wxFLP_SAVE,style);
-			set_hash_flag_option(hash,"overwrite_prompt",wxFLP_OVERWRITE_PROMPT,style);
-			set_hash_flag_option(hash,"must_exist",wxFLP_FILE_MUST_EXIST,style);
+			if(set_hash_flag_option(hash,"open",wxFLP_OPEN,style))
+				style &= ~(wxFLP_SAVE & wxFLP_OVERWRITE_PROMPT);
+			if(set_hash_flag_option(hash,"save",wxFLP_SAVE,style))
+				style &= ~(wxFLP_OPEN & wxFLP_FILE_MUST_EXIST);
+
+			if(set_hash_flag_option(hash,"overwrite_prompt",wxFLP_OVERWRITE_PROMPT,style))
+				style &= ~wxFLP_OPEN & wxFLP_SAVE;
+
+			if(set_hash_flag_option(hash,"must_exist",wxFLP_FILE_MUST_EXIST,style))
+				style &= ~wxFLP_SAVE & wxFLP_OPEN;
+
 			set_hash_flag_option(hash,"change_dir",wxFLP_CHANGE_DIR,style);
 
 		}
+
+		if((style & wxFLP_OPEN) && (style & wxFLP_SAVE))
+			rb_raise(rb_eArgError,"style can't have both OPEN and SAVE flags");
+
+		if((style & wxFLP_OPEN) && (style & wxFLP_OVERWRITE_PROMPT))
+			rb_raise(rb_eArgError,"style can't have both OVERWRITE_PROMPT and OPEN flags");
+
+		if((style & wxFLP_SAVE) && (style & wxFLP_FILE_MUST_EXIST))
+			rb_raise(rb_eArgError,"style can't have both MUST_EXIST and SAVE flags");
 
 		_self->Create(
 			unwrap<wxWindow*>(parent),id,path,
@@ -87,6 +103,26 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 
 #endif
+
+
+/* Document-const: OPEN
+ * creates control in "open" mode
+ */
+/* Document-const: SAVE
+ * creates control in "save" mode
+ */
+/* Document-const: OVERWRITE_PROMPT
+ *  Can be combined with SAVE only: ask confirmation to the user before selecting a file.
+ */
+/* Document-const: MUST_EXIST
+ * Can be combined with OPEN only: the selected file must be an existing file.
+ */
+/* Document-const: CHANGE_DIR
+ *  Change current working directory on each user file selection change.
+ */
+/* Document-const: DEFAULT_STYLE
+ * default style for this control.
+ */
 
 DLL_LOCAL void Init_WXFilePicker(VALUE rb_mWX)
 {
@@ -112,6 +148,9 @@ DLL_LOCAL void Init_WXFilePicker(VALUE rb_mWX)
 	rb_define_const(rb_cWXFilePicker,"OVERWRITE_PROMPT",INT2NUM(wxFLP_OVERWRITE_PROMPT));
 	rb_define_const(rb_cWXFilePicker,"MUST_EXIST",INT2NUM(wxFLP_FILE_MUST_EXIST));
 	rb_define_const(rb_cWXFilePicker,"CHANGE_DIR",INT2NUM(wxFLP_CHANGE_DIR));
+
+	rb_define_const(rb_cWXFilePicker,"DEFAULT_STYLE",INT2NUM(wxFLP_DEFAULT_STYLE));
+
 
 	registerEventType("filepicker_changed",wxEVT_FILEPICKER_CHANGED,rb_cWXFileDirPickerEvent);
 
