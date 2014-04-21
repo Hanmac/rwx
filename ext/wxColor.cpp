@@ -43,7 +43,13 @@ template <>
 wxColor unwrap< wxColor >(const VALUE &vcolor)
 {
 	if(rb_obj_is_kind_of(vcolor, rb_cString)){
-		return wxColour(unwrap<wxString>(vcolor));
+		wxString name(unwrap<wxString>(vcolor));
+		if(wxTheColourDatabase->Find(name).IsOk())
+			return wxColor(name);
+		else{
+			rb_raise(rb_eTypeError,"%s is not a valid %s name",name.c_str().AsChar(),rb_class2name(rb_cWXColor));
+			return wxNullColour;
+		}
 	}else if(FIXNUM_P(vcolor))
 		return wxColor(NUM2INT(vcolor));
 	else if(!rb_obj_is_kind_of(vcolor, rb_cWXColor) &&
@@ -280,7 +286,30 @@ DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
  * returns the alpha value of Color.
  */
 
-
+/* Document-const: BLACK
+ * predefined Color constant.
+ */
+/* Document-const: BLUE
+ * predefined Color constant.
+ */
+/* Document-const: CYAN
+ * predefined Color constant.
+ */
+/* Document-const: GREEN
+ * predefined Color constant.
+ */
+/* Document-const: YELLOW
+ * predefined Color constant.
+ */
+/* Document-const: LIGHT_GREY
+ * predefined Color constant.
+ */
+/* Document-const: RED
+ * predefined Color constant.
+ */
+/* Document-const: WHITE
+ * predefined Color constant.
+ */
 DLL_LOCAL void Init_WXColor(VALUE rb_mWX)
 {
 	using namespace RubyWX::Color;
@@ -312,6 +341,16 @@ DLL_LOCAL void Init_WXColor(VALUE rb_mWX)
 	rb_define_method(rb_cWXColor,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
 	rb_define_method(rb_cWXColor,"==",RUBY_METHOD_FUNC(_equal),1);
+
+	rb_define_const(rb_cWXColor,"BLACK",wrap(wxBLACK));
+	rb_define_const(rb_cWXColor,"BLUE",wrap(wxBLUE));
+	rb_define_const(rb_cWXColor,"CYAN",wrap(wxCYAN));
+	rb_define_const(rb_cWXColor,"GREEN",wrap(wxGREEN));
+	rb_define_const(rb_cWXColor,"YELLOW",wrap(wxYELLOW));
+	rb_define_const(rb_cWXColor,"LIGHT_GREY",wrap(wxLIGHT_GREY));
+	rb_define_const(rb_cWXColor,"RED",wrap(wxRED));
+	rb_define_const(rb_cWXColor,"WHITE",wrap(wxWHITE));
+
 
 	rwxID_red = rb_intern("red");
 	rwxID_blue = rb_intern("blue");
