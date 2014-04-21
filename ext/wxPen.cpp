@@ -13,6 +13,11 @@
 
 VALUE rb_cWXPen;
 
+
+typedef std::map<wxPen*,VALUE> penlisttype;
+penlisttype penlistholder;
+
+
 template <>
 VALUE wrap< wxPen >(wxPen *bitmap )
 {
@@ -141,8 +146,99 @@ DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
 }
 
 
+DLL_LOCAL VALUE _class_get(int argc,VALUE *argv,VALUE self)
+{
+
+	VALUE color,width,style;
+	rb_scan_args(argc, argv, "21",&color,&width,&style);
+	//TODO add refcounting
+	wxPen *pen = wxThePenList->FindOrCreatePen(
+		unwrap<wxColor>(color),
+		NUM2INT(width),
+		NIL_P(style) ? wxPENSTYLE_SOLID : unwrapenum<wxPenStyle>(style)
+	);
+
+	if(!pen || !pen->IsOk())
+		return Qnil;
+
+	//look in the PenList holder is pen was already wrapped
+	penlisttype::iterator it = penlistholder.find(pen);
+	if(it != penlistholder.end()) {
+		return it->second;
+	} else {
+		//wrap wxPen pointer to ruby object
+		VALUE result = wrap(pen);
+
+		//PenList objects should not be changed
+		rb_obj_freeze(result);
+		//Prevent PenList objects from been deleted
+		rwx_refobject(result);
+		//add wrapped pen to the PenList holder to find it again
+		penlistholder[pen] = result;
+		return result;
+	}
+}
+
+
 }
 }
+
+
+/*
+ * Document-class: WX::Pen
+ *
+ * This class represents an Pen.
+*/
+
+/* Document-attr: width
+ * returns the width of the Pen. Integer
+ */
+/* Document-attr: color
+ * returns the color of the Pen. WX::Color
+ */
+/* Document-attr: style
+ * returns the style of the Pen. Symbol
+ */
+/* Document-attr: stipple
+ * returns the stipple of the Pen. WX::Bitmap
+ */
+
+/* Document-const: BLACK_DASHED
+ * predefined Pen constant.
+ */
+/* Document-const: BLACK
+ * predefined Pen constant.
+ */
+/* Document-const: BLUE
+ * predefined Pen constant.
+ */
+/* Document-const: CYAN
+ * predefined Pen constant.
+ */
+/* Document-const: GREEN
+ * predefined Pen constant.
+ */
+/* Document-const: YELLOW
+ * predefined Pen constant.
+ */
+/* Document-const: GREY
+ * predefined Pen constant.
+ */
+/* Document-const: LIGHT_GREY
+ * predefined Pen constant.
+ */
+/* Document-const: MEDIUM_GREY
+ * predefined Pen constant.
+ */
+/* Document-const: RED
+ * predefined Pen constant.
+ */
+/* Document-const: TRANSPARENT
+ * predefined Pen constant.
+ */
+/* Document-const: WHITE
+ * predefined Pen constant.
+ */
 
 DLL_LOCAL void Init_WXPen(VALUE rb_mWX)
 {
@@ -171,6 +267,21 @@ DLL_LOCAL void Init_WXPen(VALUE rb_mWX)
 	rb_define_method(rb_cWXPen,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
 	rb_define_method(rb_cWXPen,"==",RUBY_METHOD_FUNC(_equal),1);
+
+	rb_define_singleton_method(rb_cWXPen,"[]",RUBY_METHOD_FUNC(_class_get),-1);
+
+	rb_define_const(rb_cWXPen,"BLACK_DASHED",wrap(wxBLACK_DASHED_PEN));
+	rb_define_const(rb_cWXPen,"BLACK",wrap(wxBLACK_PEN));
+	rb_define_const(rb_cWXPen,"BLUE",wrap(wxBLUE_PEN));
+	rb_define_const(rb_cWXPen,"CYAN",wrap(wxCYAN_PEN));
+	rb_define_const(rb_cWXPen,"GREEN",wrap(wxGREEN_PEN));
+	rb_define_const(rb_cWXPen,"YELLOW",wrap(wxYELLOW_PEN));
+	rb_define_const(rb_cWXPen,"GREY",wrap(wxGREY_PEN));
+	rb_define_const(rb_cWXPen,"LIGHT_GREY",wrap(wxLIGHT_GREY_PEN));
+	rb_define_const(rb_cWXPen,"MEDIUM_GREY",wrap(wxMEDIUM_GREY_PEN));
+	rb_define_const(rb_cWXPen,"RED",wrap(wxRED_PEN));
+	rb_define_const(rb_cWXPen,"TRANSPARENT",wrap(wxTRANSPARENT_PEN));
+	rb_define_const(rb_cWXPen,"WHITE",wrap(wxWHITE_PEN));
 
 //
 //	rb_define_method(rb_cWXPen,"to_s",RUBY_METHOD_FUNC(_tos),0);
