@@ -185,7 +185,6 @@ DLL_LOCAL VALUE _getItemEnabled(VALUE self,VALUE idx)
 	return Qnil;
 }
 
-
 /*
  * call-seq:
  *   set_item_enabled(pos, val) -> self
@@ -211,6 +210,108 @@ DLL_LOCAL VALUE _setItemEnabled(VALUE self,VALUE idx,VALUE val)
 
 	return self;
 }
+
+#if wxUSE_TOOLTIPS
+/*
+ * call-seq:
+ *   get_item_tooltip(pos) -> String/nil
+ *
+ * returns the tool tip of the item or nil if none is set.
+ * ===Arguments
+ * * pos of the item. Integer
+ * ===Return value
+ * String/nil
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of items
+ *
+*/
+DLL_LOCAL VALUE _getItemToolTip(VALUE self,VALUE idx)
+{
+	int cidx = NUM2INT(idx);
+	if(check_index(cidx,_self->GetCount()))
+		return wrap(_self->GetItemToolTip(cidx));
+	return Qnil;
+}
+
+/*
+ * call-seq:
+ *   set_item_tooltip(pos, val) -> self
+ *
+ * sets the tool tip of the item at the given position.
+ * ===Arguments
+ * * pos of the item. Integer
+ * * val is the tool tip of the item. String
+ * ===Return value
+ * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of items
+ *
+*/
+DLL_LOCAL VALUE _setItemToolTip(VALUE self,VALUE idx,VALUE val)
+{
+	rb_check_frozen(self);
+
+	int cidx = NUM2INT(idx);
+	if(check_index(cidx,_self->GetCount()))
+		_self->SetItemToolTip(cidx,unwrap<wxString>(val));
+
+	return self;
+}
+#endif
+
+#if wxUSE_HELP
+/*
+ * call-seq:
+ *   get_item_helptext(pos) -> String
+ *
+ * returns the help text of the item.
+ * ===Arguments
+ * * pos of the item. Integer
+ * ===Return value
+ * String
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of items
+ *
+*/
+DLL_LOCAL VALUE _getItemHelpText(VALUE self,VALUE idx)
+{
+	int cidx = NUM2INT(idx);
+	if(check_index(cidx,_self->GetCount()))
+		return wrap(_self->GetItemHelpText(cidx));
+	return Qnil;
+}
+
+
+/*
+ * call-seq:
+ *   set_item_helptext(pos, val) -> self
+ *
+ * sets the help text of the item at the given position.
+ * ===Arguments
+ * * pos of the item. Integer
+ * * val is the help text of the item. String
+ * ===Return value
+ * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of items
+ *
+*/
+DLL_LOCAL VALUE _setItemHelpText(VALUE self,VALUE idx,VALUE val)
+{
+	rb_check_frozen(self);
+
+	int cidx = NUM2INT(idx);
+	if(check_index(cidx,_self->GetCount()))
+		_self->SetItemHelpText(cidx,unwrap<wxString>(val));
+
+	return self;
+}
+#endif
+
 
 }
 }
@@ -247,6 +348,16 @@ DLL_LOCAL void Init_WXRadioBox(VALUE rb_mWX)
 	rb_define_method(rb_cWXRadioBox,"set_item_enabled",RUBY_METHOD_FUNC(_setItemEnabled),2);
 
 	rb_define_alias(rb_cWXRadioBox,"item_enabled?","get_item_enabled");
+
+#if wxUSE_TOOLTIPS
+	rb_define_method(rb_cWXRadioBox,"get_item_tooltip",RUBY_METHOD_FUNC(_getItemToolTip),1);
+	rb_define_method(rb_cWXRadioBox,"set_item_tooltip",RUBY_METHOD_FUNC(_setItemToolTip),2);
+#endif
+
+#if wxUSE_HELP
+	rb_define_method(rb_cWXRadioBox,"get_item_helptext",RUBY_METHOD_FUNC(_getItemHelpText),1);
+	rb_define_method(rb_cWXRadioBox,"set_item_helptext",RUBY_METHOD_FUNC(_setItemHelpText),2);
+#endif
 
 	rb_define_attr_method(rb_cWXRadioBox,"selection",_getSelection,_setSelection);
 	rb_define_attr_method(rb_cWXRadioBox,"string_selection",_getStringSelection,_setStringSelection);
