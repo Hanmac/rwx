@@ -17,6 +17,8 @@ namespace StaticLine {
 
 APP_PROTECT(wxStaticLine)
 
+singlereturn(IsVertical)
+
 /*
  * call-seq:
  *   StaticLine.new(parent, name, [options])
@@ -52,6 +54,16 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
+
+/* Document-method: vertical?
+ * call-seq:
+ *   vertical? -> true/false
+ *
+ * returns true if this control is vertical.
+ * ===Return value
+ * true/false
+*/
+
 }
 }
 #endif
@@ -69,6 +81,8 @@ DLL_LOCAL void Init_WXStaticLine(VALUE rb_mWX)
 	rb_define_alloc_func(rb_cWXStaticLine,_alloc);
 
 	rb_define_method(rb_cWXStaticLine,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
+
+	rb_define_method(rb_cWXStaticLine,"vertical?",RUBY_METHOD_FUNC(_IsVertical),0);
 
 	registerInfo<wxStaticLine>(rb_cWXStaticLine);
 #endif

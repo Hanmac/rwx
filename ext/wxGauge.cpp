@@ -20,6 +20,8 @@ macro_attr(Value,int)
 
 APP_PROTECT(wxGauge)
 
+singlereturn(IsVertical)
+
 /*
  * call-seq:
  *   Gauge.new(parent, name, [options])
@@ -83,6 +85,15 @@ singlefunc(Pulse)
  * the value of the Gauge. Integer
  */
 
+/* Document-method: vertical?
+ * call-seq:
+ *   vertical? -> true/false
+ *
+ * returns true if this control is vertical.
+ * ===Return value
+ * true/false
+*/
+
 DLL_LOCAL void Init_WXGauge(VALUE rb_mWX)
 {
 #if 0
@@ -106,6 +117,8 @@ DLL_LOCAL void Init_WXGauge(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXGauge,"value",_getValue,_setValue);
 
 	rb_define_method(rb_cWXGauge,"pulse",RUBY_METHOD_FUNC(_Pulse),0);
+
+	rb_define_method(rb_cWXGauge,"vertical?",RUBY_METHOD_FUNC(_IsVertical),0);
 
 	registerInfo<wxGauge>(rb_cWXGauge);
 #endif

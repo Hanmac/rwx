@@ -553,6 +553,15 @@ singlereturn(GetMaxRows)
  * WX::ToolBarBase::Tool
 */
 
+/* Document-method: vertical?
+ * call-seq:
+ *   vertical? -> true/false
+ *
+ * returns true if this control is vertical.
+ * ===Return value
+ * true/false
+*/
+
 }
 }
 

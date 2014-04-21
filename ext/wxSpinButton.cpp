@@ -18,11 +18,13 @@ VALUE rb_cWXSpinEvent;
 namespace RubyWX {
 namespace SpinButton {
 
+APP_PROTECT(wxSpinButton)
+
 macro_attr(Value,int)
 macro_attr(Max,int)
 macro_attr(Min,int)
 
-APP_PROTECT(wxSpinButton)
+singlereturn(IsVertical)
 
 /*
  * call-seq:
@@ -95,6 +97,15 @@ macro_attr(Value,int)
  * the maximum value of the SpinButton. Integer
  */
 
+/* Document-method: vertical?
+ * call-seq:
+ *   vertical? -> true/false
+ *
+ * returns true if this control is vertical.
+ * ===Return value
+ * true/false
+*/
+
 DLL_LOCAL void Init_WXSpinButton(VALUE rb_mWX)
 {
 #if 0
@@ -121,6 +132,7 @@ DLL_LOCAL void Init_WXSpinButton(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXSpinButton,"min",_getMin,_setMin);
 	rb_define_attr_method(rb_cWXSpinButton,"max",_getMax,_setMax);
 
+	rb_define_method(rb_cWXSpinButton,"vertical?",RUBY_METHOD_FUNC(_IsVertical),0);
 
 	rb_cWXSpinEvent = rb_define_class_under(rb_cWXEvent,"Spin",rb_cWXNotifyEvent);
 
