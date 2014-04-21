@@ -116,7 +116,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 
 	VALUE size,hash;
-	rb_scan_args(argc, argv, "11",&size,&hash);
+	rb_scan_args(argc, argv, "1:",&size,&hash);
+	//TODO: wx does not have 2-step constructor for wxFont from info
 	(*_self) = wxFont(to_info(size,hash));
 
 //	rb_call_super(argc,argv);
@@ -385,6 +386,20 @@ DLL_LOCAL VALUE _class_get(int argc,VALUE *argv,VALUE self)
  * the encoding of the Font, Encoding
  */
 
+
+/* Document-const: ITALIC
+ * predefined Font constant.
+ */
+/* Document-const: NORMAL
+ * predefined Font constant.
+ */
+/* Document-const: SMALL
+ * predefined Font constant.
+ */
+/* Document-const: SWISS
+ * predefined Font constant.
+ */
+
 DLL_LOCAL void Init_WXFont(VALUE rb_mWX)
 {
 #if 0
@@ -439,6 +454,11 @@ DLL_LOCAL void Init_WXFont(VALUE rb_mWX)
 	rb_define_method(rb_cWXFont,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
 	rb_define_singleton_method(rb_cWXFont,"[]",RUBY_METHOD_FUNC(_class_get),-1);
+
+	rb_define_const(rb_cWXFont,"ITALIC",wrap(wxITALIC_FONT));
+	rb_define_const(rb_cWXFont,"NORMAL",wrap(wxNORMAL_FONT));
+	rb_define_const(rb_cWXFont,"SMALL",wrap(wxSMALL_FONT));
+	rb_define_const(rb_cWXFont,"SWISS",wrap(wxSWISS_FONT));
 
 	registerInfo<wxFont>(rb_cWXFont);
 
