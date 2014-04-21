@@ -129,7 +129,7 @@ DLL_LOCAL VALUE _class_get(int argc,VALUE *argv,VALUE self)
 
 	//look in the PenList holder is brush was already wrapped
 	brushlisttype::iterator it = brushlistholder.find(brush);
-	if(it != penlistholder.end()) {
+	if(it != brushlistholder.end()) {
 		return it->second;
 	} else {
 		//wrap wxBrush pointer to ruby object
