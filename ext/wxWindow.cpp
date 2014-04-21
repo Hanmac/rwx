@@ -93,7 +93,9 @@ void registerID(const char *name,wxWindowID id)
 template <>
 VALUE wrap< wxToolTip >(wxToolTip* window)
 {
-	return wrap(window->GetTip());
+	if(window)
+		return wrap(window->GetTip());
+	return Qnil;
 }
 
 template <>
