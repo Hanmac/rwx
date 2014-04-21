@@ -169,6 +169,12 @@ VALUE wrap(T *arg)
 }
 
 template <typename T>
+VALUE wrap(const T *arg)
+{
+	return rb_obj_freeze(wrap(const_cast<T*>(arg)));
+}
+
+template <typename T>
 T* unwrapPtr(const VALUE &obj,const VALUE &klass)
 {
 	if(NIL_P(obj))
