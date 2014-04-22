@@ -18,6 +18,15 @@ VALUE wrap< wxColor >(wxColor *color )
 	return Data_Wrap_Struct(rb_cWXColor, NULL, free, color);
 }
 
+//TODO fix that const pointer should not be freed
+template <>
+VALUE wrap< wxColor >(const wxColor *color )
+{
+	VALUE result = Data_Wrap_Struct(rb_cWXColor, NULL, NULL, const_cast<wxColor*>(color));
+	return rb_obj_freeze(result);
+}
+
+
 template <>
 bool is_wrapable< wxColor >(const VALUE &vcolor)
 {
@@ -342,6 +351,7 @@ DLL_LOCAL void Init_WXColor(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXColor,"==",RUBY_METHOD_FUNC(_equal),1);
 
+//*
 	rb_define_const(rb_cWXColor,"BLACK",wrap(wxBLACK));
 	rb_define_const(rb_cWXColor,"BLUE",wrap(wxBLUE));
 	rb_define_const(rb_cWXColor,"CYAN",wrap(wxCYAN));
@@ -350,7 +360,7 @@ DLL_LOCAL void Init_WXColor(VALUE rb_mWX)
 	rb_define_const(rb_cWXColor,"LIGHT_GREY",wrap(wxLIGHT_GREY));
 	rb_define_const(rb_cWXColor,"RED",wrap(wxRED));
 	rb_define_const(rb_cWXColor,"WHITE",wrap(wxWHITE));
-
+//*/
 
 	rwxID_red = rb_intern("red");
 	rwxID_blue = rb_intern("blue");
