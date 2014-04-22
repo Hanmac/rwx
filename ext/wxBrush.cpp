@@ -36,6 +36,21 @@ macro_attr(Stipple,wxBitmap)
 singlereturn(IsHatch)
 
 
+void define_const()
+{
+	rb_define_const(rb_cWXBrush,"BLACK",wrap(wxBLACK_BRUSH));
+	rb_define_const(rb_cWXBrush,"BLUE",wrap(wxBLUE_BRUSH));
+	rb_define_const(rb_cWXBrush,"CYAN",wrap(wxCYAN_BRUSH));
+	rb_define_const(rb_cWXBrush,"GREEN",wrap(wxGREEN_BRUSH));
+	rb_define_const(rb_cWXBrush,"YELLOW",wrap(wxYELLOW_BRUSH));
+	rb_define_const(rb_cWXBrush,"GREY",wrap(wxGREY_BRUSH));
+	rb_define_const(rb_cWXBrush,"LIGHT_GREY",wrap(wxLIGHT_GREY_BRUSH));
+	rb_define_const(rb_cWXBrush,"MEDIUM_GREY",wrap(wxMEDIUM_GREY_BRUSH));
+	rb_define_const(rb_cWXBrush,"RED",wrap(wxRED_BRUSH));
+	rb_define_const(rb_cWXBrush,"TRANSPARENT",wrap(wxTRANSPARENT_BRUSH));
+	rb_define_const(rb_cWXBrush,"WHITE",wrap(wxWHITE_BRUSH));
+}
+
 /*
  * call-seq:
  *   Brush.new(color[,style])
@@ -207,6 +222,18 @@ DLL_LOCAL void Init_WXBrush(VALUE rb_mWX)
 	rb_define_attr(rb_cWXBrush,"style",1,1);
 	rb_define_attr(rb_cWXBrush,"stipple",1,1);
 
+	//need to
+	rb_define_const(rb_cWXBrush,"BLACK",wrap(wxBLACK_BRUSH));
+	rb_define_const(rb_cWXBrush,"BLUE",wrap(wxBLUE_BRUSH));
+	rb_define_const(rb_cWXBrush,"CYAN",wrap(wxCYAN_BRUSH));
+	rb_define_const(rb_cWXBrush,"GREEN",wrap(wxGREEN_BRUSH));
+	rb_define_const(rb_cWXBrush,"YELLOW",wrap(wxYELLOW_BRUSH));
+	rb_define_const(rb_cWXBrush,"GREY",wrap(wxGREY_BRUSH));
+	rb_define_const(rb_cWXBrush,"LIGHT_GREY",wrap(wxLIGHT_GREY_BRUSH));
+	rb_define_const(rb_cWXBrush,"MEDIUM_GREY",wrap(wxMEDIUM_GREY_BRUSH));
+	rb_define_const(rb_cWXBrush,"RED",wrap(wxRED_BRUSH));
+	rb_define_const(rb_cWXBrush,"TRANSPARENT",wrap(wxTRANSPARENT_BRUSH));
+	rb_define_const(rb_cWXBrush,"WHITE",wrap(wxWHITE_BRUSH));
 #endif
 
 	using namespace RubyWX::Brush;
@@ -231,20 +258,9 @@ DLL_LOCAL void Init_WXBrush(VALUE rb_mWX)
 //	rb_define_method(rb_cWXBrush,"to_s",RUBY_METHOD_FUNC(_tos),0);
 //	rb_define_method(rb_cWXBrush,"inspect",RUBY_METHOD_FUNC(_inspect),0);
 
-
-	rb_define_const(rb_cWXBrush,"BLACK",wrap(wxBLACK_BRUSH));
-	rb_define_const(rb_cWXBrush,"BLUE",wrap(wxBLUE_BRUSH));
-	rb_define_const(rb_cWXBrush,"CYAN",wrap(wxCYAN_BRUSH));
-	rb_define_const(rb_cWXBrush,"GREEN",wrap(wxGREEN_BRUSH));
-	rb_define_const(rb_cWXBrush,"YELLOW",wrap(wxYELLOW_BRUSH));
-	rb_define_const(rb_cWXBrush,"GREY",wrap(wxGREY_BRUSH));
-	rb_define_const(rb_cWXBrush,"LIGHT_GREY",wrap(wxLIGHT_GREY_BRUSH));
-	rb_define_const(rb_cWXBrush,"MEDIUM_GREY",wrap(wxMEDIUM_GREY_BRUSH));
-	rb_define_const(rb_cWXBrush,"RED",wrap(wxRED_BRUSH));
-	rb_define_const(rb_cWXBrush,"TRANSPARENT",wrap(wxTRANSPARENT_BRUSH));
-	rb_define_const(rb_cWXBrush,"WHITE",wrap(wxWHITE_BRUSH));
-
 	registerInfo<wxBrush>(rb_cWXBrush);
+
+
 	registerEnum<wxBrushStyle>("WX::BrushStyle",wxBRUSHSTYLE_TRANSPARENT)
 		->add(wxBRUSHSTYLE_SOLID,"solid")
 		->add(wxBRUSHSTYLE_TRANSPARENT,"transparent")

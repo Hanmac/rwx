@@ -19,4 +19,12 @@ wxBrush* nullPtr<wxBrush*>();
 template <>
 wxBrush nullPtr<wxBrush>();
 
+namespace RubyWX {
+namespace Brush {
+
+void define_const();
+
+}
+}
+
 #endif /* WXBRUSH_HPP_ */

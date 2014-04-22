@@ -65,6 +65,22 @@ macro_attr_enum(Style,wxPenStyle)
 macro_attr(Stipple,wxBitmap)
 
 
+void define_const()
+{
+	rb_define_const(rb_cWXPen,"BLACK_DASHED",wrap(wxBLACK_DASHED_PEN));
+	rb_define_const(rb_cWXPen,"BLACK",wrap(wxBLACK_PEN));
+	rb_define_const(rb_cWXPen,"BLUE",wrap(wxBLUE_PEN));
+	rb_define_const(rb_cWXPen,"CYAN",wrap(wxCYAN_PEN));
+	rb_define_const(rb_cWXPen,"GREEN",wrap(wxGREEN_PEN));
+	rb_define_const(rb_cWXPen,"YELLOW",wrap(wxYELLOW_PEN));
+	rb_define_const(rb_cWXPen,"GREY",wrap(wxGREY_PEN));
+	rb_define_const(rb_cWXPen,"LIGHT_GREY",wrap(wxLIGHT_GREY_PEN));
+	rb_define_const(rb_cWXPen,"MEDIUM_GREY",wrap(wxMEDIUM_GREY_PEN));
+	rb_define_const(rb_cWXPen,"RED",wrap(wxRED_PEN));
+	rb_define_const(rb_cWXPen,"TRANSPARENT",wrap(wxTRANSPARENT_PEN));
+	rb_define_const(rb_cWXPen,"WHITE",wrap(wxWHITE_PEN));
+}
+
 /*
  * call-seq:
  *   Brush.new(color[,style])
@@ -248,6 +264,19 @@ DLL_LOCAL void Init_WXPen(VALUE rb_mWX)
 
 	rb_define_attr(rb_cWXPen,"style",1,1);
 	rb_define_attr(rb_cWXPen,"stipple",1,1);
+
+	rb_define_const(rb_cWXPen,"BLACK_DASHED",wrap(wxBLACK_DASHED_PEN));
+	rb_define_const(rb_cWXPen,"BLACK",wrap(wxBLACK_PEN));
+	rb_define_const(rb_cWXPen,"BLUE",wrap(wxBLUE_PEN));
+	rb_define_const(rb_cWXPen,"CYAN",wrap(wxCYAN_PEN));
+	rb_define_const(rb_cWXPen,"GREEN",wrap(wxGREEN_PEN));
+	rb_define_const(rb_cWXPen,"YELLOW",wrap(wxYELLOW_PEN));
+	rb_define_const(rb_cWXPen,"GREY",wrap(wxGREY_PEN));
+	rb_define_const(rb_cWXPen,"LIGHT_GREY",wrap(wxLIGHT_GREY_PEN));
+	rb_define_const(rb_cWXPen,"MEDIUM_GREY",wrap(wxMEDIUM_GREY_PEN));
+	rb_define_const(rb_cWXPen,"RED",wrap(wxRED_PEN));
+	rb_define_const(rb_cWXPen,"TRANSPARENT",wrap(wxTRANSPARENT_PEN));
+	rb_define_const(rb_cWXPen,"WHITE",wrap(wxWHITE_PEN));
 #endif
 
 	using namespace RubyWX::Pen;
@@ -269,19 +298,6 @@ DLL_LOCAL void Init_WXPen(VALUE rb_mWX)
 	rb_define_method(rb_cWXPen,"==",RUBY_METHOD_FUNC(_equal),1);
 
 	rb_define_singleton_method(rb_cWXPen,"[]",RUBY_METHOD_FUNC(_class_get),-1);
-
-	rb_define_const(rb_cWXPen,"BLACK_DASHED",wrap(wxBLACK_DASHED_PEN));
-	rb_define_const(rb_cWXPen,"BLACK",wrap(wxBLACK_PEN));
-	rb_define_const(rb_cWXPen,"BLUE",wrap(wxBLUE_PEN));
-	rb_define_const(rb_cWXPen,"CYAN",wrap(wxCYAN_PEN));
-	rb_define_const(rb_cWXPen,"GREEN",wrap(wxGREEN_PEN));
-	rb_define_const(rb_cWXPen,"YELLOW",wrap(wxYELLOW_PEN));
-	rb_define_const(rb_cWXPen,"GREY",wrap(wxGREY_PEN));
-	rb_define_const(rb_cWXPen,"LIGHT_GREY",wrap(wxLIGHT_GREY_PEN));
-	rb_define_const(rb_cWXPen,"MEDIUM_GREY",wrap(wxMEDIUM_GREY_PEN));
-	rb_define_const(rb_cWXPen,"RED",wrap(wxRED_PEN));
-	rb_define_const(rb_cWXPen,"TRANSPARENT",wrap(wxTRANSPARENT_PEN));
-	rb_define_const(rb_cWXPen,"WHITE",wrap(wxWHITE_PEN));
 
 //
 //	rb_define_method(rb_cWXPen,"to_s",RUBY_METHOD_FUNC(_tos),0);

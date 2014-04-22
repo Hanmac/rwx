@@ -25,4 +25,13 @@ wxPen* unwrap< wxPen* >(const VALUE &vbitmap);
 template <>
 wxPen unwrap< wxPen >(const VALUE &vbitmap);
 
+
+namespace RubyWX {
+namespace Pen {
+
+void define_const();
+
+}
+}
+
 #endif /* WXPEN_HPP_ */

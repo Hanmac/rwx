@@ -72,6 +72,14 @@ macro_attr(Strikethrough,bool)
 
 macro_attr(FaceName,wxString)
 
+void define_const()
+{
+	rb_define_const(rb_cWXFont,"ITALIC",wrap(wxITALIC_FONT));
+	rb_define_const(rb_cWXFont,"NORMAL",wrap(wxNORMAL_FONT));
+	rb_define_const(rb_cWXFont,"SMALL",wrap(wxSMALL_FONT));
+	rb_define_const(rb_cWXFont,"SWISS",wrap(wxSWISS_FONT));
+}
+
 #define info_option(func,name,m) \
 	if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern(#name)))))\
 		val.func(m(tmp));
@@ -411,6 +419,12 @@ DLL_LOCAL void Init_WXFont(VALUE rb_mWX)
 	rb_define_attr(rb_cWXFont,"weight",1,1);
 	rb_define_attr(rb_cWXFont,"face_name",1,1);
 	rb_define_attr(rb_cWXFont,"encoding",1,1);
+
+	//can't defined before wxApp is initialized.
+	rb_define_const(rb_cWXFont,"ITALIC",wrap(wxITALIC_FONT));
+	rb_define_const(rb_cWXFont,"NORMAL",wrap(wxNORMAL_FONT));
+	rb_define_const(rb_cWXFont,"SMALL",wrap(wxSMALL_FONT));
+	rb_define_const(rb_cWXFont,"SWISS",wrap(wxSWISS_FONT));
 #endif
 
 	using namespace RubyWX::Font;
@@ -455,10 +469,7 @@ DLL_LOCAL void Init_WXFont(VALUE rb_mWX)
 
 	rb_define_singleton_method(rb_cWXFont,"[]",RUBY_METHOD_FUNC(_class_get),-1);
 
-	rb_define_const(rb_cWXFont,"ITALIC",wrap(wxITALIC_FONT));
-	rb_define_const(rb_cWXFont,"NORMAL",wrap(wxNORMAL_FONT));
-	rb_define_const(rb_cWXFont,"SMALL",wrap(wxSMALL_FONT));
-	rb_define_const(rb_cWXFont,"SWISS",wrap(wxSWISS_FONT));
+
 
 	registerInfo<wxFont>(rb_cWXFont);
 

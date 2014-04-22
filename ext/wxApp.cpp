@@ -6,6 +6,9 @@
  */
 
 #include "wxApp.hpp"
+#include "wxFont.hpp"
+#include "wxBrush.hpp"
+#include "wxPen.hpp"
 #include "wxPropertyGrid.hpp"
 
 #ifdef __WXMAC__
@@ -73,7 +76,9 @@ bool RubyApp::OnInit()
      SetFrontProcess( &psn );
 #endif
 
-
+	RubyWX::Font::define_const();
+	RubyWX::Brush::define_const();
+	RubyWX::Pen::define_const();
 
 #if wxUSE_INTL
 	wxLocale::CreateLanguagesDB();
