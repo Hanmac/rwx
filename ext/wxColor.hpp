@@ -26,4 +26,13 @@ wxColor* unwrap< wxColor* >(const VALUE &vcolor);
 template <>
 wxColor unwrap< wxColor >(const VALUE &vcolor);
 
+
+namespace RubyWX {
+namespace Color {
+
+void define_const();
+
+}
+}
+
 #endif /* WXCOLOR_HPP_ */

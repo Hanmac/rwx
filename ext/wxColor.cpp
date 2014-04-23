@@ -100,6 +100,18 @@ DLL_LOCAL VALUE _alloc(VALUE self) {
 	return wrap(new wxColor);
 }
 
+void define_const()
+{
+	rb_define_const(rb_cWXColor,"BLACK",wrap(wxBLACK));
+	rb_define_const(rb_cWXColor,"BLUE",wrap(wxBLUE));
+	rb_define_const(rb_cWXColor,"CYAN",wrap(wxCYAN));
+	rb_define_const(rb_cWXColor,"GREEN",wrap(wxGREEN));
+	rb_define_const(rb_cWXColor,"YELLOW",wrap(wxYELLOW));
+	rb_define_const(rb_cWXColor,"LIGHT_GREY",wrap(wxLIGHT_GREY));
+	rb_define_const(rb_cWXColor,"RED",wrap(wxRED));
+	rb_define_const(rb_cWXColor,"WHITE",wrap(wxWHITE));
+}
+
 DLL_LOCAL VALUE _getRed(VALUE self)
 {
 	if(_self->IsOk())
@@ -328,6 +340,15 @@ DLL_LOCAL void Init_WXColor(VALUE rb_mWX)
 	rb_define_attr(rb_cWXColor,"green",1,1);
 	rb_define_attr(rb_cWXColor,"blue",1,1);
 	rb_define_attr(rb_cWXColor,"alpha",1,1);
+
+	rb_define_const(rb_cWXColor,"BLACK",wrap(wxBLACK));
+	rb_define_const(rb_cWXColor,"BLUE",wrap(wxBLUE));
+	rb_define_const(rb_cWXColor,"CYAN",wrap(wxCYAN));
+	rb_define_const(rb_cWXColor,"GREEN",wrap(wxGREEN));
+	rb_define_const(rb_cWXColor,"YELLOW",wrap(wxYELLOW));
+	rb_define_const(rb_cWXColor,"LIGHT_GREY",wrap(wxLIGHT_GREY));
+	rb_define_const(rb_cWXColor,"RED",wrap(wxRED));
+	rb_define_const(rb_cWXColor,"WHITE",wrap(wxWHITE));
 #endif
 
 
@@ -350,17 +371,6 @@ DLL_LOCAL void Init_WXColor(VALUE rb_mWX)
 	rb_define_method(rb_cWXColor,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
 	rb_define_method(rb_cWXColor,"==",RUBY_METHOD_FUNC(_equal),1);
-
-//*
-	rb_define_const(rb_cWXColor,"BLACK",wrap(wxBLACK));
-	rb_define_const(rb_cWXColor,"BLUE",wrap(wxBLUE));
-	rb_define_const(rb_cWXColor,"CYAN",wrap(wxCYAN));
-	rb_define_const(rb_cWXColor,"GREEN",wrap(wxGREEN));
-	rb_define_const(rb_cWXColor,"YELLOW",wrap(wxYELLOW));
-	rb_define_const(rb_cWXColor,"LIGHT_GREY",wrap(wxLIGHT_GREY));
-	rb_define_const(rb_cWXColor,"RED",wrap(wxRED));
-	rb_define_const(rb_cWXColor,"WHITE",wrap(wxWHITE));
-//*/
 
 	rwxID_red = rb_intern("red");
 	rwxID_blue = rb_intern("blue");

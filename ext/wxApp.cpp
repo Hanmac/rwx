@@ -6,6 +6,7 @@
  */
 
 #include "wxApp.hpp"
+#include "wxColor.hpp"
 #include "wxFont.hpp"
 #include "wxBrush.hpp"
 #include "wxPen.hpp"
@@ -76,6 +77,7 @@ bool RubyApp::OnInit()
      SetFrontProcess( &psn );
 #endif
 
+	RubyWX::Color::define_const();
 	RubyWX::Font::define_const();
 	RubyWX::Brush::define_const();
 	RubyWX::Pen::define_const();
