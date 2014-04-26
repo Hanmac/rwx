@@ -64,6 +64,15 @@
 
 #include "extconf.h"
 
+#ifndef RARRAY_AREF
+#ifdef RARRAY_CONST_PTR
+#define RARRAY_AREF(a,i) RARRAY_CONST_PTR(a)[i]
+#else
+#define RARRAY_AREF(a,i) RARRAY_PTR(a)[i]
+#endif
+
+#endif
+
 
 template< class T > struct remove_pointer                    {typedef T type;};
 template< class T > struct remove_pointer<T*>                {typedef T type;};
