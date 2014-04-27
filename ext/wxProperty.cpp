@@ -196,7 +196,7 @@ DLL_LOCAL VALUE _each_child_size(VALUE self)
 */
 DLL_LOCAL VALUE _each_child(VALUE self)
 {
-	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_child_size);
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_each_child_size));
 	std::size_t count = _self->GetChildCount();
 	for(std::size_t i = 0; i < count; ++i)
 		rb_yield(wrap(_self->Item(i)));
@@ -226,7 +226,7 @@ DLL_LOCAL VALUE _each_choice_count(VALUE self)
 */
 DLL_LOCAL VALUE _each_choice(VALUE self)
 {
-	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_choice_count);
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_each_choice_count));
 	wxPGChoices& choices = const_cast<wxPGChoices&>(_self->GetChoices());
 
 	if(!choices.IsOk())
@@ -516,7 +516,7 @@ DLL_LOCAL VALUE _each_attribute_size(VALUE self)
 */
 DLL_LOCAL VALUE _each_attribute(VALUE self)
 {
-	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_attribute_size);
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_each_attribute_size));
 
 	const wxPGAttributeStorage& attrs = _self->GetAttributes();
 

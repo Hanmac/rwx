@@ -51,7 +51,7 @@ singlereturn(GetStrings)
 
 DLL_LOCAL VALUE _each(VALUE self)
 {
-	RETURN_SIZED_ENUMERATOR(self,0,NULL,_GetCount);
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_GetCount));
 	std::size_t count = _self->GetCount();
 	for(std::size_t i = 0; i < count; ++i)
 		rb_yield(wrap(_self->GetString(i)));

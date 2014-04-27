@@ -88,7 +88,7 @@ DLL_LOCAL VALUE _each_size(VALUE self)
 
 DLL_LOCAL VALUE _each(VALUE self)
 {
-	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_size);
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_each_size));
 
 	unsigned char red,green,blue;
 

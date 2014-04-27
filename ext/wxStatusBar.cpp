@@ -271,7 +271,7 @@ DLL_LOCAL VALUE _each_size(VALUE self)
 //TODO Fix the bad Reference
 DLL_LOCAL VALUE _each(VALUE self)
 {
-	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_size);
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_each_size));
 	std::size_t s = _self->GetFieldsCount();
 
 	for(std::size_t i = 0 ; i < s; ++i)

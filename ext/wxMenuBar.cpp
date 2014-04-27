@@ -34,7 +34,7 @@ DLL_LOCAL VALUE _each_size(VALUE self)
 
 DLL_LOCAL VALUE _each(VALUE self)
 {
-	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_size);
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_each_size));
 	std::size_t count = _self->GetMenuCount();
 	for(std::size_t i = 0;i < count;++i)
 		rb_yield(wrap(_self->GetMenu(i)));
@@ -172,6 +172,8 @@ DLL_LOCAL void Init_WXMenuBar(VALUE rb_mWX)
 	rb_define_method(rb_cWXMenuBar,"prepend",RUBY_METHOD_FUNC(_prepend),1);
 
 	rb_define_method(rb_cWXMenuBar,"frame",RUBY_METHOD_FUNC(_GetFrame),0);
+
+	rb_define_const(rb_cWXMenuBar,"DOCKABLE",INT2NUM(wxMB_DOCKABLE));
 
 	registerInfo<wxMenuBar>(rb_cWXMenuBar);
 #endif

@@ -69,7 +69,7 @@ DLL_LOCAL VALUE _each_checked_size(VALUE self)
 
 DLL_LOCAL VALUE _each_checked(VALUE self)
 {
-	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_checked_size);
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_each_checked_size));
 
 	wxArrayInt data;
 	_self->GetCheckedItems(data);

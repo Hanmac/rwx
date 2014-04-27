@@ -136,7 +136,7 @@ DLL_LOCAL VALUE _each_selection_size(VALUE self)
 
 DLL_LOCAL VALUE _each_selection(VALUE self)
 {
-	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_selection_size);
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_each_selection_size));
 	wxArrayInt data;
 	_self->GetSelections(data);
 	for(wxArrayInt::iterator it = data.begin(); it != data.end();++it)

@@ -72,7 +72,7 @@ VALUE _each_line_size(VALUE self)
 
 VALUE _each_line(VALUE self)
 {
-	RETURN_SIZED_ENUMERATOR(self,0,NULL,_each_line_size);
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_each_line_size));
 
 	int count = _self->GetNumberOfLines();
 	for(int i = 0; i < count; ++i)
