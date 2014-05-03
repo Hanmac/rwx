@@ -16,11 +16,24 @@ namespace RubyWX {
 namespace Gauge {
 
 macro_attr(Range,int)
-macro_attr(Value,int)
+
+singlereturn(GetValue)
 
 APP_PROTECT(wxGauge)
 
 singlereturn(IsVertical)
+
+
+DLL_LOCAL VALUE _setValue(VALUE self,VALUE other)
+{
+	rb_check_frozen(self);
+
+	int val = NUM2UINT(other);
+	//extra check, because value can't be bigger than range
+	if(check_index(val,_self->GetRange()))
+		_self->SetValue(val);
+	return other;
+}
 
 /*
  * call-seq:
@@ -54,6 +67,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"id",id,unwrapID);
 			set_hash_option(hash,"range",style);
 			set_hash_option(hash,"style",style);
+
+			set_hash_flag_option(hash,"vertical",wxGA_VERTICAL,style);
+			set_hash_flag_option(hash,"smooth",wxGA_SMOOTH,style);
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),id,range,wxDefaultPosition,wxDefaultSize,style);
@@ -94,6 +110,26 @@ singlefunc(Pulse)
  * true/false
 */
 
+/* Document-method: pulse
+ * call-seq:
+ *   pulse -> self
+ *
+ * Switch the gauge to indeterminate mode (if required) and
+ * makes the gauge move a bit to indicate the user that
+ * some progress has been made.
+ * ===Return value
+ * self
+*/
+
+
+/* Document-const: VERTICAL
+ *   Creates a vertical gauge.
+ */
+/* Document-const: SMOOTH
+ *   Creates smooth progress bar with one pixel wide update step (not supported by all platforms).
+ */
+
+
 DLL_LOCAL void Init_WXGauge(VALUE rb_mWX)
 {
 #if 0
@@ -114,11 +150,15 @@ DLL_LOCAL void Init_WXGauge(VALUE rb_mWX)
 	rb_define_method(rb_cWXGauge,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_attr_method(rb_cWXGauge,"range",_getRange,_setRange);
-	rb_define_attr_method(rb_cWXGauge,"value",_getValue,_setValue);
+	rb_define_attr_method(rb_cWXGauge,"value",_GetValue,_setValue);
 
 	rb_define_method(rb_cWXGauge,"pulse",RUBY_METHOD_FUNC(_Pulse),0);
 
 	rb_define_method(rb_cWXGauge,"vertical?",RUBY_METHOD_FUNC(_IsVertical),0);
+
+	rb_define_const(rb_cWXGauge,"VERTICAL",INT2NUM(wxGA_VERTICAL));
+	rb_define_const(rb_cWXGauge,"SMOOTH",INT2NUM(wxGA_SMOOTH));
+
 
 	registerInfo<wxGauge>(rb_cWXGauge);
 #endif
