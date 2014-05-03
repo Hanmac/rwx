@@ -75,7 +75,12 @@ DLL_LOCAL VALUE _update(int argc,VALUE *argv,VALUE self)
 {
 	VALUE val,message;
 	rb_scan_args(argc, argv, "11",&val,&message);
-	return wrap(_self->Update(NUM2INT(val),unwrap<wxString>(message)));
+
+	int value = NUM2INT(val);
+
+	if(check_index(value,_self->GetRange()))
+		return wrap(_self->Update(value,unwrap<wxString>(message)));
+	return Qnil;
 }
 
 DLL_LOCAL VALUE _pulse(int argc,VALUE *argv,VALUE self)
@@ -90,6 +95,39 @@ DLL_LOCAL VALUE _pulse(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
+
+
+/* Document-const: APP_MODAL
+ *   Make the progress dialog modal.
+ *   If this flag is not given, it is only "locally" modal
+ *   - that is the input to the parent window is disabled,
+ *   but not to the other ones.
+ */
+/* Document-const: CAN_ABORT
+ *   This flag tells the dialog that it should have a "Cancel" button which the user may press.
+ *   If this happens, the next call to update() will return false
+ */
+/* Document-const: CAN_SKIP
+ *   This flag tells the dialog that it should have a "Skip" button which the user may press.
+ *   If this happens, the next call to Update() will return true in its skip parameter.
+ */
+/* Document-const: AUTO_HIDE
+ *   Causes the progress dialog to disappear from screen as soon as the maximum value of the progress meter has been reached.
+ *   If this style is not present, the dialog will become a modal dialog (see WX::Dialog#show_modal) once the maximum value has been reached and wait for the user to dismiss it.
+ */
+/* Document-const: SMOOTH
+ *   Causes smooth progress of the gauge control (uses a WX::Gauge with the WX::Gauge::SMOOTH style).
+ */
+/* Document-const: ELAPSED_TIME
+ *   The text will not be user-editable.
+ */
+/* Document-const: ESTIMATED_TIME
+ *   The text will not be user-editable.
+ */
+/* Document-const: REMAINING_TIME
+ *   The text will not be user-editable.
+ */
+
 
 DLL_LOCAL void Init_WXProgressDialog(VALUE rb_mWX)
 {
