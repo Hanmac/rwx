@@ -111,6 +111,17 @@ DLL_LOCAL VALUE _getUserDir(int argc,VALUE *argv,VALUE self)
 
 #endif
 
+/* Document-const: DEFAULT_STYLE
+ * default style for this control.
+ */
+/* Document-const: MUST_EXIST
+ *  The dialog will allow the user to choose only an existing folder.
+ *  When this style is not given, a "Create new directory" button is added
+ *  to the dialog (on Windows) or some other way is provided to the user to type the name of a new folder.
+ */
+/* Document-const: CHANGE_DIR
+ *  Change the current working directory to the directory chosen by the user.
+ */
 DLL_LOCAL void Init_WXDirDialog(VALUE rb_mWX)
 {
 #if 0
