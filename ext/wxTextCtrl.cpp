@@ -103,7 +103,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
  * call-seq:
  *   single_line? -> true/false
  *
- * returns true if this control is vertical.
+ * Returns true if this is a single line edit control and false otherwise.
  * ===Return value
  * true/false
 */
@@ -111,7 +111,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
  * call-seq:
  *   multi_line? -> true/false
  *
- * returns true if this control is vertical.
+ * Returns true if this is a multi line edit control and false otherwise.
  * ===Return value
  * true/false
 */
