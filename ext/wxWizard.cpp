@@ -6,6 +6,7 @@
  */
 
 #include "wxWizard.hpp"
+#include "wxToplevel.hpp"
 #include "wxNotifyEvent.hpp"
 
 VALUE rb_cWXWizard;
@@ -19,7 +20,8 @@ VALUE rb_cWXWizardEvent;
 namespace RubyWX {
 namespace Wizard {
 
-macro_attr(PageSize,wxSize)
+macro_attr_con(PageSize,wxSize,!_self->IsRunning())
+
 macro_attr(Bitmap,wxBitmap)
 
 singlereturn(IsRunning)
@@ -57,6 +59,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"title",title);
 			set_hash_option(hash,"style",style);
 			set_hash_option(hash,"bitmap",bitmap);
+
+			TopLevel::set_style_flags(hash,style);
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),
@@ -74,7 +78,14 @@ DLL_LOCAL VALUE _showPage(int argc,VALUE *argv,VALUE self)
 	VALUE page,goingForward;
 	rb_scan_args(argc, argv, "11",&page,&goingForward);
 	rb_check_frozen(self);
-	return wrap(_self->ShowPage(unwrap<wxWizardPage*>(page),RTEST(goingForward)));
+
+	wxWizardPage* cpage = unwrap<wxWizardPage*>(page);
+
+	//prevent WX from raising stupid assert
+	if(cpage == _self->GetCurrentPage())
+		return Qnil;
+
+	return wrap(_self->ShowPage(cpage,RTEST(goingForward)));
 }
 
 DLL_LOCAL VALUE _runWizard(int argc,VALUE *argv,VALUE self)
@@ -87,11 +98,14 @@ DLL_LOCAL VALUE _runWizard(int argc,VALUE *argv,VALUE self)
 	if(NIL_P(page))
 	{
 		wxWindowList list = _self->GetChildren();
-		for(wxWindowList::iterator it = list.begin();it != list.end();++it)
+		for(wxWindowList::const_iterator it = list.begin();it != list.end();++it)
 			if((wpage = wxDynamicCast(*it,wxWizardPage)) != NULL)
 				break;
 		if(!wpage)
+		{
 			rb_raise(rb_eIndexError,"can't find WizardPages inside Wizard.");
+			return Qnil;
+		}
 	}else
 		wpage = unwrap<wxWizardPage*>(page);
 
@@ -101,7 +115,7 @@ DLL_LOCAL VALUE _runWizard(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL VALUE _addPage(int argc,VALUE *argv,VALUE self)
 {
 	VALUE obj,hash;
-	rb_scan_args(argc, argv, "02",&obj,&hash);
+	rb_scan_args(argc, argv, "01:",&obj,&hash);
 	rb_check_frozen(self);
 	if(NIL_P(obj))
 		obj = rb_cWXWizardPage;
