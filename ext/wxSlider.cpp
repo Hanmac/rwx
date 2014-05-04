@@ -65,6 +65,16 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"max",max);
 			set_hash_option(hash,"value",value);
 			set_hash_option(hash,"style",style);
+
+
+			set_hash_flag_option(hash,"vertical",wxSL_VERTICAL,style);
+			set_hash_flag_option(hash,"inverse",wxSL_INVERSE,style);
+
+			set_hash_flag_option(hash,"labels",wxSL_LABELS,style);
+
+			set_hash_flag_option(hash,"min_max_labels",wxSL_MIN_MAX_LABELS,style);
+			set_hash_flag_option(hash,"value_label",wxSL_VALUE_LABEL,style);
+
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),id,value,min,max,wxDefaultPosition,wxDefaultSize,style);
@@ -88,6 +98,19 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
+/*
+ * call-seq:
+ *   vertical? -> true/false
+ *
+ * returns true if this control is vertical.
+ * ===Return value
+ * true/false
+*/
+VALUE _IsVertical(VALUE self)
+{
+	return wrap(_self->HasFlag(wxSL_VERTICAL));
+}
+
 }
 }
 #endif
@@ -101,6 +124,23 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
  */
 /* Document-attr: max
  * the maximum value of the Slider. Integer
+ */
+
+
+/* Document-const: VERTICAL
+ *   Displays the slider vertically.
+ */
+/* Document-const: INVERSE
+ *   Inverses the minimum and maximum endpoints on the slider.
+ */
+/* Document-const: MIN_MAX_LABELS
+ *   Displays minimum, maximum labels
+ */
+/* Document-const: VALUE_LABEL
+ *   Displays value label
+ */
+/* Document-const: LABELS
+ *   Displays minimum, maximum and value labels
  */
 
 DLL_LOCAL void Init_WXSlider(VALUE rb_mWX)
@@ -134,6 +174,14 @@ DLL_LOCAL void Init_WXSlider(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXSlider,"line_size",_getLineSize,_setLineSize);
 	rb_define_attr_method(rb_cWXSlider,"page_size",_getPageSize,_setPageSize);
 	rb_define_attr_method(rb_cWXSlider,"thumb_length",_getThumbLength,_setThumbLength);
+
+	rb_define_method(rb_cWXSlider,"vertical?",RUBY_METHOD_FUNC(_IsVertical),0);
+
+	rb_define_const(rb_cWXSlider,"VERTICAL",INT2NUM(wxSL_VERTICAL));
+	rb_define_const(rb_cWXSlider,"INVERSE",INT2NUM(wxSL_INVERSE));
+	rb_define_const(rb_cWXSlider,"MIN_MAX_LABELS",INT2NUM(wxSL_MIN_MAX_LABELS));
+	rb_define_const(rb_cWXSlider,"VALUE_LABEL",INT2NUM(wxSL_VALUE_LABEL));
+	rb_define_const(rb_cWXSlider,"LABELS",INT2NUM(wxSL_LABELS));
 
 	registerEventType("slider", wxEVT_SLIDER,rb_cWXCommandEvent);
 
