@@ -19,4 +19,12 @@ void Init_WXChoice(VALUE rb_mWX);
 #endif
 
 
+namespace RubyWX {
+namespace Choice {
+
+void set_style_flags(VALUE hash,int& flags);
+
+}
+}
+
 #endif /* WXCHOICE_HPP_ */

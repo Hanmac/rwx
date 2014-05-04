@@ -20,6 +20,15 @@ namespace Choice {
 
 APP_PROTECT(wxChoice)
 
+
+void set_style_flags(VALUE hash,int& flags)
+{
+	set_hash_flag_option(hash,"sort",wxCB_SORT,flags);
+	set_hash_flag_option(hash,"readonly",wxCB_READONLY,flags);
+	set_hash_flag_option(hash,"dropdown",wxCB_DROPDOWN,flags);
+}
+
+
 /*
  * call-seq:
  *   ComboBox.new(parent, name, [options])
@@ -45,18 +54,16 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		int style(0);
 		int selection(-1);
 
+		bool selflag(false);
+
 		if(rb_obj_is_kind_of(hash,rb_cHash)) {
 			set_hash_option(hash,"id",id,unwrapID);
-			set_hash_option(hash,"choices",choices);
+			set_hash_option(hash,"items",choices);
 			set_hash_option(hash,"style",style);
-			set_hash_option(hash,"selection",selection);
+			selflag = set_hash_option(hash,"selection",selection);
 
-			set_hash_flag_option(hash,"sort",wxCB_SORT,style);
-			set_hash_flag_option(hash,"readonly",wxCB_READONLY,style);
-			set_hash_flag_option(hash,"dropdown",wxCB_DROPDOWN,style);
-
+			set_style_flags(hash,style);
 		}
-
 
 		_self->Create(
 			unwrap<wxWindow*>(parent),id,
@@ -64,7 +71,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			choices,style
 		);
 		
-		_self->SetSelection(selection);
+		if(selflag && check_index(selection,_self->GetCount()))
+			_self->SetSelection(selection);
 
 	}
 
@@ -83,6 +91,17 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
+
+
+/* Document-const: SORT
+ *   Sorts the entries alphabetically.
+ */
+/* Document-const: READONLY
+ *   The text will not be user-editable.
+ */
+/* Document-const: DROPDOWN
+ *   Creates a combobox with a drop-down list.
+ */
 DLL_LOCAL void Init_WXChoice(VALUE rb_mWX)
 {
 #if 0
@@ -107,6 +126,7 @@ DLL_LOCAL void Init_WXChoice(VALUE rb_mWX)
 	rb_define_const(rb_cWXChoice,"DROPDOWN",INT2NUM(wxCB_DROPDOWN));
 
 	registerInfo<wxChoice>(rb_cWXChoice);
+	registerEventType("choice",wxEVT_CHOICE);
 #endif
 
 }
