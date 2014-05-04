@@ -18,6 +18,16 @@ namespace ListBox {
 
 APP_PROTECT(wxListBox)
 
+
+void set_style_flags(VALUE hash,int& flags)
+{
+	set_hash_flag_option(hash,"sort",wxLB_SORT,flags);
+	set_hash_flag_option(hash,"multiple",wxLB_MULTIPLE,flags);
+	set_hash_flag_option(hash,"extended",wxLB_EXTENDED,flags);
+
+}
+
+
 /*
  * call-seq:
  *   ListBox.new(parent, name, [options])
@@ -40,24 +50,23 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		wxArrayString choices;
 		int style(0);
 		int selection(-1);
-
+		bool selflag(false);
 
 		if(rb_obj_is_kind_of(hash,rb_cHash)) {
 			set_hash_option(hash,"id",id,unwrapID);
 			set_hash_option(hash,"choices",choices);
 			set_hash_option(hash,"style",style);
-			set_hash_option(hash,"selection",selection);
+			selflag = set_hash_option(hash,"selection",selection);
 
-			set_hash_flag_option(hash,"sort",wxLB_SORT,style);
-			set_hash_flag_option(hash,"multiple",wxLB_MULTIPLE,style);
-
+			set_style_flags(hash,style);
 		}
 		_self->Create(
 			unwrap<wxWindow*>(parent),id,
 			wxDefaultPosition,wxDefaultSize,
 			choices,style
 		);
-		
+
+		if(selflag && check_index(selection,_self->GetCount()))
 		_self->SetSelection(selection);
 
 	}
@@ -73,7 +82,8 @@ DLL_LOCAL VALUE _getSelections(VALUE self)
 		_self->GetSelections(data);
 		return wrap(data);
 	} else {
-		return wrap(_self->GetSelection());
+		int val = _self->GetSelection();
+		return val == wxNOT_FOUND ? Qnil : wrap(val);
 	}
 
 }
@@ -134,6 +144,16 @@ DLL_LOCAL VALUE _each_selection_size(VALUE self)
 	return INT2NUM(_self->GetSelections(data));
 }
 
+/*
+ * call-seq:
+ *   each_selection -> Enumerator
+ *   each_selection { |idx, text| } -> self
+ *
+ * iterates the selected items of the list box.
+ * ===Return value
+ * self
+ *
+*/
 DLL_LOCAL VALUE _each_selection(VALUE self)
 {
 	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_each_selection_size));
@@ -144,10 +164,85 @@ DLL_LOCAL VALUE _each_selection(VALUE self)
 	return self;
 }
 
+
+/*
+ * call-seq:
+ *   get_item_selection(pos) -> true/false
+ *
+ * Determines whether an item is selected.
+ * ===Arguments
+ * * pos of the item. Integer
+ * ===Return value
+ * true/false
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of items
+ *
+*/
+DLL_LOCAL VALUE _getItemSelection(VALUE self,VALUE idx)
+{
+	int cidx = NUM2INT(idx);
+	if(check_index(cidx,_self->GetCount()))
+		return wrap(_self->IsSelected(cidx));
+	return Qnil;
+}
+
+/*
+ * call-seq:
+ *   set_item_selection(pos,val) -> self
+ *
+ * sets the item at the position as selected if val is true.
+ * ===Arguments
+ * * pos of the item. Integer
+ * * val if item should be selected. true/false
+ * ===Return value
+ * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of items
+ *
+*/
+DLL_LOCAL VALUE _setItemSelection(VALUE self,VALUE idx,VALUE val)
+{
+	rb_check_frozen(self);
+
+	int cidx = NUM2INT(idx);
+	if(check_index(cidx,_self->GetCount()))
+		_self->SetSelection(cidx,RTEST(val));
+
+	return self;
+}
+
 }
 }
 
 #endif
+
+
+/* Document-attr: selection
+ * Integer/Array/nil returns the index of the current selected item,
+ * or nil if none is selected.
+ * Array is returned if multiple flag is used.
+ */
+/* Document-attr: string_selection
+ * String/Array returns the string of the current selected item.
+ * Array is returned if multiple flag is used.
+ */
+
+/* Document-const: SORT
+ *   The listbox contents are sorted in alphabetical order.
+ */
+/* Document-const: SINGLE
+ *   Single-selection list.
+ */
+/* Document-const: MULTIPLE
+ *   Creates a text control to the left of the picker which is completely managed by this WX::PickerBase class.
+ */
+/* Document-const: EXTENDED
+ *   Extended-selection list: the user can extend the selection by using SHIFT or CTRL keys together with the cursor movement keys or the mouse.
+ */
+
+
 DLL_LOCAL void Init_WXListBox(VALUE rb_mWX)
 {
 #if 0
@@ -176,12 +271,16 @@ DLL_LOCAL void Init_WXListBox(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXListBox,"string_selection",_getStringSelections,_setStringSelection);
 
+	rb_define_method(rb_cWXListBox,"get_item_selection",RUBY_METHOD_FUNC(_getItemSelection),1);
+	rb_define_method(rb_cWXListBox,"set_item_selection",RUBY_METHOD_FUNC(_setItemSelection),2);
+
 	registerEventType("listbox", wxEVT_LISTBOX,rb_cWXCommandEvent);
 	registerEventType("listbox_dclick",  wxEVT_LISTBOX_DCLICK,rb_cWXCommandEvent);
 
 	rb_define_const(rb_cWXListBox,"SORT",INT2NUM(wxLB_SORT));
 	rb_define_const(rb_cWXListBox,"SINGLE",INT2NUM(wxLB_SINGLE));
 	rb_define_const(rb_cWXListBox,"MULTIPLE",INT2NUM(wxLB_MULTIPLE));
+	rb_define_const(rb_cWXListBox,"EXTENDED",INT2NUM(wxLB_EXTENDED));
 
 	registerInfo<wxListBox>(rb_cWXListBox);
 #endif

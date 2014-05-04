@@ -17,4 +17,13 @@ void Init_WXListBox(VALUE rb_mWX);
 #include <wx/listbox.h>
 #endif
 
+
+namespace RubyWX {
+namespace ListBox {
+
+void set_style_flags(VALUE hash,int& flags);
+
+}
+}
+
 #endif /* WXLISTBOX_HPP_ */
