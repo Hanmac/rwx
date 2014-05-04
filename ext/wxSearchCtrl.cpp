@@ -29,22 +29,11 @@ macro_attr(Value,wxString)
 macro_attr(Menu,wxMenu*)
 #endif
 
-singlereturn(IsSearchButtonVisible)
-singlereturn(IsCancelButtonVisible)
+singlereturn(IsSingleLine)
+singlereturn(IsMultiLine)
 
-DLL_LOCAL VALUE _setSearchButtonVisible(VALUE self,VALUE val)
-{
-	rb_check_frozen(self);
-	_self->ShowSearchButton(RTEST(val));
-	return self;
-}
-
-DLL_LOCAL VALUE _setCancelButtonVisible(VALUE self,VALUE val)
-{
-	rb_check_frozen(self);
-	_self->ShowCancelButton(RTEST(val));
-	return self;
-}
+macro_attr_bool2(SearchButtonVisible,ShowSearchButton)
+macro_attr_bool2(CancelButtonVisible,ShowCancelButton)
 
 /*
  * call-seq:
@@ -72,12 +61,20 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		wxWindowID id(wxID_ANY);
 		wxString value(wxEmptyString);
 
+		int style(0);
+
 		if(rb_obj_is_kind_of(hash,rb_cHash)) {
 			set_hash_option(hash,"id",id,unwrapID);
 			set_hash_option(hash,"value",value);
+
+			set_hash_option(hash,"style",style);
+
+			TextCtrl::set_style_flags(hash,style);
 		}
 
-		_self->Create(unwrap<wxWindow*>(parent),id,value);
+		_self->Create(unwrap<wxWindow*>(parent),id,value,
+			wxDefaultPosition,wxDefaultSize,style
+		);
 		
 	}
 
@@ -87,19 +84,19 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	{
 		VALUE temp;
 
-		bool search(_self->IsSearchButtonVisible());
-		bool cancel(_self->IsCancelButtonVisible());
+		bool search;
+		bool cancel;
 
 		set_option(value,Value,wxString)
 #if wxUSE_MENUS
 		set_option(menu,Menu,wxMenu*)
 #endif
 
-		set_hash_option(hash,"search",search);
-		set_hash_option(hash,"cancel",cancel);
+		if(set_hash_option(hash,"search",search))
+			_self->ShowSearchButton(search);
 
-		_self->ShowSearchButton(search);
-		_self->ShowCancelButton(cancel);
+		if(set_hash_option(hash,"cancel",cancel))
+			_self->ShowCancelButton(cancel);
 	}
 	return self;
 }
@@ -115,6 +112,13 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 /* Document-attr: menu
  * the menu of the SearchCtrl. WX::Menu
+ */
+
+/* Document-attr: search_button_visible
+ * shows if the search button is visible. true/false
+ */
+/* Document-attr: cancel_button_visible
+ * shows if the cancel button is visible. true/false
  */
 
 DLL_LOCAL void Init_WXSearchCtrl(VALUE rb_mWX)
@@ -146,13 +150,17 @@ DLL_LOCAL void Init_WXSearchCtrl(VALUE rb_mWX)
 	rb_include_module(rb_cWXSearchCtrl,rb_mWXTextArea);
 	rb_include_module(rb_cWXSearchCtrl,rb_mWXTextEntry);
 
+	rb_define_method(rb_cWXSearchCtrl,"single_line?",RUBY_METHOD_FUNC(_IsSingleLine),0);
+	rb_define_method(rb_cWXSearchCtrl,"multi_line?",RUBY_METHOD_FUNC(_IsMultiLine),0);
+
+
 	rb_define_attr_method(rb_cWXSearchCtrl,"value",_getValue,_setValue);
 #if wxUSE_MENUS
 	rb_define_attr_method(rb_cWXSearchCtrl,"menu",_getMenu,_setMenu);
 #endif
 
-	rb_define_attr_method(rb_cWXSearchCtrl,"search_button_visible",_IsSearchButtonVisible,_setSearchButtonVisible);
-	rb_define_attr_method(rb_cWXSearchCtrl,"cancel_button_visible",_IsCancelButtonVisible,_setCancelButtonVisible);
+	rb_define_attr_method(rb_cWXSearchCtrl,"search_button_visible",_getSearchButtonVisible,_setSearchButtonVisible);
+	rb_define_attr_method(rb_cWXSearchCtrl,"cancel_button_visible",_getCancelButtonVisible,_setCancelButtonVisible);
 
 	registerInfo<wxSearchCtrl>(rb_cWXSearchCtrl);
 
