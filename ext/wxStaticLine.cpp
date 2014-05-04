@@ -45,6 +45,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		{
 			set_hash_option(hash,"id",id,unwrapID);
 			set_hash_option(hash,"style",style);
+
+			set_hash_flag_option(hash,"vertical",wxLI_VERTICAL,style);
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),id,wxDefaultPosition,wxDefaultSize,style);
@@ -67,6 +69,12 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
+
+
+/* Document-const: VERTICAL
+ *   Creates a vertical static line.
+ */
+
 DLL_LOCAL void Init_WXStaticLine(VALUE rb_mWX)
 {
 #if 0
@@ -83,6 +91,8 @@ DLL_LOCAL void Init_WXStaticLine(VALUE rb_mWX)
 	rb_define_method(rb_cWXStaticLine,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_method(rb_cWXStaticLine,"vertical?",RUBY_METHOD_FUNC(_IsVertical),0);
+
+	rb_define_const(rb_cWXStaticLine,"VERTICAL",INT2NUM(wxLI_VERTICAL));
 
 	registerInfo<wxStaticLine>(rb_cWXStaticLine);
 #endif
