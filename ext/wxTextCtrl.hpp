@@ -18,4 +18,13 @@ void Init_WXTextCtrl(VALUE rb_mWX);
 #include <wx/textctrl.h>
 #endif
 
+namespace RubyWX {
+namespace TextCtrl {
+
+void set_style_flags(VALUE hash,int& flags);
+
+}
+}
+
+
 #endif /* WXTEXTCTRL_HPP_ */

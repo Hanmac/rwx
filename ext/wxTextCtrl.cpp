@@ -18,6 +18,22 @@ VALUE rb_cWXTextCtrl;
 namespace RubyWX {
 namespace TextCtrl {
 
+void set_style_flags(VALUE hash,int& style)
+{
+	set_hash_flag_option(hash,"readonly",wxTE_READONLY,style);
+	set_hash_flag_option(hash,"multiline",wxTE_MULTILINE,style);
+	set_hash_flag_option(hash,"password",wxTE_PASSWORD,style);
+	set_hash_flag_option(hash,"process_tab",wxTE_PROCESS_TAB,style);
+	set_hash_flag_option(hash,"process_enter",wxTE_PROCESS_ENTER,style);
+
+	if(((style & wxTE_MULTILINE) != 0) && ((style & (wxTE_PASSWORD|wxTE_PROCESS_ENTER)) != 0) )
+	{
+		rb_raise(rb_eArgError,"password style and process enter style are for singleline only");
+	}
+
+}
+
+
 macro_attr(Value,wxString)
 
 singlereturn(IsSingleLine)
@@ -56,16 +72,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"value",value);
 			set_hash_option(hash,"style",style);
 
-			set_hash_flag_option(hash,"readonly",wxTE_READONLY,style);
-			set_hash_flag_option(hash,"multiline",wxTE_MULTILINE,style);
-			set_hash_flag_option(hash,"password",wxTE_PASSWORD,style);
-			set_hash_flag_option(hash,"process_tab",wxTE_PROCESS_TAB,style);
-			set_hash_flag_option(hash,"process_enter",wxTE_PROCESS_ENTER,style);
-
-			if(((style & wxTE_MULTILINE) != 0) && ((style & (wxTE_PASSWORD|wxTE_PROCESS_ENTER)) != 0) )
-			{
-				rb_raise(rb_eArgError,"password style and process enter style are for singleline only");
-			}
+			set_style_flags(hash,style);
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),id,value,wxDefaultPosition,wxDefaultSize,style);
@@ -90,6 +97,39 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 /* Document-attr: value
  * the value of the TextCtrl. String
+ */
+
+/* Document-method: single_line?
+ * call-seq:
+ *   single_line? -> true/false
+ *
+ * returns true if this control is vertical.
+ * ===Return value
+ * true/false
+*/
+/* Document-method: multi_line?
+ * call-seq:
+ *   multi_line? -> true/false
+ *
+ * returns true if this control is vertical.
+ * ===Return value
+ * true/false
+*/
+
+/* Document-const: READONLY
+ *   The text will not be user-editable.
+ */
+/* Document-const: MULTILINE
+ *   The text control allows multiple lines. If this style is not specified, line break characters should not be used in the controls value.
+ */
+/* Document-const: PROCESS_TAB
+ *   The control will receive :char events for TAB pressed - normally, TAB is used for passing to the next control in a dialog instead. For the control created with this style, you can still use Ctrl-Enter to pass to the next control from the keyboard.
+ */
+/* Document-const: PROCESS_ENTER
+ *  The control will generate the event :text_enter (otherwise pressing Enter key is either processed internally by the control or used for navigation between dialog controls).
+ */
+/* Document-const: PASSWORD
+ *   The text will be echoed as asterisks.
  */
 DLL_LOCAL void Init_WXTextCtrl(VALUE rb_mWX)
 {
@@ -125,6 +165,11 @@ DLL_LOCAL void Init_WXTextCtrl(VALUE rb_mWX)
 	rb_define_const(rb_cWXTextCtrl,"PROCESS_TAB",INT2NUM(wxTE_PROCESS_TAB));
 	rb_define_const(rb_cWXTextCtrl,"PROCESS_ENTER",INT2NUM(wxTE_PROCESS_ENTER));
 	rb_define_const(rb_cWXTextCtrl,"PASSWORD",INT2NUM(wxTE_PASSWORD));
+
+	registerEventType("text",wxEVT_TEXT,rb_cWXCommandEvent);
+	registerEventType("text_enter",wxEVT_TEXT_ENTER,rb_cWXCommandEvent);
+	registerEventType("text_url",wxEVT_TEXT_URL,rb_cWXCommandEvent);
+	registerEventType("text_maxlen",wxEVT_TEXT_MAXLEN,rb_cWXCommandEvent);
 
 	registerInfo<wxTextCtrl>(rb_cWXTextCtrl);
 #endif
