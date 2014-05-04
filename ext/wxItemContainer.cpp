@@ -49,6 +49,18 @@ singlereturn(GetCount)
 singlereturn(IsSorted)
 singlereturn(GetStrings)
 
+
+
+/*
+ * call-seq:
+ *   each_item -> Enumerator
+ *   each_item { | text| } -> self
+ *
+ * iterates the items of this control.
+ * ===Return value
+ * self
+ *
+*/
 DLL_LOCAL VALUE _each(VALUE self)
 {
 	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_GetCount));
@@ -201,6 +213,18 @@ DLL_LOCAL VALUE _setItemString(VALUE self,VALUE idx,VALUE val)
 }
 }
 #endif
+
+
+/* Document-attr: selection
+ * Integer/nil returns the index of the current selected item, or nil if none is selected.
+ */
+/* Document-attr: string_selection
+ * String returns the string of the current selected item.
+ */
+/* Document-attr: items
+ * Array of the items in this control.
+ */
+
 
 DLL_LOCAL void Init_WXItemContainer(VALUE rb_mWX)
 {
