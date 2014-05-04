@@ -22,7 +22,7 @@ wxPickerBase* unwrap<wxPickerBase*>(const VALUE &arg)
 namespace RubyWX {
 namespace PickerBase {
 
-macro_attr(InternalMargin,int)
+macro_attr_con(InternalMargin,int,_self->HasTextCtrl())
 macro_attr_con(TextCtrlProportion,int,_self->HasTextCtrl())
 macro_attr(PickerCtrlProportion,int)
 macro_attr_bool_con(TextCtrlGrowable,HasTextCtrl)
@@ -45,6 +45,36 @@ void set_style_flags(VALUE hash,int& flags)
 }
 
 #endif
+
+
+/* Document-attr: text_ctrl_growable
+ * true if the text control is growable. true/false
+ */
+/* Document-attr: picker_ctrl_growable
+ * true if the picker control is growable. true/false
+ */
+/* Document-attr: text_ctrl_proportion
+ * the proportion value of the text control. Integer
+ */
+/* Document-attr: picker_ctrl_proportion
+ * the proportion value of the picker. Integer
+ */
+/* Document-attr: text_ctrl
+ * the text control. WX::TextCtrl / nil
+ */
+/* Document-attr: picker_ctrl
+ * the picker control. WX::Control / nil
+ */
+/* Document-attr: internal_margin
+ * the margin (in pixel) between the picker and the text control. Integer
+ */
+
+/* Document-const: USE_TEXTCTRL
+ *   Creates a text control to the left of the picker which is completely managed by this WX::PickerBase class.
+ */
+/* Document-const: SMALL
+ *   Use smaller version of the control with a small "..." button
+ */
 DLL_LOCAL void Init_WXPickerBase(VALUE rb_mWX)
 {
 #if 0
