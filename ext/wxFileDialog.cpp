@@ -62,6 +62,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_flag_option(hash,"open",wxFD_OPEN,style);
 			set_hash_flag_option(hash,"save",wxFD_SAVE,style);
 			set_hash_flag_option(hash,"overwrite_prompt",wxFD_OVERWRITE_PROMPT,style);
+#ifdef HAVE_CONST_WXFD_NO_FOLLOW
+			set_hash_flag_option(hash,"no_follow",wxFD_NO_FOLLOW,style);
+#endif
 			set_hash_flag_option(hash,"must_exist",wxFD_FILE_MUST_EXIST,style);
 			set_hash_flag_option(hash,"multiple",wxFD_MULTIPLE,style);
 			set_hash_flag_option(hash,"change_dir",wxFD_CHANGE_DIR,style);
@@ -155,6 +158,39 @@ DLL_LOCAL VALUE _loadFileSelector(int argc,VALUE *argv,VALUE self)
  * the path of the FileDialog. String
  */
 
+
+/* Document-const: OPEN
+ * This is an open dialog; usually this means that the default button's label of the dialog is "Open".
+ */
+/* Document-const: SAVE
+ * This is a save dialog; usually this means that the default button's label of the dialog is "Save".
+ */
+/* Document-const: OVERWRITE_PROMPT
+ *  For save dialog only: prompt for a confirmation if a file will be overwritten.
+ */
+/* Document-const: NO_FOLLOW
+ *  Directs the dialog to return the path and file name of the selected shortcut file, not its target as it does by default.
+ *  Currently this flag is only implemented in wxMSW and the non-dereferenced link path is always returned, even without this flag, under Unix and so using it there doesn't do anything.
+ */
+/* Document-const: MUST_EXIST
+ *  For open dialog only: the user may only select files that actually exist.
+ *  Notice that under OS X the file dialog with wxFD_OPEN style always behaves as if this style was specified,
+ *  because it is impossible to choose a file that doesn't exist from a standard OS X file dialog.
+ */
+/* Document-const: MULTIPLE
+ *  For open dialog only: allows selecting multiple files.
+ */
+/* Document-const: CHANGE_DIR
+ *  Change the current working directory (when the dialog is dismissed) to the directory where the file(s) chosen by the user are.
+ */
+/* Document-const: PREVIEW
+ *  Show the preview of the selected files (currently only supported by wxGTK).
+ */
+
+/* Document-const: DEFAULT_STYLE
+ * default style for this control.
+ */
+
 DLL_LOCAL void Init_WXFileDialog(VALUE rb_mWX)
 {
 #if 0
@@ -193,10 +229,15 @@ DLL_LOCAL void Init_WXFileDialog(VALUE rb_mWX)
 	rb_define_const(rb_cWXFileDialog,"OPEN",INT2NUM(wxFD_OPEN));
 	rb_define_const(rb_cWXFileDialog,"SAVE",INT2NUM(wxFD_SAVE));
 	rb_define_const(rb_cWXFileDialog,"OVERWRITE_PROMPT",INT2NUM(wxFD_OVERWRITE_PROMPT));
+#ifdef HAVE_CONST_WXFD_NO_FOLLOW
+	rb_define_const(rb_cWXFileDialog,"NO_FOLLOW",INT2NUM(wxFD_NO_FOLLOW));
+#endif
 	rb_define_const(rb_cWXFileDialog,"MUST_EXIST",INT2NUM(wxFD_FILE_MUST_EXIST));
 	rb_define_const(rb_cWXFileDialog,"MULTIPLE",INT2NUM(wxFD_MULTIPLE));
 	rb_define_const(rb_cWXFileDialog,"CHANGE_DIR",INT2NUM(wxFD_CHANGE_DIR));
 	rb_define_const(rb_cWXFileDialog,"PREVIEW",INT2NUM(wxFD_PREVIEW));
+
+	rb_define_const(rb_cWXFileDialog,"DEFAULT_STYLE",INT2NUM(wxFD_DEFAULT_STYLE));
 
 	registerInfo<wxFileDialog>(rb_cWXFileDialog);
 #endif
