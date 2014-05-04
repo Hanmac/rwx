@@ -9,6 +9,7 @@
 #include "wxFontPicker.hpp"
 #include "wxPickerBase.hpp"
 #include "wxFont.hpp"
+#include "wxColor.hpp"
 
 VALUE rb_cWXFontPicker,rb_cWXFontPickerEvent;
 
