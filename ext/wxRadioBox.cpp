@@ -64,6 +64,27 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
+singlereturn(GetCount)
+
+/*
+ * call-seq:
+ *   each_item -> Enumerator
+ *   each_item { | text| } -> self
+ *
+ * iterates the items of this control.
+ * ===Return value
+ * self
+ *
+*/
+DLL_LOCAL VALUE _each(VALUE self)
+{
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_GetCount));
+	std::size_t count = _self->GetCount();
+	for(std::size_t i = 0; i < count; ++i)
+		rb_yield(wrap(_self->GetString(i)));
+	return self;
+}
+
 /*
  * call-seq:
  *   get_item_string(pos) -> String
@@ -317,6 +338,16 @@ DLL_LOCAL VALUE _setItemHelpText(VALUE self,VALUE idx,VALUE val)
 }
 
 #endif
+
+
+/* Document-attr: selection
+ * Integer/nil returns the index of the current selected item, or nil if none is selected.
+ */
+/* Document-attr: string_selection
+ * String returns the string of the current selected item.
+ */
+
+
 DLL_LOCAL void Init_WXRadioBox(VALUE rb_mWX)
 {
 #if 0
@@ -335,6 +366,8 @@ DLL_LOCAL void Init_WXRadioBox(VALUE rb_mWX)
 	rb_define_alloc_func(rb_cWXRadioBox,_alloc);
 
 	rb_define_method(rb_cWXRadioBox,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
+
+	rb_define_method(rb_cWXRadioBox,"each_item",RUBY_METHOD_FUNC(_each),0);
 
 	rb_define_method(rb_cWXRadioBox,"get_item_string",RUBY_METHOD_FUNC(_getItemString),1);
 	rb_define_method(rb_cWXRadioBox,"set_item_string",RUBY_METHOD_FUNC(_setItemString),2);
