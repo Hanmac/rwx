@@ -19,6 +19,7 @@ namespace RubyWX {
 namespace FontPicker {
 
 macro_attr(SelectedFont,wxFont)
+macro_attr(SelectedColour,wxColor)
 
 APP_PROTECT(wxFontPickerCtrl)
 
@@ -34,6 +35,7 @@ APP_PROTECT(wxFontPickerCtrl)
  *
  * *options: Hash with possible options to set:
  *   * selected_font WX::Font default font
+ *   * selected_color WX::Color default color
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
@@ -54,6 +56,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 			PickerBase::set_style_flags(hash,style);
 
+			set_hash_flag_option(hash,"fontdesc_as_label",wxFNTP_FONTDESC_AS_LABEL,style);
+			set_hash_flag_option(hash,"font_for_label",wxFNTP_USEFONT_FOR_LABEL,style);
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),id,font,wxDefaultPosition,wxDefaultSize,style);
@@ -66,6 +70,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		VALUE temp;
 
 		set_option(selected_font,SelectedFont,wxFont)
+		set_option(selected_color,SelectedColour,wxColor)
 	}
 	return self;
 }
@@ -80,6 +85,31 @@ macro_attr(Font,wxFont)
 }
 }
 #endif
+
+
+/* Document-attr: selected_font
+ * the current font of the WX::FontPicker. WX::Font
+ */
+/* Document-attr: selected_color
+ * the current color of the WX::FontPicker. WX::Color
+ */
+
+/* Document-attr: font
+ * the font of the WX::Event::FontPicker. WX::Font
+ */
+
+/* Document-const: DEFAULT_STYLE
+ * default style for this control.
+ */
+/* Document-const: FONTDESC_AS_LABEL
+ *  Keeps the label of the button updated with the fontface name and the font size.
+ *  E.g. choosing "Times New Roman bold, italic with size 10" from the fontdialog,
+ *  will update the label (overwriting any previous label) with the "Times New Roman, 10" text.
+ */
+/* Document-const: USEFONT_FOR_LABEL
+ *  Uses the currently selected font to draw the label of the button.
+ */
+
 DLL_LOCAL void Init_WXFontPicker(VALUE rb_mWX)
 {
 #if 0
@@ -91,6 +121,7 @@ DLL_LOCAL void Init_WXFontPicker(VALUE rb_mWX)
 	rb_cWXEvent = rb_define_class_under(rb_mWX,"Event",rb_cObject);
 
 	rb_define_attr(rb_cWXFontPicker,"selected_font",1,1);
+	rb_define_attr(rb_cWXFontPicker,"selected_color",1,1);
 	rb_define_attr(rb_cWXFontPickerEvent,"font",1,1);
 #endif
 
@@ -102,10 +133,15 @@ DLL_LOCAL void Init_WXFontPicker(VALUE rb_mWX)
 	rb_define_method(rb_cWXFontPicker,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_attr_method(rb_cWXFontPicker,"selected_font",_getSelectedFont,_setSelectedFont);
+	rb_define_attr_method(rb_cWXFontPicker,"selected_color",_getSelectedColour,_setSelectedColour);
 
 	rb_cWXFontPickerEvent = rb_define_class_under(rb_cWXEvent,"FontPicker",rb_cWXEvent);
 	registerEventType("fontpicker_changed",wxEVT_FONTPICKER_CHANGED,rb_cWXFontPickerEvent);
 	rb_define_attr_method(rb_cWXFontPickerEvent,"font",Event::_getFont,Event::_setFont);
+
+	rb_define_const(rb_cWXFontPicker,"DEFAULT_STYLE",INT2NUM(wxFNTP_DEFAULT_STYLE));
+	rb_define_const(rb_cWXFontPicker,"FONTDESC_AS_LABEL",INT2NUM(wxFNTP_FONTDESC_AS_LABEL));
+	rb_define_const(rb_cWXFontPicker,"USEFONT_FOR_LABEL",INT2NUM(wxFNTP_USEFONT_FOR_LABEL));
 
 	registerInfo<wxFontPickerCtrl>(rb_cWXFontPicker);
 #endif
