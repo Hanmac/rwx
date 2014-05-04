@@ -85,10 +85,36 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 #endif
 
 
+/* Document-method: third_state?
+ * call-seq:
+ *   third_state? -> true/false
+ *
+ * Returns whether or not the checkbox is a 3-state checkbox.
+ * ===Return value
+ * true/false
+*/
+/* Document-method: third_state_user?
+ * call-seq:
+ *   third_state_user? -> true/false
+ *
+ * Returns whether or not the user can set the checkbox to the third state.
+ * ===Return value
+ * true/false
+*/
+
 /* Document-attr: value
  * the value of the CheckBox. bool
  */
+/* Document-attr: third_state
+ * the value of the CheckBox then third-state is used. Symbol
+ */
 
+/* Document-const: THIRD_STATE
+ *   Create a 3-state checkbox.
+ */
+/* Document-const: THIRD_STATE_USER
+ *   Using this flags allows the user to set the checkbox to the third state by clicking.
+ */
 DLL_LOCAL void Init_WXCheckBox(VALUE rb_mWX)
 {
 #if 0
