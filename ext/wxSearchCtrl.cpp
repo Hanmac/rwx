@@ -105,6 +105,22 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 #endif
 
+/* Document-method: single_line?
+ * call-seq:
+ *   single_line? -> true/false
+ *
+ * Returns true if this is a single line edit control and false otherwise.
+ * ===Return value
+ * true/false
+*/
+/* Document-method: multi_line?
+ * call-seq:
+ *   multi_line? -> true/false
+ *
+ * Returns true if this is a multi line edit control and false otherwise.
+ * ===Return value
+ * true/false
+*/
 
 /* Document-attr: value
  * the value of the SearchCtrl. String
