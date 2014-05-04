@@ -55,6 +55,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		{
 			set_hash_option(hash,"id",id,unwrapID);
 			set_hash_option(hash,"style",style);
+
+			set_hash_flag_option(hash,"vertical",wxSP_VERTICAL,style);
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),id,wxDefaultPosition,wxDefaultSize,style);
@@ -106,6 +108,10 @@ macro_attr(Value,int)
  * true/false
 */
 
+/* Document-const: VERTICAL
+ *   Creates a vertical static line.
+ */
+
 DLL_LOCAL void Init_WXSpinButton(VALUE rb_mWX)
 {
 #if 0
@@ -133,6 +139,7 @@ DLL_LOCAL void Init_WXSpinButton(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXSpinButton,"max",_getMax,_setMax);
 
 	rb_define_method(rb_cWXSpinButton,"vertical?",RUBY_METHOD_FUNC(_IsVertical),0);
+	rb_define_const(rb_cWXSpinButton,"VERTICAL",INT2NUM(wxSP_VERTICAL));
 
 	rb_cWXSpinEvent = rb_define_class_under(rb_cWXEvent,"Spin",rb_cWXNotifyEvent);
 
