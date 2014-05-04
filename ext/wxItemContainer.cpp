@@ -47,6 +47,7 @@ singlefunc(Clear)
 
 singlereturn(GetCount)
 singlereturn(IsSorted)
+singlereturn(IsEmpty)
 singlereturn(GetStrings)
 
 
@@ -215,6 +216,41 @@ DLL_LOCAL VALUE _setItemString(VALUE self,VALUE idx,VALUE val)
 #endif
 
 
+/* Document-method: clear
+ * call-seq:
+ *   clear -> self
+ *
+ * Removes all items from the control.
+ * ===Return value
+ * self
+*/
+
+/* Document-method: item_count
+ * call-seq:
+ *   item_count -> Integer
+ *
+ * Returns the number of items in the control.
+ * ===Return value
+ * Integer
+*/
+
+/* Document-method: sorted?
+ * call-seq:
+ *   sorted? -> true/false
+ *
+ * Return true if the control has specific style.
+ * ===Return value
+ * true/false
+*/
+/* Document-method: empty?
+ * call-seq:
+ *   empty? -> true/false
+ *
+ * Returns true if the control is empty or false if it has some items.
+ * ===Return value
+ * true/false
+*/
+
 /* Document-attr: selection
  * Integer/nil returns the index of the current selected item, or nil if none is selected.
  */
@@ -259,6 +295,7 @@ DLL_LOCAL void Init_WXItemContainer(VALUE rb_mWX)
 
 	rb_define_method(rb_mWXItemContainer,"item_count",RUBY_METHOD_FUNC(_GetCount),0);
 	rb_define_method(rb_mWXItemContainer,"sorted?",RUBY_METHOD_FUNC(_IsSorted),0);
+	rb_define_method(rb_mWXItemContainer,"empty?",RUBY_METHOD_FUNC(_IsEmpty),0);
 
 	rb_define_attr_method(rb_mWXItemContainer,"selection",_getSelection,_setSelection);
 	rb_define_attr_method(rb_mWXItemContainer,"string_selection",_getStringSelection,_setStringSelection);
