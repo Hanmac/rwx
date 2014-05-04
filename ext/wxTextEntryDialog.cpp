@@ -70,7 +70,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL VALUE _getText(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
-	rb_scan_args(argc, argv, "02",&parent,&hash);
+	rb_scan_args(argc, argv, "01:",&parent,&hash);
 
 	app_protected();
 
