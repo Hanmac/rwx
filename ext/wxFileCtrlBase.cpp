@@ -6,6 +6,7 @@
  */
 
 #include "wxFileCtrlBase.hpp"
+#include "wxCommandEvent.hpp"
 
 VALUE rb_cWXFileCtrlBase,rb_cWXFileCtrlEvent;
 
@@ -19,7 +20,12 @@ wxString unwrapWildCard(const VALUE &val)
 		return wxEmptyString;
 	}
 	return wildcard;
+}
 
+bool check_filter_index(int& filter,const wxString& wildcard)
+{
+	wxArrayString wild,desc;
+	return check_index(filter,wxParseCommonDialogsFilter(wildcard,wild,desc));
 }
 
 #if wxUSE_FILECTRL
@@ -39,7 +45,7 @@ macro_attr(Directory,wxString)
 macro_attr(Filename,wxString)
 macro_attr(Path,wxString)
 
-macro_attr(FilterIndex,int)
+singlereturn(GetFilterIndex)
 
 
 void set_style_flags(VALUE hash,int& flags)
@@ -50,6 +56,17 @@ void set_style_flags(VALUE hash,int& flags)
 	set_hash_flag_option(hash,"multiple",wxFC_MULTIPLE,flags);
 	set_hash_flag_option(hash,"no_show_hidden",wxFC_NOSHOWHIDDEN,flags);
 
+}
+
+VALUE _setFilterIndex(VALUE self,VALUE other)
+{
+	rb_check_frozen(self);
+	int filter(NUM2INT(other));
+
+	if(check_filter_index(filter,_self->GetWildcard()))
+		_self->SetFilterIndex(filter);
+
+	return other;
 }
 
 
@@ -76,13 +93,18 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_call_super(argc,argv);
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
+		int filter;
 		VALUE temp;
 		set_option_func(wildcard,Wildcard,unwrapWildCard)
 		set_option(directory,Directory,wxString)
 		set_option(filename,Filename,wxString)
 		set_option(path,Path,wxString)
 
-		set_option(filter_index,FilterIndex,int)
+		if(set_hash_option(hash,"filter_index",filter))
+		{
+			if(check_filter_index(filter,_self->GetWildcard()))
+				_self->SetFilterIndex(filter);
+		}
 	}
 	return self;
 }
@@ -107,14 +129,15 @@ singlereturn(GetFile)
 /* Document-attr: wildcard
  * the wildcard of the FileCtrl. String, raise an ArgumentError if wildcard has wrong format
  */
+/* Document-attr: filter_index
+ * the filter_index of the FileCtrl.
+ * Can't be higher than filters in wildcard. Integer
+ */
 /* Document-attr: directory
  * the directory of the FileCtrl. String
  */
 /* Document-attr: filename
  * the filename of the FileCtrl. String
- */
-/* Document-attr: filter_index
- * the filter_index of the FileCtrl. Integer
  */
 
 /* Document-const: OPEN
@@ -165,7 +188,7 @@ DLL_LOCAL void Init_WXFileCtrlBase(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXFileCtrlBase,"wildcard",_getWildcard,_setWildcard);
 	rb_define_attr_method(rb_cWXFileCtrlBase,"directory",_getDirectory,_setDirectory);
 	rb_define_attr_method(rb_cWXFileCtrlBase,"filename",_getFilename,_setFilename);
-	rb_define_attr_method(rb_cWXFileCtrlBase,"filter_index",_getFilterIndex,_setFilterIndex);
+	rb_define_attr_method(rb_cWXFileCtrlBase,"filter_index",_GetFilterIndex,_setFilterIndex);
 
 	rb_define_const(rb_cWXFileCtrlBase,"OPEN",INT2NUM(wxFC_OPEN));
 	rb_define_const(rb_cWXFileCtrlBase,"SAVE",INT2NUM(wxFC_SAVE));
@@ -175,7 +198,7 @@ DLL_LOCAL void Init_WXFileCtrlBase(VALUE rb_mWX)
 	rb_define_const(rb_cWXFileCtrlBase,"DEFAULT_STYLE",INT2NUM(wxFC_DEFAULT_STYLE));
 
 
-	rb_cWXFileCtrlEvent = rb_define_class_under(rb_cWXEvent,"FileCtrl",rb_cWXEvent);
+	rb_cWXFileCtrlEvent = rb_define_class_under(rb_cWXEvent,"FileCtrl",rb_cWXCommandEvent);
 	registerEventType("filectrl_selectionchanged",wxEVT_FILECTRL_SELECTIONCHANGED,rb_cWXFileCtrlEvent);
 	registerEventType("filectrl_fileactivated",wxEVT_FILECTRL_FILEACTIVATED,rb_cWXFileCtrlEvent);
 	registerEventType("filectrl_folderchanged",wxEVT_FILECTRL_FOLDERCHANGED,rb_cWXFileCtrlEvent);

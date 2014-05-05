@@ -101,6 +101,21 @@ macro_attr_with_func(Wildcard,wrap,unwrapWildCard)
 macro_attr(Message,wxString)
 macro_attr(Path,wxString)
 
+singlereturn(GetFilterIndex)
+
+
+VALUE _setFilterIndex(VALUE self,VALUE other)
+{
+	rb_check_frozen(self);
+	int filter(NUM2INT(other));
+
+	if(check_filter_index(filter,_self->GetWildcard()))
+		_self->SetFilterIndex(filter);
+
+	return other;
+}
+
+
 DLL_LOCAL VALUE _getFilenames(VALUE self)
 {
 	wxArrayString result;
@@ -144,6 +159,10 @@ DLL_LOCAL VALUE _loadFileSelector(int argc,VALUE *argv,VALUE self)
 
 /* Document-attr: wildcard
  * the wildcard of the FileDialog. String
+ */
+/* Document-attr: filter_index
+ * the filter_index of the FileDialog.
+ * Can't be higher than filters in wildcard. Integer
  */
 /* Document-attr: directory
  * the directory of the FileDialog. String
@@ -202,6 +221,7 @@ DLL_LOCAL void Init_WXFileDialog(VALUE rb_mWX)
 
 	rb_define_attr(rb_cWXFileDialog,"directory",1,1);
 	rb_define_attr(rb_cWXFileDialog,"filename",1,1);
+	rb_define_attr(rb_cWXFileDialog,"filter_index",1,1);
 	rb_define_attr(rb_cWXFileDialog,"wildcard",1,1);
 	rb_define_attr(rb_cWXFileDialog,"message",1,1);
 	rb_define_attr(rb_cWXFileDialog,"path",1,1);
@@ -217,6 +237,7 @@ DLL_LOCAL void Init_WXFileDialog(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXFileDialog,"directory",_getDirectory,_setDirectory);
 	rb_define_attr_method(rb_cWXFileDialog,"filename",_getFilename,_setFilename);
 	rb_define_attr_method(rb_cWXFileDialog,"wildcard",_getWildcard,_setWildcard);
+	rb_define_attr_method(rb_cWXFileDialog,"filter_index",_GetFilterIndex,_setFilterIndex);
 	rb_define_attr_method(rb_cWXFileDialog,"message",_getMessage,_setMessage);
 	rb_define_attr_method(rb_cWXFileDialog,"path",_getPath,_setPath);
 

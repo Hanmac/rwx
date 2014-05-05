@@ -15,6 +15,7 @@ extern VALUE rb_cWXFileCtrlBase;
 void Init_WXFileCtrlBase(VALUE rb_mWX);
 
 wxString unwrapWildCard(const VALUE& val);
+bool check_filter_index(int& filter,const wxString& wildcard);
 
 #if wxUSE_FILECTRL
 #include <wx/filectrl.h>
