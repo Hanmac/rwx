@@ -131,6 +131,9 @@
 #include "wxDirPicker.hpp"
 #include "wxDatePicker.hpp"
 
+#include "wxFilePickerWidget.hpp"
+#include "wxDirPickerWidget.hpp"
+
 #include "wxTreeCtrl.hpp"
 
 #include "wxFileCtrlBase.hpp"
@@ -337,6 +340,9 @@ extern "C" void Init_rwx()
 	Init_WXCheckBox(rb_mWX);
 	Init_WXRadioButton(rb_mWX);
 	Init_WXRadioBox(rb_mWX);
+
+	Init_WXFilePickerWidget(rb_mWX);
+	Init_WXDirPickerWidget(rb_mWX);
 
 	Init_WXTextArea(rb_mWX);
 	Init_WXTextEntry(rb_mWX);

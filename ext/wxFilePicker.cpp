@@ -20,6 +20,22 @@ namespace FilePicker {
 
 APP_PROTECT(wxFilePickerCtrl)
 
+void set_style_flags(VALUE hash,int& style)
+{
+	if(set_hash_flag_option(hash,"open",wxFLP_OPEN,style))
+		style &= ~(wxFLP_SAVE & wxFLP_OVERWRITE_PROMPT);
+	if(set_hash_flag_option(hash,"save",wxFLP_SAVE,style))
+		style &= ~(wxFLP_OPEN & wxFLP_FILE_MUST_EXIST);
+
+	if(set_hash_flag_option(hash,"overwrite_prompt",wxFLP_OVERWRITE_PROMPT,style))
+		style &= ~wxFLP_OPEN & wxFLP_SAVE;
+
+	if(set_hash_flag_option(hash,"must_exist",wxFLP_FILE_MUST_EXIST,style))
+		style &= ~wxFLP_SAVE & wxFLP_OPEN;
+
+	set_hash_flag_option(hash,"change_dir",wxFLP_CHANGE_DIR,style);
+}
+
 /*
  * call-seq:
  *   FilePicker.new(parent, name, [options])
@@ -62,29 +78,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 			PickerBase::set_style_flags(hash,style);
 
-			if(set_hash_flag_option(hash,"open",wxFLP_OPEN,style))
-				style &= ~(wxFLP_SAVE & wxFLP_OVERWRITE_PROMPT);
-			if(set_hash_flag_option(hash,"save",wxFLP_SAVE,style))
-				style &= ~(wxFLP_OPEN & wxFLP_FILE_MUST_EXIST);
-
-			if(set_hash_flag_option(hash,"overwrite_prompt",wxFLP_OVERWRITE_PROMPT,style))
-				style &= ~wxFLP_OPEN & wxFLP_SAVE;
-
-			if(set_hash_flag_option(hash,"must_exist",wxFLP_FILE_MUST_EXIST,style))
-				style &= ~wxFLP_SAVE & wxFLP_OPEN;
-
-			set_hash_flag_option(hash,"change_dir",wxFLP_CHANGE_DIR,style);
+			set_style_flags(hash,style);
 
 		}
 
-		if((style & wxFLP_OPEN) && (style & wxFLP_SAVE))
-			rb_raise(rb_eArgError,"style can't have both OPEN and SAVE flags");
-
-		if((style & wxFLP_OPEN) && (style & wxFLP_OVERWRITE_PROMPT))
-			rb_raise(rb_eArgError,"style can't have both OVERWRITE_PROMPT and OPEN flags");
-
-		if((style & wxFLP_SAVE) && (style & wxFLP_FILE_MUST_EXIST))
-			rb_raise(rb_eArgError,"style can't have both MUST_EXIST and SAVE flags");
+		FileDirPicker::check_style_flags(style);
 
 		_self->Create(
 			unwrap<wxWindow*>(parent),id,path,

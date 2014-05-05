@@ -15,6 +15,14 @@ extern VALUE rb_cWXDirPicker;
 void Init_WXDirPicker(VALUE rb_mWX);
 #if wxUSE_DIRPICKERCTRL
 #include <wx/filepicker.h>
+
+namespace RubyWX {
+namespace DirPicker {
+
+void set_style_flags(VALUE hash,int& style);
+
+}
+}
 #endif
 
 #endif /* WXDIRPICKER_HPP_ */

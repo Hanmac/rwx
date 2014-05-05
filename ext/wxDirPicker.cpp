@@ -6,6 +6,7 @@
  */
 
 #include "wxDirPicker.hpp"
+#include "wxFilePicker.hpp"
 #include "wxFileDirPicker.hpp"
 #include "wxPickerBase.hpp"
 
@@ -18,6 +19,13 @@ namespace DirPicker {
 #define _self unwrap<wxDirPickerCtrl*>(self)
 
 APP_PROTECT(wxDirPickerCtrl)
+
+
+void set_style_flags(VALUE hash,int& style)
+{
+	set_hash_flag_option(hash,"must_exist",wxDIRP_DIR_MUST_EXIST,style);
+	set_hash_flag_option(hash,"change_dir",wxDIRP_CHANGE_DIR,style);
+}
 
 /*
  * call-seq:
@@ -58,21 +66,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 			PickerBase::set_style_flags(hash,style);
 
-			set_hash_flag_option(hash,"must_exist",wxDIRP_DIR_MUST_EXIST,style);
-			set_hash_flag_option(hash,"change_dir",wxDIRP_CHANGE_DIR,style);
+			set_style_flags(hash,style);
 
 		}
 
-		//can happen so check it too
-		if((style & wxFLP_OPEN) && (style & wxFLP_SAVE))
-			rb_raise(rb_eArgError,"style can't have both OPEN and SAVE flags");
-
-		if((style & wxFLP_OPEN) && (style & wxFLP_OVERWRITE_PROMPT))
-			rb_raise(rb_eArgError,"style can't have both OVERWRITE_PROMPT and OPEN flags");
-
-		if((style & wxFLP_SAVE) && (style & wxFLP_FILE_MUST_EXIST))
-			rb_raise(rb_eArgError,"style can't have both MUST_EXIST and SAVE flags");
-
+		FileDirPicker::check_style_flags(style);
 
 		_self->Create(
 			unwrap<wxWindow*>(parent),id,path,

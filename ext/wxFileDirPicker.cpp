@@ -25,6 +25,19 @@ namespace RubyWX {
 namespace FileDirPicker {
 #define _self unwrap<wxFileDirPickerCtrlBase*>(self)
 
+void check_style_flags(const int& style)
+{
+	if((style & wxFLP_OPEN) && (style & wxFLP_SAVE))
+		rb_raise(rb_eArgError,"style can't have both OPEN and SAVE flags");
+
+	if((style & wxFLP_OPEN) && (style & wxFLP_OVERWRITE_PROMPT))
+		rb_raise(rb_eArgError,"style can't have both OVERWRITE_PROMPT and OPEN flags");
+
+	if((style & wxFLP_SAVE) && (style & wxFLP_FILE_MUST_EXIST))
+		rb_raise(rb_eArgError,"style can't have both MUST_EXIST and SAVE flags");
+
+}
+
 macro_attr(Path,wxString)
 
 namespace Event {
