@@ -9,6 +9,7 @@
 #include "wxButton.hpp"
 #include "wxFileCtrlBase.hpp"
 #include "wxDirPicker.hpp"
+#include "wxFileDirPicker.hpp"
 #include "wxFilePicker.hpp"
 
 VALUE rb_cWXDirPickerWidget;
