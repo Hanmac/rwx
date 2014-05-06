@@ -1,6 +1,12 @@
 require "mkmf"
 
 
+def have_member_func(klass,member,header)
+  if have_func("#{klass}().#{member}()","wx/fontpicker.h")
+    $defs[-1] = "-DHAVE_#{klass.tr_cpp}_#{member.tr_cpp}" 
+  end
+end
+
 dir_config "rwx"
 
 if(wx_config = find_executable('wx-config'))
@@ -36,6 +42,8 @@ if(wx_config = find_executable('wx-config'))
     have_func("wxNumberEntryDialog()","wx/numdlg.h")
     have_func("wxPasswordEntryDialog()","wx/textdlg.h")
     have_func("wxProgressDialog()","wx/progdlg.h")
+        
+    have_member_func("wxFontPickerCtrl","GetSelectedColour","wx/fontpicker.h")
     
     have_const("wxFD_NO_FOLLOW","wx/filedlg.h")
     

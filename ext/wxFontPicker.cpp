@@ -20,7 +20,10 @@ namespace RubyWX {
 namespace FontPicker {
 
 macro_attr(SelectedFont,wxFont)
+
+#if HAVE_WXFONTPICKERCTRL_GETSELECTEDCOLOUR
 macro_attr(SelectedColour,wxColor)
+#endif
 
 APP_PROTECT(wxFontPickerCtrl)
 
@@ -134,7 +137,10 @@ DLL_LOCAL void Init_WXFontPicker(VALUE rb_mWX)
 	rb_define_method(rb_cWXFontPicker,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_attr_method(rb_cWXFontPicker,"selected_font",_getSelectedFont,_setSelectedFont);
+
+#if HAVE_WXFONTPICKERCTRL_GETSELECTEDCOLOUR
 	rb_define_attr_method(rb_cWXFontPicker,"selected_color",_getSelectedColour,_setSelectedColour);
+#endif
 
 	rb_cWXFontPickerEvent = rb_define_class_under(rb_cWXEvent,"FontPicker",rb_cWXEvent);
 	registerEventType("fontpicker_changed",wxEVT_FONTPICKER_CHANGED,rb_cWXFontPickerEvent);
