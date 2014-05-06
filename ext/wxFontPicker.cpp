@@ -21,7 +21,7 @@ namespace FontPicker {
 
 macro_attr(SelectedFont,wxFont)
 
-#if HAVE_WXFONTPICKERCTRL_GETSELECTEDCOLOUR
+#ifdef HAVE_WXFONTPICKERCTRL_GETSELECTEDCOLOUR
 macro_attr(SelectedColour,wxColor)
 #endif
 
@@ -138,7 +138,7 @@ DLL_LOCAL void Init_WXFontPicker(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXFontPicker,"selected_font",_getSelectedFont,_setSelectedFont);
 
-#if HAVE_WXFONTPICKERCTRL_GETSELECTEDCOLOUR
+#ifdef HAVE_WXFONTPICKERCTRL_GETSELECTEDCOLOUR
 	rb_define_attr_method(rb_cWXFontPicker,"selected_color",_getSelectedColour,_setSelectedColour);
 #endif
 
