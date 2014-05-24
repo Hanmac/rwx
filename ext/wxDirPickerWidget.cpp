@@ -109,7 +109,7 @@ DLL_LOCAL void Init_WXDirPickerWidget(VALUE rb_mWX)
 
 #endif
 
-#if wxUSE_BMPBUTTON
+#if wxUSE_DIRPICKERCTRL
 	using namespace RubyWX::DirPickerWidget;
 	rb_cWXDirPickerWidget = rb_define_class_under(rb_mWX,"DirPickerWidget",rb_cWXButton);
 	rb_define_alloc_func(rb_cWXDirPickerWidget,_alloc);
