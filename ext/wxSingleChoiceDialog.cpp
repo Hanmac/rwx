@@ -63,7 +63,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 		_self->Create(unwrap<wxWindow*>(parent),message,caption,choices,(void **)NULL,style);
 		
-		_self->SetSelection(selection);
+		if(check_index(selection,choices.GetCount()))
+			_self->SetSelection(selection);
 	}
 	rb_call_super(argc,argv);
 	return self;
@@ -74,7 +75,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 VALUE _GetSingleChoice(int argc,VALUE *argv,VALUE self)
 {
 	VALUE message,caption,choices,hash;
-	rb_scan_args(argc, argv, "31",&message,&caption,&choices,&hash);
+	rb_scan_args(argc, argv, "30:",&message,&caption,&choices,&hash);
 
 	app_protected();
 
@@ -88,6 +89,8 @@ VALUE _GetSingleChoice(int argc,VALUE *argv,VALUE self)
 
 	int selection(-1);
 
+	wxArrayString cchoices = unwrap<wxArrayString>(choices);
+
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 
@@ -100,13 +103,14 @@ VALUE _GetSingleChoice(int argc,VALUE *argv,VALUE self)
 		set_hash_option(hash,"width",width);
 		set_hash_option(hash,"height",height);
 
-		set_hash_option(hash,"selection",selection);
-
+		if(set_hash_option(hash,"selection",selection))
+			if(!check_index(selection,cchoices.GetCount()))
+				return Qnil;
 	}
 
 	return wrap(wxGetSingleChoice(
 			unwrap<wxString>(message), unwrap<wxString>(caption),
-			unwrap<wxArrayString>(choices),
+			cchoices,
 			parent, x, y, centre, width, height, selection
 	));
 }
