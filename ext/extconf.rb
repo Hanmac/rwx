@@ -2,7 +2,7 @@ require "mkmf"
 
 
 def have_member_func(klass,member,header)
-  if have_func("#{klass}().#{member}()","wx/fontpicker.h")
+  if have_func("#{klass}().#{member}()",header)
     $defs[-1] = "-DHAVE_#{klass.tr_cpp}_#{member.tr_cpp}" 
   end
 end
