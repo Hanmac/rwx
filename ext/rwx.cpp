@@ -133,6 +133,8 @@
 
 #include "wxFilePickerWidget.hpp"
 #include "wxDirPickerWidget.hpp"
+#include "wxFontPickerWidget.hpp"
+#include "wxColorPickerWidget.hpp"
 
 #include "wxTreeCtrl.hpp"
 
@@ -157,6 +159,7 @@
 #include "wxBookCtrl.hpp"
 #include "wxChoiceBook.hpp"
 #include "wxNoteBook.hpp"
+#include "wxSimpleBook.hpp"
 #include "wxListBook.hpp"
 #include "wxToolBook.hpp"
 #include "wxAuiBook.hpp"
@@ -344,6 +347,9 @@ extern "C" void Init_rwx()
 	Init_WXFilePickerWidget(rb_mWX);
 	Init_WXDirPickerWidget(rb_mWX);
 
+	Init_WXFontPickerWidget(rb_mWX);
+	Init_WXColorPickerWidget(rb_mWX);
+
 	Init_WXTextArea(rb_mWX);
 	Init_WXTextEntry(rb_mWX);
 
@@ -382,6 +388,7 @@ extern "C" void Init_rwx()
 	Init_WXChoiceBookCtrl(rb_mWX);
 	Init_WXToolBookCtrl(rb_mWX);
 	Init_WXNoteBookCtrl(rb_mWX);
+	Init_WXSimpleBookCtrl(rb_mWX);
 	Init_WXListBookCtrl(rb_mWX);
 	Init_WXAuiNoteBookCtrl(rb_mWX);
 	Init_WXTreeBookCtrl(rb_mWX);
