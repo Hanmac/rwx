@@ -257,7 +257,11 @@ DLL_LOCAL bool check_window(VALUE self,VALUE hash, VALUE window, wxWindow*& w)
 		VALUE argv2[] = {self, hash };
 		w = unwrap<wxWindow*>(rb_class_new_instance(2,argv2,window));
 		return true;
+#if wxUSE_TREEBOOK
 	}else if(nil_check(window,!rb_obj_is_kind_of(self,rb_cWXTreebook))) //TODO Tree Ctrl allows nil page, but i can't check that
+#else
+	}else if(nil_check(window))
+#endif
 	{
 		return window_parent_check(window,_self,w);
 	}
