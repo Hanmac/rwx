@@ -44,6 +44,7 @@ if(wx_config = find_executable('wx-config'))
     have_func("wxProgressDialog()","wx/progdlg.h")
         
     have_member_func("wxFontPickerCtrl","GetSelectedColour","wx/fontpicker.h")
+    have_member_func("wxInfoBar","GetButtonCount","wx/infobar.h")
     
     have_const("wxFD_NO_FOLLOW","wx/filedlg.h")
     
@@ -54,11 +55,12 @@ else
 end
 
 #drop some of the warn flags because they are not valid for C++
-CONFIG["warnflags"].gsub!("-Wdeclaration-after-statement","")
-CONFIG["warnflags"].gsub!("-Wimplicit-function-declaration","")
-
-#wxAUI is a bit buggy
-CONFIG["warnflags"].gsub!("-Wextra","")
+CONFIG["warnflags"].gsub!(
+	Regexp.union(
+		"-Wdeclaration-after-statement",
+		"-Wimplicit-function-declaration",
+		"-Wextra" #wxAUI is a bit buggy
+	), "")
 
 create_header
 create_makefile "rwx"

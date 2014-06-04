@@ -61,9 +61,51 @@ DLL_LOCAL VALUE _addButton(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL VALUE _removeButton(VALUE self,VALUE id)
 {
-	_self->RemoveButton(unwrapID(id));
+	wxWindowID wid = unwrapID(id);
+
+#ifdef HAVE_WXINFOBAR_GETBUTTONCOUNT
+	if(!_self->HasButtonId(wid))
+		return Qnil;
+#endif
+
+	_self->RemoveButton(wid);
 	return self;
 }
+
+#ifdef HAVE_WXINFOBAR_GETBUTTONCOUNT
+
+DLL_LOCAL VALUE _hasButton(VALUE self,VALUE id)
+{
+	return wrap(_self->HasButtonId(unwrapID(id)));
+}
+
+DLL_LOCAL VALUE _each_button_size(VALUE self)
+{
+	return UINT2NUM(_self->GetButtonCount());
+}
+
+
+DLL_LOCAL VALUE _each_button(VALUE self)
+{
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_each_button_size));
+	
+	std::size_t count = _self->GetButtonCount();
+	
+	for(std::size_t i = 0; i < count; ++i)
+		rb_yield(wrapID(_self->GetButtonId(i)));
+	
+	return self;
+}
+
+DLL_LOCAL VALUE _getButton(VALUE self,VALUE idx)
+{
+	int cidx = NUM2INT(idx);
+	if(check_index(cidx,_self->GetButtonCount()))
+		return wrapID(_self->GetButtonId(cidx));
+	return Qnil;
+}
+
+#endif
 
 }
 }
@@ -88,6 +130,15 @@ DLL_LOCAL void Init_WXInfoBarBase(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXInfoBarBase,"add_button",RUBY_METHOD_FUNC(_addButton),-1);
 	rb_define_method(rb_cWXInfoBarBase,"remove_button",RUBY_METHOD_FUNC(_removeButton),1);
+
+#ifdef HAVE_WXINFOBAR_GETBUTTONCOUNT
+
+	rb_define_method(rb_cWXInfoBarBase,"has_button?",RUBY_METHOD_FUNC(_hasButton),1);
+	rb_define_method(rb_cWXInfoBarBase,"get_button",RUBY_METHOD_FUNC(_getButton),1);
+
+	rb_define_method(rb_cWXInfoBarBase,"each_button",RUBY_METHOD_FUNC(_each_button),0);
+
+#endif
 
 	registerType<wxInfoBarBase>(rb_cWXInfoBarBase);
 #endif
