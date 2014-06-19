@@ -13,6 +13,7 @@
 extern VALUE rb_cWXPoint;
 DLL_LOCAL void Init_WXPoint(VALUE rb_mWX);
 
+extern ID rwxID_x,rwxID_y;
 
 template <>
 VALUE wrap< wxRealPoint >(wxRealPoint *point );

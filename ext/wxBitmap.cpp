@@ -40,11 +40,7 @@ VALUE wrap< wxBitmap >(const wxBitmap &vbitmap)
 template <>
 VALUE wrap< wxBitmap >(wxBitmap *bitmap )
 {
-	if(!bitmap)
-		return Qnil;
-	if(!bitmap->IsOk())
-		return Qnil;
-	if(bitmap == &wxNullBitmap)
+	if(!bitmap || !bitmap->IsOk() || bitmap == &wxNullBitmap)
 		return Qnil;
 	return Data_Wrap_Struct(rb_cWXBitmap, NULL, NULL, bitmap);
 }
@@ -82,20 +78,14 @@ wxBitmap& unwrap< wxBitmap& >(const VALUE &vbitmap)
 template <>
 VALUE wrap< wxIcon >(wxIcon *icon )
 {
-	if(!icon)
-		return Qnil;
-	if(!icon->IsOk())
-		return Qnil;
-	if(icon == &wxNullIcon)
+	if(!icon || !icon->IsOk() || icon == &wxNullIcon)
 		return Qnil;
 	return wrap< wxBitmap >(wxBitmap(*icon));
 }
 template <>
 VALUE wrap< wxIcon >(const wxIcon &icon )
 {
-	if(!icon.IsOk())
-		return Qnil;
-	if(&icon == &wxNullIcon)
+	if(!icon.IsOk() || &icon == &wxNullIcon)
 		return Qnil;
 	return wrap< wxBitmap >(new wxBitmap(icon));
 }

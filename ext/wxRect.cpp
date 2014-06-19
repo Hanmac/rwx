@@ -13,6 +13,52 @@ VALUE rb_cWXRect;
 
 #define _self unwrap<wxRect*>(self)
 
+template <>
+VALUE wrap< wxRect >(wxRect *size )
+{
+	return Data_Wrap_Struct(rb_cWXRect, NULL, free, size);
+}
+
+template <>
+bool is_wrapable< wxRect >(const VALUE &vsize)
+{
+	if (rb_obj_is_kind_of(vsize, rb_cWXRect)){
+		return true;
+	}else if(rb_respond_to(vsize,rwxID_x) &&
+		rb_respond_to(vsize,rwxID_y) &&
+		rb_respond_to(vsize,rwxID_width) &&
+		rb_respond_to(vsize,rwxID_height)){
+		return true;
+	}else
+		return false;
+}
+
+template <>
+wxRect* unwrap< wxRect* >(const VALUE &vsize)
+{
+	if(!rb_obj_is_kind_of(vsize, rb_cWXRect) &&
+		rb_respond_to(vsize,rwxID_x) &&
+		rb_respond_to(vsize,rwxID_y) &&
+		rb_respond_to(vsize,rwxID_width) &&
+		rb_respond_to(vsize,rwxID_height)){
+		wxRect *size = new wxRect;
+		size->SetX(NUM2INT(rb_funcall(vsize,rwxID_x,0)));
+		size->SetY(NUM2INT(rb_funcall(vsize,rwxID_y,0)));
+
+		size->SetWidth(NUM2INT(rb_funcall(vsize,rwxID_width,0)));
+		size->SetHeight(NUM2INT(rb_funcall(vsize,rwxID_height,0)));
+		return size;
+	}else{
+		return unwrapPtr<wxRect>(vsize, rb_cWXRect);
+	}
+}
+
+template <>
+wxRect unwrap< wxRect >(const VALUE &vsize)
+{
+	return *unwrap<wxRect*>(vsize);
+}
+
 
 namespace RubyWX {
 namespace Rect {

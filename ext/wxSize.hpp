@@ -13,6 +13,8 @@
 extern VALUE rb_cWXSize;
 void Init_WXSize(VALUE rb_mWX);
 
+extern ID rwxID_width,rwxID_height;
+
 
 template <>
 VALUE wrap< wxSize >(wxSize *size );

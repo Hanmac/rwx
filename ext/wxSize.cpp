@@ -35,8 +35,8 @@ wxSize unwrap< wxSize >(const VALUE &vsize)
 {
 	if(rb_obj_is_kind_of(vsize, rb_cArray)){
 			wxSize size;
-			size.SetWidth(NUM2INT(rb_ary_entry(vsize,0)));
-			size.SetHeight(NUM2INT(rb_ary_entry(vsize,1)));
+			size.SetWidth(NUM2INT(RARRAY_AREF(vsize,0)));
+			size.SetHeight(NUM2INT(RARRAY_AREF(vsize,1)));
 			return size;
 	}else if(!rb_obj_is_kind_of(vsize, rb_cWXSize) &&
 		rb_respond_to(vsize,rwxID_width) &&
