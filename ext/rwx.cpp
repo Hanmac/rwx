@@ -423,4 +423,26 @@ extern "C" void Init_rwx()
 //			it != klassholder.end();++it)
 //		std::cout << it->first << std::endl;
 
+
+	registerEnum("wxButtonFlag","button_flag",wxOK)
+		->add(wxYES,"yes")
+		->add(wxOK,"ok")
+		->add(wxNO,"no")
+		->add(wxYES_NO,"yes_no")
+		->add(wxCANCEL,"cancel")
+		->add(wxAPPLY,"apply")
+		->add(wxCLOSE,"close")
+		->add(wxHELP,"help");
+
+	registerEnum("wxIconFlag","icon_flag",wxICON_NONE)
+		->add(wxICON_EXCLAMATION,"exclamation")
+		->add(wxICON_HAND,"hand")
+		->add(wxICON_WARNING,"warning")
+		->add(wxICON_ERROR,"error")
+		->add(wxICON_QUESTION,"question")
+		->add(wxICON_INFORMATION,"information")
+		->add(wxICON_STOP,"stop")
+		->add(wxICON_ASTERISK,"asterisk")
+		->allow_array = false;
+
 }

@@ -55,6 +55,40 @@ VALUE wrapPtr(void *arg,VALUE klass)
 	return Qnil;
 }
 
+#define type_wrap(t,get,set) \
+template <>\
+t unwrap< t >(const VALUE &val )\
+{\
+	return get(val);\
+}\
+template <>\
+VALUE wrap< t >(const t &st )\
+{\
+	return set(st);\
+}\
+
+#define type_wrap_array(t) \
+template <>\
+VALUE wrap< t >(const t &st )\
+{\
+	VALUE ary = rb_ary_new();\
+	for(t::const_iterator it = st.begin(); it != st.end(); ++it)\
+		rb_ary_push(ary,wrap(*it));\
+	return ary;\
+}\
+template <>\
+t unwrap< t >(const VALUE &val )\
+{\
+	t arry;\
+	if(NIL_P(val))\
+		return arry;\
+	VALUE dp(rb_Array(val));\
+	std::size_t length = RARRAY_LEN(dp);\
+	for(std::size_t i = 0; i < length; ++i)\
+		arry.Add(unwrap<t::value_type>(RARRAY_AREF(dp,i)));\
+	return arry;\
+}
+
 template <>
 bool unwrap< bool >(const VALUE &val )
 {
@@ -67,65 +101,11 @@ VALUE wrap< bool >(const bool &st )
 	return st ? Qtrue : Qfalse;
 }
 
-template <>
-int unwrap< int >(const VALUE &val )
-{
-	return NUM2INT(val);
-}
-
-template <>
-VALUE wrap< int >(const int &st )
-{
-	return INT2NUM(st);
-}
-template <>
-double unwrap< double >(const VALUE &val )
-{
-	return NUM2DBL(val);
-}
-
-template <>
-VALUE wrap< double >(const double &st )
-{
-	return DBL2NUM(st);
-}
-
-
-template <>
-unsigned int unwrap< unsigned int >(const VALUE &val )
-{
-	return NUM2UINT(val);
-}
-
-template <>
-VALUE wrap< unsigned int >(const unsigned int &st )
-{
-	return UINT2NUM(st);
-}
-
-template <>
-long unwrap< long >(const VALUE &val )
-{
-	return NUM2LONG(val);
-}
-
-template <>
-VALUE wrap< long >(const long &st )
-{
-	return LONG2NUM(st);
-}
-
-template <>
-unsigned long unwrap< unsigned long >(const VALUE &val )
-{
-	return NUM2ULONG(val);
-}
-
-template <>
-VALUE wrap< unsigned long >(const unsigned long &st )
-{
-	return ULONG2NUM(st);
-}
+type_wrap(int,NUM2INT,INT2NUM)
+type_wrap(double,NUM2DBL,DBL2NUM)
+type_wrap(unsigned int,NUM2UINT,UINT2NUM)
+type_wrap(long,NUM2LONG,LONG2NUM)
+type_wrap(unsigned long,NUM2ULONG,ULONG2NUM)
 
 template <>
 VALUE wrap< wxString >(const wxString &st )
@@ -151,7 +131,7 @@ char* unwrap< char* >(const VALUE &val )
 		return RSTRING_PTR(val);
 	}
 	else
-		return unwrap< char* >(rb_funcall(val,rb_intern("to_s"),0));
+		return unwrap< char* >(rb_String(val));
 }
 
 template <>
@@ -162,57 +142,9 @@ wxString unwrap< wxString >(const VALUE &val )
 	else
 		return wxString(unwrap< char* >(val));
 }
-template <>
-VALUE wrap< wxArrayString >(const wxArrayString &st )
-{
-	VALUE ary = rb_ary_new();
-	for(wxArrayString::const_iterator it = st.begin(); it != st.end(); ++it)
-		rb_ary_push(ary,wrap(*it));
-	return ary;
-}
 
-template <>
-VALUE wrap< wxArrayInt >(const wxArrayInt &st )
-{
-	VALUE ary = rb_ary_new();
-	for(wxArrayInt::const_iterator it = st.begin(); it != st.end(); ++it)
-		rb_ary_push(ary,wrap(*it));
-	return ary;
-}
-
-template <>
-wxArrayString unwrap< wxArrayString >(const VALUE &val )
-{
-	wxArrayString arry;
-	if(NIL_P(val))
-		return arry;
-	else if(rb_respond_to(val,rb_intern("to_a")))	{
-		VALUE dp = rb_funcall(val,rb_intern("to_a"),0);
-		std::size_t length = RARRAY_LEN(dp);
-		for(std::size_t i = 0; i < length; ++i)
-			arry.Add(unwrap<wxString>(RARRAY_PTR(dp)[i]));
-	}else{
-		arry.Add(unwrap<wxString>(val));
-	}
-	return arry;
-}
-template <>
-wxArrayInt unwrap< wxArrayInt >(const VALUE &val )
-{
-	wxArrayInt arry;
-	if(NIL_P(val))
-		return arry;
-	else if(rb_respond_to(val,rb_intern("to_a")))	{
-		VALUE dp = rb_funcall(val,rb_intern("to_a"),0);
-		std::size_t length = RARRAY_LEN(dp);
-		for(std::size_t i = 0; i < length; ++i)
-			arry.Add(NUM2INT(RARRAY_PTR(dp)[i]));
-	}else{
-		arry.Add(NUM2INT(val));
-	}
-	return arry;
-}
-
+type_wrap_array(wxArrayString)
+type_wrap_array(wxArrayInt)
 
 template <>
 VALUE wrap< wxDateTime >(const wxDateTime &st )
@@ -242,35 +174,76 @@ wxDateTime unwrap< wxDateTime >(const VALUE &val )
 	return result;
 }
 
+enumtype* registerEnum(const std::string& name,const std::string& type ,int def)
+{
+	enumtype *etype = new enumtype;
+	enumregister.insert(std::make_pair(type,etype));
+	etype->name = name;
+	etype->allow_array = true;
+	etype->defaults = def;
+	return etype;
+}
+
+
+VALUE wrapenum(const int &arg, const std::string& name)
+{
+	enumtype::value_type &enummap = enumregister[name]->values;
+	enumtype::value_type::iterator it = enummap.find(arg);
+	if(it != enummap.end())
+		return ID2SYM(it->second);
+	bool found = false;
+
+	int carg(arg);
+
+	VALUE result = rb_ary_new();
+	for(it = enummap.begin();it != enummap.end();++it)
+	{
+		if((carg & it->first) != 0)
+		{
+			found = true;
+			rb_ary_push(result,ID2SYM(it->second));
+			carg &= ~it->first;
+		}
+	}
+	return found ? result : Qnil;
+}
+
+int unwrapenum(const VALUE &arg, const std::string& name)
+{
+	enumregistertype::iterator it = enumregister.find(name);
+	if(it != enumregister.end())
+	{
+		enumtype* etype = it->second;
+		if(NIL_P(arg))
+			return etype->defaults;
+		else if(SYMBOL_P(arg))
+		{
+			ID id(SYM2ID(arg));
+
+			for(enumtype::value_type::iterator it2 = etype->values.begin();
+					it2 != etype->values.end();
+					++it2)
+			{
+				if(it2->second == id)
+					return it2->first;
+			}
+			rb_raise(rb_eTypeError,"%s is not a %s-Enum.",rb_id2name(id),etype->name.c_str());
+		}else if(rb_obj_is_kind_of(arg,rb_cArray) && etype->allow_array )
+		{
+			int result = 0;
+			size_t count = RARRAY_LEN(arg);
+			for(size_t i = 0; i < count; ++i)
+				result = result | unwrapenum(RARRAY_AREF(arg,i),name);
+		}else
+			return NUM2INT(arg);
+	}
+	return 0;
+}
 
 int unwrap_iconflag(const VALUE &val,int mask)
 {
-	if(NIL_P(val))
-		return wxICON_NONE;
-	
-	int result = 0;
-	if(SYMBOL_P(val))
-	{
-		ID id(SYM2ID(val));
-		if(id == rb_intern("exclamation"))
-			result = wxICON_EXCLAMATION;
-		else if(id == rb_intern("hand"))
-			result = wxICON_HAND;
-		else if(id == rb_intern("warning"))
-			result = wxICON_WARNING;
-		else if(id == rb_intern("error"))
-			result = wxICON_ERROR;
-		else if(id == rb_intern("question"))
-			result = wxICON_QUESTION;
-		else if(id == rb_intern("information"))
-			result = wxICON_INFORMATION;
-		else if(id == rb_intern("stop"))
-			result = wxICON_STOP;
-		else if(id == rb_intern("asterisk"))
-			result = wxICON_ASTERISK;
-	}else
-		result = NUM2INT(val);
-		
+	int result = unwrapenum(val,"icon_flag");
+
 	if((result & mask) != result)
 		rb_raise(rb_eTypeError,"%s is not a in %d mask",unwrap<char*>(val),mask);
 	
@@ -280,38 +253,7 @@ int unwrap_iconflag(const VALUE &val,int mask)
 
 int unwrap_buttonflag(const VALUE& val)
 {
-	if(rb_obj_is_kind_of(val,rb_cArray))
-	{
-
-		int result(0);
-		std::size_t count = RARRAY_LEN(val);
-		for(std::size_t i = 0;i < count; ++i)
-		{
-			result |= unwrap_buttonflag(RARRAY_PTR(val)[i]);
-		}
-		return result;
-	}else if(SYMBOL_P(val))
-	{
-		ID id(SYM2ID(val));
-		if(id == rb_intern("yes"))
-			return wxYES;
-		if(id == rb_intern("ok"))
-			return wxOK;
-		if(id == rb_intern("no"))
-			return wxNO;
-		if(id == rb_intern("yes_no"))
-			return wxYES_NO;
-		if(id == rb_intern("cancel"))
-			return wxCANCEL;
-		if(id == rb_intern("apply"))
-			return wxAPPLY;
-		if(id == rb_intern("close"))
-			return wxCLOSE;
-		if(id == rb_intern("help"))
-			return wxHELP;
-	}else
-			return NUM2INT(val);
-	return wxOK;
+	return unwrapenum(val,"button_flag");
 }
 
 bool check_file_loadable(const wxString& path)
