@@ -45,10 +45,10 @@ DLL_LOCAL VALUE _getCustomColors(VALUE self)
 DLL_LOCAL VALUE _setCustomColors(VALUE self,VALUE val)
 {
 	rb_check_frozen(self);
-	VALUE dp = rb_funcall(val,rb_intern("to_a"),0);
+	VALUE dp = rb_Array(val);
 	wxColourData &data = _self->GetColourData();
 	for(std::size_t i = 0; i < wxColourData::NUM_CUSTOM && i < (std::size_t)RARRAY_LEN(dp); ++i)
-		data.SetCustomColour(i,unwrap<wxColor>(RARRAY_PTR(dp)[i]));
+		data.SetCustomColour(i,unwrap<wxColor>(RARRAY_AREF(dp,i)));
 
 	return val;
 }

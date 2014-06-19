@@ -87,15 +87,13 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
  */
 DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 {
-	VALUE *ptr = RARRAY_PTR(data);
+	_setItemLabel(self,RARRAY_AREF(data,0));
+	_setId(self,RARRAY_AREF(data,1));
+	_setKind(self,RARRAY_AREF(data,2));
 
-	_setItemLabel(self,ptr[0]);
-	_setId(self,ptr[1]);
-	_setKind(self,ptr[2]);
-
-	_setHelp(self,ptr[3]);
+	_setHelp(self,RARRAY_AREF(data,3));
 #if wxUSE_IMAGE
-	_SetBitmap(self,ptr[4]);
+	_SetBitmap(self,RARRAY_AREF(data,4));
 #endif
 	return self;
 }

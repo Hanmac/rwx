@@ -187,23 +187,21 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
  */
 DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 {
-	VALUE *ptr = RARRAY_PTR(data);
-
 	_self->Create(
-		NUM2INT(ptr[0]),
-		unwrapenum<wxFontFamily>(ptr[1]),
-		unwrapenum<wxFontStyle>(ptr[2]),
-		unwrapenum<wxFontWeight>(ptr[3]),
-		RTEST(ptr[4]),
-		unwrap<wxString>(ptr[6]),
+		NUM2INT(RARRAY_AREF(data,0)),
+		unwrapenum<wxFontFamily>(RARRAY_AREF(data,1)),
+		unwrapenum<wxFontStyle>(RARRAY_AREF(data,2)),
+		unwrapenum<wxFontWeight>(RARRAY_AREF(data,3)),
+		RTEST(RARRAY_AREF(data,4)),
+		unwrap<wxString>(RARRAY_AREF(data,6)),
 #ifdef HAVE_RUBY_ENCODING_H
-		unwrapenum<wxFontEncoding>(ptr[7])
+		unwrapenum<wxFontEncoding>(RARRAY_AREF(data,7))
 #else
 		wxFONTENCODING_DEFAULT
 #endif
 	);
 
-	_setStrikethrough(self,ptr[5]);
+	_setStrikethrough(self,RARRAY_AREF(data,5));
 
 	return self;
 }

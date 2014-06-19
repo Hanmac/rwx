@@ -121,9 +121,8 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
  */
 DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
 {
-    VALUE* ptr = RARRAY_PTR(data);
-    _setWidth(self, ptr[0]);
-    _setHeight(self, ptr[1]);
+    _setWidth(self, RARRAY_AREF(data,0));
+    _setHeight(self, RARRAY_AREF(data,1));
     return Qnil;
 }
 

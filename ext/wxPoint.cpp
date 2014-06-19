@@ -91,7 +91,7 @@ wxPointList* unwrap< wxPointList* >(const VALUE &val)
 	VALUE dp = rb_funcall(val,rb_intern("to_a"),0);
 	std::size_t length = RARRAY_LEN(dp);
 	for(std::size_t i = 0; i < length; ++i)
-		result->Append(new wxPoint(unwrap<wxPoint>(RARRAY_PTR(dp)[i])));
+		result->Append(new wxPoint(unwrap<wxPoint>(RARRAY_AREF(dp,i))));
 	return result;
 }
 
@@ -165,9 +165,8 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
  */
 DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
 {
-    VALUE* ptr = RARRAY_PTR(data);
-    _set_x(self, ptr[0]);
-    _set_y(self, ptr[1]);
+    _set_x(self, RARRAY_AREF(data,0));
+    _set_y(self, RARRAY_AREF(data,1));
     return Qnil;
 }
 

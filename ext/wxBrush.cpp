@@ -106,10 +106,9 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
  */
 DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
 {
-    VALUE* ptr = RARRAY_PTR(data);
-    _setColour(self, ptr[0]);
-    _setStyle(self, ptr[1]);
-    _setStipple(self, ptr[2]);
+    _setColour(self, RARRAY_AREF(data,0));
+    _setStyle(self, RARRAY_AREF(data,1));
+    _setStipple(self, RARRAY_AREF(data,2));
     return Qnil;
 }
 

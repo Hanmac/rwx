@@ -398,18 +398,20 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
  */
 DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 {
-	VALUE *ptr = RARRAY_PTR(data);
-	VALUE tmp = ptr[3];
+	VALUE tmp = RARRAY_AREF(data,3);
 	unsigned char* alpha = NULL;
 	if(!NIL_P(tmp))
 		alpha = (unsigned char*)StringValuePtr(tmp);
 
-	_self->Create(NUM2UINT(ptr[0]),NUM2UINT(ptr[1]),(unsigned char*)StringValuePtr(ptr[2]),alpha);
+	VALUE val = RARRAY_AREF(data,2);
+	_self->Create(
+		NUM2UINT(RARRAY_AREF(data,0)),NUM2UINT(RARRAY_AREF(data,1)),
+		(unsigned char*)StringValuePtr(val),alpha);
 
-	_setMask(self,ptr[4]);
+	_setMask(self,RARRAY_AREF(data,4));
 
 #if wxUSE_PALETTE
-	_setPalette(self,ptr[5]);
+	_setPalette(self,RARRAY_AREF(data,5));
 #endif
 
 	return self;

@@ -130,11 +130,11 @@ template <>
 wxImageList* unwrap< wxImageList* >(const VALUE &imagelist)
 {
 	wxImageList *result = new wxImageList;
-	VALUE dup = rb_funcall(imagelist,rb_intern("to_a"),0);
+	VALUE dup(rb_Array(imagelist));
 	result->Create();
 	std::size_t count = RARRAY_LEN(dup);
 	for(std::size_t i = 0;i < count;++i)
-		result->Add(unwrap<wxBitmap>(RARRAY_PTR(dup)[i]));
+		result->Add(unwrap<wxBitmap>(RARRAY_AREF(dup,i)));
 	return result;
 }
 
