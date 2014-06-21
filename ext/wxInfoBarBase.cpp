@@ -49,11 +49,8 @@ DLL_LOCAL VALUE _addButton(int argc,VALUE *argv,VALUE self)
 	if(rb_block_given_p())
 	{
 		VALUE proc = rb_block_proc();
-#ifdef wxHAS_EVENT_BIND
-			_self->Bind(wxEVT_BUTTON,RubyFunctor(proc),wid);
-#else
-			_self->Connect(wid,wxEVT_BUTTON,wxCommandEventHandler(RubyFunctor::operator()),NULL,new RubyFunctor(proc));
-#endif
+
+		_self->Bind(wxEVT_BUTTON,RubyFunctor(proc),wid);
 	
 	}
 	return self;

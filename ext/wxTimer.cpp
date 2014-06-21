@@ -22,11 +22,9 @@ DLL_LOCAL VALUE _initialize(VALUE self)
 {
 	if(rb_block_given_p()){
 		VALUE proc = rb_block_proc();
-#ifdef wxHAS_EVENT_BIND
+
 		_self->Bind(wxEVT_TIMER,RubyFunctor(proc),_self->GetId());
-#else
-		_self->Connect(_self->GetId(),wxEVT_TIMER,wxTimerEventHandler(RubyFunctor::operator()),NULL,new RubyFunctor(proc));
-#endif
+
 	}
 
 	return self;

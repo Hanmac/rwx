@@ -69,11 +69,7 @@ void bind_callback(wxMenu* menu,wxWindowID id)
 {
 	if(rb_block_given_p()){
 		VALUE proc = rb_block_proc();
-#ifdef wxHAS_EVENT_BIND
 		menu->Bind(wxEVT_MENU,RubyFunctor(proc),id);
-#else
-		menu->Connect(id,wxEVT_MENU,wxCommandEventHandler(RubyFunctor::operator()),NULL,new RubyFunctor(proc));
-#endif
 	}
 }
 

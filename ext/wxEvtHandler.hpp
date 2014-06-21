@@ -25,7 +25,6 @@
 
 DLL_LOCAL void registerEventType(const char *sym, wxEventType type,wxClassInfo *info);
 
-#ifdef wxHAS_EVENT_BIND
 template<typename T>
 DLL_LOCAL void registerEventType(const char *sym, wxEventTypeTag<T> type,VALUE klass)
 {
@@ -38,21 +37,6 @@ DLL_LOCAL void registerEventType(const char *sym, wxEventTypeTag<T> type)
 {
 	registerEventType(sym,type,Qnil);
 }
-#else
-template<typename T>
-DLL_LOCAL void registerEventType(const char *sym, wxEventType type,VALUE klass)
-{
-	registerEventType(sym,type,wxCLASSINFO(T));
-	if(!NIL_P(klass))
-		registerInfo<T>(klass);
-}
-template<typename T>
-DLL_LOCAL void registerEventType(const char *sym, wxEventType type)
-{
-	registerEventType<T>(sym,type,Qnil);
-}
-
-#endif
 
 DLL_LOCAL wxEventType unwrapEventType(VALUE type);
 DLL_LOCAL VALUE wrapEventType(wxEventType type);
@@ -71,10 +55,6 @@ private:
 };
 
 class RubyFunctor
-#ifndef wxHAS_EVENT_BIND
-: public wxEvtHandler
-#endif
-
 {
 public:
 	RubyFunctor(VALUE obj);

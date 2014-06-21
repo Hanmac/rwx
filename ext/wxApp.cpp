@@ -35,9 +35,6 @@ wxApp* unwrap< wxApp* >(const VALUE &vapp)
 
 
 class AppAfter
-#ifndef wxHAS_EVENT_BIND
-: public wxEvtHandler
-#endif
 {
 public:
 
@@ -94,11 +91,7 @@ bool RubyApp::OnInit()
 	wxPropertyGrid::RegisterAdditionalEditors();
 #endif
 
-#ifdef wxHAS_EVENT_BIND
 	this->Bind(wxEVT_ASYNC_METHOD_CALL,AppAfter());
-#else
-	this->Connect(wxEVT_ASYNC_METHOD_CALL,wxEventHandler(AppAfter::operator()),NULL,new AppAfter());
-#endif
 
 	ruby_app_inited = true;
 

@@ -47,6 +47,10 @@ if(wx_config = find_executable('wx-config'))
     have_member_func("wxInfoBar","GetButtonCount","wx/infobar.h")
     
     have_const("wxFD_NO_FOLLOW","wx/filedlg.h")
+    unless have_macro("wxHAS_EVENT_BIND","wx/wx.h")
+      abort("need wxHAS_EVENT_BIND, update your compiler")
+    end
+    
     
 	}
 else

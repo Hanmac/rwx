@@ -212,11 +212,9 @@ DLL_LOCAL VALUE _bind(int argc,VALUE *argv,VALUE self)
 
 	if(NIL_P(proc))
 		proc = rb_block_proc();
-#ifdef wxHAS_EVENT_BIND
+
 	_self->Bind(wxEventTypeTag<wxEvent>(unwrapEventType(type)),RubyFunctor(proc),unwrapID(id),unwrapID(last));
-#else
-	_self->Connect(unwrapID(id),unwrapID(last),unwrapEventType(type),wxEventHandler(RubyFunctor::operator()),NULL,new RubyFunctor(proc));
-#endif
+
 	return self;
 }
 
