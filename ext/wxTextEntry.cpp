@@ -8,6 +8,7 @@
 #include "wxTextEntry.hpp"
 #include "wxTextCtrl.hpp"
 #include "wxSearchCtrl.hpp"
+#include "wxBitmapComboBox.hpp"
 #include "wxComboBox.hpp"
 #include "wxPoint.hpp"
 
@@ -24,12 +25,16 @@ wxTextEntryBase* unwrap< wxTextEntryBase* >(const VALUE &obj)
 	if(rb_obj_is_kind_of(obj,rb_cWXSearchCtrl))
 		return unwrap<wxSearchCtrl*>(obj);
 #endif
+#if wxUSE_BITMAPCOMBOBOX
+	if(rb_obj_is_kind_of(obj,rb_cWXBitmapComboBox))
+		return unwrap<wxBitmapComboBox*>(obj);
+#endif
 #if wxUSE_COMBOBOX
 	if(rb_obj_is_kind_of(obj,rb_cWXComboBox))
 		return unwrap<wxComboBox*>(obj);
 #endif
 	rb_raise(rb_eTypeError,"Unknown wxTextEntryBase: %s",rb_obj_classname(obj));
-return NULL;
+	return NULL;
 }
 
 

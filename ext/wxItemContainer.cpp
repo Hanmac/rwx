@@ -10,6 +10,7 @@
 
 #include "wxListBox.hpp"
 #include "wxChoice.hpp"
+#include "wxBitmapComboBox.hpp"
 #include "wxComboBox.hpp"
 
 VALUE rb_mWXItemContainer;
@@ -26,6 +27,10 @@ wxItemContainer* unwrap< wxItemContainer* >(const VALUE &obj)
 #if wxUSE_CHOICE
 	if(rb_obj_is_kind_of(obj,rb_cWXChoice))
 		return unwrap<wxChoice*>(obj);
+#endif
+#if wxUSE_BITMAPCOMBOBOX
+	if(rb_obj_is_kind_of(obj,rb_cWXBitmapComboBox))
+		return unwrap<wxBitmapComboBox*>(obj);
 #endif
 #if wxUSE_COMBOBOX
 	if(rb_obj_is_kind_of(obj,rb_cWXComboBox))

@@ -108,6 +108,7 @@
 
 #include "wxChoice.hpp"
 #include "wxComboBox.hpp"
+#include "wxBitmapComboBox.hpp"
 
 #include "wxSlider.hpp"
 
@@ -359,8 +360,9 @@ extern "C" void Init_rwx()
 
 	Init_WXSearchCtrl(rb_mWX);
 
-	Init_WXComboBox(rb_mWX);
 	Init_WXChoice(rb_mWX);
+	Init_WXComboBox(rb_mWX);
+	Init_WXBitmapComboBox(rb_mWX);
 
 	Init_WXTreeCtrl(rb_mWX);
 	Init_WXStatusBar(rb_mWX);
