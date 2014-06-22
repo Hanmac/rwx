@@ -94,6 +94,16 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 #endif
 
+
+/* Document-attr: next
+ * Get the page which should be shown when the user chooses the "Next" button. WX::WizardPage
+ */
+/* Document-attr: prev
+ * Get the page which should be shown when the user chooses the "Back" button. WX::WizardPage
+ */
+/* Document-attr: bitmap
+ * the font of the TextAttr, WX::Bitmap
+ */
 DLL_LOCAL void Init_WXWizardPage(VALUE rb_mWX)
 {
 #if 0
