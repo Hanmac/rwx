@@ -21,9 +21,7 @@ penlisttype penlistholder;
 template <>
 VALUE wrap< wxPen >(wxPen *bitmap )
 {
-	if(!bitmap)
-		return Qnil;
-	if(!bitmap->IsOk())
+	if(!bitmap || !bitmap->IsOk())
 		return Qnil;
 	return wrapPtr(bitmap,rb_cWXPen);
 }
