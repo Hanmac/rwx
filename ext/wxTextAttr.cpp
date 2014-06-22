@@ -78,7 +78,7 @@ macro_textattr(ParagraphStyleName,wxString,PARAGRAPH_STYLE_NAME,wrap)
 macro_textattr(ListStyleName,wxString,LIST_STYLE_NAME,wrap)
 macro_textattr(ParagraphSpacingAfter,int,PARA_SPACING_AFTER,wrap)
 macro_textattr(ParagraphSpacingBefore,int,PARA_SPACING_BEFORE,wrap)
-macro_textattr(LineSpacing,int,LINE_SPACING,wrap)
+macro_textattr(LineSpacing,wxTextAttrLineSpacing,LINE_SPACING,wrapenum)
 
 macro_textattr(BulletStyle,wxTextAttrBulletStyle,BULLET_STYLE,wrapenum)
 macro_textattr(BulletNumber,int,BULLET_NUMBER,wrap)
@@ -125,8 +125,14 @@ macro_textattr(URL,wxString,URL,wrap)
 /* Document-attr: font_weight
  * the font weight of the TextAttr, Symbol
  */
-/* Document-attr: font_face_name
- * the font face name of the TextAttr, Symbol
+/* Document-attr: font_facename
+ * the font face name of the TextAttr, String
+ */
+/* Document-attr: font_underlined
+ * true if the font is underlined. bool
+ */
+/* Document-attr: font_strikethrough
+ * true if the font is strikethrough. bool
  */
 /* Document-attr: font_encoding
  * the font encoding of the TextAttr, Encoding
@@ -136,6 +142,24 @@ macro_textattr(URL,wxString,URL,wrap)
  * the font of the TextAttr, WX::Font
  */
 
+/* Document-attr: character_style_name
+ * the name of the character style. String
+ */
+/* Document-attr: paragraph_style_name
+ * the name of the paragraph style. String
+ */
+/* Document-attr: list_style_name
+ * the name of the list style. String
+ */
+/* Document-attr: paragraph_spacing_after
+ * the space in tenths of a millimeter after the paragraph. Integer
+ */
+/* Document-attr: paragraph_Spacing_before
+ * the space in tenths of a millimeter before the paragraph. Integer
+ */
+/* Document-attr: line_spacing
+ * the bullet style of the TextAttr, Symbol
+ */
 
 /* Document-attr: bullet_style
  * the bullet style of the TextAttr, Symbol
@@ -272,6 +296,13 @@ DLL_LOCAL void Init_WXTextAttr(VALUE rb_mWX)
 		->add(wxTEXT_ATTR_BULLET_STYLE_ALIGN_CENTRE,"align_center")
 
 		->add(wxTEXT_ATTR_BULLET_STYLE_CONTINUATION,"continuation");
+
+	registerEnum<wxTextAttrLineSpacing>("wxTextAttrLineSpacing",wxTEXT_ATTR_LINE_SPACING_NORMAL)
+		->add(wxTEXT_ATTR_LINE_SPACING_NORMAL,"normal")
+		->add(wxTEXT_ATTR_LINE_SPACING_HALF,"half")
+		->add(wxTEXT_ATTR_LINE_SPACING_TWICE,"twice");
+
+
 
 #endif
 
