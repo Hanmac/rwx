@@ -1,23 +1,23 @@
 /*
- * wxMessageDialog.cpp
+ * wxMessageDialogGeneric.cpp
  *
- *  Created on: 25.11.2012
+ *  Created on: 22.06.2014
  *      Author: hanmac
  */
 
 
-#include "wxMessageDialog.hpp"
+#include "wxMessageDialogGeneric.hpp"
 
-VALUE rb_cWXMessageDialog;
+VALUE rb_cWXMessageDialogGeneric;
 
 #if wxUSE_MSGDLG
-#define _self unwrap<wxMessageDialog*>(self)
+#define _self unwrap<wxGenericMessageDialog*>(self)
 
 namespace RubyWX {
-namespace MessageDialog {
+namespace MessageDialogGeneric {
 
-#ifdef HAVE_WXMESSAGEDIALOG
-APP_PROTECT(wxMessageDialog)
+#ifdef HAVE_WXGENERICMESSAGEDIALOG
+APP_PROTECT(wxGenericMessageDialog)
 #else
 APP_PROTECT_NULL
 #endif
@@ -52,7 +52,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		set_hash_option(hash,"style",style);
 	}
 
-	DATA_PTR(self) = new wxMessageDialog(
+	DATA_PTR(self) = new wxGenericMessageDialog(
 		unwrap<wxWindow*>(parent),message,caption,style
 	);
 
@@ -66,7 +66,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
-DLL_LOCAL void Init_WXMessageDialog(VALUE rb_mWX)
+DLL_LOCAL void Init_WXMessageDialogGeneric(VALUE rb_mWX)
 {
 
 #if 0
@@ -79,13 +79,13 @@ DLL_LOCAL void Init_WXMessageDialog(VALUE rb_mWX)
 #endif
 
 #if wxUSE_MSGDLG
-	using namespace RubyWX::MessageDialog;
-	rb_cWXMessageDialog = rb_define_class_under(rb_mWX,"MessageDialog",rb_cWXMessageDialogBase);
-	rb_define_alloc_func(rb_cWXMessageDialog,_alloc);
+	using namespace RubyWX::MessageDialogGeneric;
+	rb_cWXMessageDialogGeneric = rb_define_class_under(rb_mWX,"MessageDialogGeneric",rb_cWXMessageDialogBase);
+	rb_define_alloc_func(rb_cWXMessageDialogGeneric,_alloc);
 
-	rb_define_method(rb_cWXMessageDialog,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
+	rb_define_method(rb_cWXMessageDialogGeneric,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-	registerInfo<wxMessageDialog>(rb_cWXMessageDialog);
+	registerInfo<wxGenericMessageDialog>(rb_cWXMessageDialogGeneric);
 #endif
 
 }

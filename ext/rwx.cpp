@@ -60,6 +60,10 @@
 #include "wxProgressDialog.hpp"
 
 #include "wxMessageDialogBase.hpp"
+#include "wxMessageDialog.hpp"
+#include "wxMessageDialogGeneric.hpp"
+
+#include "wxRichMessageDialog.hpp"
 
 #include "wxWizard.hpp"
 
@@ -278,6 +282,10 @@ extern "C" void Init_rwx()
 	Init_WXMultiChoiceDialog(rb_mWX);
 
 	Init_WXMessageDialogBase(rb_mWX);
+	Init_WXMessageDialog(rb_mWX);
+	Init_WXMessageDialogGeneric(rb_mWX);
+
+	Init_WXRichMessageDialog(rb_mWX);
 
 	Init_WXMenuBar(rb_mWX);
 
