@@ -8,7 +8,9 @@
 #include "wxTextArea.hpp"
 #include "wxTextAttr.hpp"
 #include "wxTextCtrl.hpp"
+#include "wxRichTextCtrl.hpp"
 #include "wxSearchCtrl.hpp"
+#include "wxSTC.hpp"
 
 VALUE rb_mWXTextArea;
 
@@ -19,9 +21,17 @@ wxTextAreaBase* unwrap< wxTextAreaBase* >(const VALUE &obj)
 {
 	if(rb_obj_is_kind_of(obj,rb_cWXTextCtrl))
 		return unwrap<wxTextCtrl*>(obj);
+#if	wxUSE_RICHTEXT
+	if(rb_obj_is_kind_of(obj,rb_cWXRichTextCtrl))
+		return unwrap<wxRichTextCtrl*>(obj);
+#endif
 #if	wxUSE_SEARCHCTRL
 	if(rb_obj_is_kind_of(obj,rb_cWXSearchCtrl))
 		return unwrap<wxSearchCtrl*>(obj);
+#endif
+#if	wxUSE_STC
+	if(rb_obj_is_kind_of(obj,rb_cWXSTC))
+		return unwrap<wxStyledTextCtrl*>(obj);
 #endif
 	rb_raise(rb_eTypeError,"Unknown wxTextAreaBase: %s",rb_obj_classname(obj));
 return NULL;

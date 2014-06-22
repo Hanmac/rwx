@@ -7,9 +7,11 @@
 
 #include "wxTextEntry.hpp"
 #include "wxTextCtrl.hpp"
+#include "wxRichTextCtrl.hpp"
 #include "wxSearchCtrl.hpp"
 #include "wxBitmapComboBox.hpp"
 #include "wxComboBox.hpp"
+#include "wxSTC.hpp"
 #include "wxPoint.hpp"
 
 VALUE rb_mWXTextEntry;
@@ -20,6 +22,10 @@ wxTextEntryBase* unwrap< wxTextEntryBase* >(const VALUE &obj)
 #if	wxUSE_TEXTCTRL
 	if(rb_obj_is_kind_of(obj,rb_cWXTextCtrl))
 		return unwrap<wxTextCtrl*>(obj);
+#endif
+#if	wxUSE_RICHTEXT
+	if(rb_obj_is_kind_of(obj,rb_cWXRichTextCtrl))
+		return unwrap<wxRichTextCtrl*>(obj);
 #endif
 #if	wxUSE_SEARCHCTRL
 	if(rb_obj_is_kind_of(obj,rb_cWXSearchCtrl))
@@ -32,6 +38,10 @@ wxTextEntryBase* unwrap< wxTextEntryBase* >(const VALUE &obj)
 #if wxUSE_COMBOBOX
 	if(rb_obj_is_kind_of(obj,rb_cWXComboBox))
 		return unwrap<wxComboBox*>(obj);
+#endif
+#if wxUSE_STC
+	if(rb_obj_is_kind_of(obj,rb_cWXSTC))
+		return unwrap<wxStyledTextCtrl*>(obj);
 #endif
 	rb_raise(rb_eTypeError,"Unknown wxTextEntryBase: %s",rb_obj_classname(obj));
 	return NULL;

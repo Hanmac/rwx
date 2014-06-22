@@ -166,6 +166,7 @@
 #include "wxAuiBook.hpp"
 #include "wxTreeBook.hpp"
 
+#include "wxRichTextCtrl.hpp"
 
 #include "wxSTC.hpp"
 #include "wxXRC.hpp"
@@ -414,6 +415,8 @@ extern "C" void Init_rwx()
 	Init_WXPropertyCell(rb_mWX);
 
 	Init_WXPreferences(rb_mWX);
+
+	Init_WXRichTextCtrl(rb_mWX);
 
 	Init_WXXRC(rb_mWX);
 
