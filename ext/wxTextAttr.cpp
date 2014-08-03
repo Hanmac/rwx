@@ -89,6 +89,16 @@ macro_textattr(BulletName,wxString,BULLET_NAME,wrap)
 macro_textattr(URL,wxString,URL,wrap)
 
 
+/*
+*/
+DLL_LOCAL VALUE _initialize_copy(VALUE self, VALUE other)
+{
+	VALUE result = rb_call_super(1,&other);
+	_self->Copy(unwrap<wxTextAttr>(other));
+	return result;
+}
+
+
 }
 }
 #endif
@@ -229,6 +239,7 @@ DLL_LOCAL void Init_WXTextAttr(VALUE rb_mWX)
 	rb_cWXTextAttr = rb_define_class_under(rb_mWX,"TextAttr",rb_cObject);
 	rb_define_alloc_func(rb_cWXTextAttr,_alloc);
 
+	rb_define_private_method(rb_cWXTextAttr,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),1);
 
 	rb_define_attr_method(rb_cWXTextAttr,"text_color",_getTextColour,_setTextColour);
 	rb_define_attr_method(rb_cWXTextAttr,"background_color",_getBackgroundColour,_setBackgroundColour);
