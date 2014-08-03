@@ -43,14 +43,16 @@ DLL_LOCAL VALUE _alloc(VALUE self)
 {
 	app_protected();
 
-	for(VALUE klass = self; klass !=rb_cObject; klass = rb_class_get_superclass(klass))
+	for(VALUE klass = self; klass != rb_cWXProperty; klass = rb_class_get_superclass(klass))
 	{
-		for(infoholdertype::const_iterator it = infoklassholder.begin(); it != infoklassholder.end();++it)
-			if(it->second == klass)
+		for(infoholdertype::const_iterator it = infoklassholder.begin(); it != infoklassholder.end();++it) {
+			if(it->second == klass) {
 				return wrapPtr(it->first->CreateObject(),self);
+			}
+		}
 	}
 
-	return Qnil;
+	return wrapPtr(new wxPGProperty,self);
 }
 
 macro_attr(Name,wxString)
@@ -79,8 +81,6 @@ singlereturn(GetValueType)
 
 singlefunc(DeleteChildren)
 
-macro_attr(ValueImage,wxBitmap&)
-
 macro_attr_selection(ChoiceSelection,GetChoices().GetCount)
 
 macro_attr_bool(Expanded)
@@ -100,6 +100,17 @@ DLL_LOCAL VALUE _setDefaultValue(VALUE self,VALUE val)
 	_self->SetDefaultValue(var);
 	return val;
 }
+
+DLL_LOCAL VALUE _setValueImage(VALUE self,VALUE val)
+{
+	rb_check_frozen(self);
+
+	if(_self->GetGrid())
+		_self->SetValueImage(unwrap<wxBitmap&>(val));
+
+	return val;
+}
+
 
 DLL_LOCAL VALUE _getAttribute(VALUE self,VALUE name)
 {
@@ -658,7 +669,7 @@ DLL_LOCAL void Init_WXProperty(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXProperty,"value",_GetValue,_setValue);
 	rb_define_attr_method(rb_cWXProperty,"default_value",_GetDefaultValue,_setDefaultValue);
-	rb_define_attr_method(rb_cWXProperty,"value_image",_getValueImage,_setValueImage);
+	rb_define_attr_method(rb_cWXProperty,"value_image",_GetValueImage,_setValueImage);
 
 	rb_define_attr_method(rb_cWXProperty,"visible",_IsVisible,_setVisible);
 	rb_define_attr_method(rb_cWXProperty,"expanded",_getExpanded,_setExpanded);
