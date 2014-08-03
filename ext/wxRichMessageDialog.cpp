@@ -31,7 +31,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	wxString caption(wxMessageBoxCaptionStr);
 	int style(wxOK|wxCENTRE);
 
-#ifdef HAVE_WXMESSAGEDIALOG
+#ifdef HAVE_WXRICHMESSAGEDIALOG
 	if(!_created && rb_obj_is_kind_of(name,rb_cString)) {
 
 		if(rb_obj_is_kind_of(hash,rb_cHash)) {
@@ -78,7 +78,7 @@ DLL_LOCAL void Init_WXRichMessageDialog(VALUE rb_mWX)
 	rb_cWXMessageDialogBase = rb_define_class_under(rb_mWX,"MessageDialogBase",rb_cWXDialog);
 #endif
 
-#if wxUSE_MSGDLG
+#if wxUSE_RICHMSGDLG
 	using namespace RubyWX::RichMessageDialog;
 	rb_cWXRichMessageDialog = rb_define_class_under(rb_mWX,"RichMessageDialog",rb_cWXMessageDialogBase);
 	rb_define_alloc_func(rb_cWXRichMessageDialog,_alloc);
