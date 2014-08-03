@@ -71,6 +71,11 @@ macro_attr(Height,int)
 macro_attr(Position,wxPoint)
 macro_attr(Size,wxSize)
 
+macro_attr(Left,int)
+macro_attr(Top,int)
+macro_attr(Bottom,int)
+macro_attr(Right,int)
+
 macro_attr(TopLeft,wxPoint)
 macro_attr(TopRight,wxPoint)
 macro_attr(BottomLeft,wxPoint)
@@ -163,17 +168,53 @@ DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
  * Document-class: WX::Rect
  *
  * This class represents an Rect.
-*/
+ */
 
 /* Document-attr: x
- * returns the x value of Rect. */
+ * returns the x value of Rect. Integer
+ */
 /* Document-attr: y
- * returns the y value of Rect. */
+ * returns the y value of Rect. Integer
+ */
 /* Document-attr: width
- * returns the width value of Rect. */
+ * returns the width value of Rect. Integer
+ */
 /* Document-attr: height
- * returns the height value of Rect. */
+ * returns the height value of Rect. Integer
+ */
 
+/* Document-attr: position
+ * returns the position of Rect. WX::Point
+ */
+/* Document-attr: size
+ * returns the size of Rect. WX::Size
+ */
+
+/* Document-attr: left
+ * returns the left of Rect. Integer
+ */
+/* Document-attr: top
+ * returns the top of Rect. Integer
+ */
+/* Document-attr: bottom
+ * returns the bottom of Rect. Integer
+ */
+/* Document-attr: right
+ * returns the right of Rect. Integer
+ */
+
+/* Document-attr: top_left
+ * returns the top left of Rect. WX::Point
+ */
+/* Document-attr: top_right
+ * returns the top right of Rect. WX::Point
+ */
+/* Document-attr: bottom_left
+ * returns the bottom left of Rect. WX::Point
+ */
+/* Document-attr: bottom_right
+ * returns the bottom right of Rect. WX::Point
+ */
 
 DLL_LOCAL void Init_WXRect(VALUE rb_mWX)
 {
@@ -185,6 +226,20 @@ DLL_LOCAL void Init_WXRect(VALUE rb_mWX)
 	rb_define_attr(rb_cWXRect,"y",1,1);
 	rb_define_attr(rb_cWXRect,"width",1,1);
 	rb_define_attr(rb_cWXRect,"height",1,1);
+
+	rb_define_attr(rb_cWXRect,"position",1,1);
+	rb_define_attr(rb_cWXRect,"size",1,1);
+
+	rb_define_attr(rb_cWXRect,"left",1,1);
+	rb_define_attr(rb_cWXRect,"top",1,1);
+	rb_define_attr(rb_cWXRect,"bottom",1,1);
+	rb_define_attr(rb_cWXRect,"right",1,1);
+
+	rb_define_attr(rb_cWXRect,"top_left",1,1);
+	rb_define_attr(rb_cWXRect,"top_right",1,1);
+	rb_define_attr(rb_cWXRect,"bottom_left",1,1);
+	rb_define_attr(rb_cWXRect,"bottom_right",1,1);
+
 #endif
 
 	using namespace RubyWX::Rect;
@@ -203,6 +258,16 @@ DLL_LOCAL void Init_WXRect(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXRect,"position",_getPosition,_setPosition);
 	rb_define_attr_method(rb_cWXRect,"size",_getSize,_setSize);
+
+	rb_define_attr_method(rb_cWXRect,"left",_getLeft,_setLeft);
+	rb_define_attr_method(rb_cWXRect,"top",_getTop,_setTop);
+	rb_define_attr_method(rb_cWXRect,"bottom",_getBottom,_setBottom);
+	rb_define_attr_method(rb_cWXRect,"right",_getRight,_setRight);
+
+	rb_define_attr_method(rb_cWXRect,"top_left",_getTopLeft,_setTopLeft);
+	rb_define_attr_method(rb_cWXRect,"top_right",_getTopRight,_setTopRight);
+	rb_define_attr_method(rb_cWXRect,"bottom_left",_getBottomLeft,_setBottomLeft);
+	rb_define_attr_method(rb_cWXRect,"bottom_right",_getBottomRight,_setBottomRight);
 
 	rb_define_method(rb_cWXRect,"inspect",RUBY_METHOD_FUNC(_inspect),0);
 
