@@ -172,6 +172,9 @@
 #include "wxTreeBook.hpp"
 
 #include "wxRichTextCtrl.hpp"
+#include "wxRichTextAttr.hpp"
+#include "wxRichTextStyle.hpp"
+#include "wxRichTextStyleSheet.hpp"
 
 #include "wxSTC.hpp"
 #include "wxXRC.hpp"
@@ -428,6 +431,9 @@ extern "C" void Init_rwx()
 	Init_WXPreferences(rb_mWX);
 
 	Init_WXRichTextCtrl(rb_mWX);
+	Init_WXRichTextAttr(rb_mWX);
+	Init_WXRichTextStyle(rb_mWX);
+	Init_WXRichTextStyleSheet(rb_mWX);
 
 	Init_WXXRC(rb_mWX);
 
