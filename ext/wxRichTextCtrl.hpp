@@ -18,13 +18,4 @@ void Init_WXRichTextCtrl(VALUE rb_mWX);
 #include <wx/richtext/richtextctrl.h>
 #endif
 
-namespace RubyWX {
-namespace RichTextCtrl {
-
-void set_style_flags(VALUE hash,int& flags);
-
-}
-}
-
-
 #endif /* WXRICHTEXTCTRL_HPP_ */
