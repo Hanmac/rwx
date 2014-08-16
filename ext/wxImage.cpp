@@ -10,6 +10,7 @@
 
 #include "wxImage.hpp"
 #include "wxBitmap.hpp"
+#include "wxDC.hpp"
 #include "wxColor.hpp"
 
 #include "wxStream.hpp"
@@ -335,6 +336,30 @@ DLL_LOCAL VALUE _save(int argc,VALUE *argv,VALUE self)
 //			rb_raise(rb_eArgError,"%s mime not known",unwrap<wxString>(mime).c_str().AsChar());
 	}
 	return wrap(result);
+}
+
+
+
+DLL_LOCAL VALUE _draw(VALUE self)
+{
+	wxDC *dc;
+
+#if wxUSE_GRAPHICS_CONTEXT
+	dc = new wxGCDC(wxGraphicsContext::Create(*_self));
+#else
+	wxBitmap bit(*_self);
+	wxMemoryDC *mdc = new wxMemoryDC;
+	mdc->SelectObject(bit);
+	dc = mdc;
+#endif
+	rb_yield(wrap(dc));
+
+#if !wxUSE_GRAPHICS_CONTEXT
+	(*_self) = bit.ConvertToImage();
+	mdc->SelectObject(wxNullBitmap);
+#endif
+	//TODO add a way to delete the DCs again
+	return self;
 }
 
 
