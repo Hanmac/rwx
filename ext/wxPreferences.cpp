@@ -18,7 +18,7 @@ VALUE rb_cWXPreferences;
 template <>
 VALUE wrap< wxPreferencesEditor >(wxPreferencesEditor *point )
 {
-	return Data_Wrap_Struct(rb_cWXPreferences, NULL, NULL, point);
+	return wrapTypedPtr(point, rb_cWXPreferences);
 }
 
 #define _self unwrap<wxPreferencesEditor*>(self)

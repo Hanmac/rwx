@@ -16,7 +16,7 @@ VALUE rb_cWXEvent;
 template <>
 wxEvent* unwrap<wxEvent*>(const VALUE &arg)
 {
-	return unwrapPtr<wxEvent>(arg,rb_cWXEvent);
+	return unwrapTypedPtr<wxEvent>(arg,rb_cWXEvent);
 }
 
 

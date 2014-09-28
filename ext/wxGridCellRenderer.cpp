@@ -19,7 +19,7 @@ VALUE rb_cWXGridCellRenderer;
 template <>
 VALUE wrap< wxGridCellRenderer >(wxGridCellRenderer* window)
 {
-	return wrapPtr(window,rb_cWXGridCellRenderer);
+	return wrapTypedPtr(window,rb_cWXGridCellRenderer);
 }
 
 class RubyGridCellRenderer : public wxGridCellRenderer
@@ -45,7 +45,7 @@ public :
 template <>
 wxGridCellRenderer* unwrap<wxGridCellRenderer*>(const VALUE &arg)
 {
-	return unwrapPtr<wxGridCellRenderer>(arg,rb_cWXGridCellRenderer);
+	return unwrapTypedPtr<wxGridCellRenderer>(arg,rb_cWXGridCellRenderer);
 }
 
 

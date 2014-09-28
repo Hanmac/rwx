@@ -35,6 +35,8 @@
   #endif
 #endif
 
+#include "extconf.h"
+
 //need to include setup first because main header does it wrong
 #include <wx/setup.h>
 #include <wx/wx.h>
@@ -62,8 +64,6 @@
 #include <wx/grid.h>
 #endif
 
-#include "extconf.h"
-
 #ifndef RARRAY_AREF
 #ifdef RARRAY_CONST_PTR
 #define RARRAY_AREF(a,i) RARRAY_CONST_PTR(a)[i]
@@ -80,39 +80,33 @@ template< class T > struct remove_pointer<T* const>          {typedef T type;};
 template< class T > struct remove_pointer<T* volatile>       {typedef T type;};
 template< class T > struct remove_pointer<T* const volatile> {typedef T type;};
 
-template< typename T >
-struct is_pointer{
-  static const bool value = false;
-};
-
-template< typename T >
-struct is_pointer< T* >{
-  static const bool value = true;
-};
-
 //typedef std::map<std::string,VALUE> klassholdertype;
 typedef std::map<const wxClassInfo*,VALUE> infoholdertype;
 extern infoholdertype infoklassholder;
 typedef std::map<std::string,VALUE> typeholdertype;
 extern typeholdertype typeklassholder;
 
+typedef std::map<VALUE, rb_data_type_t> datatypeholdertype;
+extern datatypeholdertype datatypeholder;
+extern datatypeholdertype datatypeholder_const;
+
 extern VALUE global_holder;
 void rwx_refobject(VALUE object);
-void rwx_unrefobject(VALUE object);
+bool rwx_unrefobject(VALUE object);
 
-VALUE wrapPtr(void *arg,VALUE klass);
-VALUE wrapPtr(wxObject *object,VALUE klass);
-VALUE wrapPtr(wxEvtHandler *handler,VALUE klass);
+VALUE wrapTypedPtr(void *arg,VALUE klass);
+VALUE wrapTypedPtr(wxObject *object,VALUE klass);
+VALUE wrapTypedPtr(wxEvtHandler *handler,VALUE klass);
 
-VALUE wrapPtr(wxClientDataContainer *sizer,VALUE klass);
-VALUE wrapPtr(wxSizer *sizer,VALUE klass);
+VALUE wrapTypedPtr(wxClientDataContainer *sizer,VALUE klass);
+VALUE wrapTypedPtr(wxSizer *sizer,VALUE klass);
 
 #if wxUSE_PROPGRID
-VALUE wrapPtr(wxPGProperty *sizer,VALUE klass);
+VALUE wrapTypedPtr(wxPGProperty *sizer,VALUE klass);
 #endif
 #if wxUSE_GRID
-VALUE wrapPtr(wxGridTableBase *sizer,VALUE klass);
-VALUE wrapPtr(wxGridCellAttr *sizer,VALUE klass);
+VALUE wrapTypedPtr(wxGridTableBase *sizer,VALUE klass);
+VALUE wrapTypedPtr(wxGridCellAttr *sizer,VALUE klass);
 #endif
 
 
@@ -149,19 +143,34 @@ DLL_LOCAL enumtype* registerEnum(const char* name,int def = 0)
 
 
 template <typename T>
-void registerType(VALUE klass)
+DLL_LOCAL size_t type_size_of(const void* data)
+{
+	return data ? sizeof(T) : 0;
+}
+
+DLL_LOCAL void registerDataType(VALUE klass);
+DLL_LOCAL void registerDataType(VALUE klass, RUBY_DATA_FUNC freefunc, size_t (*sizefunc)(const void *) = NULL);
+
+template <typename T>
+DLL_LOCAL void registerType(VALUE klass, bool bfree = false)
 {
 	typeklassholder[typeid(T*).name()]=klass;
+	if(bfree)
+		registerDataType(klass, RUBY_TYPED_DEFAULT_FREE, type_size_of<T>);
+	else
+		registerDataType(klass);
 }
 
 template <typename T>
-void registerInfo(VALUE klass)
+DLL_LOCAL void registerInfo(VALUE klass)
 {
 	infoklassholder[wxCLASSINFO(T)]=klass;
-	typeklassholder[typeid(T*).name()]=klass;
+	registerType<T>(klass);
 }
 
-VALUE wrapClass(const wxClassInfo * info);
+DLL_LOCAL VALUE wrapClass(const wxClassInfo * info);
+
+DLL_LOCAL rb_data_type_t* unwrapDataType(const VALUE& klass);
 
 template <typename T>
 VALUE wrap(T *arg)
@@ -172,7 +181,7 @@ VALUE wrap(T *arg)
 	VALUE klass = wrapClass(info);
 	if(!NIL_P(klass))
 	{
-		return wrapPtr(arg,klass);
+		return wrapTypedPtr(arg,klass);
 	}
 	rb_warn("%s type unknown",wxString(info->GetClassName()).c_str().AsChar());
 	return Qnil;
@@ -181,21 +190,24 @@ VALUE wrap(T *arg)
 template <typename T>
 VALUE wrap(const T *arg)
 {
-	return rb_obj_freeze(wrap(const_cast<T*>(arg)));
+	VALUE result = rb_obj_freeze(wrap(const_cast<T*>(arg)));
+	RTYPEDDATA_TYPE(result) = &datatypeholder_const[CLASS_OF(result)];
+	return result;
 }
 
+
+DLL_LOCAL void* unwrapTypedPtr(const VALUE &obj, rb_data_type_t* rbdata);
+
 template <typename T>
-T* unwrapPtr(const VALUE &obj,const VALUE &klass)
+T* unwrapTypedPtr(const VALUE &obj,const VALUE &klass, rb_data_type_t* rbdata = NULL)
 {
 	if(NIL_P(obj))
 		return NULL;
 
 	if(rb_obj_is_instance_of(obj,rb_cClass) && rb_class_inherited(obj,klass)) {
-		return unwrapPtr<T>(rb_class_new_instance(0,NULL,obj),klass);
+		return unwrapTypedPtr<T>(rb_class_new_instance(0,NULL,obj), klass, rbdata);
 	}else if (rb_obj_is_kind_of(obj, klass)){
-		T *temp;
-		Data_Get_Struct( obj, T, temp);
-		return temp;
+		return (T*)unwrapTypedPtr(obj, rbdata ? rbdata : unwrapDataType(klass));
 	}else{
 		rb_raise(rb_eTypeError,
 			"Expected %s got %s!",
@@ -208,38 +220,19 @@ T* unwrapPtr(const VALUE &obj,const VALUE &klass)
 }
 
 template <typename T>
-struct WrapReturn
-{
-	WrapReturn(T *val) : mValue(val) {};
-	WrapReturn(T &val) : mValue(&val) {};
-
-	T *mValue;
-
-	operator T*() {return mValue;};
-	operator T() {return *mValue;};
-
-};
-
-template <typename T>
-T nullPtr(){
-	return (T)NULL;
-}
-
-
-template <typename T>
 T unwrap(const VALUE &arg)
 {
 	if(NIL_P(arg))
-		return nullPtr<T>();
+		return NULL;
 	typedef typename remove_pointer<T>::type rtype;
 
 	typeholdertype::iterator it = typeklassholder.find(typeid(rtype*).name());
 	if(it != typeklassholder.end())
 	{
-		return WrapReturn<rtype>(unwrapPtr<rtype>(arg,it->second));
+		return unwrapTypedPtr<rtype>(arg,it->second);
 	}
 	rb_raise(rb_eTypeError,"%s type unknown",typeid(rtype*).name());
-	return nullPtr<T>();
+	return NULL;
 }
 
 template <class T>

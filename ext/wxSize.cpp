@@ -15,7 +15,7 @@ ID rwxID_width,rwxID_height;
 template <>
 VALUE wrap< wxSize >(wxSize *size )
 {
-	return Data_Wrap_Struct(rb_cWXSize, NULL, free, size);
+	return wrapTypedPtr(size, rb_cWXSize);
 }
 
 template <>
@@ -165,7 +165,7 @@ DLL_LOCAL void Init_WXSize(VALUE rb_mWX)
 	rb_define_method(rb_cWXSize,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
 	rb_define_method(rb_cWXSize,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
-	registerType<wxSize>(rb_cWXSize);
+	registerType<wxSize>(rb_cWXSize, true);
 
 	rwxID_width = rb_intern("width");
 	rwxID_height = rb_intern("height");

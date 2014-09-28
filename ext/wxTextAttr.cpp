@@ -15,15 +15,15 @@ VALUE rb_cWXTextAttr;
 
 //find better way?
 template <>
-VALUE wrap< wxTextAttr >(wxTextAttr *color )
+VALUE wrap< wxTextAttr >(wxTextAttr *attr )
 {
-	return Data_Wrap_Struct(rb_cWXTextAttr, NULL, free, color);
+	return wrapTypedPtr(attr, rb_cWXTextAttr);
 }
 
 template <>
 wxTextAttr unwrap< wxTextAttr >(const VALUE &vcolor)
 {
-	return *unwrapPtr<wxTextAttr>(vcolor,rb_cWXTextAttr);
+	return *unwrapTypedPtr<wxTextAttr>(vcolor,rb_cWXTextAttr);
 }
 
 #define _self unwrap<wxTextAttr*>(self)

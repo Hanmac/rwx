@@ -32,7 +32,7 @@ bool check_filter_index(int& filter,const wxString& wildcard)
 template <>
 wxFileCtrlBase* unwrap<wxFileCtrlBase*>(const VALUE &arg)
 {
-	return unwrapPtr<wxFileCtrlBase>(arg,rb_cWXFileCtrlBase);
+	return unwrapTypedPtr<wxFileCtrlBase>(arg,rb_cWXFileCtrlBase);
 }
 
 #define _self unwrap<wxFileCtrlBase*>(self)

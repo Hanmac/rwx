@@ -16,6 +16,9 @@ typeholdertype typeklassholder;
 
 enumregistertype enumregister;
 
+datatypeholdertype datatypeholder;
+datatypeholdertype datatypeholder_const;
+
 VALUE global_holder;
 
 typedef std::map<VALUE,std::size_t> ref_countertype;
@@ -29,12 +32,60 @@ void rwx_refobject(VALUE object)
 	ref_counter[object]++;
 }
 
-void rwx_unrefobject(VALUE object)
+bool rwx_unrefobject(VALUE object)
 {
 	if(ref_counter[object] != 0)
 		ref_counter[object]--;
-	if(ref_counter[object] == 0)
+	if(ref_counter[object] == 0) {
 		rb_hash_delete(global_holder,INT2NUM(object));
+		return true;
+	}
+	return false;
+}
+
+void registerDataType(VALUE klass, RUBY_DATA_FUNC freefunc, size_t (*sizefunc)(const void *))
+{
+	if(!NIL_P(klass))
+	{
+		rb_data_type_t str = {
+			rb_class2name(klass),
+			{0, freefunc, sizefunc,},
+			unwrapDataType(RCLASS_SUPER(klass)), NULL,
+		};
+
+		datatypeholder[klass] = str;
+		if(freefunc) {
+			rb_data_type_t str_const = {
+				rb_class2name(klass),
+				{0, 0, 0,},
+				unwrapDataType(RCLASS_SUPER(klass)), NULL,
+			};
+			datatypeholder_const[klass] = str_const;
+		}else {
+			datatypeholder_const[klass] = str;
+		}
+	}
+}
+
+void registerDataType(VALUE klass)
+{
+	registerDataType(klass, RUBY_TYPED_NEVER_FREE, NULL);
+}
+
+void* unwrapTypedPtr(const VALUE &obj, rb_data_type_t* rbdata)
+{
+	if(!rbdata) {
+		rb_raise(rb_eTypeError,"%s unknown datatype", rb_obj_classname(obj));
+		return NULL;
+	}
+	void* data = Check_TypedStruct(obj, rbdata);
+	if(!data) {
+		rb_raise(
+			rb_eRuntimeError, "destroyed object of %s", rb_obj_classname(obj)
+		);
+		return NULL;
+	}
+	return data;
 
 }
 
@@ -48,10 +99,28 @@ VALUE wrapClass(const wxClassInfo * info)
 	return Qnil;
 }
 
-VALUE wrapPtr(void *arg,VALUE klass)
+rb_data_type_t* unwrapDataType(const VALUE& klass)
 {
-	if(arg)
-		return Data_Wrap_Struct(klass, 0, 0, arg);
+	if(klass == rb_cObject)
+		return NULL;
+	datatypeholdertype::iterator it = datatypeholder.find(klass);
+	if(it != datatypeholder.end())
+		return &it->second;
+	return unwrapDataType(RCLASS_SUPER(klass));
+}
+
+
+VALUE wrapTypedPtr(void *arg,VALUE klass)
+{
+	if(arg){
+		rb_data_type_t* datatype = unwrapDataType(klass);
+		if(!datatype)
+			rb_fatal("%s unknown datatype",rb_class2name(klass));
+
+		rb_warn("%p object of %s", arg, rb_class2name(klass));
+
+		return TypedData_Wrap_Struct(klass, datatype, arg);
+	}
 	return Qnil;
 }
 

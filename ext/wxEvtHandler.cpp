@@ -26,7 +26,7 @@ template <>
 wxEvtHandler* unwrap< wxEvtHandler* >(const VALUE &vhandler)
 {
 	if(TYPE(vhandler) == T_DATA)
-		return unwrapPtr<wxEvtHandler>(vhandler,rb_mWXEvtHandler);
+		return unwrapTypedPtr<wxEvtHandler>(vhandler,rb_mWXEvtHandler);
 	evthandlerholdertype::iterator it = evthandlerholder.find(vhandler);
 	if(it != evthandlerholder.end())
 		return it->second;
@@ -62,7 +62,7 @@ public:
 #endif
 
 #define rubyclientdata(T) \
-VALUE wrapPtr(T *handler,VALUE klass)\
+VALUE wrapTypedPtr(T *handler,VALUE klass)\
 {\
 	if(!handler)\
 		return Qnil;\
@@ -72,7 +72,7 @@ VALUE wrapPtr(T *handler,VALUE klass)\
 	{\
 		if(NIL_P(klass))\
 			return Qnil;\
-		handler->SetClientObject(rcd = new RubyClientData(wrapPtr((void*)handler,klass)));\
+		handler->SetClientObject(rcd = new RubyClientData(wrapTypedPtr((void*)handler,klass)));\
 	}\
 	if(rcd)\
 		return rcd->mRuby;\
@@ -93,23 +93,23 @@ rubyclientdata(wxGridCellAttr)
 #endif
 
 
-VALUE wrapPtr(wxObject *object,VALUE klass)
+VALUE wrapTypedPtr(wxObject *object,VALUE klass)
 {
 	if(!object)
 		return Qnil;
 
 	if(wxEvtHandler *evt = wxDynamicCast(object,wxEvtHandler))
-		return wrapPtr(evt,klass);
+		return wrapTypedPtr(evt,klass);
 	if(wxSizer *evt = wxDynamicCast(object,wxSizer))
-		return wrapPtr(evt,klass);
+		return wrapTypedPtr(evt,klass);
 	if(wxClientDataContainer *evt = dynamic_cast<wxClientDataContainer*>(object))
-		return wrapPtr(evt,klass);
+		return wrapTypedPtr(evt,klass);
 #if wxUSE_PROPGRID
 	if(wxPGProperty *evt = wxDynamicCast(object,wxPGProperty))
-		return wrapPtr(evt,klass);
+		return wrapTypedPtr(evt,klass);
 #endif
 
-	return wrapPtr((void*)object,klass);
+	return wrapTypedPtr((void*)object,klass);
 }
 
 
@@ -170,36 +170,37 @@ RubyClientData::RubyClientData(VALUE obj) : wxClientData(), mRuby(obj)
 
 RubyClientData::~RubyClientData()
 {
-	rwx_unrefobject(mRuby);
+	if(rwx_unrefobject(mRuby) && unwrapDataType(CLASS_OF(mRuby)))
+	{
+		rb_warn(
+			"set %p data of object %p of %s to null",
+			this,
+			(void*)mRuby,
+			rb_obj_classname(mRuby)
+		);
+		RTYPEDDATA_DATA(mRuby) = NULL;
+	}
 }
 
-RubyFunctorPtr::RubyFunctorPtr(VALUE obj) : mValue(obj){
-	rwx_refobject(obj);
-}
-
-RubyFunctorPtr::~RubyFunctorPtr(){
-	rwx_unrefobject(mValue);
-}
-
-RubyFunctor::RubyFunctor(VALUE obj) : ptr(new RubyFunctorPtr(obj)){
+RubyFunctor::RubyFunctor(VALUE obj) : ptr(new RubyClientData(obj)){
 
 }
 
 
 void RubyFunctor::operator()( wxEvent & event )
 {
-	rb_funcall(ptr->get(),rb_intern("call"),1,wrap(&event));
+	rb_funcall(ptr->mRuby,rb_intern("call"),1,wrap(&event));
 }
 #if wxUSE_GUI
 void RubyFunctor::operator()( wxCommandEvent & event )
 {
-	rb_funcall(ptr->get(),rb_intern("call"),1,wrap(&event));
+	rb_funcall(ptr->mRuby,rb_intern("call"),1,wrap(&event));
 }
 #endif
 #if wxUSE_TIMER
 void RubyFunctor::operator()( wxTimerEvent & event )
 {
-	rb_funcall(ptr->get(),rb_intern("call"),1,wrap(&event));
+	rb_funcall(ptr->mRuby,rb_intern("call"),1,wrap(&event));
 }
 #endif
 namespace RubyWX {
@@ -260,14 +261,14 @@ DLL_LOCAL VALUE _callafter(int argc,VALUE *argv,VALUE self)
 	//for some reason new does not work with
 	//wxAsyncMethodCallEvent1<RubyCallAfter,VALUE> in eclipse
 
-	wxAsyncMethodCallEvent0<RubyCallAfter> evnt(
-		new RubyCallAfter(rb_block_proc()), &RubyCallAfter::call
-	);
-	_self->QueueEvent(evnt.Clone());
+//	wxAsyncMethodCallEvent0<RubyCallAfter> evnt(
+//		new RubyCallAfter(rb_block_proc()), &RubyCallAfter::call
+//	);
+//	_self->QueueEvent(evnt.Clone());
 
-//	_self->QueueEvent(new wxAsyncMethodCallEvent0<RubyCallAfter>(
-//			new RubyCallAfter(rb_block_proc()), &RubyCallAfter::call
-//		));
+	_self->QueueEvent(new wxAsyncMethodCallEvent0<RubyCallAfter>(
+			new RubyCallAfter(rb_block_proc()), &RubyCallAfter::call
+		));
 #else
 
 #endif

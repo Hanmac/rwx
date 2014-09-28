@@ -18,7 +18,7 @@ VALUE rb_cWXGridCellAttr;
 template <>
 VALUE wrap< wxGridCellAttr >(wxGridCellAttr* window)
 {
-	return wrapPtr(window,rb_cWXGridCellAttr);
+	return wrapTypedPtr(window,rb_cWXGridCellAttr);
 }
 
 

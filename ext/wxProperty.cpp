@@ -47,12 +47,12 @@ DLL_LOCAL VALUE _alloc(VALUE self)
 	{
 		for(infoholdertype::const_iterator it = infoklassholder.begin(); it != infoklassholder.end();++it) {
 			if(it->second == klass) {
-				return wrapPtr(it->first->CreateObject(),self);
+				return wrapTypedPtr(it->first->CreateObject(),self);
 			}
 		}
 	}
 
-	return wrapPtr(new wxPGProperty,self);
+	return wrapTypedPtr(new wxPGProperty,self);
 }
 
 macro_attr(Name,wxString)

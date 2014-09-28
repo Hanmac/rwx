@@ -15,9 +15,7 @@ extern VALUE rb_cWXBrush;
 void Init_WXBrush(VALUE rb_mWX);
 
 template <>
-wxBrush* nullPtr<wxBrush*>();
-template <>
-wxBrush nullPtr<wxBrush>();
+wxBrush unwrap< wxBrush >(const VALUE &vbrush);
 
 namespace RubyWX {
 namespace Brush {

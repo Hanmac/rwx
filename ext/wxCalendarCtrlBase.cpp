@@ -15,7 +15,7 @@ VALUE rb_cWXCalendarCtrlBase;
 template <>
 wxCalendarCtrlBase* unwrap<wxCalendarCtrlBase*>(const VALUE &arg)
 {
-	return unwrapPtr<wxCalendarCtrlBase>(arg,rb_cWXCalendarCtrlBase);
+	return unwrapTypedPtr<wxCalendarCtrlBase>(arg,rb_cWXCalendarCtrlBase);
 }
 
 namespace RubyWX {

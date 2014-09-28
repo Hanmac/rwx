@@ -13,7 +13,7 @@ VALUE rb_cWXGridTable;
 #if wxUSE_GRID
 RubyGridTable::RubyGridTable(VALUE klass) : wxGridTableBase()
 {
-	this->SetClientObject(new RubyClientData(wrapPtr((void*)this,klass)));
+	this->SetClientObject(new RubyClientData(wrapTypedPtr((void*)this,klass)));
 }
 
 int RubyGridTable::GetNumberRows()
@@ -77,7 +77,7 @@ bool RubyGridTable::DeleteCols( size_t pos, size_t numCols)
 template <>
 wxGridTableBase* unwrap<wxGridTableBase*>(const VALUE &arg)
 {
-	return unwrapPtr<wxGridTableBase>(arg,rb_cWXGridTable);
+	return unwrapTypedPtr<wxGridTableBase>(arg,rb_cWXGridTable);
 }
 
 
@@ -89,7 +89,7 @@ namespace GridTable {
 
 DLL_LOCAL VALUE _alloc(VALUE self)
 {
-	return wrapPtr(new RubyGridTable(self),self);
+	return wrapTypedPtr(new RubyGridTable(self),self);
 }
 
 }

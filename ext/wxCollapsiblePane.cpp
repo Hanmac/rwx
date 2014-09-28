@@ -64,7 +64,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 namespace Event
 {
 #undef _self
-#define _self unwrapPtr<wxCollapsiblePaneEvent>(self,rb_cWXCollapsiblePaneEvent)
+#define _self unwrapTypedPtr<wxCollapsiblePaneEvent>(self,rb_cWXCollapsiblePaneEvent)
 macro_attr(Collapsed,bool)
 }
 

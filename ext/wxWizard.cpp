@@ -147,7 +147,7 @@ DLL_LOCAL VALUE _chainPages(int argc,VALUE *argv,VALUE self)
 namespace Event
 {
 #undef _self
-#define _self unwrapPtr<wxWizardEvent>(self,rb_cWXWizardEvent)
+#define _self unwrapTypedPtr<wxWizardEvent>(self,rb_cWXWizardEvent)
 
 singlereturn(GetDirection)
 singlereturn(GetPage)

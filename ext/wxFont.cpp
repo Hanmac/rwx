@@ -20,7 +20,10 @@ typedef std::map<wxFont*,VALUE> fontlisttype;
 fontlisttype fontlistholder;
 
 template <>
-wxFont nullPtr<wxFont>(){ return wxNullFont;}
+wxFont unwrap< wxFont >(const VALUE &vfont)
+{
+	return NIL_P(vfont) ? wxNullFont : *unwrap< wxFont* >(vfont);
+}
 
 #ifdef HAVE_RUBY_ENCODING_H
 template <>
@@ -466,8 +469,6 @@ DLL_LOCAL void Init_WXFont(VALUE rb_mWX)
 	rb_define_method(rb_cWXFont,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
 	rb_define_singleton_method(rb_cWXFont,"[]",RUBY_METHOD_FUNC(_class_get),-1);
-
-
 
 	registerInfo<wxFont>(rb_cWXFont);
 

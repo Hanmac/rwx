@@ -36,7 +36,7 @@ wxItemContainer* unwrap< wxItemContainer* >(const VALUE &obj)
 	if(rb_obj_is_kind_of(obj,rb_cWXComboBox))
 		return unwrap<wxComboBox*>(obj);
 #endif
-		return unwrapPtr<wxItemContainer>(obj,rb_mWXItemContainer);
+		return unwrapTypedPtr<wxItemContainer>(obj,rb_mWXItemContainer);
  return NULL;
 }
 

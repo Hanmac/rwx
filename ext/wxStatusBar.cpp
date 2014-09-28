@@ -275,14 +275,14 @@ DLL_LOCAL VALUE _each(VALUE self)
 	std::size_t s = _self->GetFieldsCount();
 
 	for(std::size_t i = 0 ; i < s; ++i)
-		rb_yield(wrapPtr(&const_cast<wxStatusBarPane&>(_self->GetField(i)),rb_cWXStatusBarPane));
+		rb_yield(wrapTypedPtr(&const_cast<wxStatusBarPane&>(_self->GetField(i)),rb_cWXStatusBarPane));
 	return self;
 }
 
 namespace Pane
 {
 #undef _self
-#define _self unwrapPtr<wxStatusBarPane>(self,rb_cWXStatusBarPane)
+#define _self unwrapTypedPtr<wxStatusBarPane>(self,rb_cWXStatusBarPane)
 
 macro_attr(Width,int)
 macro_attr(Style,int)

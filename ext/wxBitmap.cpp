@@ -42,7 +42,7 @@ VALUE wrap< wxBitmap >(wxBitmap *bitmap )
 {
 	if(!bitmap || !bitmap->IsOk() || bitmap == &wxNullBitmap)
 		return Qnil;
-	return Data_Wrap_Struct(rb_cWXBitmap, NULL, NULL, bitmap);
+	return wrapTypedPtr(bitmap,rb_cWXBitmap);
 }
 
 template <>
@@ -51,7 +51,7 @@ wxBitmap* unwrap< wxBitmap* >(const VALUE &vbitmap)
 	if(NIL_P(vbitmap))
 		return &wxNullBitmap;
 	if(rb_obj_is_kind_of(vbitmap,rb_cWXBitmap))
-		return unwrapPtr<wxBitmap>(vbitmap, rb_cWXBitmap);
+		return unwrapTypedPtr<wxBitmap>(vbitmap, rb_cWXBitmap);
 #if wxUSE_IMAGE
 	if(rb_obj_is_kind_of(vbitmap,rb_cWXImage))
 		return new wxBitmap(unwrap<wxImage>(vbitmap));
@@ -180,7 +180,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL VALUE _initialize_copy(VALUE self,VALUE other)
 {
 	//TODO delete old data?
-	DATA_PTR(self) = new wxBitmap(unwrap<wxBitmap>(other));
+	RTYPEDDATA_DATA(self) = new wxBitmap(unwrap<wxBitmap>(other));
 	return self;
 }
 
@@ -216,7 +216,7 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
 DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 {
 	//TODO delete old data?
-	DATA_PTR(self) = new wxBitmap(unwrap<wxImage>(data));
+	RTYPEDDATA_DATA(self) = new wxBitmap(unwrap<wxImage>(data));
 	return self;
 }
 

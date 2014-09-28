@@ -52,7 +52,7 @@ wxSizerFlags unwrap< wxSizerFlags >(const VALUE &hash)
 template <>
 wxSizer* unwrap<wxSizer*>(const VALUE &arg)
 {
-	return unwrapPtr<wxSizer>(arg,rb_cWXSizer);
+	return unwrapTypedPtr<wxSizer>(arg,rb_cWXSizer);
 }
 
 
@@ -363,5 +363,6 @@ DLL_LOCAL void Init_WXSizer(VALUE rb_mWX)
 	rb_define_method(rb_cWXSizer,"remove",RUBY_METHOD_FUNC(_remove),1);
 
 	registerInfo<wxSizer>(rb_cWXSizer);
+
 }
 

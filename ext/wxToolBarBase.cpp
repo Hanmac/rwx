@@ -14,7 +14,7 @@ VALUE rb_cWXToolBarBase;
 
 #if wxUSE_TOOLBAR
 
-#define _self unwrapPtr<wxToolBarBase>(self,rb_cWXToolBarBase)
+#define _self unwrapTypedPtr<wxToolBarBase>(self,rb_cWXToolBarBase)
 
 namespace RubyWX {
 namespace ToolBarBase {

@@ -15,7 +15,7 @@ VALUE rb_cWXInfoBarBase;
 template <>
 wxInfoBarBase* unwrap<wxInfoBarBase*>(const VALUE &arg)
 {
-	return unwrapPtr<wxInfoBarBase>(arg,rb_cWXInfoBarBase);
+	return unwrapTypedPtr<wxInfoBarBase>(arg,rb_cWXInfoBarBase);
 }
 
 

@@ -204,6 +204,9 @@ singlereturn_frozen(PageUp)
 singlereturn_frozen(PageDown)
 
 singlereturn_frozen(Destroy)
+singlereturn_frozen(DestroyChildren)
+
+singlereturn(IsBeingDeleted)
 
 singlereturn(GetRect)
 
@@ -377,6 +380,10 @@ DLL_LOCAL VALUE _wxClass(VALUE self)
 	return wrap(wxString(_self->GetClassInfo()->GetClassName()));
 }
 
+DLL_LOCAL VALUE _IsDestroyed(VALUE self)
+{
+	return wrap(RTYPEDDATA_DATA(self) == NULL);
+}
 
 
 #if wxUSE_MENUS
@@ -792,6 +799,10 @@ DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 	rb_define_method(rb_cWXWindow,"draw",RUBY_METHOD_FUNC(_draw),-1);
 	rb_define_method(rb_cWXWindow,"close",RUBY_METHOD_FUNC(_Close),-1);
 	rb_define_method(rb_cWXWindow,"destroy",RUBY_METHOD_FUNC(_Destroy),0);
+	rb_define_method(rb_cWXWindow,"destroy_children",RUBY_METHOD_FUNC(_DestroyChildren),0);
+
+	rb_define_method(rb_cWXWindow,"destroyed?",RUBY_METHOD_FUNC(_IsDestroyed),0);
+	rb_define_method(rb_cWXWindow,"deleted?",RUBY_METHOD_FUNC(_IsBeingDeleted),0);
 
 #if wxUSE_MENUS
 	rb_define_method(rb_cWXWindow,"popup_menu",RUBY_METHOD_FUNC(_popupmenu),-1);

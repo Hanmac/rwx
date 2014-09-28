@@ -17,7 +17,7 @@ VALUE rb_cWXAuiPane;
 template <>
 VALUE wrap< wxAuiPaneInfo >(wxAuiPaneInfo *vinfo)
 {
-	return wrapPtr(vinfo,rb_cWXAuiPane);
+	return wrapTypedPtr(vinfo,rb_cWXAuiPane);
 }
 
 #define set_aui_option(name, cname, func) \
@@ -91,7 +91,7 @@ wxAuiPaneInfo unwrap< wxAuiPaneInfo >(const VALUE &vinfo)
 		set_aui_option(pin_button,PinButton,RTEST)
 		return info;
 	}else
-		return *unwrapPtr<wxAuiPaneInfo>(vinfo, rb_cWXAuiPane);
+		return *unwrapTypedPtr<wxAuiPaneInfo>(vinfo, rb_cWXAuiPane);
 }
 
 namespace RubyWX {

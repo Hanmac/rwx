@@ -13,15 +13,14 @@
 
 VALUE rb_cWXBrush;
 
-
 typedef std::map<wxBrush*,VALUE> brushlisttype;
 brushlisttype brushlistholder;
 
-
 template <>
-wxBrush* nullPtr<wxBrush*>(){ return &wxNullBrush;}
-template <>
-wxBrush nullPtr<wxBrush>(){ return wxNullBrush;}
+wxBrush unwrap< wxBrush >(const VALUE &vbrush)
+{
+	return NIL_P(vbrush) ? wxNullBrush : *unwrap< wxBrush* >(vbrush);
+}
 
 namespace RubyWX {
 namespace Brush {
@@ -258,7 +257,6 @@ DLL_LOCAL void Init_WXBrush(VALUE rb_mWX)
 //	rb_define_method(rb_cWXBrush,"inspect",RUBY_METHOD_FUNC(_inspect),0);
 
 	registerInfo<wxBrush>(rb_cWXBrush);
-
 
 	registerEnum<wxBrushStyle>("WX::BrushStyle",wxBRUSHSTYLE_TRANSPARENT)
 		->add(wxBRUSHSTYLE_SOLID,"solid")

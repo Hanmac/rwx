@@ -32,7 +32,7 @@ void DataViewClientHolder::setClientValue( const wxDataViewItem& item, wxClientD
 
 bool RubyDataViewNotifier::ItemAdded( const wxDataViewItem &parent, const wxDataViewItem &item )
 {
-	dynamic_cast<DataViewClientHolder*>(this->GetOwner())->setClientValue(item,new RubyClientData(wrapPtr((void*)(&item),rb_cWXDataViewItem)));
+	dynamic_cast<DataViewClientHolder*>(this->GetOwner())->setClientValue(item,new RubyClientData(wrapTypedPtr((void*)(&item),rb_cWXDataViewItem)));
 	return true;
 }
 bool RubyDataViewNotifier::ItemDeleted( const wxDataViewItem &parent, const wxDataViewItem &item )
@@ -144,7 +144,7 @@ DLL_LOCAL VALUE _AppendProgressColumn(int argc,VALUE *argv,VALUE self)
 
 namespace Event {
 #undef _self
-#define _self unwrapPtr<wxDataViewEvent>(self,rb_cWXDataViewEvent)
+#define _self unwrapTypedPtr<wxDataViewEvent>(self,rb_cWXDataViewEvent)
 DLL_LOCAL VALUE _getValue(VALUE self)
 {
 	//omg is this ugly

@@ -23,31 +23,27 @@ VALUE wrap< wxPen >(wxPen *bitmap )
 {
 	if(!bitmap || !bitmap->IsOk())
 		return Qnil;
-	return wrapPtr(bitmap,rb_cWXPen);
+	return wrapTypedPtr(bitmap,rb_cWXPen);
 }
 
 template <>
 VALUE wrap< wxPen >(const wxPen &bitmap )
 {
 	if(bitmap.IsOk())
-		return wrapPtr(const_cast<wxPen*>(&bitmap),rb_cWXPen);
+		return wrapTypedPtr(const_cast<wxPen*>(&bitmap),rb_cWXPen);
 	return Qnil;
 }
 
 template <>
 wxPen* unwrap< wxPen* >(const VALUE &vbitmap)
 {
-	if(NIL_P(vbitmap))
-		return &wxNullPen;
-	return unwrapPtr<wxPen>(vbitmap, rb_cWXPen);
+	return NIL_P(vbitmap) ? &wxNullPen : unwrapTypedPtr<wxPen>(vbitmap, rb_cWXPen);
 }
 
 template <>
 wxPen unwrap< wxPen >(const VALUE &vbitmap)
 {
-	if(NIL_P(vbitmap))
-		return wxNullPen;
-	return *unwrap<wxPen*>(vbitmap);
+	return NIL_P(vbitmap) ? wxNullPen : *unwrap<wxPen*>(vbitmap);
 }
 
 
@@ -296,6 +292,7 @@ DLL_LOCAL void Init_WXPen(VALUE rb_mWX)
 
 	rb_define_singleton_method(rb_cWXPen,"[]",RUBY_METHOD_FUNC(_class_get),-1);
 
+	registerDataType(rb_cWXPen);
 //
 //	rb_define_method(rb_cWXPen,"to_s",RUBY_METHOD_FUNC(_tos),0);
 //	rb_define_method(rb_cWXPen,"inspect",RUBY_METHOD_FUNC(_inspect),0);

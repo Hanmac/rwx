@@ -30,7 +30,7 @@ bool ruby_app_inited;
 template <>
 wxApp* unwrap< wxApp* >(const VALUE &vapp)
 {
-	return unwrapPtr<RubyApp>(vapp, rb_cWXApp);
+	return unwrapTypedPtr<RubyApp>(vapp, rb_cWXApp);
 }
 
 
@@ -59,7 +59,7 @@ void app_protected()
 
 RubyApp::RubyApp(VALUE klass)
 {
-	mRuby = wrapPtr(this,klass);
+	mRuby = wrapTypedPtr(this,klass);
 }
 
 bool RubyApp::OnInit()
@@ -198,5 +198,8 @@ DLL_LOCAL void Init_WXApp(VALUE rb_mWX)
 	rb_define_singleton_method(rb_mWX,"App",RUBY_METHOD_FUNC(singleton_wxApp),0);
 
 	rb_define_module_function(rb_mWX,"exit",RUBY_METHOD_FUNC(_wxExit),0);
+
+	registerDataType(rb_cWXApp);
+
 }
 

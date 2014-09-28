@@ -41,17 +41,13 @@ DLL_LOCAL void registerEventType(const char *sym, wxEventTypeTag<T> type)
 DLL_LOCAL wxEventType unwrapEventType(VALUE type);
 DLL_LOCAL VALUE wrapEventType(wxEventType type);
 
-class RubyFunctorPtr
+
+class RubyClientData : public wxClientData
 {
 public:
-	RubyFunctorPtr(VALUE obj);
-
-	~RubyFunctorPtr();
-
-	VALUE get() {return mValue;};
-private:
-	VALUE mValue;
-
+	RubyClientData(VALUE obj);
+	~RubyClientData();
+	VALUE mRuby;
 };
 
 class RubyFunctor
@@ -68,15 +64,7 @@ public:
 	void operator()( wxTimerEvent & event );
 #endif
 private:
-	wxSharedPtr<RubyFunctorPtr> ptr;
-};
-
-class RubyClientData : public wxClientData
-{
-public:
-	RubyClientData(VALUE obj);
-	~RubyClientData();
-	VALUE mRuby;
+	wxSharedPtr<RubyClientData> ptr;
 };
 
 

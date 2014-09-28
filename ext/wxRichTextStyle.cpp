@@ -15,7 +15,7 @@ VALUE rb_cWXRichTextStyle;
 template <>
 wxRichTextStyleDefinition* unwrap< wxRichTextStyleDefinition* >(const VALUE &vcolor)
 {
-	return unwrapPtr<wxRichTextStyleDefinition>(vcolor,rb_cWXRichTextStyle);
+	return unwrapTypedPtr<wxRichTextStyleDefinition>(vcolor,rb_cWXRichTextStyle);
 }
 
 #define _self unwrap<wxRichTextStyleDefinition*>(self)

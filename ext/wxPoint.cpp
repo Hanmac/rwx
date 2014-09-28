@@ -16,8 +16,9 @@ ID rwxID_x,rwxID_y;
 template <>
 VALUE wrap< wxRealPoint >(wxRealPoint *point )
 {
-	return Data_Wrap_Struct(rb_cwxPoint, NULL, free, point);
+	return wrapTypedPtr(point, rb_cwxPoint);
 }
+
 template <>
 VALUE wrap< wxPoint >(const wxPoint &point )
 {
@@ -213,7 +214,7 @@ DLL_LOCAL void Init_WXPoint(VALUE rb_mWX)
 	rb_define_method(rb_cwxPoint,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
 	rb_define_method(rb_cwxPoint,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
-	registerType<wxRealPoint>(rb_cwxPoint);
+	registerType<wxRealPoint>(rb_cwxPoint, true);
 
 	rwxID_x = rb_intern("x");
 	rwxID_y = rb_intern("y");

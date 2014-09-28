@@ -20,7 +20,7 @@ singlereturn(IsVertical)
 
 DLL_LOCAL VALUE _alloc(VALUE self)
 {
-	return wrapPtr(new wxBoxSizer(wxHORIZONTAL),self);
+	return wrapTypedPtr(new wxBoxSizer(wxHORIZONTAL),self);
 }
 
 

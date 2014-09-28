@@ -61,7 +61,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		_self->Create(unwrap<wxWindow*>(parent),
 				message,prompt,caption,value,min,max);
 #else
-		DATA_PTR(self) = new wxNumberEntryDialog(unwrap<wxWindow*>(parent),
+		RTYPEDDATA_DATA(self) = new wxNumberEntryDialog(unwrap<wxWindow*>(parent),
 				message,prompt,caption,value,min,max);
 #endif
 		

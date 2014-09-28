@@ -15,17 +15,8 @@ ID rwxID_red,rwxID_blue,rwxID_green,rwxID_alpha;
 template <>
 VALUE wrap< wxColor >(wxColor *color )
 {
-	return Data_Wrap_Struct(rb_cWXColor, NULL, free, color);
+	return wrapTypedPtr(color, rb_cWXColor);
 }
-
-//TODO fix that const pointer should not be freed
-template <>
-VALUE wrap< wxColor >(const wxColor *color )
-{
-	VALUE result = Data_Wrap_Struct(rb_cWXColor, NULL, NULL, const_cast<wxColor*>(color));
-	return rb_obj_freeze(result);
-}
-
 
 template <>
 bool is_wrapable< wxColor >(const VALUE &vcolor)
@@ -45,7 +36,7 @@ bool is_wrapable< wxColor >(const VALUE &vcolor)
 template <>
 wxColor* unwrap< wxColor* >(const VALUE &vcolor)
 {
-	return unwrapPtr<wxColor>(vcolor, rb_cWXColor);
+	return unwrapTypedPtr<wxColor>(vcolor, rb_cWXColor);
 }
 
 template <>
@@ -53,12 +44,12 @@ wxColor unwrap< wxColor >(const VALUE &vcolor)
 {
 	if(rb_obj_is_kind_of(vcolor, rb_cString)){
 		wxString name(unwrap<wxString>(vcolor));
-		if(wxTheColourDatabase->Find(name).IsOk())
-			return wxColor(name);
-		else{
-			rb_raise(rb_eTypeError,"%s is not a valid %s name",name.c_str().AsChar(),rb_class2name(rb_cWXColor));
-			return wxNullColour;
+		if(wxColourDatabase *database = wxTheColourDatabase) {
+			if(database->Find(name).IsOk())
+				return wxColor(name);
 		}
+		rb_raise(rb_eTypeError,"%s is not a valid %s name",name.c_str().AsChar(),rb_class2name(rb_cWXColor));
+		return wxNullColour;
 	}else if(FIXNUM_P(vcolor))
 		return wxColor(NUM2INT(vcolor));
 	else if(!rb_obj_is_kind_of(vcolor, rb_cWXColor) &&
@@ -375,4 +366,6 @@ DLL_LOCAL void Init_WXColor(VALUE rb_mWX)
 	rwxID_blue = rb_intern("blue");
 	rwxID_green = rb_intern("green");
 	rwxID_alpha = rb_intern("alpha");
+
+	registerType<wxColor>(rb_cWXColor, true);
 }

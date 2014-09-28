@@ -30,7 +30,7 @@ VALUE rb_cWXBookCtrlBase,rb_cWXBookCtrlEvent;
 template <>
 wxBookCtrlBase* unwrap<wxBookCtrlBase*>(const VALUE &arg)
 {
-	return unwrapPtr<wxBookCtrlBase>(arg,rb_cWXBookCtrlBase);
+	return unwrapTypedPtr<wxBookCtrlBase>(arg,rb_cWXBookCtrlBase);
 }
 
 #define _self unwrap<wxBookCtrlBase*>(self)
@@ -543,7 +543,7 @@ DLL_LOCAL VALUE _prev_page(VALUE self)
 
 namespace Event {
 #undef _self
-#define _self unwrapPtr<wxBookCtrlEvent>(self,rb_cWXBookCtrlEvent)
+#define _self unwrapTypedPtr<wxBookCtrlEvent>(self,rb_cWXBookCtrlEvent)
 macro_attr(Selection,int)
 macro_attr(OldSelection,int)
 }

@@ -48,7 +48,7 @@ wxWizardPage* RubyWizardPage::GetNext() const
 template <>
 wxWizardPage* unwrap<wxWizardPage*>(const VALUE &arg)
 {
-	return unwrapPtr<wxWizardPage>(arg,rb_cWXWizardPage);
+	return unwrapTypedPtr<wxWizardPage>(arg,rb_cWXWizardPage);
 }
 
 

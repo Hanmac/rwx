@@ -76,7 +76,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 namespace Event {
 #undef _self
-#define _self unwrapPtr<wxColourPickerEvent>(self,rb_cWXColorPickerEvent)
+#define _self unwrapTypedPtr<wxColourPickerEvent>(self,rb_cWXColorPickerEvent)
 macro_attr(Colour,wxColour)
 }
 

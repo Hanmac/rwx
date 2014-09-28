@@ -169,7 +169,7 @@ block_func0(SuppressUndo)
 namespace Event
 {
 #undef _self
-#define _self unwrapPtr<wxRichTextEvent>(self,rb_cWXRichTextCtrlEvent)
+#define _self unwrapTypedPtr<wxRichTextEvent>(self,rb_cWXRichTextCtrlEvent)
 
 macro_attr(Position,int)
 

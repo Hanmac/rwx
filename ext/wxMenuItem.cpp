@@ -169,5 +169,6 @@ DLL_LOCAL void Init_WXMenuItem(VALUE rb_mWX)
 
 
 	registerInfo<wxMenuItem>(rb_cWXMenuItem);
+
 #endif
 }

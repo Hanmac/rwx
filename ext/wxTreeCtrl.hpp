@@ -58,14 +58,9 @@ private:
 };
 
 template <>
-inline wxTreeItemId unwrap< wxTreeItemId >(const VALUE &vwindow)
-{
-	return unwrapPtr<RubyTreeCtrlItem>(vwindow, rb_cWXTreeCtrl)->GetId();
-}
+wxTreeItemId unwrap< wxTreeItemId >(const VALUE &vwindow);
 
-
-
-VALUE wrap(wxTreeCtrl* tree,wxTreeItemId id);
+VALUE wrap(wxTreeCtrl* tree, wxTreeItemId id);
 
 #endif
 #endif /* WXTREECTRL_HPP_ */

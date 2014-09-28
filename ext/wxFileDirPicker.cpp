@@ -18,7 +18,7 @@ VALUE rb_cWXFileDirPickerEvent;
 template <>
 wxFileDirPickerCtrlBase* unwrap<wxFileDirPickerCtrlBase*>(const VALUE &arg)
 {
-	return unwrapPtr<wxFileDirPickerCtrlBase>(arg,rb_cWXFileDirPicker);
+	return unwrapTypedPtr<wxFileDirPickerCtrlBase>(arg,rb_cWXFileDirPicker);
 }
 
 namespace RubyWX {
@@ -42,7 +42,7 @@ macro_attr(Path,wxString)
 
 namespace Event {
 #undef _self
-#define _self unwrapPtr<wxFileDirPickerEvent>(self,rb_cWXFileDirPickerEvent)
+#define _self unwrapTypedPtr<wxFileDirPickerEvent>(self,rb_cWXFileDirPickerEvent)
 macro_attr(Path,wxString)
 }
 

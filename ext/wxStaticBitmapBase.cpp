@@ -13,7 +13,7 @@
 VALUE rb_cWXStaticBitmapBase;
 
 #if wxUSE_STATBMP
-#define _self unwrapPtr<wxStaticBitmapBase>(self,rb_cWXStaticBitmapBase)
+#define _self unwrapTypedPtr<wxStaticBitmapBase>(self,rb_cWXStaticBitmapBase)
 
 namespace RubyWX {
 namespace StaticBitmapBase {

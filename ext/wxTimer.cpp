@@ -50,7 +50,7 @@ DLL_LOCAL VALUE _setOwner(VALUE self,VALUE val)
 namespace Event {
 
 #undef _self
-#define _self unwrapPtr<wxTimerEvent>(self,rb_cWXTimerEvent)
+#define _self unwrapTypedPtr<wxTimerEvent>(self,rb_cWXTimerEvent)
 
 singlereturn(GetInterval)
 

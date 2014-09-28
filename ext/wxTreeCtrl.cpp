@@ -15,6 +15,11 @@
 VALUE rb_cWXTreeCtrl,rb_cWXTreeCtrlItem,rb_cWXTreeCtrlEvent;
 #if wxUSE_TREECTRL
 
+template <>
+wxTreeItemId unwrap< wxTreeItemId >(const VALUE &vwindow)
+{
+	return unwrapTypedPtr<RubyTreeCtrlItem>(vwindow, rb_cWXTreeCtrl)->GetId();
+}
 
 namespace RubyWX {
 namespace TreeCtrl {
@@ -89,7 +94,7 @@ DLL_LOCAL VALUE _setSelection(VALUE self,VALUE item)
 
 namespace Item {
 #undef _self
-#define _self unwrapPtr<RubyTreeCtrlItem>(self, rb_cWXTreeCtrlItem)
+#define _self unwrapTypedPtr<RubyTreeCtrlItem>(self, rb_cWXTreeCtrlItem)
 
 macro_attr(State,int)
 macro_attr(Bold,bool)
@@ -146,7 +151,7 @@ DLL_LOCAL VALUE _GetPrevSibling(VALUE self)
 
 DLL_LOCAL VALUE _compare(VALUE self,VALUE other)
 {
-	return _self->compare(unwrapPtr<RubyTreeCtrlItem>(self, rb_cWXTreeCtrlItem));
+	return _self->compare(unwrapTypedPtr<RubyTreeCtrlItem>(self, rb_cWXTreeCtrlItem));
 }
 
 DLL_LOCAL VALUE _each(VALUE self)
@@ -162,7 +167,7 @@ DLL_LOCAL VALUE _each(VALUE self)
 namespace Event {
 
 #undef _self
-#define _self unwrapPtr<wxTreeEvent>(self, rb_cWXTreeCtrlEvent)
+#define _self unwrapTypedPtr<wxTreeEvent>(self, rb_cWXTreeCtrlEvent)
 
 macro_attr(Label,wxString)
 macro_attr(ToolTip,wxString)
@@ -194,7 +199,7 @@ DLL_LOCAL VALUE _SetOldItem(VALUE self,VALUE val)
 }
 
 RubyTreeCtrlItem::RubyTreeCtrlItem(wxTreeCtrl* tree,wxTreeItemId id) : wxTreeItemData(),
-		mRuby(wrapPtr(this,rb_cWXTreeCtrlItem)), mTree(tree)
+		mRuby(wrapTypedPtr(this,rb_cWXTreeCtrlItem)), mTree(tree)
 {
 	SetId(id);
 	tree->SetItemData(id,this);

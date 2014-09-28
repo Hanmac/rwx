@@ -29,10 +29,10 @@ template <>
 wxImage* unwrap< wxImage* >(const VALUE &vimage)
 {
 	if(rb_obj_is_kind_of(vimage,rb_cWXImage))
-		return unwrapPtr<wxImage>(vimage, rb_cWXImage);
+		return unwrapTypedPtr<wxImage>(vimage, rb_cWXImage);
 	if(is_wrapable<wxSize>(vimage))
 		return new wxImage(unwrap<wxSize>(vimage));
-	return unwrapPtr<wxImage>(rb_class_new_instance(1,const_cast<VALUE*>(&vimage),rb_cWXImage), rb_cWXImage);
+	return unwrapTypedPtr<wxImage>(rb_class_new_instance(1,const_cast<VALUE*>(&vimage),rb_cWXImage), rb_cWXImage);
 }
 
 

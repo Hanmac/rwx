@@ -14,7 +14,7 @@ VALUE rb_cWXPickerBase;
 template <>
 wxPickerBase* unwrap<wxPickerBase*>(const VALUE &arg)
 {
-	return unwrapPtr<wxPickerBase>(arg,rb_cWXPickerBase);
+	return unwrapTypedPtr<wxPickerBase>(arg,rb_cWXPickerBase);
 }
 
 #define _self unwrap<wxPickerBase*>(self)

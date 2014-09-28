@@ -14,15 +14,15 @@ VALUE rb_cWXRichTextAttr;
 
 //find better way?
 template <>
-VALUE wrap< wxRichTextAttr >(wxRichTextAttr *color )
+VALUE wrap< wxRichTextAttr >(wxRichTextAttr *attr )
 {
-	return Data_Wrap_Struct(rb_cWXTextAttr, NULL, free, color);
+	return wrapTypedPtr(attr, rb_cWXRichTextAttr);
 }
 
 template <>
-wxRichTextAttr unwrap< wxRichTextAttr >(const VALUE &vcolor)
+wxRichTextAttr unwrap< wxRichTextAttr >(const VALUE &vattr)
 {
-	return *unwrapPtr<wxRichTextAttr>(vcolor,rb_cWXTextAttr);
+	return *unwrapTypedPtr<wxRichTextAttr>(vattr,rb_cWXTextAttr);
 }
 
 #define _self unwrap<wxRichTextAttr*>(self)

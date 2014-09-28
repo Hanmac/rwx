@@ -17,7 +17,7 @@ VALUE rb_cWXPalette;
 template <>
 wxPalette* unwrap< wxPalette* >(const VALUE &vimage)
 {
-	return unwrapPtr<wxPalette>(vimage, rb_cWXPalette);
+	return unwrapTypedPtr<wxPalette>(vimage, rb_cWXPalette);
 }
 
 

@@ -11,11 +11,9 @@
 VALUE rb_cWXCursor;
 
 template <>
-VALUE wrap< wxCursor >(wxCursor *bitmap )
+VALUE wrap< wxCursor >(wxCursor *cursor )
 {
-	if(bitmap)
-		return Data_Wrap_Struct(rb_cWXCursor, NULL, free, bitmap);
-	return Qnil;
+	return wrapTypedPtr(cursor, rb_cWXCursor);
 }
 
 template <>
@@ -27,7 +25,7 @@ wxCursor* unwrap< wxCursor* >(const VALUE &vbitmap)
 	{
 		return new wxCursor(unwrapenum<wxStockCursor>(vbitmap));
 	}else if(rb_obj_is_kind_of(vbitmap,rb_cWXCursor))
-		return unwrapPtr<wxCursor>(vbitmap, rb_cWXCursor);
+		return unwrapTypedPtr<wxCursor>(vbitmap, rb_cWXCursor);
 	else
 #if wxUSE_IMAGE
 	return new wxCursor(unwrap<wxImage>(vbitmap));
@@ -75,6 +73,7 @@ DLL_LOCAL void Init_WXCursor(VALUE rb_mWX)
 	rb_define_module_function(rb_mWX,"busy",RUBY_METHOD_FUNC(_busy),-1);
 	rb_define_module_function(rb_mWX,"busy?",RUBY_METHOD_FUNC(_isBusy),0);
 
+	registerType<wxCursor>(rb_cWXCursor);
 
 	registerEnum<wxStockCursor>("WX::StockCursor")
 		->add(wxCURSOR_NONE,"none")

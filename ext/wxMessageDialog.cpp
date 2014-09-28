@@ -52,7 +52,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		set_hash_option(hash,"style",style);
 	}
 
-	DATA_PTR(self) = new wxMessageDialog(
+	RTYPEDDATA_DATA(self) = new wxMessageDialog(
 		unwrap<wxWindow*>(parent),message,caption,style
 	);
 
