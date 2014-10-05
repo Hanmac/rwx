@@ -263,18 +263,23 @@ DLL_LOCAL VALUE _popStatusText(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-DLL_LOCAL VALUE _each_size(VALUE self)
-{
-	return UINT2NUM(_self->GetFieldsCount());
-}
-
-//TODO Fix the bad Reference
+/*
+ * call-seq:
+ *   each_statuspane -> Enumerator
+ *   each_statuspane { |pane| } -> self
+ *
+ * iterates the panes of this StatusBar.
+ * ===Return value
+ * self
+ *
+*/
 DLL_LOCAL VALUE _each(VALUE self)
 {
-	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_each_size));
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_getFieldsCount));
 	std::size_t s = _self->GetFieldsCount();
 
 	for(std::size_t i = 0 ; i < s; ++i)
+		//TODO Fix the bad Reference
 		rb_yield(wrapTypedPtr(&const_cast<wxStatusBarPane&>(_self->GetField(i)),rb_cWXStatusBarPane));
 	return self;
 }
@@ -288,6 +293,18 @@ macro_attr(Width,int)
 macro_attr(Style,int)
 macro_attr(Text,wxString)
 
+
+/*
+ * call-seq:
+ *   push_text(text) -> true/false
+ *
+ * pushes status text to the pane.
+ * ===Arguments
+ * * text String
+ *
+ * ===Return value
+ * true/false
+*/
 DLL_LOCAL VALUE _pushText(VALUE self,VALUE str)
 {
 	rb_check_frozen(self);
@@ -303,6 +320,36 @@ macro_attr_bool2(Ellipsized,SetIsEllipsized)
 }
 }
 #endif
+
+
+/* Document-attr: status_text
+ * the current status text. String
+ */
+/* Document-attr: fields_count
+ * the number of status panes. Integer
+ */
+
+/* Document-attr: width
+ * the width of the pane. Integer
+ */
+/* Document-attr: style
+ * the style of the pane. Integer
+ */
+/* Document-attr: text
+ * the status text of the pane. String
+ */
+
+
+/* Document-method: pop_text
+ * call-seq:
+ *   pop_text -> true/false
+ *
+ * pops status text from the pane.
+ *
+ * ===Return value
+ * true/false
+*/
+
 DLL_LOCAL void Init_WXStatusBar(VALUE rb_mWX)
 {
 #if 0
