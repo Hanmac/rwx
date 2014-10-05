@@ -7,6 +7,7 @@
 
 #include "wxSize.hpp"
 #include "wxRect.hpp"
+#include "wxPoint.hpp"
 
 #include "wxImage.hpp"
 #include "wxBitmap.hpp"
@@ -71,7 +72,7 @@ DLL_LOCAL VALUE _load(int argc,VALUE *argv,VALUE self)
 		file.MakeAbsolute(wxGetCwd());
 
 		if(NIL_P(mime)){
-			result = _self->LoadFile(file.GetFullPath());
+			result = _self->LoadFile(file.GetFullPath(), wxBITMAP_TYPE_ANY, NUM2INT(nr));
 		}else if(SYMBOL_P(mime) || FIXNUM_P(mime)){
 //			result = _self->LoadFile(file.GetFullPath(),unwrap<wxBitmapType>(mime),NUM2INT(nr));
 		}else
@@ -81,7 +82,7 @@ DLL_LOCAL VALUE _load(int argc,VALUE *argv,VALUE self)
 		RubyInputStream st(name);
 
 		if(NIL_P(mime)){
-			result = _self->LoadFile(st);
+			result = _self->LoadFile(st, wxBITMAP_TYPE_ANY, NUM2INT(nr));
 		}else if(SYMBOL_P(mime) || FIXNUM_P(mime)){
 //			result = _self->LoadFile(st,unwrap<wxBitmapType>(mime),NUM2INT(nr));
 		}else
@@ -157,6 +158,19 @@ DLL_LOCAL VALUE _getAlpha(VALUE self)
 	return Qnil;
 }
 
+/*
+ * call-seq:
+ *   image[rect] -> WX::Image or nil
+ *   image[x,y] -> WX::Color or nil
+ *
+ * if giving a WX::Rect, return a sub image of the given place
+ * if giving x and y, return the color of the given position or nil when out of range
+ * ===Arguments
+ * * x and y are Integer
+ * * rect is a WX::Rect
+ * ===Return value
+ * WX::Image, WX::Color or nil
+*/
 DLL_LOCAL VALUE _get(int argc,VALUE *argv,VALUE self)
 {
 	VALUE vx,vy;
@@ -188,49 +202,311 @@ DLL_LOCAL VALUE _get(int argc,VALUE *argv,VALUE self)
 		return Qnil;
 }
 
+bool check_inside(int x, int y, const wxSize& size)
+{
+	return x >= 0 && y >= 0 && x < size.GetWidth() && y < size.GetHeight();
+}
+
+void set_at_pos(int x, int y, wxImage* self, VALUE val)
+{
+	if(!check_inside(x, y, self->GetSize()))
+		return;
+
+	if(rb_obj_is_kind_of(val,rb_cWXImage) || rb_obj_is_kind_of(val,rb_cWXBitmap))
+	{
+		self->Paste(unwrap<wxImage>(val),x,y);
+	} else {
+		wxColor c(unwrap<wxColor>(val));
+		self->SetRGB(x,y,c.Red(),c.Green(),c.Blue());
+		if(self->HasAlpha())
+			self->SetAlpha(x,y,c.Alpha());
+	}
+}
+
+/*
+ * call-seq:
+ *   image[x,y]= WX::Color or WX::Image or WX::Bitmap
+ *   image[pos]= WX::Color or WX::Image or WX::Bitmap
+ *   image[rect]= WX::Color
+ *
+ * if giving x and y or pos, and as value a color, sets the color at the given position
+ * if giving x and y or pos, and an image or bitmap does paste it at the given position
+ * if giving a WX::Rect, fill the color at the place with the given one
+ * ===Arguments
+ * * x and y are Integer
+ * * pos is a WX::Point
+ * * rect is a WX::Rect
+ */
 DLL_LOCAL VALUE _set(int argc,VALUE *argv,VALUE self)
 {
 	VALUE vx,vy,value;
-	rb_scan_args(argc, argv, "30",&vx,&vy,&value);
+	rb_scan_args(argc, argv, "21",&vx,&vy,&value);
 	if(_self->IsOk())
 	{
-		int x,y;
-		x = NUM2UINT(vx);
-		y = NUM2UINT(vy);
-
-		if(y < 0 || x < 0 || x >= _self->GetWidth() || y >= _self->GetHeight())
-			return value;
-
-		wxColor c(unwrap<wxColor>(value));
-		_self->SetRGB(x,y,c.Red(),c.Green(),c.Blue());
-		if(_self->HasAlpha())
-			_self->SetAlpha(x,y,c.Alpha());
+		if(NIL_P(value)) {
+			if(is_wrapable<wxRect>(vx)) {
+				wxColor c(unwrap<wxColor>(vy));
+				wxRect vrect(unwrap<wxRect>(vx));
+				_self->SetRGB(vrect,c.Red(),c.Green(),c.Blue());
+				if(_self->HasAlpha()) {
+					for(int i = vrect.x; i < vrect.width; ++i)
+						for(int j = vrect.y; j < vrect.height; ++j)
+							if(check_inside(i, j, _self->GetSize()))
+								_self->SetAlpha(i,j,c.Alpha());
+				}
+			} else {
+				wxPoint vpoint(unwrap<wxPoint>(vx));
+				set_at_pos(vpoint.x, vpoint.y, _self, vy);
+			}
+		} else {
+			set_at_pos(NUM2UINT(vx), NUM2UINT(vy), _self, value);
+		}
 	}
 
-	return value;
+	return NIL_P(value) ? value : vy;
 }
 
-DLL_LOCAL VALUE _scale(VALUE self,VALUE x_scale,VALUE y_scale)
+/*
+ * call-seq:
+ *   image.resize(size, pos [, color]) -> WX::Image
+ *   image.resize(rect [, color]) -> WX::Image
+ *
+ * returns a new resized image, if color is given use this one to fill new space
+ * ===Arguments
+ * * size WX::Size
+ * * pos WX::Point
+ * * rect WX::Rect
+ * * color WX::Color
+ * ===Return value
+ * WX::Image
+*/
+DLL_LOCAL VALUE _resize(int argc,VALUE *argv,VALUE self)
+{
+	VALUE size, pos, color;
+	rb_scan_args(argc, argv, "12",&size,&pos, &color);
+
+	wxSize csize(unwrap<wxSize>(size));
+	wxPoint cpos;
+
+	if(is_wrapable<wxColor>(pos))
+	{
+		std::swap(color,pos);
+	}
+
+	if(NIL_P(pos) && is_wrapable<wxPoint>(size))
+		cpos = unwrap<wxPoint>(size);
+	else
+		cpos = unwrap<wxPoint>(pos);
+
+	if(NIL_P(color))
+		return wrap(_self->Size(csize, cpos));
+	else {
+		wxColor c(unwrap<wxColor>(size));
+
+		return wrap(_self->Size(csize, cpos, c.Red(), c.Green(), c.Blue()));
+	}
+}
+
+/*
+ * call-seq:
+ *   image.resize!(size, pos [, color]) -> self
+ *   image.resize!(rect [, color]) -> self
+ *
+ * returns this image resized, if color is given use this one to fill new space
+ * ===Arguments
+ * * size WX::Size
+ * * pos WX::Point
+ * * rect WX::Rect
+ * * color WX::Color
+ * ===Return value
+ * self
+*/
+DLL_LOCAL VALUE _resize_self(int argc,VALUE *argv,VALUE self)
+{
+	VALUE size, pos, color;
+	rb_scan_args(argc, argv, "12",&size,&pos, &color);
+
+	wxSize csize(unwrap<wxSize>(size));
+	wxPoint cpos;
+
+	if(is_wrapable<wxColor>(pos))
+	{
+		std::swap(color,pos);
+	}
+
+	if(NIL_P(pos) && is_wrapable<wxPoint>(size))
+		cpos = unwrap<wxPoint>(size);
+	else
+		cpos = unwrap<wxPoint>(pos);
+
+	if(NIL_P(color))
+		_self->Resize(csize, cpos);
+	else {
+		wxColor c(unwrap<wxColor>(size));
+
+		_self->Resize(csize, cpos, c.Red(), c.Green(), c.Blue());
+	}
+	return self;
+}
+
+
+/*
+ * call-seq:
+ *   image.scale(size) -> WX::Image
+ *   image.scale(x_ratio, y_ratio) -> WX::Image
+ *
+ * returns a new scaled image
+ * ===Arguments
+ * * size WX::Size
+ * * x_ratio and y_ratio are Float
+ * ===Return value
+ * WX::Image
+*/
+DLL_LOCAL VALUE _scale(int argc,VALUE *argv,VALUE self)
+{
+	VALUE x_scale, y_scale;
+	rb_scan_args(argc, argv, "11",&x_scale,&y_scale);
+
+	if(NIL_P(y_scale))
+	{
+		wxSize size(unwrap<wxSize>(x_scale));
+		return wrap(_self->Scale(size.GetWidth(),size.GetHeight()));
+	}else {
+		wxImage result(*_self);
+		double x,y;
+		x = NUM2DBL(x_scale);
+		y = NUM2DBL(y_scale);
+
+		if(x < 0)
+		{
+			x *= -1;
+			result = result.Mirror(false);
+		}
+		if(y < 0)
+		{
+			y *= -1;
+			result = result.Mirror();
+		}
+
+		result.Rescale(result.GetWidth() * x,result.GetHeight() * y);
+		return wrap(result);
+	}
+}
+
+
+/*
+ * call-seq:
+ *   image.scale!(size) -> self
+ *   image.scale!(x_ratio, y_ratio) -> self
+ *
+ * scaled this image, return self
+ * ===Arguments
+ * * size WX::Size
+ * * x_ratio and y_ratio are Float
+ * ===Return value
+ * self
+*/
+DLL_LOCAL VALUE _scale_self(int argc,VALUE *argv,VALUE self)
+{
+	VALUE x_scale, y_scale;
+	rb_scan_args(argc, argv, "11",&x_scale,&y_scale);
+
+	if(NIL_P(y_scale))
+	{
+		wxSize size(unwrap<wxSize>(x_scale));
+		_self->Rescale(size.GetWidth(),size.GetHeight());
+	}else {
+		wxImage result(*_self);
+		double x,y;
+		x = NUM2DBL(x_scale);
+		y = NUM2DBL(y_scale);
+
+		if(x < 0)
+		{
+			x *= -1;
+			*_self = _self->Mirror(false);
+		}
+		if(y < 0)
+		{
+			y *= -1;
+			*_self = _self->Mirror();
+		}
+
+		_self->Rescale(_self->GetWidth() * x,_self->GetHeight() * y);
+	}
+	return self;
+}
+
+/*
+ * call-seq:
+ *   image.replace_color(color1, color2) -> WX::Image
+ *
+ * replaces color1 with color2, return new image
+ * ===Arguments
+ * * color1 and color2 are WX::Color
+ * ===Return value
+ * WX::Image
+*/
+DLL_LOCAL VALUE _replace_color(VALUE self, VALUE color1, VALUE color2)
+{
+	wxColor c1(unwrap<wxColor>(color1));
+	wxColor c2(unwrap<wxColor>(color2));
+	wxImage result(*_self);
+	result.Replace(c1.Red(),c1.Green(),c1.Blue(),c2.Red(),c2.Green(),c2.Blue());
+	return wrap(result);
+}
+
+
+/*
+ * call-seq:
+ *   image.replace_color!(color1, color2) -> self
+ *
+ * replaces color1 with color2, return self
+ * ===Arguments
+ * * color1 and color2 are WX::Color
+ * ===Return value
+ * self
+*/
+DLL_LOCAL VALUE _replace_color_self(VALUE self, VALUE color1, VALUE color2)
+{
+	wxColor c1(unwrap<wxColor>(color1));
+	wxColor c2(unwrap<wxColor>(color2));
+	_self->Replace(c1.Red(),c1.Green(),c1.Blue(),c2.Red(),c2.Green(),c2.Blue());
+	return self;
+}
+
+
+/*
+ * call-seq:
+ *   image.rotate_hue(angle) -> WX::Image
+ *
+ * rotates the hue, where -1.0 is -360 degrees and 1.0 is 360 degrees, return new image
+ * ===Arguments
+ * * angle is Float
+ * ===Return value
+ * WX::Image
+*/
+DLL_LOCAL VALUE _rotate_hue(VALUE self, VALUE angle)
 {
 	wxImage result(*_self);
-
-	double x,y;
-	x = NUM2DBL(x_scale);
-	y = NUM2DBL(y_scale);
-
-	if(x < 0)
-	{
-		x *= -1;
-		result = result.Mirror(false);
-	}
-	if(y < 0)
-	{
-		y *= -1;
-		result = result.Mirror();
-	}
-
-	result = result.Scale(result.GetWidth() * x,result.GetHeight() * y);
+	result.RotateHue(NUM2DBL(angle));
 	return wrap(result);
+}
+
+/*
+ * call-seq:
+ *   image.rotate_hue!(angle) -> self
+ *
+ * rotates the hue, where -1.0 is -360 degrees and 1.0 is 360 degrees, return self
+ * ===Arguments
+ * * angle is Float
+ * ===Return value
+ * self
+*/
+DLL_LOCAL VALUE _rotate_hue_self(VALUE self, VALUE angle)
+{
+	_self->RotateHue(NUM2DBL(angle));
+	return self;
 }
 
 DLL_LOCAL VALUE _mal(VALUE self,VALUE obj)
@@ -415,7 +691,7 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
 
 /*
  * call-seq:
- *   marshal_load(array) -> nil
+ *   marshal_load(array) -> self
  *
  * Provides marshalling support for use by the Marshal library.
  *
@@ -447,9 +723,40 @@ DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 
 #endif
 
+
+/* Document-attr: width
+ * returns the width of the Image. Integer
+ */
+/* Document-attr: height
+ * returns the height of the Image. Integer
+ */
+/* Document-attr: size
+ * returns the size of the Image. WX::Size
+ */
+
+/* Document-attr: data
+ * returns the data of the Image. String
+ */
+/* Document-attr: alpha
+ * returns the alpha of the Image. String
+ */
+
+/* Document-attr: mask
+ * returns the mask color of the Image. WX::Color
+ */
+/* Document-attr: palette
+ * returns the color palette of the Image. WX::Palette
+ */
+
 DLL_LOCAL void Init_WXImage(VALUE rb_mWX)
 {
 #if 0
+	rb_define_attr(rb_cWXImage,"width",1,0);
+	rb_define_attr(rb_cWXImage,"height",1,0);
+	rb_define_attr(rb_cWXImage,"size",1,0);
+	rb_define_attr(rb_cWXImage,"data",1,0);
+	rb_define_attr(rb_cWXImage,"alpha",1,0);
+
 	rb_define_attr(rb_cWXImage,"mask",1,1);
 	rb_define_attr(rb_cWXImage,"palette",1,1);
 #endif
@@ -466,11 +773,11 @@ DLL_LOCAL void Init_WXImage(VALUE rb_mWX)
 	rb_define_method(rb_cWXImage,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 	rb_define_private_method(rb_cWXImage,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),1);
 
-
-	rb_define_method(rb_cWXImage,"height",RUBY_METHOD_FUNC(_getHeight),0);
-	rb_define_method(rb_cWXImage,"width",RUBY_METHOD_FUNC(_getWidth),0);
-	rb_define_method(rb_cWXImage,"data",RUBY_METHOD_FUNC(_getData),0);
-	rb_define_method(rb_cWXImage,"alpha",RUBY_METHOD_FUNC(_getAlpha),0);
+	rb_define_attr_method(rb_cWXImage,"height",_getHeight,NULL);
+	rb_define_attr_method(rb_cWXImage,"width",_getWidth,NULL);
+	rb_define_attr_method(rb_cWXImage,"size",_getSize,NULL);
+	rb_define_attr_method(rb_cWXImage,"data",_getData,NULL);
+	rb_define_attr_method(rb_cWXImage,"alpha",_getAlpha,NULL);
 
 	rb_define_method(rb_cWXImage,"to_image",RUBY_METHOD_FUNC(_to_image),0);
 	rb_define_method(rb_cWXImage,"to_bitmap",RUBY_METHOD_FUNC(_to_bitmap),0);
@@ -484,7 +791,18 @@ DLL_LOCAL void Init_WXImage(VALUE rb_mWX)
 #endif
 
 	rb_define_method(rb_cWXImage,"*",RUBY_METHOD_FUNC(_mal),1);
-	rb_define_method(rb_cWXImage,"scale",RUBY_METHOD_FUNC(_scale),2);
+
+	rb_define_method(rb_cWXImage,"scale",RUBY_METHOD_FUNC(_scale),-1);
+	rb_define_method(rb_cWXImage,"scale!",RUBY_METHOD_FUNC(_scale_self),-1);
+
+	rb_define_method(rb_cWXImage,"resize",RUBY_METHOD_FUNC(_resize),-1);
+	rb_define_method(rb_cWXImage,"resize!",RUBY_METHOD_FUNC(_resize_self),-1);
+
+	rb_define_method(rb_cWXImage,"replace_color",RUBY_METHOD_FUNC(_replace_color),2);
+	rb_define_method(rb_cWXImage,"replace_color!",RUBY_METHOD_FUNC(_replace_color_self),2);
+
+	rb_define_method(rb_cWXImage,"rotate_hue",RUBY_METHOD_FUNC(_rotate_hue),1);
+	rb_define_method(rb_cWXImage,"rotate_hue!",RUBY_METHOD_FUNC(_rotate_hue_self),1);
 
 	rb_define_method(rb_cWXImage,"[]",RUBY_METHOD_FUNC(_get),-1);
 	rb_define_method(rb_cWXImage,"[]=",RUBY_METHOD_FUNC(_set),-1);
@@ -492,7 +810,7 @@ DLL_LOCAL void Init_WXImage(VALUE rb_mWX)
 	rb_define_method(rb_cWXImage,"load",RUBY_METHOD_FUNC(_load),-1);
 	rb_define_method(rb_cWXImage,"save",RUBY_METHOD_FUNC(_save),-1);
 
-	registerInfo<wxImage>(rb_cWXImage);
+	registerInfo<wxImage>(rb_cWXImage, true);
 #endif
 
 }
