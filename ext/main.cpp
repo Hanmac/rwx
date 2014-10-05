@@ -401,6 +401,11 @@ bool nil_check(VALUE window,const char* type,bool raise)
 	return !result;
 }
 
+bool nil_check(VALUE window,VALUE klass, bool raise)
+{
+	return nil_check(window,rb_class2name(klass),raise);
+}
+
 bool nil_check(VALUE window, bool raise)
 {
 	return nil_check(window,"window",raise);

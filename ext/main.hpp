@@ -158,14 +158,14 @@ DLL_LOCAL void registerType(VALUE klass, bool bfree = false)
 	if(bfree)
 		registerDataType(klass, RUBY_TYPED_DEFAULT_FREE, type_size_of<T>);
 	else
-		registerDataType(klass);
+		registerDataType(klass, RUBY_TYPED_NEVER_FREE, type_size_of<T>);
 }
 
 template <typename T>
-DLL_LOCAL void registerInfo(VALUE klass)
+DLL_LOCAL void registerInfo(VALUE klass, bool bfree = false)
 {
 	infoklassholder[wxCLASSINFO(T)]=klass;
-	registerType<T>(klass);
+	registerType<T>(klass, bfree);
 }
 
 DLL_LOCAL VALUE wrapClass(const wxClassInfo * info);
@@ -342,6 +342,7 @@ DLL_LOCAL bool window_parent_check(VALUE window, wxWindow* parent, T* &w)
 }
 
 bool nil_check(VALUE window,const char* type,bool raise = true);
+bool nil_check(VALUE window,VALUE klass ,bool raise = true);
 bool nil_check(VALUE window,bool raise = true);
 
 bool check_index(int &cidx,const std::size_t &count);
