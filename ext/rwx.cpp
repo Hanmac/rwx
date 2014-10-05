@@ -211,8 +211,10 @@ VALUE rb_mWX;
 
 void rb_define_attr_method(VALUE klass,std::string name,VALUE(get)(VALUE),VALUE(set)(VALUE,VALUE))
 {
-	rb_define_method(klass,name.c_str(),RUBY_METHOD_FUNC(get),0);
-	rb_define_method(klass,(name + "=").c_str(),RUBY_METHOD_FUNC(set),1);
+	if(get)
+		rb_define_method(klass,name.c_str(),RUBY_METHOD_FUNC(get),0);
+	if(set)
+		rb_define_method(klass,(name + "=").c_str(),RUBY_METHOD_FUNC(set),1);
 }
 
 
