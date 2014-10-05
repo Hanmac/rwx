@@ -31,6 +31,8 @@ wxPalette unwrap< wxPalette >(const VALUE &vimage)
 namespace RubyWX {
 namespace Palette {
 
+singlereturn(GetColoursCount)
+
 DLL_LOCAL VALUE _alloc(VALUE self) {
 	return wrap(new wxPalette);
 }
@@ -72,6 +74,16 @@ DLL_LOCAL VALUE _initialize_copy(VALUE self,VALUE other) {
 	return self;
 }
 
+/*
+ * call-seq:
+ *   image[idx] -> WX::Color or nil
+ *
+ * Returns the color at the given position or nil if out of range
+ * ===Arguments
+ * * idx is Integer
+ * ===Return value
+ * WX::Color or nil
+*/
 DLL_LOCAL VALUE _get(VALUE self,VALUE idx)
 {
 	unsigned char red,green,blue;
@@ -80,15 +92,20 @@ DLL_LOCAL VALUE _get(VALUE self,VALUE idx)
 	return Qnil;
 }
 
-DLL_LOCAL VALUE _each_size(VALUE self)
-{
-	return UINT2NUM(_self->GetColoursCount());
-}
 
-
+/*
+ * call-seq:
+ *   each -> Enumerator
+ *   each { |color| } -> self
+ *
+ * iterates the colors in this Palette.
+ * ===Return value
+ * self
+ *
+*/
 DLL_LOCAL VALUE _each(VALUE self)
 {
-	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_each_size));
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_GetColoursCount));
 
 	unsigned char red,green,blue;
 
@@ -159,6 +176,15 @@ DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 
 #endif
 
+/* Document-method: size
+ * call-seq:
+ *   size -> Integer
+ *
+ * returns the count of colors in this Palette list.
+ * ===Return value
+ * Integer
+ */
+
 DLL_LOCAL void Init_WXPalette(VALUE rb_mWX)
 {
 #if wxUSE_PALETTE
@@ -174,7 +200,7 @@ DLL_LOCAL void Init_WXPalette(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXPalette,"[]",RUBY_METHOD_FUNC(_get),1);
 
-	rb_define_method(rb_cWXPalette,"size",RUBY_METHOD_FUNC(_each_size),0);
+	rb_define_method(rb_cWXPalette,"size",RUBY_METHOD_FUNC(_GetColoursCount),0);
 	rb_define_method(rb_cWXPalette,"each",RUBY_METHOD_FUNC(_each),0);
 
 	rb_define_method(rb_cWXPalette,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
