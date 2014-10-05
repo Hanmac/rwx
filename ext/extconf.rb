@@ -70,6 +70,7 @@ if(wx_config = find_executable('wx-config'))
 		
 		#check for enum flags
 		have_const("wxFD_NO_FOLLOW","wx/filedlg.h")
+    have_const("wxDIRCTRL_DEFAULT_STYLE",["wx/wx.h", "wx/dirctrl.h"])
 		
 		#check for better Bind commmand
 		unless have_macro("wxHAS_EVENT_BIND","wx/wx.h")
@@ -82,7 +83,7 @@ else
 
 end
 
-$defs.push("-DRUBY_DEPRECATE_DATA_WRAP_STRUCT=1")
+$defs.push("-DRUBY_UNTYPED_DATA_WARNING=1")
 
 #drop some of the warn flags because they are not valid for C++
 CONFIG["warnflags"].gsub!(
