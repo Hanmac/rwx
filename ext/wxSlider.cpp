@@ -119,11 +119,21 @@ VALUE _IsVertical(VALUE self)
 /* Document-attr: value
  * the value of the Slider. Integer
  */
-/* Document-attr: mix
+/* Document-attr: min
  * the minimum value of the Slider. Integer
  */
 /* Document-attr: max
  * the maximum value of the Slider. Integer
+ */
+
+/* Document-attr: line_size
+ * the line size of the Slider. Integer
+ */
+/* Document-attr: page_size
+ * the page size of the Slider. Integer
+ */
+/* Document-attr: thumb_length
+ * the thumb length of the Slider. Integer
  */
 
 

@@ -91,7 +91,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 /* Document-attr: value
  * the value of the SpinCtrl. Integer
  */
-/* Document-attr: mix
+/* Document-attr: min
  * the minimum value of the SpinCtrl. Integer
  */
 /* Document-attr: max

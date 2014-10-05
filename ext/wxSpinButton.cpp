@@ -92,7 +92,7 @@ macro_attr(Value,int)
 /* Document-attr: value
  * the value of the SpinButton. Integer
  */
-/* Document-attr: mix
+/* Document-attr: min
  * the minimum value of the SpinButton. Integer
  */
 /* Document-attr: max
