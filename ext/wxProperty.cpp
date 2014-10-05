@@ -549,44 +549,6 @@ VALUE find_prop_class(VALUE self,VALUE name)
 
 #endif
 
-
-/* Document-method: parent
- * call-seq:
- *   parent -> WX::Property or nil
- *
- * returns the parent property of this one or nil of this is already the parent.
- * ===Return value
- * WX::Property or nil
- */
-
-/* Document-method: main_parent
- * call-seq:
- *   parent -> WX::Property or nil
- *
- * returns highest level parent property of this one or nil of this is already the highest.
- * ===Return value
- * WX::Property or nil
- */
-
-/* Document-method: depth
- * call-seq:
- *   depth -> Integer
- *
- * returns the depth of this property inside a grid.
- * ===Return value
- * Integer
- */
-
-/* Document-method: grid
- * call-seq:
- *   grid -> WX::PropertyGrid or nil
- *
- * returns the property grid that has this property of nil.
- * ===Return value
- * WX::PropertyGrid or nil
- */
-
-
 /* Document-attr: label
  * the label of the Property. String
  */
@@ -621,6 +583,24 @@ VALUE find_prop_class(VALUE self,VALUE name)
 /* Document-attr: choice_selection
  * the index with choice of the Property is selected. Integer/nil
  */
+
+
+/* Document-attr: parent
+ * the parent property of this one. WX::Property or nil
+ */
+/* Document-attr: main_parent
+ * highest level parent property of this one. WX::Property or nil
+ */
+/* Document-attr: base_name
+ * the base name of the Property. String
+ */
+
+/* Document-attr: depth
+ * the depth of this property inside a grid. Integer
+ */
+/* Document-attr: grid
+ * the property grid that has this property. WX::PropertyGrid or nil
+ */
 DLL_LOCAL void Init_WXProperty(VALUE rb_mWX)
 {
 #if 0
@@ -639,6 +619,13 @@ DLL_LOCAL void Init_WXProperty(VALUE rb_mWX)
 
 	rb_define_attr(rb_cWXProperty,"choice_selection",1,1);
 
+	rb_define_attr(rb_cWXProperty,"base_name",1,0);
+	rb_define_attr(rb_cWXProperty,"main_parent",1,0);
+	rb_define_attr(rb_cWXProperty,"parent",1,0);
+
+	rb_define_attr(rb_cWXProperty,"depth",1,0);
+	rb_define_attr(rb_cWXProperty,"grid",1,0);
+
 #endif
 
 #if wxUSE_PROPGRID
@@ -650,14 +637,6 @@ DLL_LOCAL void Init_WXProperty(VALUE rb_mWX)
 	rb_undef_method(rb_cWXProperty,"initialize_copy");
 	rb_undef_method(rb_cWXProperty,"_load");
 	rb_undef_method(rb_cWXProperty,"_dump");
-
-	rb_define_method(rb_cWXProperty,"base_name",RUBY_METHOD_FUNC(_GetBaseName),0);
-	rb_define_method(rb_cWXProperty,"main_parent",RUBY_METHOD_FUNC(_GetMainParent),0);
-	rb_define_method(rb_cWXProperty,"parent",RUBY_METHOD_FUNC(_GetParent),0);
-
-	rb_define_method(rb_cWXProperty,"depth",RUBY_METHOD_FUNC(_GetDepth),0);
-
-	rb_define_method(rb_cWXProperty,"grid",RUBY_METHOD_FUNC(_GetGrid),0);
 
 	rb_define_method(rb_cWXProperty,"visible_children?",RUBY_METHOD_FUNC(_HasVisibleChildren),0);
 	rb_define_method(rb_cWXProperty,"root?",RUBY_METHOD_FUNC(_IsRoot),0);
@@ -676,6 +655,13 @@ DLL_LOCAL void Init_WXProperty(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXProperty,"enabled",_getEnabled,_setEnabled);
 
 	rb_define_attr_method(rb_cWXProperty,"choice_selection",_getChoiceSelection,_setChoiceSelection);
+
+	rb_define_attr_method(rb_cWXProperty,"base_name",_GetBaseName,0);
+	rb_define_attr_method(rb_cWXProperty,"main_parent",_GetMainParent,0);
+	rb_define_attr_method(rb_cWXProperty,"parent",_GetParent,0);
+
+	rb_define_attr_method(rb_cWXProperty,"depth",_GetDepth,0);
+	rb_define_attr_method(rb_cWXProperty,"grid",_GetGrid,0);
 
 	rb_define_method(rb_cWXProperty,"show",RUBY_METHOD_FUNC(_show),-1);
 	rb_define_method(rb_cWXProperty,"hide",RUBY_METHOD_FUNC(_hide),-1);
