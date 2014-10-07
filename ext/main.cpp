@@ -117,8 +117,6 @@ VALUE wrapTypedPtr(void *arg,VALUE klass)
 		if(!datatype)
 			rb_fatal("%s unknown datatype",rb_class2name(klass));
 
-		rb_warn("%p object of %s", arg, rb_class2name(klass));
-
 		return TypedData_Wrap_Struct(klass, datatype, arg);
 	}
 	return Qnil;
@@ -314,7 +312,7 @@ int unwrap_iconflag(const VALUE &val,int mask)
 	int result = unwrapenum(val,"icon_flag");
 
 	if((result & mask) != result)
-		rb_raise(rb_eTypeError,"%s is not a in %d mask",unwrap<char*>(val),mask);
+		rb_raise(rb_eTypeError,"%"PRIsVALUE" is not a in %d mask", val, mask);
 	
 	return result;
 
