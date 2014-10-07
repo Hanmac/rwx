@@ -6,6 +6,8 @@
  */
 
 #include "wxSize.hpp"
+#include "wxRect.hpp"
+
 VALUE rb_cWXSize;
 
 #define _self unwrap<wxSize*>(self)
@@ -38,6 +40,8 @@ wxSize unwrap< wxSize >(const VALUE &vsize)
 			size.SetWidth(NUM2INT(RARRAY_AREF(vsize,0)));
 			size.SetHeight(NUM2INT(RARRAY_AREF(vsize,1)));
 			return size;
+	}else if(rb_obj_is_kind_of(vsize, rb_cWXRect)){
+		return unwrapTypedPtr<wxRect>(vsize, rb_cWXRect)->GetSize();
 	}else if(!rb_obj_is_kind_of(vsize, rb_cWXSize) &&
 		rb_respond_to(vsize,rwxID_width) &&
 		rb_respond_to(vsize,rwxID_height)){
@@ -50,6 +54,36 @@ wxSize unwrap< wxSize >(const VALUE &vsize)
 	}
 }
 
+bool check_negative_size(VALUE val, wxSize &size)
+{
+	size = unwrap<wxSize>(val);
+	if(size.GetHeight() <= 0 && size.GetWidth() <= 0)
+	{
+		rb_raise(rb_eArgError,"%"PRIsVALUE" does have invalid size.", rb_inspect(val));
+		return false;
+	}
+	return true;
+}
+
+bool check_negative_size(const int &width, const int &height)
+{
+
+	if(height <= 0 && width <= 0)
+	{
+		rb_raise(rb_eArgError,
+			"%s(%d, %d) does have invalid size.",
+			rb_class2name(rb_cWXSize),
+			width, height
+		);
+		return false;
+	}
+	return true;
+}
+
+bool check_negative_size(const wxSize &size)
+{
+	return check_negative_size(size.GetWidth(), size.GetHeight());
+}
 
 namespace RubyWX {
 namespace Size {
