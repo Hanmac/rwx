@@ -13,6 +13,7 @@
 #define _self unwrap<wxEvtHandler*>(self)
 
 VALUE rb_mWXEvtHandler;
+ID rwx_IDcall, rwx_IDid;
 
 typedef std::map<VALUE,wxEvtHandler*> evthandlerholdertype;
 typedef std::map<ID,wxEventType>  evttypeholdertype;
@@ -43,9 +44,9 @@ bool loadxrc(wxObject *self,VALUE name,wxWindow *parent)
 {
 	if(rb_obj_is_kind_of(name,rb_cString)){
 
-		wxClassInfo *info = self->GetClassInfo();
-		if(!(wxXmlResource::Get()->LoadObjectRecursively(self,parent,unwrap<wxString>(name),wxString(info->GetClassName()))))
-			rb_raise(rb_eNameError,"Named %s '%s' is not found.",wxString(info->GetClassName()).GetData().AsChar(),unwrap<char*>(name));
+		wxString classname = wxString(self->GetClassInfo()->GetClassName());
+		if(!(wxXmlResource::Get()->LoadObjectRecursively(self,parent,unwrap<wxString>(name),classname)))
+			rb_raise(rb_eNameError,"Named %s '%"PRIsVALUE"' is not found.", classname.GetData().AsChar(), name);
 		return true;
 	}
 	return false;
@@ -152,9 +153,9 @@ class RubyCallAfter : public wxObject
 public:
 	RubyCallAfter(VALUE val) : mVal(val){};
 
-	void call()
+	void call(VALUE val)
 	{
-		rb_funcall(mVal,rb_intern("call"),0);
+		rb_funcall(mVal, rwx_IDcall, 1, val);
 	}
 
 private:
@@ -172,12 +173,6 @@ RubyClientData::~RubyClientData()
 {
 	if(rwx_unrefobject(mRuby) && unwrapDataType(CLASS_OF(mRuby)))
 	{
-		rb_warn(
-			"set %p data of object %p of %s to null",
-			this,
-			(void*)mRuby,
-			rb_obj_classname(mRuby)
-		);
 		RTYPEDDATA_DATA(mRuby) = NULL;
 	}
 }
@@ -189,18 +184,18 @@ RubyFunctor::RubyFunctor(VALUE obj) : ptr(new RubyClientData(obj)){
 
 void RubyFunctor::operator()( wxEvent & event )
 {
-	rb_funcall(ptr->mRuby,rb_intern("call"),1,wrap(&event));
+	rb_funcall(ptr->mRuby,rwx_IDcall,1,wrap(&event));
 }
 #if wxUSE_GUI
 void RubyFunctor::operator()( wxCommandEvent & event )
 {
-	rb_funcall(ptr->mRuby,rb_intern("call"),1,wrap(&event));
+	rb_funcall(ptr->mRuby,rwx_IDcall,1,wrap(&event));
 }
 #endif
 #if wxUSE_TIMER
 void RubyFunctor::operator()( wxTimerEvent & event )
 {
-	rb_funcall(ptr->mRuby,rb_intern("call"),1,wrap(&event));
+	rb_funcall(ptr->mRuby,rwx_IDcall,1,wrap(&event));
 }
 #endif
 namespace RubyWX {
@@ -237,14 +232,13 @@ DLL_LOCAL VALUE _call(int argc,VALUE *argv,VALUE self)
 		evt = new RubyEvent;
 #endif
 
-	ID IDid = rb_intern("id");
 	evt->SetEventType(etype);
 	if(!NIL_P(id))
 		evt->SetId(unwrapID(id));
 	else
 	{
-		if(rb_respond_to(self,IDid))
-			evt->SetId(unwrapID(rb_funcall(self,IDid,0)));
+		if(rb_respond_to(self,rwx_IDid))
+			evt->SetId(unwrapID(rb_funcall(self,rwx_IDid,0)));
 	}
 	evt->SetEventObject(_self);
 
@@ -258,16 +252,8 @@ DLL_LOCAL VALUE _call(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL VALUE _callafter(int argc,VALUE *argv,VALUE self)
 {
 #ifdef wxHAS_CALL_AFTER
-	//for some reason new does not work with
-	//wxAsyncMethodCallEvent1<RubyCallAfter,VALUE> in eclipse
-
-//	wxAsyncMethodCallEvent0<RubyCallAfter> evnt(
-//		new RubyCallAfter(rb_block_proc()), &RubyCallAfter::call
-//	);
-//	_self->QueueEvent(evnt.Clone());
-
-	_self->QueueEvent(new wxAsyncMethodCallEvent0<RubyCallAfter>(
-			new RubyCallAfter(rb_block_proc()), &RubyCallAfter::call
+	_self->QueueEvent(new wxAsyncMethodCallEvent1<RubyCallAfter, VALUE>(
+			new RubyCallAfter(rb_block_proc()), &RubyCallAfter::call, self
 		));
 #else
 
@@ -296,6 +282,9 @@ DLL_LOCAL void Init_WXEvtHandler(VALUE rb_mWX)
 
 	//because only Evthandler are created different
 	registerInfo<wxEvtHandler>(Qnil);
+
+	rwx_IDcall = rb_intern("call");
+	rwx_IDid = rb_intern("id");
 }
 
 
