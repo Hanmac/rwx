@@ -21,24 +21,35 @@ void wxrubyAssert(const wxString& file,
 		);
 }
 
-class RubyExceptionLog : public wxLog
+class RubyExceptionLog : public wxLogChain
 {
+public:
+	RubyExceptionLog(wxLog *log) : wxLogChain(log) {}
+
 protected:
 	void DoLogRecord(wxLogLevel level,
 	                             const wxString& msg,
 	                             const wxLogRecordInfo& info)
 	{
+
+		wxLogChain::DoLogRecord(level, msg, info);
+
 		const char * c = msg.GetData().AsChar();
+		const char * f = info.func;
 		switch(level)
 		{
 		case wxLOG_FatalError:
-			rb_fatal("%s",c);
+			rb_fatal("%s in %s", c, f);
 			break;
 		case wxLOG_Warning:
-			rb_warn("%s",c);
+			rb_warn("%s in %s", c, f);
+			break;
+		case wxLOG_Error:
+			rb_raise(rb_eWXError,"%s in %s", c, f);
 			break;
 		default:
-			rb_raise(rb_eWXError,"%s",c);
+
+			break;
 		}
 
 
@@ -51,6 +62,6 @@ protected:
 DLL_LOCAL void Init_WXError(VALUE rb_mWX)
 {
 	rb_eWXError = rb_define_class_under(rb_mWX,"Error",rb_eException);
-	wxLog::SetActiveTarget(new RubyExceptionLog);
+	wxLog::SetActiveTarget(new RubyExceptionLog(wxLog::GetActiveTarget()));
 	wxSetAssertHandler(wxrubyAssert);
 }
