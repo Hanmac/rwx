@@ -158,6 +158,12 @@ DLL_LOCAL VALUE _getAlpha(VALUE self)
 	return Qnil;
 }
 
+
+bool check_inside(int x, int y, const wxSize& size)
+{
+	return x >= 0 && y >= 0 && x < size.GetWidth() && y < size.GetHeight();
+}
+
 /*
  * call-seq:
  *   image[rect] -> WX::Image or nil
@@ -186,7 +192,7 @@ DLL_LOCAL VALUE _get(int argc,VALUE *argv,VALUE self)
 		x = NUM2UINT(vx);
 		y = NUM2UINT(vy);
 
-		if(y < 0 || x < 0 || x >= _self->GetWidth() || y >= _self->GetHeight())
+		if(!check_inside(x,y, _self->GetSize()))
 			return Qnil;
 
 		unsigned char red,green,blue,alpha;
@@ -200,11 +206,6 @@ DLL_LOCAL VALUE _get(int argc,VALUE *argv,VALUE self)
 		return wrap(new wxColor(red,green,blue,alpha));
 	}else
 		return Qnil;
-}
-
-bool check_inside(int x, int y, const wxSize& size)
-{
-	return x >= 0 && y >= 0 && x < size.GetWidth() && y < size.GetHeight();
 }
 
 void set_at_pos(int x, int y, wxImage* self, VALUE val)
@@ -236,6 +237,10 @@ void set_at_pos(int x, int y, wxImage* self, VALUE val)
  * * x and y are Integer
  * * pos is a WX::Point
  * * rect is a WX::Rect
+ *
+ * === Exceptions
+ * [ArgumentError]
+ * * rect does not fit into the Size of the Image
  */
 DLL_LOCAL VALUE _set(int argc,VALUE *argv,VALUE self)
 {
@@ -246,13 +251,23 @@ DLL_LOCAL VALUE _set(int argc,VALUE *argv,VALUE self)
 		if(NIL_P(value)) {
 			if(is_wrapable<wxRect>(vx)) {
 				wxColor c(unwrap<wxColor>(vy));
+				wxSize size(_self->GetSize());
 				wxRect vrect(unwrap<wxRect>(vx));
-				_self->SetRGB(vrect,c.Red(),c.Green(),c.Blue());
-				if(_self->HasAlpha()) {
-					for(int i = vrect.x; i < vrect.width; ++i)
-						for(int j = vrect.y; j < vrect.height; ++j)
-							if(check_inside(i, j, _self->GetSize()))
-								_self->SetAlpha(i,j,c.Alpha());
+
+				if(wxRect(size).Contains(vrect))
+				{
+					_self->SetRGB(vrect,c.Red(),c.Green(),c.Blue());
+					if(_self->HasAlpha()) {
+						for(int i = vrect.x; i < vrect.width; ++i)
+							for(int j = vrect.y; j < vrect.height; ++j)
+								if(check_inside(i, j, size))
+									_self->SetAlpha(i,j,c.Alpha());
+					}
+				} else {
+					rb_raise(rb_eArgError,
+						"%"PRIsVALUE" does not fit into image of %"PRIsVALUE,
+						rb_inspect(vx), rb_inspect(wrap(size))
+					);
 				}
 			} else {
 				wxPoint vpoint(unwrap<wxPoint>(vx));
@@ -279,13 +294,20 @@ DLL_LOCAL VALUE _set(int argc,VALUE *argv,VALUE self)
  * * color WX::Color
  * ===Return value
  * WX::Image
+ *
+ * === Exceptions
+ * [ArgumentError]
+ * * size is invalid
 */
 DLL_LOCAL VALUE _resize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE size, pos, color;
 	rb_scan_args(argc, argv, "12",&size,&pos, &color);
 
-	wxSize csize(unwrap<wxSize>(size));
+	wxSize csize;
+	if(!check_negative_size(size,csize))
+		return Qnil;
+
 	wxPoint cpos;
 
 	if(is_wrapable<wxColor>(pos))
@@ -320,13 +342,19 @@ DLL_LOCAL VALUE _resize(int argc,VALUE *argv,VALUE self)
  * * color WX::Color
  * ===Return value
  * self
+ * === Exceptions
+ * [ArgumentError]
+ * * size is invalid
 */
 DLL_LOCAL VALUE _resize_self(int argc,VALUE *argv,VALUE self)
 {
 	VALUE size, pos, color;
 	rb_scan_args(argc, argv, "12",&size,&pos, &color);
 
-	wxSize csize(unwrap<wxSize>(size));
+	wxSize csize;
+	if(!check_negative_size(size,csize))
+		return self;
+
 	wxPoint cpos;
 
 	if(is_wrapable<wxColor>(pos))
@@ -361,6 +389,9 @@ DLL_LOCAL VALUE _resize_self(int argc,VALUE *argv,VALUE self)
  * * x_ratio and y_ratio are Float
  * ===Return value
  * WX::Image
+ * === Exceptions
+ * [ArgumentError]
+ * * size is invalid or x_ratio or y_ratio is zero
 */
 DLL_LOCAL VALUE _scale(int argc,VALUE *argv,VALUE self)
 {
@@ -369,13 +400,24 @@ DLL_LOCAL VALUE _scale(int argc,VALUE *argv,VALUE self)
 
 	if(NIL_P(y_scale))
 	{
-		wxSize size(unwrap<wxSize>(x_scale));
+		wxSize size;
+		if(!check_negative_size(x_scale,size))
+			return Qnil;
+
 		return wrap(_self->Scale(size.GetWidth(),size.GetHeight()));
 	}else {
-		wxImage result(*_self);
+
 		double x,y;
 		x = NUM2DBL(x_scale);
 		y = NUM2DBL(y_scale);
+
+		if(x == 0 || y == 0)
+		{
+			if(!check_negative_size(x, y))
+				return Qnil;
+		}
+
+		wxImage result(*_self);
 
 		if(x < 0)
 		{
@@ -405,6 +447,9 @@ DLL_LOCAL VALUE _scale(int argc,VALUE *argv,VALUE self)
  * * x_ratio and y_ratio are Float
  * ===Return value
  * self
+ * === Exceptions
+ * [ArgumentError]
+ * * size is invalid or x_ratio or y_ratio is zero
 */
 DLL_LOCAL VALUE _scale_self(int argc,VALUE *argv,VALUE self)
 {
@@ -413,13 +458,19 @@ DLL_LOCAL VALUE _scale_self(int argc,VALUE *argv,VALUE self)
 
 	if(NIL_P(y_scale))
 	{
-		wxSize size(unwrap<wxSize>(x_scale));
-		_self->Rescale(size.GetWidth(),size.GetHeight());
+		wxSize size;
+		if(check_negative_size(x_scale,size))
+			_self->Rescale(size.GetWidth(),size.GetHeight());
 	}else {
-		wxImage result(*_self);
 		double x,y;
 		x = NUM2DBL(x_scale);
 		y = NUM2DBL(y_scale);
+
+		if(x == 0 || y == 0)
+		{
+			if(!check_negative_size(x, y))
+				return Qnil;
+		}
 
 		if(x < 0)
 		{
@@ -485,11 +536,18 @@ DLL_LOCAL VALUE _replace_color_self(VALUE self, VALUE color1, VALUE color2)
  * * angle is Float
  * ===Return value
  * WX::Image
+ * === Exceptions
+ * [RangeError]
+ * * angle is outside of -1..1
 */
 DLL_LOCAL VALUE _rotate_hue(VALUE self, VALUE angle)
 {
 	wxImage result(*_self);
-	result.RotateHue(NUM2DBL(angle));
+	double val = NUM2DBL(angle);
+	if(val >= -1.0 && val <= 1.0)
+		result.RotateHue(val);
+	else
+		rb_raise(rb_eRangeError,"%f is out of range (-1..1)", val);
 	return wrap(result);
 }
 
@@ -502,10 +560,18 @@ DLL_LOCAL VALUE _rotate_hue(VALUE self, VALUE angle)
  * * angle is Float
  * ===Return value
  * self
+ * === Exceptions
+ * [RangeError]
+ * * angle is outside of -1..1
 */
 DLL_LOCAL VALUE _rotate_hue_self(VALUE self, VALUE angle)
 {
-	_self->RotateHue(NUM2DBL(angle));
+	double val = NUM2DBL(angle);
+	if(val >= -1.0 && val <= 1.0)
+		_self->RotateHue(val);
+	else
+		rb_raise(rb_eRangeError,"%f is out of range (-1..1)", val);
+
 	return self;
 }
 
