@@ -77,7 +77,7 @@ DLL_LOCAL bool check_title(wxWindowID wid, VALUE id, VALUE text)
 {
 	if(!wxIsStockID(wid) && (NIL_P(text) || rb_str_length(text) == INT2FIX(0)))
 	{
-		rb_raise(rb_eArgError,"id %s (%d) needs an text",unwrap<char*>(id),wid);
+		rb_raise(rb_eArgError,"id %"PRIsVALUE"s (%d) needs an text", id, wid);
 		return false;
 	}
 	return true;
@@ -237,7 +237,7 @@ DLL_LOCAL VALUE _appendShift(VALUE self,VALUE val)
 	} else {
 		wxWindowID id = unwrapID(val);
 		if(!wxIsStockID(id))
-			rb_raise(rb_eArgError,"id \"%s\" cant be fast added",unwrap<char*>(val));
+			rb_raise(rb_eArgError,"id \"%"PRIsVALUE"\" cant be fast added", val);
 		_self->Append(id);
 	}
 	return self;
