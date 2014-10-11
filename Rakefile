@@ -12,14 +12,16 @@ rescue LoadError
 end
 
 ENV["RDOCOPT"] = "" if ENV["RDOCOPT"]
-TMPSRCDIR = Dir.mktmpdir
-CLEAN.include(TMPSRCDIR)
+if RDoc::VERSION < "4.1"
+	TMPSRCDIR = Dir.mktmpdir
+	CLEAN.include(TMPSRCDIR)
+end
 CLOBBER.include("rdoc")
 
 
 load "rwx.gemspec"
 
-Gem::PackageTask.new(GEMSPEC)do |pkg|
+Gem::PackageTask.new(GEMSPEC) do |pkg|
   pkg.need_zip = true
   pkg.need_tar = true
   pkg.need_tar_bz2 = true
@@ -52,12 +54,17 @@ end
 RDoc::Task.new do |rdoc|
   rdoc.title = "rwx RDocs"
   rdoc.main = "README.rdoc"
+if RDoc::VERSION < "4.1"
   rdoc.rdoc_files.include("*.rdoc", TMPSRCDIR)
-  rdoc.rdoc_dir = "rdoc"
-
   # We will have another 'rdoc' task that depends on this task
   rdoc.name = :docs
+else
+  rdoc.rdoc_files.include("*.rdoc", "ext/*.cpp")
 end
+  rdoc.rdoc_dir = "rdoc"
+end
+
+if RDoc::VERSION < "4.1"
 
 # This task removes the DLL_LOCAL statements temporarily to
 # make RDoc work properly. The stripped sources are to be
@@ -83,3 +90,6 @@ end
 
 desc "Generate the RDoc documentation."
 task :rdoc => [:prepare_sources, :docs, :clean_sources]
+
+end
+
