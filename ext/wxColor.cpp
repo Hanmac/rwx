@@ -43,13 +43,15 @@ template <>
 wxColor unwrap< wxColor >(const VALUE &vcolor)
 {
 	if(rb_obj_is_kind_of(vcolor, rb_cString)){
+		wxLogNull logNo;
 		wxString name(unwrap<wxString>(vcolor));
-		if(wxColourDatabase *database = wxTheColourDatabase) {
-			if(database->Find(name).IsOk())
-				return wxColor(name);
-		}
-		rb_raise(rb_eTypeError,"%s is not a valid %s name",name.c_str().AsChar(),rb_class2name(rb_cWXColor));
-		return wxNullColour;
+		wxColor col(name);
+		if(!col.Ok())
+			rb_raise(
+				rb_eTypeError,
+				"%"PRIsVALUE" is not valid %"PRIsVALUE, vcolor, rb_cWXColor
+			);
+		return col;
 	}else if(FIXNUM_P(vcolor))
 		return wxColor(NUM2INT(vcolor));
 	else if(!rb_obj_is_kind_of(vcolor, rb_cWXColor) &&
@@ -181,6 +183,19 @@ DLL_LOCAL VALUE _tos(VALUE self)
 {
 	return wrap(wxToString(*_self));
 }
+
+DLL_LOCAL VALUE _name(VALUE self)
+{
+	if(wxColourDatabase *database = wxTheColourDatabase) {
+		wxString name(database->FindName(*_self).MakeLower());
+		if(name.empty())
+			return Qnil;
+		return wrap(name);
+	}
+	return Qnil;
+}
+
+
 /*
  * call-seq:
  *   Color.new(red,green,blue[,alpha])
@@ -262,6 +277,21 @@ DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
     return Qnil;
 }
 
+struct equal_obj {
+	wxColor* self;
+	VALUE other;
+};
+
+VALUE _equal_block(equal_obj *obj)
+{
+	return wrap(*obj->self == unwrap<wxColor>(obj->other));
+}
+
+VALUE _equal_rescue(VALUE val)
+{
+	return Qfalse;
+}
+
 /*
  * call-seq:
  *   == color -> bool
@@ -272,7 +302,14 @@ DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
  */
 DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
 {
-	return wrap((*_self) == unwrap<wxColor>(other));
+	equal_obj obj;
+	obj.self = _self;
+	obj.other = other;
+
+	return rb_rescue(
+		RUBY_METHOD_FUNC(_equal_block),(VALUE)&obj,
+		RUBY_METHOD_FUNC(_equal_rescue),Qnil
+	);
 }
 
 
@@ -357,6 +394,7 @@ DLL_LOCAL void Init_WXColor(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXColor,"alpha",_getAlpha,_setAlpha);
 
 	rb_define_method(rb_cWXColor,"to_s",RUBY_METHOD_FUNC(_tos),0);
+	rb_define_method(rb_cWXColor,"name",RUBY_METHOD_FUNC(_name),0);
 	rb_define_method(rb_cWXColor,"inspect",RUBY_METHOD_FUNC(_inspect),0);
 
 	rb_define_method(rb_cWXColor,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
