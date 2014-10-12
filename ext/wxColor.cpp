@@ -111,33 +111,33 @@ void define_const()
 DLL_LOCAL VALUE _getRed(VALUE self)
 {
 	if(_self->IsOk())
-		return INT2NUM(_self->Red());
+		return CHR2FIX(_self->Red());
 	else
-		return UINT2NUM(0);
+		return CHR2FIX(0);
 }
 
 DLL_LOCAL VALUE _getGreen(VALUE self)
 {
 	if(_self->IsOk())
-		return INT2NUM(_self->Green());
+		return CHR2FIX(_self->Green());
 	else
-		return UINT2NUM(0);
+		return CHR2FIX(0);
 }
 
 DLL_LOCAL VALUE _getBlue(VALUE self)
 {
 	if(_self->IsOk())
-		return INT2NUM(_self->Blue());
+		return CHR2FIX(_self->Blue());
 	else
-		return UINT2NUM(0);
+		return CHR2FIX(0);
 }
 
 DLL_LOCAL VALUE _getAlpha(VALUE self)
 {
 	if(_self->IsOk())
-		return INT2NUM(_self->Alpha());
+		return CHR2FIX(_self->Alpha());
 	else
-		return UINT2NUM(0);
+		return CHR2FIX(0);
 }
 
 
@@ -247,12 +247,13 @@ DLL_LOCAL VALUE _initialize_copy(VALUE self, VALUE other)
 */
 DLL_LOCAL VALUE _inspect(VALUE self)
 {
-	return rb_sprintf( "%s(%d, %d, %d, %d)",
+	return rb_sprintf( "%s(%d, %d, %d, %f)",
 		rb_obj_classname( self ),
 		FIX2INT(_getRed(self)),
 		FIX2INT(_getGreen(self)),
 		FIX2INT(_getBlue(self)),
-		FIX2INT(_getAlpha(self)));
+		NUM2DBL(_getAlpha(self)) / 256
+	);
 }
 
 /*
