@@ -140,14 +140,24 @@ DLL_LOCAL VALUE _getAlpha(VALUE self)
 		return CHR2FIX(0);
 }
 
+DLL_LOCAL char val_to_char(VALUE val)
+{
+	char cval(0);
+	if(FIXNUM_P(val))
+		cval = NUM2CHR(val);
+	else
+		cval = NUM2DBL(val) * 256;
+	return cval;
+}
 
 DLL_LOCAL VALUE _setRed(VALUE self,VALUE val)
 {
 	rb_check_frozen(self);
+
 	if(_self->IsOk())
-		_self->Set(NUM2CHR(val),_self->Green(),_self->Blue(),_self->Alpha());
+		_self->Set(val_to_char(val),_self->Green(),_self->Blue(),_self->Alpha());
 	else
-		_self->Set(NUM2CHR(val),0,0,0);
+		_self->Set(val_to_char(val),0,0,0);
 	return val;
 }
 
@@ -155,25 +165,25 @@ DLL_LOCAL VALUE _setGreen(VALUE self,VALUE val)
 {
 	rb_check_frozen(self);
 	if(_self->IsOk())
-		_self->Set(_self->Red(),NUM2CHR(val),_self->Blue(),_self->Alpha());
+		_self->Set(_self->Red(),val_to_char(val),_self->Blue(),_self->Alpha());
 	else
-		_self->Set(0,NUM2CHR(val),0,0);
+		_self->Set(0,val_to_char(val),0,0);
 	return val;
 }
 DLL_LOCAL VALUE _setBlue(VALUE self,VALUE val)
 {
 	rb_check_frozen(self);
 	if(_self->IsOk())
-		_self->Set(_self->Red(),_self->Green(),NUM2CHR(val),_self->Alpha());
+		_self->Set(_self->Red(),_self->Green(),val_to_char(val),_self->Alpha());
 	else
-		_self->Set(0,0,NUM2CHR(val),0);
+		_self->Set(0,0,val_to_char(val),0);
 	return val;
 }
 DLL_LOCAL VALUE _setAlpha(VALUE self,VALUE val)
 {
 	rb_check_frozen(self);
 
-	char red(0), green(0), blue(0), alpha(0);
+	int red(0), green(0), blue(0), alpha(0);
 
 	if(_self->IsOk()) {
 		red = _self->Red();
@@ -186,7 +196,7 @@ DLL_LOCAL VALUE _setAlpha(VALUE self,VALUE val)
 	else if(val == Qtrue)
 		alpha = wxALPHA_TRANSPARENT;
 	else
-		alpha = NUM2CHR(val);
+		alpha = val_to_char(val);
 
 	_self->Set(red, green, blue, alpha);
 	return val;
@@ -249,10 +259,10 @@ DLL_LOCAL VALUE _inspect(VALUE self)
 {
 	return rb_sprintf( "%s(%d, %d, %d, %d)",
 		rb_obj_classname( self ),
-		NUM2CHR(_getRed(self)),
-		NUM2CHR(_getGreen(self)),
-		NUM2CHR(_getBlue(self)),
-		NUM2CHR(_getAlpha(self))
+		FIX2INT(_getRed(self)),
+		FIX2INT(_getGreen(self)),
+		FIX2INT(_getBlue(self)),
+		FIX2INT(_getAlpha(self))
 	);
 }
 
