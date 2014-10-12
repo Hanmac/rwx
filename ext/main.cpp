@@ -56,9 +56,9 @@ void registerDataType(VALUE klass, RUBY_DATA_FUNC freefunc, size_t (*sizefunc)(c
 		datatypeholder[klass] = str;
 		if(freefunc) {
 			rb_data_type_t str_const = {
-				rb_class2name(klass),
-				{0, 0, 0,},
-				unwrapDataType(RCLASS_SUPER(klass)), NULL,
+				(std::string(rb_class2name(klass)) + "(const)").c_str(),
+				{0, 0, sizefunc,},
+				&datatypeholder[klass], NULL,
 			};
 			datatypeholder_const[klass] = str_const;
 		}else {
@@ -74,6 +74,9 @@ void registerDataType(VALUE klass)
 
 void* unwrapTypedPtr(const VALUE &obj, rb_data_type_t* rbdata)
 {
+	if(NIL_P(obj))
+		return NULL;
+
 	if(!rbdata) {
 		rb_raise(rb_eTypeError,"%s unknown datatype", rb_obj_classname(obj));
 		return NULL;
