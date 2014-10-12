@@ -26,8 +26,7 @@ bool is_wrapable< wxColor >(const VALUE &vcolor)
 		return true;
 	} else if(rb_respond_to(vcolor,rwxID_red) &&
 		rb_respond_to(vcolor,rwxID_blue) &&
-		rb_respond_to(vcolor,rwxID_green) &&
-		rb_respond_to(vcolor,rwxID_alpha)){
+		rb_respond_to(vcolor,rwxID_green)){
 		return true;
 	}else
 		return false;
@@ -39,6 +38,15 @@ wxColor* unwrap< wxColor* >(const VALUE &vcolor)
 	return unwrapTypedPtr<wxColor>(vcolor, rb_cWXColor);
 }
 
+void set_color_part(char& cv,const VALUE &val, const ID &id)
+{
+	VALUE tmp = rb_funcall(val,id,0);
+	if(FIXNUM_P(tmp))
+		cv = NUM2CHR(tmp);
+	else
+		cv = NUM2DBL(tmp) * 256;
+}
+
 template <>
 wxColor unwrap< wxColor >(const VALUE &vcolor)
 {
@@ -46,38 +54,30 @@ wxColor unwrap< wxColor >(const VALUE &vcolor)
 		wxLogNull logNo;
 		wxString name(unwrap<wxString>(vcolor));
 		wxColor col(name);
-		if(!col.Ok())
+		if(!col.IsOk())
 			rb_raise(
 				rb_eTypeError,
 				"%"PRIsVALUE" is not valid %"PRIsVALUE, vcolor, rb_cWXColor
 			);
 		return col;
 	}else if(FIXNUM_P(vcolor))
-		return wxColor(NUM2INT(vcolor));
+		return wxColor(FIX2LONG(vcolor));
 	else if(!rb_obj_is_kind_of(vcolor, rb_cWXColor) &&
 		rb_respond_to(vcolor,rwxID_red) &&
-		rb_respond_to(vcolor,rwxID_blue) &&
 		rb_respond_to(vcolor,rwxID_green) &&
-		rb_respond_to(vcolor,rwxID_alpha)){
-		double red,blue,green,alpha;
+		rb_respond_to(vcolor,rwxID_blue)){
+		char red,green,blue,alpha(wxALPHA_OPAQUE);
 		wxColor color;
-		red = NUM2DBL(rb_funcall(vcolor,rwxID_red,0));
-		if(red < 1.0)
-			red *=256;
 
-		blue = NUM2DBL(rb_funcall(vcolor,rwxID_blue,0));
-		if(blue < 1.0)
-			blue *=256;
+		set_color_part(red, vcolor, rwxID_red);
+		set_color_part(green, vcolor, rwxID_green);
+		set_color_part(blue, vcolor, rwxID_blue);
 
-		green = NUM2DBL(rb_funcall(vcolor,rwxID_green,0));
-		if(green < 1.0)
-			green *=256;
+		if(rb_respond_to(vcolor,rwxID_alpha)) {
+			set_color_part(alpha, vcolor, rwxID_alpha);
+		}
 
-		alpha = NUM2DBL(rb_funcall(vcolor,rwxID_alpha,0));
-		if(alpha < 1.0)
-			alpha *=256;
-
-		color.Set(red,blue,green,alpha);
+		color.Set(red, green, blue, alpha);
 
 		return color;
 	}else{
@@ -172,10 +172,23 @@ DLL_LOCAL VALUE _setBlue(VALUE self,VALUE val)
 DLL_LOCAL VALUE _setAlpha(VALUE self,VALUE val)
 {
 	rb_check_frozen(self);
-	if(_self->IsOk())
-		_self->Set(_self->Red(),_self->Green(),_self->Blue(),NUM2CHR(val));
+
+	char red(0), green(0), blue(0), alpha(0);
+
+	if(_self->IsOk()) {
+		red = _self->Red();
+		green = _self->Green();
+		blue = _self->Blue();
+	}
+
+	if(!RTEST(val))
+		alpha = wxALPHA_OPAQUE;
+	else if(val == Qtrue)
+		alpha = wxALPHA_TRANSPARENT;
 	else
-		_self->Set(0,0,0,NUM2CHR(val));
+		alpha = NUM2CHR(val);
+
+	_self->Set(red, green, blue, alpha);
 	return val;
 }
 
@@ -209,7 +222,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	_setRed(self,red);
 	_setGreen(self,green);
 	_setBlue(self,blue);
-	_setAlpha(self,NIL_P(alpha) ? INT2NUM(wxALPHA_OPAQUE) : alpha);
+	_setAlpha(self, alpha);
 	return self;
 }
 /*
