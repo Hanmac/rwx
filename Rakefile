@@ -3,6 +3,7 @@ gem "rdoc"
 require "tmpdir"
 require "rake"
 require "rake/clean"
+require "rake/testtask"
 require "rubygems/package_task"
 require "rdoc/task"
 
@@ -49,6 +50,10 @@ else
     t.cross_compile = true                # enable cross compilation (requires cross compile toolchain)
     t.cross_platform = 'i386-mswin32'     # forces the Windows platform instead of the default one
   end
+end
+
+Rake::TestTask.new do |t|
+  t.verbose = true
 end
 
 RDoc::Task.new do |rdoc|
