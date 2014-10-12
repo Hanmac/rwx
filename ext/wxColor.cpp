@@ -93,6 +93,9 @@ DLL_LOCAL VALUE _alloc(VALUE self) {
 
 void define_const()
 {
+	if(rb_const_defined(rb_cWXColor,rb_intern("BLACK")))
+		return;
+
 	rb_define_const(rb_cWXColor,"BLACK",wrap(wxBLACK));
 	rb_define_const(rb_cWXColor,"BLUE",wrap(wxBLUE));
 	rb_define_const(rb_cWXColor,"CYAN",wrap(wxCYAN));
@@ -324,6 +327,7 @@ DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
 DLL_LOCAL void Init_WXColor(VALUE rb_mWX)
 {
 	using namespace RubyWX::Color;
+	rb_cWXColor = rb_define_class_under(rb_mWX,"Color",rb_cObject);
 
 #if 0
 	rb_define_attr(rb_cWXColor,"red",1,1);
@@ -341,8 +345,6 @@ DLL_LOCAL void Init_WXColor(VALUE rb_mWX)
 	rb_define_const(rb_cWXColor,"WHITE",wrap(wxWHITE));
 #endif
 
-
-	rb_cWXColor = rb_define_class_under(rb_mWX,"Color",rb_cObject);
 	rb_define_alloc_func(rb_cWXColor,_alloc);
 
 	rb_define_method(rb_cWXColor,"initialize",RUBY_METHOD_FUNC(_initialize),-1);

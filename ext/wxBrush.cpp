@@ -37,6 +37,9 @@ singlereturn(IsHatch)
 
 void define_const()
 {
+	if(rb_const_defined(rb_cWXBrush,rb_intern("BLACK")))
+		return;
+
 	rb_define_const(rb_cWXBrush,"BLACK",wrap(wxBLACK_BRUSH));
 	rb_define_const(rb_cWXBrush,"BLUE",wrap(wxBLUE_BRUSH));
 	rb_define_const(rb_cWXBrush,"CYAN",wrap(wxCYAN_BRUSH));

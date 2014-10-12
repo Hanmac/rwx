@@ -61,6 +61,9 @@ macro_attr(Stipple,wxBitmap)
 
 void define_const()
 {
+	if(rb_const_defined(rb_cWXPen,rb_intern("BLACK")))
+		return;
+
 	rb_define_const(rb_cWXPen,"BLACK_DASHED",wrap(wxBLACK_DASHED_PEN));
 	rb_define_const(rb_cWXPen,"BLACK",wrap(wxBLACK_PEN));
 	rb_define_const(rb_cWXPen,"BLUE",wrap(wxBLUE_PEN));

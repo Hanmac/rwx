@@ -77,6 +77,9 @@ macro_attr(FaceName,wxString)
 
 void define_const()
 {
+	if(rb_const_defined(rb_cWXFont,rb_intern("ITALIC")))
+		return;
+
 	rb_define_const(rb_cWXFont,"ITALIC",wrap(wxITALIC_FONT));
 	rb_define_const(rb_cWXFont,"NORMAL",wrap(wxNORMAL_FONT));
 	rb_define_const(rb_cWXFont,"SMALL",wrap(wxSMALL_FONT));
