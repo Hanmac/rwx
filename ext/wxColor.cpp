@@ -247,12 +247,12 @@ DLL_LOCAL VALUE _initialize_copy(VALUE self, VALUE other)
 */
 DLL_LOCAL VALUE _inspect(VALUE self)
 {
-	return rb_sprintf( "%s(%d, %d, %d, %f)",
+	return rb_sprintf( "%s(%d, %d, %d, %d)",
 		rb_obj_classname( self ),
-		FIX2INT(_getRed(self)),
-		FIX2INT(_getGreen(self)),
-		FIX2INT(_getBlue(self)),
-		NUM2DBL(_getAlpha(self)) / 256
+		NUM2CHR(_getRed(self)),
+		NUM2CHR(_getGreen(self)),
+		NUM2CHR(_getBlue(self)),
+		NUM2CHR(_getAlpha(self))
 	);
 }
 
