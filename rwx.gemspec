@@ -19,8 +19,9 @@ newest Binding for wxWidgets 3.0+, it was made after wxRuby died.
   spec.platform              = Gem::Platform::RUBY
   spec.required_ruby_version = ">= 2.0.0"
 
-  spec.add_development_dependency "rdoc"
-  spec.add_development_dependency "rake"
+  spec.add_development_dependency "rdoc", '~> 4.0'
+  spec.add_development_dependency "rake", '~> 10.0'
+  spec.add_development_dependency "test-unit", '~> 3.0'
 
   # Gem contents
   begin
@@ -30,7 +31,9 @@ newest Binding for wxWidgets 3.0+, it was made after wxRuby died.
       "rwx.gemspec", "ext/extconf.rb", "ext/*.*pp", "samples/**/**", "tests/**"
     ] if spec.files.empty?
   end
-  spec.has_rdoc         = true
+  
+  spec.extensions << "ext/extconf.rb"
+  
   spec.extra_rdoc_files = ["README.rdoc", "COPYING"]
   spec.rdoc_options << "-t" << "The rwx RDocs" << "-m" << "README.rdoc"
 
