@@ -31,7 +31,6 @@ protected:
 	                             const wxString& msg,
 	                             const wxLogRecordInfo& info)
 	{
-		wxLogInterposer::DoLogRecord(level, msg, info);
 
 		const char * c = msg.GetData().AsChar();
 		const char * f = info.func;
@@ -51,6 +50,8 @@ protected:
 			break;
 		}
 
+		wxLogInterposer::DoLogRecord(level, msg, info);
+
 
 	}
 
@@ -61,6 +62,6 @@ protected:
 DLL_LOCAL void Init_WXError(VALUE rb_mWX)
 {
 	rb_eWXError = rb_define_class_under(rb_mWX,"Error",rb_eException);
-	new RubyExceptionLog();
+	wxLog::SetActiveTarget(new RubyExceptionLog());
 	wxSetAssertHandler(wxrubyAssert);
 }
