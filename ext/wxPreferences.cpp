@@ -43,7 +43,6 @@ public:
 
 		return unwrap<wxWindow*>(result);
 	}
-
 private:
 	VALUE mblock;
 	VALUE mklass;
@@ -52,8 +51,12 @@ private:
 class RubyPreferencesPage : public RubyPreferencesPageInterface,public wxPreferencesPage
 {
 public:
-	RubyPreferencesPage(VALUE block,VALUE klass,const wxString &title) :
-		RubyPreferencesPageInterface(block,klass),wxPreferencesPage(),mtitle(title) {}
+	RubyPreferencesPage(VALUE block,VALUE klass,const wxString &title, VALUE bitmap) :
+		RubyPreferencesPageInterface(block,klass),wxPreferencesPage(),mtitle(title)
+#ifdef wxHAS_PREF_EDITOR_ICONS
+	,mBitmap(unwrap<wxBitmap>(bitmap))
+#endif
+	{}
 
 	//using RubyPreferencesPageInterface::CreateWindow;
 	wxWindow *CreateWindow(wxWindow *parent)
@@ -61,9 +64,17 @@ public:
 		return RubyPreferencesPageInterface::CreateWindow(parent);
 	}
 
+#ifdef wxHAS_PREF_EDITOR_ICONS
+	virtual wxBitmap GetLargeIcon() const { return mBitmap; };
+#endif
+
 	wxString GetName() const {return mtitle;}
 private:
 	wxString mtitle;
+
+#ifdef wxHAS_PREF_EDITOR_ICONS
+	wxBitmap mBitmap;
+#endif
 };
 
 
@@ -85,8 +96,8 @@ namespace Preferences {
 
 DLL_LOCAL VALUE _add_page(int argc,VALUE *argv,VALUE self)
 {
-	VALUE kind, klass,block;
-	rb_scan_args(argc, argv, "20&",&kind,&klass,&block);
+	VALUE kind, klass, block, bitmap;
+	rb_scan_args(argc, argv, "21&",&kind,&klass,&bitmap,&block);
 	wxPreferencesPage *page = NULL;
 	//VALUE block = rb_block_proc();
 	if(SYMBOL_P(kind))
@@ -99,7 +110,7 @@ DLL_LOCAL VALUE _add_page(int argc,VALUE *argv,VALUE self)
 		page = new RubyStockPreferencesPage(block,klass,wxkind);
 	}else
 	{
-		page = new RubyPreferencesPage(block,klass,unwrap<wxString>(kind));
+		page = new RubyPreferencesPage(block,klass,unwrap<wxString>(kind), bitmap);
 	}
 
 	_self->AddPage(page);
