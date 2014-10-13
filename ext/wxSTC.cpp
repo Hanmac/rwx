@@ -315,8 +315,9 @@ DLL_LOCAL void Init_WXSTC(VALUE rb_mWX)
 		->add(wxSTC_LEX_KVIRC,"kvirc")
 		->add(wxSTC_LEX_RUST,"rust")
 		->add(wxSTC_LEX_DMAP,"dmap")
-		->allow_array = false;
 #endif
+		->allow_array = false;
+
 	registerEnum("WX::STC::WrapIndent","WX::STC::WrapIndent",wxSTC_WRAPINDENT_FIXED)
 		->add(wxSTC_WRAPINDENT_FIXED,"fixed")
 		->add(wxSTC_WRAPINDENT_SAME,"same")
