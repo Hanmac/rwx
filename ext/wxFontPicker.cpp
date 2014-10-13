@@ -74,7 +74,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		VALUE temp;
 
 		set_option(selected_font,SelectedFont,wxFont)
+#ifdef HAVE_WXFONTPICKERCTRL_GETSELECTEDCOLOUR
 		set_option(selected_color,SelectedColour,wxColor)
+#endif
 	}
 	return self;
 }
@@ -124,14 +126,17 @@ DLL_LOCAL void Init_WXFontPicker(VALUE rb_mWX)
 
 	rb_cWXEvent = rb_define_class_under(rb_mWX,"Event",rb_cObject);
 
-	rb_define_attr(rb_cWXFontPicker,"selected_font",1,1);
-	rb_define_attr(rb_cWXFontPicker,"selected_color",1,1);
-	rb_define_attr(rb_cWXFontPickerEvent,"font",1,1);
 #endif
 
 #if wxUSE_FONTPICKERCTRL
 	using namespace RubyWX::FontPicker;
 	rb_cWXFontPicker = rb_define_class_under(rb_mWX,"FontPicker",rb_cWXPickerBase);
+
+#if 0
+	rb_define_attr(rb_cWXFontPicker,"selected_font",1,1);
+	rb_define_attr(rb_cWXFontPicker,"selected_color",1,1);
+#endif
+
 	rb_define_alloc_func(rb_cWXFontPicker,_alloc);
 
 	rb_define_method(rb_cWXFontPicker,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
@@ -143,6 +148,11 @@ DLL_LOCAL void Init_WXFontPicker(VALUE rb_mWX)
 #endif
 
 	rb_cWXFontPickerEvent = rb_define_class_under(rb_cWXEvent,"FontPicker",rb_cWXEvent);
+
+#if 0
+	rb_define_attr(rb_cWXFontPickerEvent,"font",1,1);
+#endif
+
 	registerEventType("fontpicker_changed",wxEVT_FONTPICKER_CHANGED,rb_cWXFontPickerEvent);
 	rb_define_attr_method(rb_cWXFontPickerEvent,"font",Event::_getFont,Event::_setFont);
 
