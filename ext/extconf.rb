@@ -88,6 +88,10 @@ if(wx_config = find_executable('wx-config'))
 		have_member_func("wxFontPickerCtrl","GetSelectedColour","wx/fontpicker.h")
 		have_member_func("wxInfoBar","GetButtonCount","wx/infobar.h")
 		
+    have_member_func("wxOwnerDrawnComboBox","IsListEmpty","wx/odcombo.h")
+		
+    
+		
 		#check for enum flags
 		have_const("wxFD_NO_FOLLOW","wx/filedlg.h")
 		have_const("wxDIRCTRL_DEFAULT_STYLE",["wx/wx.h", "wx/dirctrl.h"])
