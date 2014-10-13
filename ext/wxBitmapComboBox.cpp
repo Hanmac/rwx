@@ -28,8 +28,19 @@ singlefunc(Clear)
 singlefunc(Popup)
 singlefunc(Dismiss)
 
+#if wxBITMAPCOMBOBOX_OWNERDRAWN_BASED
+DLL_LOCAL VALUE _IsListEmpty(VALUE self)
+{
+	return wrap(dynamic_cast<wxItemContainer*>(_self)->IsEmpty());
+}
+DLL_LOCAL VALUE _IsTextEmpty(VALUE self)
+{
+	return wrap(dynamic_cast<wxTextEntry*>(_self)->IsEmpty());
+}
+#else
 singlereturn(IsListEmpty)
 singlereturn(IsTextEmpty)
+#endif
 
 /*
  * call-seq:
@@ -252,13 +263,14 @@ DLL_LOCAL void Init_WXBitmapComboBox(VALUE rb_mWX)
 	rb_define_method(rb_cWXBitmapComboBox,"popup",RUBY_METHOD_FUNC(_Popup),0);
 	rb_define_method(rb_cWXBitmapComboBox,"dismiss",RUBY_METHOD_FUNC(_Dismiss),0);
 
+
+	rb_include_module(rb_cWXBitmapComboBox,rb_mWXItemContainer);
+	rb_include_module(rb_cWXBitmapComboBox,rb_mWXTextEntry);
+
 	rb_undef_method(rb_cWXBitmapComboBox,"empty?");
 
 	rb_define_method(rb_cWXBitmapComboBox,"list_empty?",RUBY_METHOD_FUNC(_IsListEmpty),0);
 	rb_define_method(rb_cWXBitmapComboBox,"text_empty?",RUBY_METHOD_FUNC(_IsTextEmpty),0);
-
-	rb_include_module(rb_cWXBitmapComboBox,rb_mWXItemContainer);
-	rb_include_module(rb_cWXBitmapComboBox,rb_mWXTextEntry);
 
 	rb_define_method(rb_cWXBitmapComboBox,"get_item_bitmap",RUBY_METHOD_FUNC(_getItemBitmap),1);
 	rb_define_method(rb_cWXBitmapComboBox,"set_item_bitmap",RUBY_METHOD_FUNC(_setItemBitmap),2);
