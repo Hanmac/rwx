@@ -28,7 +28,7 @@ singlefunc(Clear)
 singlefunc(Popup)
 singlefunc(Dismiss)
 
-#if !wxBITMAPCOMBOBOX_OWNERDRAWN_BASED && !defined(HAVE_WXOWNERDRAWNCOMBOBOX_ISLISTEMPTY)
+#if defined(wxBITMAPCOMBOBOX_OWNERDRAWN_BASED) && !defined(HAVE_WXOWNERDRAWNCOMBOBOX_ISLISTEMPTY)
 DLL_LOCAL VALUE _IsListEmpty(VALUE self)
 {
 	return wrap(dynamic_cast<wxItemContainer*>(_self)->IsEmpty());
