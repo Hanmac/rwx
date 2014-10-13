@@ -9,6 +9,10 @@
 
 #include "wxApp.hpp"
 
+#ifdef wxHAS_PREF_EDITOR_ICONS
+#include "wxBitmap.hpp"
+#endif
+
 VALUE rb_cWXPreferences;
 
 #ifdef HAVE_WX_PREFERENCES_H
