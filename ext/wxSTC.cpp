@@ -309,13 +309,14 @@ DLL_LOCAL void Init_WXSTC(VALUE rb_mWX)
 		->add(wxSTC_LEX_ECL,"ecl")
 		->add(wxSTC_LEX_OSCRIPT,"oscript")
 		->add(wxSTC_LEX_VISUALPROLOG,"visual_prolog")
+#if HAVE_CONST_WXSTC_LEX_DMAP
 		->add(wxSTC_LEX_LITERATEHASKELL,"lite_rate_haskell")
 		->add(wxSTC_LEX_STTXT,"sttxt")
 		->add(wxSTC_LEX_KVIRC,"kvirc")
 		->add(wxSTC_LEX_RUST,"rust")
 		->add(wxSTC_LEX_DMAP,"dmap")
 		->allow_array = false;
-
+#endif
 	registerEnum("WX::STC::WrapIndent","WX::STC::WrapIndent",wxSTC_WRAPINDENT_FIXED)
 		->add(wxSTC_WRAPINDENT_FIXED,"fixed")
 		->add(wxSTC_WRAPINDENT_SAME,"same")

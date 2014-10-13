@@ -90,12 +90,12 @@ if(wx_config = find_executable('wx-config'))
 		
     have_member_func("wxOwnerDrawnComboBox","IsListEmpty","wx/odcombo.h")
 		
-    
-		
 		#check for enum flags
 		have_const("wxFD_NO_FOLLOW","wx/filedlg.h")
 		have_const("wxDIRCTRL_DEFAULT_STYLE",["wx/wx.h", "wx/dirctrl.h"])
-		
+		  
+    have_const("wxSTC_LEX_DMAP",["wx/wx.h", "wx/stc/stc.h"])
+    
 	}
 else
 		abort("wx-config executable not found!")
