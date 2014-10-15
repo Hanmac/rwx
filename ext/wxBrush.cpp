@@ -16,10 +16,34 @@ VALUE rb_cWXBrush;
 typedef std::map<wxBrush*,VALUE> brushlisttype;
 brushlisttype brushlistholder;
 
+
+template <>
+VALUE wrap< wxBrush >(wxBrush *bitmap )
+{
+	if(!bitmap || !bitmap->IsOk())
+		return Qnil;
+	return wrapTypedPtr(bitmap,rb_cWXBrush);
+}
+
+template <>
+VALUE wrap< wxBrush >(const wxBrush &bitmap )
+{
+	if(bitmap.IsOk())
+		return wrapTypedPtr(const_cast<wxBrush*>(&bitmap),rb_cWXBrush);
+	return Qnil;
+}
+
 template <>
 wxBrush unwrap< wxBrush >(const VALUE &vbrush)
 {
-	return NIL_P(vbrush) ? wxNullBrush : *unwrap< wxBrush* >(vbrush);
+	if(NIL_P(vbrush))
+		return wxNullBrush;
+	if(is_wrapable<wxColor>(vbrush))
+		return wxBrush(unwrap<wxColor>(vbrush));
+	if(rb_obj_is_kind_of(vbrush,rb_cWXBrush))
+		return *unwrap< wxBrush* >(vbrush);
+	else
+		return wxBrush(unwrap<wxBitmap>(vbrush));
 }
 
 namespace RubyWX {
@@ -217,8 +241,11 @@ DLL_LOCAL VALUE _class_get(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL void Init_WXBrush(VALUE rb_mWX)
 {
-#if 0
+	using namespace RubyWX::Brush;
+	rb_cWXBrush = rb_define_class_under(rb_mWX,"Brush",rb_cObject);
+	rb_define_alloc_func(rb_cWXBrush,_alloc);
 
+#if 0
 	rb_define_attr(rb_cWXBrush,"color",1,1);
 	rb_define_attr(rb_cWXBrush,"style",1,1);
 	rb_define_attr(rb_cWXBrush,"stipple",1,1);
@@ -236,10 +263,6 @@ DLL_LOCAL void Init_WXBrush(VALUE rb_mWX)
 	rb_define_const(rb_cWXBrush,"TRANSPARENT",wrap(wxTRANSPARENT_BRUSH));
 	rb_define_const(rb_cWXBrush,"WHITE",wrap(wxWHITE_BRUSH));
 #endif
-
-	using namespace RubyWX::Brush;
-	rb_cWXBrush = rb_define_class_under(rb_mWX,"Brush",rb_cObject);
-	rb_define_alloc_func(rb_cWXBrush,_alloc);
 
 	rb_define_method(rb_cWXBrush,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 	rb_define_private_method(rb_cWXBrush,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),1);
