@@ -43,14 +43,18 @@ wxPen* unwrap< wxPen* >(const VALUE &vbitmap)
 template <>
 wxPen unwrap< wxPen >(const VALUE &vbitmap)
 {
-	return NIL_P(vbitmap) ? wxNullPen : *unwrap<wxPen*>(vbitmap);
+	if(NIL_P(vbitmap))
+		return wxNullPen;
+	if(is_wrapable<wxColor>(vbitmap))
+		return wxPen(unwrap<wxColor>(vbitmap));
+	return *unwrap< wxPen* >(vbitmap);
 }
 
 
 namespace RubyWX {
 namespace Pen {
 DLL_LOCAL VALUE _alloc(VALUE self) {
-	return wrap(new wxPen(*wxBLACK));
+	return wrapTypedPtr(new wxPen(*wxBLACK), self);
 }
 
 macro_attr(Width,int)
