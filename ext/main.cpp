@@ -113,12 +113,12 @@ rb_data_type_t* unwrapDataType(const VALUE& klass)
 }
 
 
-VALUE wrapTypedPtr(void *arg,VALUE klass)
+VALUE wrapTypedPtr(void *arg,VALUE klass, bool allowNull)
 {
-	if(arg){
+	if(arg || allowNull){
 		rb_data_type_t* datatype = unwrapDataType(klass);
 		if(!datatype)
-			rb_fatal("%s unknown datatype",rb_class2name(klass));
+			rb_fatal("%"PRIsVALUE" unknown datatype", klass);
 
 		return TypedData_Wrap_Struct(klass, datatype, arg);
 	}

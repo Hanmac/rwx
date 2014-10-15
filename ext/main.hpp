@@ -94,7 +94,7 @@ extern VALUE global_holder;
 void rwx_refobject(VALUE object);
 bool rwx_unrefobject(VALUE object);
 
-VALUE wrapTypedPtr(void *arg,VALUE klass);
+VALUE wrapTypedPtr(void *arg,VALUE klass, bool allowNull = false);
 VALUE wrapTypedPtr(wxObject *object,VALUE klass);
 VALUE wrapTypedPtr(wxEvtHandler *handler,VALUE klass);
 
