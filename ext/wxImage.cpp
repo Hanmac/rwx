@@ -5,6 +5,7 @@
  *      Author: hanmac
  */
 
+#include "wxApp.hpp"
 #include "wxSize.hpp"
 #include "wxRect.hpp"
 #include "wxPoint.hpp"
@@ -684,6 +685,9 @@ DLL_LOCAL VALUE _save(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL VALUE _draw(VALUE self)
 {
+	app_protected();
+	rb_check_frozen(self);
+
 	wxDC *dc;
 
 #if wxUSE_GRAPHICS_CONTEXT
@@ -844,6 +848,8 @@ DLL_LOCAL void Init_WXImage(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXImage,"size",_getSize,NULL);
 	rb_define_attr_method(rb_cWXImage,"data",_getData,NULL);
 	rb_define_attr_method(rb_cWXImage,"alpha",_getAlpha,NULL);
+
+	rb_define_method(rb_cWXImage,"draw",RUBY_METHOD_FUNC(_draw),0);
 
 	rb_define_method(rb_cWXImage,"to_image",RUBY_METHOD_FUNC(_to_image),0);
 	rb_define_method(rb_cWXImage,"to_bitmap",RUBY_METHOD_FUNC(_to_bitmap),0);
