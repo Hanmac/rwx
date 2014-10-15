@@ -15,6 +15,9 @@ void Init_WXColor(VALUE rb_mWX);
 
 
 template <>
+VALUE wrap< wxColor >(const wxColor& color );
+
+template <>
 VALUE wrap< wxColor >(wxColor *color );
 
 template <>

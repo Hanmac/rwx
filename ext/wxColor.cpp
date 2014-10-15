@@ -13,6 +13,13 @@ VALUE rb_cWXColor;
 ID rwxID_red,rwxID_blue,rwxID_green,rwxID_alpha;
 
 template <>
+VALUE wrap< wxColor >(const wxColor& color )
+{
+	if(!color.IsOk())
+		return Qnil;
+	return wrapTypedPtr(new wxColor(color), rb_cWXColor);
+}
+template <>
 VALUE wrap< wxColor >(wxColor *color )
 {
 	return wrapTypedPtr(color, rb_cWXColor);
@@ -21,10 +28,15 @@ VALUE wrap< wxColor >(wxColor *color )
 template <>
 bool is_wrapable< wxColor >(const VALUE &vcolor)
 {
-	if (rb_obj_is_kind_of(vcolor, rb_cWXColor) ||
-		rb_obj_is_kind_of(vcolor, rb_cString) || FIXNUM_P(vcolor)){
+	if(rb_obj_is_kind_of(vcolor, rb_cWXColor) || FIXNUM_P(vcolor)){
 		return true;
-	} else if(rb_respond_to(vcolor,rwxID_red) &&
+	}else if(rb_obj_is_kind_of(vcolor, rb_cString)){
+		wxLogNull logNo;
+		wxString name(unwrap<wxString>(vcolor));
+		wxColor col(name);
+		return col.IsOk();
+	}
+	else if(rb_respond_to(vcolor,rwxID_red) &&
 		rb_respond_to(vcolor,rwxID_blue) &&
 		rb_respond_to(vcolor,rwxID_green)){
 		return true;
@@ -50,6 +62,10 @@ void set_color_part(char& cv,const VALUE &val, const ID &id)
 template <>
 wxColor unwrap< wxColor >(const VALUE &vcolor)
 {
+	//NULLColor is not wanted
+	//	if(NIL_P(vcolor))
+	//		return wxNullColour;
+
 	if(rb_obj_is_kind_of(vcolor, rb_cString)){
 		wxLogNull logNo;
 		wxString name(unwrap<wxString>(vcolor));
@@ -81,7 +97,10 @@ wxColor unwrap< wxColor >(const VALUE &vcolor)
 
 		return color;
 	}else{
-		return *unwrap<wxColor*>(vcolor);
+		wxColor *col = unwrap<wxColor*>(vcolor);
+		if(!col->IsOk())
+			rb_raise(rb_eTypeError,"invalid %"PRIsVALUE, rb_cWXColor);
+		return *col;
 	}
 
 
@@ -90,7 +109,7 @@ wxColor unwrap< wxColor >(const VALUE &vcolor)
 namespace RubyWX {
 namespace Color {
 DLL_LOCAL VALUE _alloc(VALUE self) {
-	return wrap(new wxColor);
+	return wrapTypedPtr(new wxColor,self);
 }
 
 void define_const()
