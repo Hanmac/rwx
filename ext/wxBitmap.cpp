@@ -5,8 +5,9 @@
  *      Author: hanmac
  */
 
-
+#include "wxApp.hpp"
 #include "wxBitmap.hpp"
+#include "wxColor.hpp"
 #include "wxPalette.hpp"
 #include "wxDC.hpp"
 #include <map>
@@ -14,7 +15,7 @@
 
 #define _self unwrap<wxBitmap*>(self)
 
-VALUE rb_cWXBitmap;
+VALUE rb_cWXBitmap, rb_cWXMask;
 
 typedef std::map<wxWindowID,wxArtID> WindowArt;
 WindowArt windowArtHolder;
@@ -136,24 +137,42 @@ macro_attr(Height,int)
 macro_attr(Width,int)
 macro_attr(Depth,int)
 
-macro_attr(Mask,wxMask*)
+singlereturn(GetMask)
+
 #if wxUSE_PALETTE
 macro_attr(Palette,wxPalette)
 #endif
 
+DLL_LOCAL VALUE _setMask(VALUE self, VALUE val) {
+	if(rb_obj_is_kind_of(val, rb_cWXMask))
+		_self->SetMask(unwrap<wxMask*>(val));
+	else if(is_wrapable<wxColor>(val))
+		_self->SetMask(new wxMask(*_self, unwrap<wxColor>(val)));
+#if wxUSE_PALETTE
+	else if(FIXNUM_P(val))
+		_self->SetMask(new wxMask(*_self, NUM2INT(val)));
+#endif
+	else
+		_self->SetMask(new wxMask(unwrap<wxBitmap>(val)));
+	return val;
+}
+
 DLL_LOCAL VALUE _alloc(VALUE self) {
-	return wrap(new wxBitmap);
+	return wrapTypedPtr(new wxBitmap, self);
 }
 
 DLL_LOCAL VALUE _draw(VALUE self)
 {
+	app_protected();
+	rb_check_frozen(self);
+
 	wxDC *dc;
 	wxMemoryDC *mdc = new wxMemoryDC;
 	mdc->SelectObject(*_self);
 #if wxUSE_GRAPHICS_CONTEXT
 	dc = new wxGCDC(*mdc);
 #else
-	dc = &mdc;
+	dc = mdc;
 #endif
 	rb_yield(wrap(dc));
 	mdc->SelectObject(wxNullBitmap);
@@ -284,6 +303,12 @@ DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
 	rb_define_method(rb_cWXBitmap,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 	rb_define_private_method(rb_cWXBitmap,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),1);
 
+	rb_define_attr_method(rb_cWXBitmap,"height",_getHeight,_setHeight);
+	rb_define_attr_method(rb_cWXBitmap,"width",_getWidth,_setWidth);
+	rb_define_attr_method(rb_cWXBitmap,"depth",_getDepth,_setDepth);
+
+	rb_define_attr_method(rb_cWXBitmap,"mask",_GetMask,_setMask);
+
 #if wxUSE_IMAGE
 	rb_define_method(rb_cWXBitmap,"to_image",RUBY_METHOD_FUNC(_to_image),0);
 
@@ -298,10 +323,21 @@ DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXBitmap,"palette",_getPalette,_setPalette);
 #endif
 
+	rb_define_method(rb_cWXBitmap,"draw",RUBY_METHOD_FUNC(_draw),0);
+
 	rb_define_method(rb_cWXBitmap,"to_bitmap",RUBY_METHOD_FUNC(_to_bitmap),0);
 
 	rb_define_method(rb_cWXBitmap,"save_file",RUBY_METHOD_FUNC(_save_file),-1);
 
+	registerInfo<wxBitmap>(rb_cWXBitmap);
+
+	rb_cWXMask = rb_define_class_under(rb_mWX,"Mask",rb_cObject);
+	rb_undef_alloc_func(rb_cWXMask);
+	rb_undef_method(rb_cWXMask,"initialize_copy");
+	rb_undef_method(rb_cWXMask,"_load");
+	rb_undef_method(rb_cWXMask,"_dump");
+
+	registerInfo<wxMask>(rb_cWXMask);
 
 	registerArtID("folder",wxART_FOLDER);
 
