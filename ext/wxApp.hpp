@@ -42,7 +42,7 @@ void app_protected();
 #define APP_PROTECT_NULL DLL_LOCAL VALUE _alloc(VALUE self)\
 {\
 	app_protected();\
-	return wrapTypedPtr((void*)NULL,self);\
+	return wrapTypedPtr((void*)NULL,self, true);\
 }
 
 #endif /* WXAPP_HPP_ */
