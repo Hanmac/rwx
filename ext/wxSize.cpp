@@ -179,15 +179,16 @@ DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
 DLL_LOCAL void Init_WXSize(VALUE rb_mWX)
 {
 
+	using namespace RubyWX::Size;
+	rb_cWXSize = rb_define_class_under(rb_mWX,"Size",rb_cObject);
+
+	rb_define_alloc_func(rb_cWXSize,_alloc);
+
 #if 0
 	rb_define_attr(rb_cWXSize,"width",1,1);
 	rb_define_attr(rb_cWXSize,"height",1,1);
 #endif
 
-	using namespace RubyWX::Size;
-	rb_cWXSize = rb_define_class_under(rb_mWX,"Size",rb_cObject);
-
-	rb_define_alloc_func(rb_cWXSize,_alloc);
 	rb_define_method(rb_cWXSize,"initialize",RUBY_METHOD_FUNC(_initialize),2);
 	rb_define_private_method(rb_cWXSize,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),1);
 
