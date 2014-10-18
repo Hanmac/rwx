@@ -145,14 +145,16 @@ DLL_LOCAL void Init_WXTextCtrl(VALUE rb_mWX)
 
 	rb_mWXTextArea = rb_define_module_under(rb_mWX,"TextArea");
 	rb_mWXTextEntry = rb_define_module_under(rb_mWX,"TextEntry");
-
-	rb_define_attr(rb_cWXTextCtrl,"value",1,1);
 #endif
 
 #if wxUSE_TEXTCTRL
 	using namespace RubyWX::TextCtrl;
 	rb_cWXTextCtrl = rb_define_class_under(rb_mWX,"TextCtrl",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXTextCtrl,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXTextCtrl,"value",1,1);
+#endif
 
 	rb_include_module(rb_cWXTextCtrl,rb_mWXTextArea);
 	rb_include_module(rb_cWXTextCtrl,rb_mWXTextEntry);
