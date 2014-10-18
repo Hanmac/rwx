@@ -102,6 +102,8 @@ macro_attr(Message,wxString)
 macro_attr(Path,wxString)
 
 singlereturn(GetFilterIndex)
+singlereturn_array(GetFilenames, wxArrayString)
+singlereturn_array(GetPaths, wxArrayString)
 
 
 VALUE _setFilterIndex(VALUE self,VALUE other)
@@ -114,22 +116,6 @@ VALUE _setFilterIndex(VALUE self,VALUE other)
 
 	return other;
 }
-
-
-DLL_LOCAL VALUE _getFilenames(VALUE self)
-{
-	wxArrayString result;
-	_self->GetFilenames(result);
-	return wrap(result);
-}
-
-DLL_LOCAL VALUE _getPaths(VALUE self)
-{
-	wxArrayString result;
-	_self->GetPaths(result);
-	return wrap(result);
-}
-
 
 DLL_LOCAL VALUE _saveFileSelector(int argc,VALUE *argv,VALUE self)
 {
@@ -176,6 +162,12 @@ DLL_LOCAL VALUE _loadFileSelector(int argc,VALUE *argv,VALUE self)
 /* Document-attr: path
  * the path of the FileDialog. String
  */
+/* Document-attr: filenames
+ * the filenamex of the FileDialog. Array<String>
+ */
+/* Document-attr: paths
+ * the paths of the FileDialog. Array<String>
+ */
 
 
 /* Document-const: OPEN
@@ -218,14 +210,6 @@ DLL_LOCAL void Init_WXFileDialog(VALUE rb_mWX)
 
 	rb_cWXTopLevel = rb_define_class_under(rb_mWX,"TopLevel",rb_cWXWindow);
 	rb_cWXDialog = rb_define_class_under(rb_mWX,"Dialog",rb_cWXTopLevel);
-
-	rb_define_attr(rb_cWXFileDialog,"directory",1,1);
-	rb_define_attr(rb_cWXFileDialog,"filename",1,1);
-	rb_define_attr(rb_cWXFileDialog,"filter_index",1,1);
-	rb_define_attr(rb_cWXFileDialog,"wildcard",1,1);
-	rb_define_attr(rb_cWXFileDialog,"message",1,1);
-	rb_define_attr(rb_cWXFileDialog,"path",1,1);
-
 #endif
 
 #if wxUSE_FILEDLG
@@ -234,6 +218,17 @@ DLL_LOCAL void Init_WXFileDialog(VALUE rb_mWX)
 	rb_define_alloc_func(rb_cWXFileDialog,_alloc);
 	rb_define_method(rb_cWXFileDialog,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
+#if 0
+	rb_define_attr(rb_cWXFileDialog,"directory",1,1);
+	rb_define_attr(rb_cWXFileDialog,"filename",1,1);
+	rb_define_attr(rb_cWXFileDialog,"filter_index",1,1);
+	rb_define_attr(rb_cWXFileDialog,"wildcard",1,1);
+	rb_define_attr(rb_cWXFileDialog,"message",1,1);
+	rb_define_attr(rb_cWXFileDialog,"path",1,1);
+	rb_define_attr(rb_cWXFileDialog,"filenames",1,0);
+	rb_define_attr(rb_cWXFileDialog,"paths",1,0);
+#endif
+
 	rb_define_attr_method(rb_cWXFileDialog,"directory",_getDirectory,_setDirectory);
 	rb_define_attr_method(rb_cWXFileDialog,"filename",_getFilename,_setFilename);
 	rb_define_attr_method(rb_cWXFileDialog,"wildcard",_getWildcard,_setWildcard);
@@ -241,8 +236,8 @@ DLL_LOCAL void Init_WXFileDialog(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXFileDialog,"message",_getMessage,_setMessage);
 	rb_define_attr_method(rb_cWXFileDialog,"path",_getPath,_setPath);
 
-	rb_define_method(rb_cWXFileDialog,"filenames",RUBY_METHOD_FUNC(_getFilenames),0);
-	rb_define_method(rb_cWXFileDialog,"paths",RUBY_METHOD_FUNC(_getPaths),0);
+	rb_define_attr_method(rb_cWXFileDialog,"filenames",_GetFilenames,NULL);
+	rb_define_attr_method(rb_cWXFileDialog,"paths",_GetPaths,NULL);
 
 	rb_define_module_function(rb_mWX,"load_dialog",RUBY_METHOD_FUNC(_loadFileSelector),-1);
 	rb_define_module_function(rb_mWX,"save_dialog",RUBY_METHOD_FUNC(_saveFileSelector),-1);
