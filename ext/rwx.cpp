@@ -149,6 +149,7 @@
 #include "wxFileCtrlBase.hpp"
 #include "wxFileCtrl.hpp"
 #include "wxFileCtrlGeneric.hpp"
+#include "wxDirCtrl.hpp"
 
 #include "wxCalendarCtrlBase.hpp"
 #include "wxCalendarCtrl.hpp"
@@ -319,6 +320,7 @@ extern "C" void Init_rwx()
 	Init_WXFileCtrlBase(rb_mWX);
 	Init_WXFileCtrl(rb_mWX);
 	Init_WXFileCtrlGeneric(rb_mWX);
+	Init_WXDirCtrl(rb_mWX);
 
 	Init_WXCalendarCtrlBase(rb_mWX);
 	Init_WXCalendarCtrl(rb_mWX);
