@@ -221,7 +221,14 @@ DLL_LOCAL void Init_WXRect(VALUE rb_mWX)
 
 #if 0
 	rb_mWX = rb_define_module("WX");
+#endif
 
+	using namespace RubyWX::Rect;
+	rb_cWXRect = rb_define_class_under(rb_mWX,"Rect",rb_cObject);
+
+	rb_define_alloc_func(rb_cWXRect,_alloc);
+
+#if 0
 	rb_define_attr(rb_cWXRect,"x",1,1);
 	rb_define_attr(rb_cWXRect,"y",1,1);
 	rb_define_attr(rb_cWXRect,"width",1,1);
@@ -239,13 +246,7 @@ DLL_LOCAL void Init_WXRect(VALUE rb_mWX)
 	rb_define_attr(rb_cWXRect,"top_right",1,1);
 	rb_define_attr(rb_cWXRect,"bottom_left",1,1);
 	rb_define_attr(rb_cWXRect,"bottom_right",1,1);
-
 #endif
-
-	using namespace RubyWX::Rect;
-	rb_cWXRect = rb_define_class_under(rb_mWX,"Rect",rb_cObject);
-
-	rb_define_alloc_func(rb_cWXRect,_alloc);
 
 	rb_define_method(rb_cWXRect,"initialize",RUBY_METHOD_FUNC(_initialize),4);
 	rb_define_private_method(rb_cWXRect,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),1);
