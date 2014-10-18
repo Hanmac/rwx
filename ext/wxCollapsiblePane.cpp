@@ -78,22 +78,24 @@ DLL_LOCAL void Init_WXCollapsiblePane(VALUE rb_mWX)
 	rb_mWX = rb_define_module("WX");
 	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
-
-	rb_define_attr(rb_cWXCollapsiblePane,"collapsed",1,1);
-	rb_define_attr(rb_cWXCollapsiblePaneEvent,"collapsed",1,1);
 #endif
+
 #if wxUSE_COLLPANE
 	using namespace RubyWX::CollapsiblePane;
 	rb_cWXCollapsiblePane = rb_define_class_under(rb_mWX,"CollapsiblePane",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXCollapsiblePane,_alloc);
+	rb_cWXCollapsiblePaneEvent = rb_define_class_under(rb_cWXEvent,"CollapsiblePane",rb_cWXCommandEvent);
+
+#if 0
+	rb_define_attr(rb_cWXCollapsiblePane,"collapsed",1,1);
+	rb_define_attr(rb_cWXCollapsiblePaneEvent,"collapsed",1,1);
+#endif
 
 	rb_define_method(rb_cWXCollapsiblePane,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_attr_method(rb_cWXCollapsiblePane,"collapsed",_getCollapsed,_setCollapsed);
 
 	rb_define_method(rb_cWXCollapsiblePane,"pane",RUBY_METHOD_FUNC(_GetPane),0);
-
-	rb_cWXCollapsiblePaneEvent = rb_define_class_under(rb_cWXEvent,"CollapsiblePane",rb_cWXCommandEvent);
 
 	rb_define_attr_method(rb_cWXCollapsiblePaneEvent,"collapsed",Event::_getCollapsed,Event::_setCollapsed);
 
