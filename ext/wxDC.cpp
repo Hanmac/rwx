@@ -199,6 +199,11 @@ DLL_LOCAL VALUE _DrawLines(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL void Init_WXDC(VALUE rb_mWX)
 {
+
+	using namespace RubyWX::DC;
+	rb_cWXDC = rb_define_class_under(rb_mWX,"DC",rb_cObject);
+	rb_undef_alloc_func(rb_cWXDC);
+
 #if 0
 	rb_define_attr(rb_cWXDC,"font",1,1);
 	rb_define_attr(rb_cWXDC,"pen",1,1);
@@ -212,10 +217,6 @@ DLL_LOCAL void Init_WXDC(VALUE rb_mWX)
 	rb_define_attr(rb_cWXDC,"user_scale",1,1);
 	rb_define_attr(rb_cWXDC,"logical_scale",1,1);
 #endif
-
-	using namespace RubyWX::DC;
-	rb_cWXDC = rb_define_class_under(rb_mWX,"DC",rb_cObject);
-	rb_undef_alloc_func(rb_cWXDC);
 
 	rb_undef_method(rb_cWXDC,"initialize_copy");
 	rb_undef_method(rb_cWXDC,"_load");
