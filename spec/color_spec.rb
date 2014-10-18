@@ -8,6 +8,15 @@ RSpec.describe WX::Color do
     expect { c.red = 300 }.to change { c.red }.
       from( 40 ).
       to( 44 )
+    expect { c.blue += 256 }.not_to change { c.blue }
+    
+    expect { c.green = -26 }.to change { c.green }.
+      from( 0 ).
+      to( 230 )
+    
+    expect { c.alpha = true }.to change { c.alpha }.
+      from( 255 ).
+      to( 0 )
   end
   
   it "not equal to color name before app-init" do
@@ -27,9 +36,14 @@ RSpec.describe WX::Color do
   end
   
   it "equal to color name after app-init" do
-    c = WX::Color.new(255, 0, 0)
-    expect(c.name).to eq("red")
-    expect(c).to eq("red")
+    c1 = WX::Color.new(255, 0, 0)
+    expect(c1.name).to eq("red")
+    expect(c1).to eq("red")
+
+    c2 = WX::Color.new(254, 0, 0)
+    expect(c2.name).not_to eq("red")
+    expect(c2.name).to be_nil
+    expect(c2).not_to eq("red")
   end
 
   it "defined color constants after app-init" do
