@@ -125,15 +125,17 @@ DLL_LOCAL void Init_WXCheckBox(VALUE rb_mWX)
 	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
 
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
-
-	rb_define_attr(rb_cWXCheckBox,"value",1,1);
-	rb_define_attr(rb_cWXCheckBox,"third_state",1,1);
 #endif
 
 #if wxUSE_CHECKBOX
 	using namespace RubyWX::CheckBox;
 	rb_cWXCheckBox = rb_define_class_under(rb_mWX,"CheckBox",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXCheckBox,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXCheckBox,"value",1,1);
+	rb_define_attr(rb_cWXCheckBox,"third_state",1,1);
+#endif
 
 	rb_define_method(rb_cWXCheckBox,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
