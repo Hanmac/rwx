@@ -69,6 +69,11 @@ DLL_LOCAL VALUE _inspect(VALUE self)
 DLL_LOCAL void Init_WXPropertyCell(VALUE rb_mWX)
 {
 #if wxUSE_PROPGRID
+
+	using namespace RubyWX::PropertyCell;
+	rb_cWXPropertyCell = rb_define_class_under(rb_mWX,"PropertyCell",rb_cObject);
+	rb_undef_alloc_func(rb_cWXPropertyCell);
+
 #if 0
 	rb_define_attr(rb_cWXPropertyCell,"text",1,1);
 	rb_define_attr(rb_cWXPropertyCell,"font",1,1);
@@ -76,10 +81,6 @@ DLL_LOCAL void Init_WXPropertyCell(VALUE rb_mWX)
 	rb_define_attr(rb_cWXPropertyCell,"fg_col",1,1);
 	rb_define_attr(rb_cWXPropertyCell,"bg_col",1,1);
 #endif
-
-	using namespace RubyWX::PropertyCell;
-	rb_cWXPropertyCell = rb_define_class_under(rb_mWX,"PropertyCell",rb_cObject);
-	rb_undef_alloc_func(rb_cWXPropertyCell);
 
 	rb_undef_method(rb_cWXPropertyCell,"_load");
 	rb_undef_method(rb_cWXPropertyCell,"_dump");
