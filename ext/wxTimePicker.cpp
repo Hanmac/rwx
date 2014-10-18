@@ -85,14 +85,16 @@ DLL_LOCAL void Init_WXTimePicker(VALUE rb_mWX)
 	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
 
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
-
-	rb_define_attr(rb_cWXTimePicker,"value",1,1);
 #endif
 
 #if wxUSE_TIMEPICKCTRL
 	using namespace RubyWX::TimePicker;
 	rb_cWXTimePicker = rb_define_class_under(rb_mWX,"TimePicker",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXTimePicker,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXTimePicker,"value",1,1);
+#endif
 
 	rb_define_method(rb_cWXTimePicker,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
