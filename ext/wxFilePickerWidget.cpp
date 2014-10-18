@@ -112,15 +112,16 @@ DLL_LOCAL void Init_WXFilePickerWidget(VALUE rb_mWX)
 	rb_cWXAnyButton = rb_define_class_under(rb_mWX,"AnyButton",rb_cWXControl);
 
 	rb_cWXButton = rb_define_class_under(rb_mWX,"Button",rb_cWXAnyButton);
-
-	rb_define_attr(rb_cWXFilePickerWidget,"path",1,1);
-
 #endif
 
 #if wxUSE_FILEPICKERCTRL
 	using namespace RubyWX::FilePickerWidget;
 	rb_cWXFilePickerWidget = rb_define_class_under(rb_mWX,"FilePickerWidget",rb_cWXButton);
 	rb_define_alloc_func(rb_cWXFilePickerWidget,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXFilePickerWidget,"path",1,1);
+#endif
 
 	rb_define_method(rb_cWXFilePickerWidget,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
