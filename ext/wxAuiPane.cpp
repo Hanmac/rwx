@@ -241,6 +241,13 @@ DLL_LOCAL VALUE _setMaximized(VALUE self, VALUE val)
 
 DLL_LOCAL void Init_WXAuiPane(VALUE rb_mWX)
 {
+
+#if wxUSE_AUI
+	using namespace RubyWX::AuiPane;
+	rb_cWXAuiPane = rb_define_class_under(rb_mWX,"AuiPane",rb_cObject);
+	rb_define_alloc_func(rb_cWXAuiPane,_alloc);
+	//rb_define_method(rb_cWXAuiManager,"[]=",RUBY_METHOD_FUNC(_set),2);
+
 #if 0
 	rb_define_attr(rb_cWXAuiPane,"caption",1,1);
 	rb_define_attr(rb_cWXAuiPane,"name",1,1);
@@ -281,12 +288,6 @@ DLL_LOCAL void Init_WXAuiPane(VALUE rb_mWX)
 	rb_define_attr(rb_cWXAuiPane,"pin_button",1,1);
 
 #endif
-
-#if wxUSE_AUI
-	using namespace RubyWX::AuiPane;
-	rb_cWXAuiPane = rb_define_class_under(rb_mWX,"AuiPane",rb_cObject);
-	rb_define_alloc_func(rb_cWXAuiPane,_alloc);
-	//rb_define_method(rb_cWXAuiManager,"[]=",RUBY_METHOD_FUNC(_set),2);
 
 	rb_define_attr_method(rb_cWXAuiPane,"caption",_get_caption,_set_caption);
 	rb_define_attr_method(rb_cWXAuiPane,"name",_get_name,_set_name);
