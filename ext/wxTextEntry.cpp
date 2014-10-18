@@ -11,6 +11,7 @@
 #include "wxSearchCtrl.hpp"
 #include "wxBitmapComboBox.hpp"
 #include "wxComboBox.hpp"
+#include "wxComboCtrl.hpp"
 #include "wxSTC.hpp"
 #include "wxPoint.hpp"
 
@@ -38,6 +39,10 @@ wxTextEntryBase* unwrap< wxTextEntryBase* >(const VALUE &obj)
 #if wxUSE_COMBOBOX
 	if(rb_obj_is_kind_of(obj,rb_cWXComboBox))
 		return unwrap<wxComboBox*>(obj);
+#endif
+#if wxUSE_COMBOCTRL
+	if(rb_obj_is_kind_of(obj,rb_cWXComboCtrl))
+		return unwrap<wxComboCtrl*>(obj);
 #endif
 #if wxUSE_STC
 	if(rb_obj_is_kind_of(obj,rb_cWXSTC))
@@ -214,14 +219,14 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
  */
 DLL_LOCAL void Init_WXTextEntry(VALUE rb_mWX)
 {
+	using namespace RubyWX::TextEntry;
+	rb_mWXTextEntry = rb_define_module_under(rb_mWX,"TextEntry");
+
 #if 0
 	rb_define_attr(rb_mWXTextEntry,"hint",1,1);
 	rb_define_attr(rb_mWXTextEntry,"editable",1,1);
 	rb_define_attr(rb_mWXTextEntry,"margins",1,1);
 #endif
-
-	using namespace RubyWX::TextEntry;
-	rb_mWXTextEntry = rb_define_module_under(rb_mWX,"TextEntry");
 
 	rb_define_method(rb_mWXTextEntry,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 

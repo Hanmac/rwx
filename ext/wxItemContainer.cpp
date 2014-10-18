@@ -12,6 +12,7 @@
 #include "wxChoice.hpp"
 #include "wxBitmapComboBox.hpp"
 #include "wxComboBox.hpp"
+#include "wxOwnerDrawnComboBox.hpp"
 
 VALUE rb_mWXItemContainer;
 #if wxUSE_CONTROLS
@@ -35,6 +36,10 @@ wxItemContainer* unwrap< wxItemContainer* >(const VALUE &obj)
 #if wxUSE_COMBOBOX
 	if(rb_obj_is_kind_of(obj,rb_cWXComboBox))
 		return unwrap<wxComboBox*>(obj);
+#endif
+#if wxUSE_ODCOMBOBOX
+	if(rb_obj_is_kind_of(obj,rb_cWXOwnerDrawnComboBox))
+		return unwrap<wxOwnerDrawnComboBox*>(obj);
 #endif
 		return unwrapTypedPtr<wxItemContainer>(obj,rb_mWXItemContainer);
  return NULL;
