@@ -71,8 +71,8 @@ bool check_negative_size(const int &width, const int &height)
 	if(height <= 0 && width <= 0)
 	{
 		rb_raise(rb_eArgError,
-			"%s(%d, %d) does have invalid size.",
-			rb_class2name(rb_cWXSize),
+			"%"PRIsVALUE"(%d, %d) does have invalid size.",
+			rb_cWXSize,
 			width, height
 		);
 		return false;

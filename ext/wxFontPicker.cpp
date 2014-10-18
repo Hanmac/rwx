@@ -63,8 +63,10 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_flag_option(hash,"fontdesc_as_label",wxFNTP_FONTDESC_AS_LABEL,style);
 			set_hash_flag_option(hash,"font_for_label",wxFNTP_USEFONT_FOR_LABEL,style);
 		}
-
-		_self->Create(unwrap<wxWindow*>(parent),id,font,wxDefaultPosition,wxDefaultSize,style);
+		if(nil_check(parent))
+			_self->Create(unwrap<wxWindow*>(parent),id,
+				font,wxDefaultPosition,wxDefaultSize,style
+			);
 	}
 
 	rb_call_super(argc,argv);

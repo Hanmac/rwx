@@ -45,8 +45,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			bitmap = wrapBitmap(temp,id,WRAP_BITMAP_ID,wxART_BUTTON);
 		}
 
-		_self->Create(unwrap<wxWindow*>(parent),id,bitmap);
-		
+		if(nil_check(parent)) {
+			_self->Create(unwrap<wxWindow*>(parent),id,bitmap);
+		}
 	}
 
 	rb_call_super(argc,argv);

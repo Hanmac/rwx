@@ -53,7 +53,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_flag_option(hash,"show_tips",wxSTB_SHOW_TIPS,style);
 		}
 
-		_self->Create(unwrap<wxWindow*>(parent),id,style);
+		if(nil_check(parent)) {
+			_self->Create(unwrap<wxWindow*>(parent),id,style);
+		}
 	}
 	rb_call_super(argc,argv);
 	return self;
@@ -357,22 +359,25 @@ DLL_LOCAL void Init_WXStatusBar(VALUE rb_mWX)
 	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
 
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
-
-	rb_define_attr(rb_cWXStatusBar,"status_text",1,1);
-	rb_define_attr(rb_cWXStatusBar,"fields_count",1,1);
-
-	rb_define_attr(rb_cWXStatusBarPane,"width",1,1);
-	rb_define_attr(rb_cWXStatusBarPane,"style",1,1);
-	rb_define_attr(rb_cWXStatusBarPane,"text",1,1);
-
 #endif
 #if wxUSE_STATUSBAR
 	using namespace RubyWX::StatusBar;
 	rb_cWXStatusBar = rb_define_class_under(rb_mWX,"StatusBar",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXStatusBar,_alloc);
 
-	rb_define_method(rb_cWXStatusBar,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
+	rb_cWXStatusBarPane = rb_define_class_under(rb_cWXStatusBar,"Pane",rb_cObject);
+	rb_undef_alloc_func(rb_cWXStatusBarPane);
 
+#if 0
+	rb_define_attr(rb_cWXStatusBar,"status_text",1,1);
+	rb_define_attr(rb_cWXStatusBar,"fields_count",1,1);
+
+	rb_define_attr(rb_cWXStatusBarPane,"width",1,1);
+	rb_define_attr(rb_cWXStatusBarPane,"style",1,1);
+	rb_define_attr(rb_cWXStatusBarPane,"text",1,1);
+#endif
+
+	rb_define_method(rb_cWXStatusBar,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_attr_method(rb_cWXStatusBar,"status_text",_getStatusText,_setStatusText);
 	rb_define_attr_method(rb_cWXStatusBar,"fields_count",_getFieldsCount,_setFieldsCount);
@@ -390,9 +395,6 @@ DLL_LOCAL void Init_WXStatusBar(VALUE rb_mWX)
 	rb_define_method(rb_cWXStatusBar,"pop_status_text",RUBY_METHOD_FUNC(_popStatusText),-1);
 
 	rb_define_method(rb_cWXStatusBar,"each_statuspane",RUBY_METHOD_FUNC(_each),0);
-
-	rb_cWXStatusBarPane = rb_define_class_under(rb_cWXStatusBar,"Pane",rb_cObject);
-	rb_undef_alloc_func(rb_cWXStatusBarPane);
 
 	using namespace Pane;
 	rb_define_attr_method(rb_cWXStatusBarPane,"width",_getWidth,_setWidth);

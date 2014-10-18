@@ -72,10 +72,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			TextCtrl::set_style_flags(hash,style);
 		}
 
-		_self->Create(unwrap<wxWindow*>(parent),id,value,
-			wxDefaultPosition,wxDefaultSize,style
-		);
-		
+		if(nil_check(parent)) {
+			_self->Create(unwrap<wxWindow*>(parent),id,value,
+				wxDefaultPosition,wxDefaultSize,style
+			);
+		}
 	}
 
 	rb_call_super(argc,argv);
@@ -147,19 +148,20 @@ DLL_LOCAL void Init_WXSearchCtrl(VALUE rb_mWX)
 
 	rb_mWXTextArea = rb_define_module_under(rb_mWX,"TextArea");
 	rb_mWXTextEntry = rb_define_module_under(rb_mWX,"TextEntry");
-
-	rb_define_attr(rb_cWXSearchCtrl,"value",1,1);
-	rb_define_attr(rb_cWXSearchCtrl,"menu",1,1);
-
-	rb_define_attr(rb_cWXSearchCtrl,"search_button_visible",1,1);
-	rb_define_attr(rb_cWXSearchCtrl,"cancel_button_visible",1,1);
-
 #endif
 
 #if wxUSE_SEARCHCTRL
 	using namespace RubyWX::SearchCtrl;
 	rb_cWXSearchCtrl = rb_define_class_under(rb_mWX,"SearchCtrl",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXSearchCtrl,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXSearchCtrl,"value",1,1);
+	rb_define_attr(rb_cWXSearchCtrl,"menu",1,1);
+
+	rb_define_attr(rb_cWXSearchCtrl,"search_button_visible",1,1);
+	rb_define_attr(rb_cWXSearchCtrl,"cancel_button_visible",1,1);
+#endif
 
 	rb_define_method(rb_cWXSearchCtrl,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 

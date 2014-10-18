@@ -44,7 +44,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"label",label);
 		}
 
-		_self->Create(unwrap<wxWindow*>(parent),id,label);
+		if(nil_check(parent)) {
+			_self->Create(unwrap<wxWindow*>(parent),id,label);
+		}
 
 	}
 
@@ -54,11 +56,10 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL VALUE _GetContainingSizer(VALUE self)
 {
-	wxSizer * result = _self->GetContainingSizer();
-	if(result)
-		return wrap(result);
-	else
-		return wrap(dynamic_cast<wxBoxSizer*>(new wxStaticBoxSizer(_self,wxHORIZONTAL)));
+	wxSizer *result = _self->GetContainingSizer();
+	if(!result)
+		result = new wxStaticBoxSizer(_self,wxHORIZONTAL);
+	return wrap(result);
 }
 
 }

@@ -71,8 +71,10 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_flag_option(hash,"vertical",wxGA_VERTICAL,style);
 			set_hash_flag_option(hash,"smooth",wxGA_SMOOTH,style);
 		}
-
-		_self->Create(unwrap<wxWindow*>(parent),id,range,wxDefaultPosition,wxDefaultSize,style);
+		if(nil_check(parent))
+			_self->Create(unwrap<wxWindow*>(parent),id,
+				range,wxDefaultPosition,wxDefaultSize,style
+			);
 
 	}
 

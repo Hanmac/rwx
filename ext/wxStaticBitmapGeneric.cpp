@@ -47,7 +47,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"bitmap",bitmap);
 		}
 
-		_self->Create(unwrap<wxWindow*>(parent),id,bitmap);
+		if(nil_check(parent)) {
+			_self->Create(unwrap<wxWindow*>(parent),id,bitmap);
+		}
 	}
 	
 	rb_call_super(argc,argv);

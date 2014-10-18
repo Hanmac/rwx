@@ -76,8 +76,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_flag_option(hash,"value_label",wxSL_VALUE_LABEL,style);
 
 		}
-
-		_self->Create(unwrap<wxWindow*>(parent),id,value,min,max,wxDefaultPosition,wxDefaultSize,style);
+		if(nil_check(parent)) {
+			_self->Create(unwrap<wxWindow*>(parent),id,value,min,max,
+				wxDefaultPosition,wxDefaultSize,style
+			);
+		}
 	}
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
@@ -160,7 +163,14 @@ DLL_LOCAL void Init_WXSlider(VALUE rb_mWX)
 	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
 
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+#endif
 
+#if wxUSE_SLIDER
+	using namespace RubyWX::Slider;
+	rb_cWXSlider = rb_define_class_under(rb_mWX,"Slider",rb_cWXControl);
+	rb_define_alloc_func(rb_cWXSlider,_alloc);
+
+#if 0
 	rb_define_attr(rb_cWXSlider,"value",1,1);
 	rb_define_attr(rb_cWXSlider,"min",1,1);
 	rb_define_attr(rb_cWXSlider,"max",1,1);
@@ -169,11 +179,6 @@ DLL_LOCAL void Init_WXSlider(VALUE rb_mWX)
 	rb_define_attr(rb_cWXSlider,"page_size",1,1);
 	rb_define_attr(rb_cWXSlider,"thumb_length",1,1);
 #endif
-
-#if wxUSE_SLIDER
-	using namespace RubyWX::Slider;
-	rb_cWXSlider = rb_define_class_under(rb_mWX,"Slider",rb_cWXControl);
-	rb_define_alloc_func(rb_cWXSlider,_alloc);
 
 	rb_define_method(rb_cWXSlider,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 

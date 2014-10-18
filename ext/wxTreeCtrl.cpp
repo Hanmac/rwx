@@ -50,12 +50,13 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"style",style);
 		}
 
-		_self->Create(
-			unwrap<wxWindow*>(parent),id,
-			wxDefaultPosition,wxDefaultSize,
-			style
-		);
-
+		if(nil_check(parent)) {
+			_self->Create(
+				unwrap<wxWindow*>(parent),id,
+				wxDefaultPosition,wxDefaultSize,
+				style
+			);
+		}
 	}
 
 	rb_call_super(argc,argv);
@@ -331,7 +332,7 @@ VALUE RubyTreeCtrlItem::GetPrevSibling()
 void RubyTreeCtrlItem::checkDestroyed()
 {
 	if(!GetId().IsOk())
-		rb_raise(rb_eTypeError,"%s has been destroyed",rb_class2name(rb_cWXTreeCtrlItem));
+		rb_raise(rb_eTypeError,"%"PRIsVALUE" has been destroyed",rb_cWXTreeCtrlItem);
 }
 
 

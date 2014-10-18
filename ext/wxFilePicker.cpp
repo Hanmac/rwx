@@ -83,12 +83,12 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		}
 
 		FileDirPicker::check_style_flags(style);
-
-		_self->Create(
-			unwrap<wxWindow*>(parent),id,path,
-			message,wildCard,
-			wxDefaultPosition,wxDefaultSize,style
-		);
+		if(nil_check(parent))
+			_self->Create(
+				unwrap<wxWindow*>(parent),id,path,
+				message,wildCard,
+				wxDefaultPosition,wxDefaultSize,style
+			);
 
 	}
 	rb_call_super(argc,argv);

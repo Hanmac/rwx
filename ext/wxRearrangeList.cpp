@@ -56,8 +56,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			order.resize(items.size());
 			set_hash_option(hash,"style",style);
 		}
-
-		_self->Create(unwrap<wxWindow*>(parent),id,wxDefaultPosition,wxDefaultSize,order,items,style);
+		if(nil_check(parent)) {
+			_self->Create(unwrap<wxWindow*>(parent),id,
+				wxDefaultPosition,wxDefaultSize,order,items,style
+			);
+		}
 		
 	}
 	rb_call_super(argc,argv);

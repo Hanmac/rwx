@@ -43,8 +43,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		{
 			set_hash_option(hash,"id",id,unwrapID);
 		}
-
-		_self->Create(unwrap<wxWindow*>(parent),id);
+		if(nil_check(parent))
+			_self->Create(unwrap<wxWindow*>(parent),id);
 	}
 	rb_call_super(argc,argv);
 

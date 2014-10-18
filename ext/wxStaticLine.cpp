@@ -49,7 +49,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_flag_option(hash,"vertical",wxLI_VERTICAL,style);
 		}
 
-		_self->Create(unwrap<wxWindow*>(parent),id,wxDefaultPosition,wxDefaultSize,style);
+		if(nil_check(parent)) {
+			_self->Create(unwrap<wxWindow*>(parent),id,
+				wxDefaultPosition,wxDefaultSize,style
+			);
+		}
 	}
 	
 	rb_call_super(argc,argv);

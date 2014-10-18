@@ -66,11 +66,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"url",url);
 			set_hash_option(hash,"style",style);
 		}
-
-		_self->Create(
-			unwrap<wxWindow*>(parent),id,label,url,
-			wxDefaultPosition,wxDefaultSize,style
-		);
+		if(nil_check(parent))
+			_self->Create(
+				unwrap<wxWindow*>(parent),id,label,url,
+				wxDefaultPosition,wxDefaultSize,style
+			);
 
 	}
 	

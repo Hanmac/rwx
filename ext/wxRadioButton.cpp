@@ -56,7 +56,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_flag_option(hash,"group",wxRB_GROUP,style);
 		}
 
-		_self->Create(unwrap<wxWindow*>(parent),id,label,wxDefaultPosition,wxDefaultSize,style);
+		if(nil_check(parent)) {
+			_self->Create(unwrap<wxWindow*>(parent),id,label,
+				wxDefaultPosition,wxDefaultSize,style
+			);
+		}
 		
 	}
 

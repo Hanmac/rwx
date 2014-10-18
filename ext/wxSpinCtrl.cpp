@@ -73,10 +73,12 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"style",style);
 		}
 
-		_self->Create(unwrap<wxWindow*>(parent),id,
-			wxEmptyString,wxDefaultPosition,wxDefaultSize,
-			style,min,max,value
-		);
+		if(nil_check(parent)) {
+			_self->Create(unwrap<wxWindow*>(parent),id,
+				wxEmptyString,wxDefaultPosition,wxDefaultSize,
+				style,min,max,value
+			);
+		}
 	}
 
 	rb_call_super(argc,argv);
@@ -105,16 +107,18 @@ DLL_LOCAL void Init_WXSpinCtrl(VALUE rb_mWX)
 	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
 
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
-
-	rb_define_attr(rb_cWXSpinCtrl,"value",1,1);
-	rb_define_attr(rb_cWXSpinCtrl,"min",1,1);
-	rb_define_attr(rb_cWXSpinCtrl,"max",1,1);
 #endif
 
 #if wxUSE_SPINCTRL
 	using namespace RubyWX::SpinCtrl;
 	rb_cWXSpinCtrl = rb_define_class_under(rb_mWX,"SpinCtrl",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXSpinCtrl,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXSpinCtrl,"value",1,1);
+	rb_define_attr(rb_cWXSpinCtrl,"min",1,1);
+	rb_define_attr(rb_cWXSpinCtrl,"max",1,1);
+#endif
 
 	rb_define_method(rb_cWXSpinCtrl,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 

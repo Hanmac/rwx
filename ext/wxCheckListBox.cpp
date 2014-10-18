@@ -49,15 +49,16 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 			ListBox::set_style_flags(hash,style);
 		}
-		_self->Create(
-			unwrap<wxWindow*>(parent),id,
-			wxDefaultPosition,wxDefaultSize,
-			choices,style
-		);
-		
-		if(selflag && check_index(selection,_self->GetCount()))
-			_self->SetSelection(selection);
+		if(nil_check(parent)) {
+			_self->Create(
+				unwrap<wxWindow*>(parent),id,
+				wxDefaultPosition,wxDefaultSize,
+				choices,style
+			);
 
+			if(selflag && check_index(selection,_self->GetCount()))
+				_self->SetSelection(selection);
+		}
 	}
 	rb_call_super(argc,argv);
 	return self;

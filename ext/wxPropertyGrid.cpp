@@ -81,9 +81,12 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"id",id,unwrapID);
 			set_hash_option(hash,"style",style);
 		}
-
-		_self->Create(unwrap<wxWindow*>(parent),id,wxDefaultPosition,wxDefaultSize,style);
 		
+		if(nil_check(parent))
+			_self->Create(unwrap<wxWindow*>(parent),id,
+				wxDefaultPosition,wxDefaultSize,style
+			);
+
 	}
 
 	rb_call_super(argc,argv);
@@ -112,25 +115,6 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 #endif
 
-
-/* Document-method: root
- * call-seq:
- *   root -> WX::Property
- *
- * returns the root property of this WX::PropertyGrid
- * ===Return value
- * WX::Property
- */
-
-/* Document-method: status_bar
- * call-seq:
- *   status_bar -> WX::StatusBar
- *
- * returns the status bar of this WX::PropertyGrid when available.
- * ===Return value
- * WX::StatusBar
- */
-
 /* Document-method: caption_font
  * call-seq:
  *   caption_font -> WX::Font
@@ -138,6 +122,14 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
  * returns the caption font of this WX::PropertyGrid.
  * ===Return value
  * WX::Font
+ */
+
+
+/* Document-attr: root
+ * the root property of this WX::PropertyGrid. WX::Property
+ */
+/* Document-attr: status_bar
+ * the status bar of this WX::PropertyGrid when available. WX::StatusBar
  */
 
 /* Document-attr: caption_background_color
@@ -182,6 +174,16 @@ DLL_LOCAL void Init_WXPropertyGrid(VALUE rb_mWX)
 
 	rb_mWXPropertyGridInterface = rb_define_module_under(rb_mWX,"PropertyGridInterface");
 
+#endif
+#if wxUSE_PROPGRID
+	using namespace RubyWX::PropertyGrid;
+	rb_cWXPropertyGrid = rb_define_class_under(rb_mWX,"PropertyGrid",rb_cWXControl);
+	rb_define_alloc_func(rb_cWXPropertyGrid,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXPropertyGrid,"root",1,0);
+	rb_define_attr(rb_cWXPropertyGrid,"status_bar",1,0);
+
 	rb_define_attr(rb_cWXPropertyGrid,"caption_background_color",1,1);
 	rb_define_attr(rb_cWXPropertyGrid,"selection_background_color",1,1);
 
@@ -195,19 +197,16 @@ DLL_LOCAL void Init_WXPropertyGrid(VALUE rb_mWX)
 	rb_define_attr(rb_cWXPropertyGrid,"margin_color",1,1);
 
 #endif
-#if wxUSE_PROPGRID
-	using namespace RubyWX::PropertyGrid;
-	rb_cWXPropertyGrid = rb_define_class_under(rb_mWX,"PropertyGrid",rb_cWXControl);
-	rb_define_alloc_func(rb_cWXPropertyGrid,_alloc);
 
 	rb_include_module(rb_cWXPropertyGrid,rb_mWXPropertyGridInterface);
 
 	rb_define_method(rb_cWXPropertyGrid,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-	rb_define_method(rb_cWXPropertyGrid,"root",RUBY_METHOD_FUNC(_GetRoot),0);
+	rb_define_attr_method(rb_cWXPropertyGrid,"root",_GetRoot,0);
 
 #if wxUSE_STATUSBAR
-	rb_define_method(rb_cWXPropertyGrid,"status_bar",RUBY_METHOD_FUNC(_GetStatusBar),0);
+	rb_define_attr_method(rb_cWXPropertyGrid,"status_bar",_GetStatusBar,0);
+
 #endif
 
 	rb_define_method(rb_cWXPropertyGrid,"caption_font",RUBY_METHOD_FUNC(_GetCaptionFont),0);

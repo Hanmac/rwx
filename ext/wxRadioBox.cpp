@@ -51,14 +51,16 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"style",style);
 			selset = set_hash_option(hash,"selection",selection);
 		}
-		_self->Create(
-			unwrap<wxWindow*>(parent),id,label,
-			wxDefaultPosition,wxDefaultSize,
-			choices,0,style
-		);
-		if(selset && check_index(selection,_self->GetCount()))
-			_self->SetSelection(selection);
 
+		if(nil_check(parent)) {
+			_self->Create(
+				unwrap<wxWindow*>(parent),id,label,
+				wxDefaultPosition,wxDefaultSize,
+				choices,0,style
+			);
+			if(selset && check_index(selection,_self->GetCount()))
+				_self->SetSelection(selection);
+		}
 	}
 	rb_call_super(argc,argv);
 	return self;

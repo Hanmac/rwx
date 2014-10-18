@@ -179,6 +179,9 @@ DLL_LOCAL void Init_WXComboBox(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXComboBox,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
+	rb_include_module(rb_cWXComboBox,rb_mWXItemContainer);
+	rb_include_module(rb_cWXComboBox,rb_mWXTextEntry);
+
 	rb_define_method(rb_cWXComboBox,"clear",RUBY_METHOD_FUNC(_Clear),0);
 	rb_define_method(rb_cWXComboBox,"popup",RUBY_METHOD_FUNC(_Popup),0);
 	rb_define_method(rb_cWXComboBox,"dismiss",RUBY_METHOD_FUNC(_Dismiss),0);
@@ -187,9 +190,6 @@ DLL_LOCAL void Init_WXComboBox(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXComboBox,"list_empty?",RUBY_METHOD_FUNC(_IsListEmpty),0);
 	rb_define_method(rb_cWXComboBox,"text_empty?",RUBY_METHOD_FUNC(_IsTextEmpty),0);
-
-	rb_include_module(rb_cWXComboBox,rb_mWXItemContainer);
-	rb_include_module(rb_cWXComboBox,rb_mWXTextEntry);
 
 	//define Choice constants
 	rb_define_const(rb_cWXComboBox,"SORT",INT2NUM(wxCB_SORT));

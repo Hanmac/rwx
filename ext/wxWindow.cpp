@@ -263,7 +263,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 #if wxUSE_XRC
 		if(!loadxrc(_self,name,unwrap<wxWindow*>(parent)))
 #endif
-		_self->Create(unwrap<wxWindow*>(parent),id);
+		if(nil_check(parent)) {
+			_self->Create(unwrap<wxWindow*>(parent),id);
+		}
 		
 	}
 

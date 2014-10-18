@@ -59,7 +59,10 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 		}
 
-		_self->Create(unwrap<wxWindow*>(parent),id,wxDefaultPosition,wxDefaultSize,style);
+		if(nil_check(parent))
+			_self->Create(unwrap<wxWindow*>(parent),id,
+				wxDefaultPosition,wxDefaultSize,style
+			);
 		
 	}
 
@@ -234,14 +237,19 @@ DLL_LOCAL void Init_WXPropertyGridManager(VALUE rb_mWX)
 	rb_cWXPropertyGridManager = rb_define_class_under(rb_mWX,"PropertyGridManager",rb_cWXPanel);
 	rb_define_alloc_func(rb_cWXPropertyGridManager,_alloc);
 
+#if 0
+	rb_define_attr(rb_cWXPropertyGridManager,"tool_bar",1,0);
+	rb_define_attr(rb_cWXPropertyGridManager,"grid",1,0);
+	rb_define_attr(rb_cWXPropertyGridManager,"current_page",1,0);
+#endif
+
 	rb_include_module(rb_cWXPropertyGridManager,rb_mWXPropertyGridInterface);
 
 	rb_define_method(rb_cWXPropertyGridManager,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-	rb_define_method(rb_cWXPropertyGridManager,"tool_bar",RUBY_METHOD_FUNC(_GetToolBar),0);
-	rb_define_method(rb_cWXPropertyGridManager,"grid",RUBY_METHOD_FUNC(_GetGrid),0);
-
-	rb_define_method(rb_cWXPropertyGridManager,"current_page",RUBY_METHOD_FUNC(_GetCurrentPage),0);
+	rb_define_attr_method(rb_cWXPropertyGridManager,"tool_bar",_GetToolBar,0);
+	rb_define_attr_method(rb_cWXPropertyGridManager,"grid",_GetGrid,0);
+	rb_define_attr_method(rb_cWXPropertyGridManager,"current_page",_GetCurrentPage,0);
 
 	rb_define_method(rb_cWXPropertyGridManager,"add_page",RUBY_METHOD_FUNC(_add_page),-1);
 	rb_define_method(rb_cWXPropertyGridManager,"insert_page",RUBY_METHOD_FUNC(_insert_page),-1);

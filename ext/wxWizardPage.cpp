@@ -79,9 +79,10 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	VALUE parent,name,hash;
 	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
 
-	if(!_created && !rb_obj_is_kind_of(name,rb_cString))
-	{
-		_self->Create(unwrap<wxWizard*>(parent));
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString)) {
+		if(nil_check(parent)) {
+			_self->Create(unwrap<wxWizard*>(parent));
+		}
 	}
 	
 	rb_call_super(argc,argv);

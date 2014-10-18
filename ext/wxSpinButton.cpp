@@ -59,7 +59,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_flag_option(hash,"vertical",wxSP_VERTICAL,style);
 		}
 
-		_self->Create(unwrap<wxWindow*>(parent),id,wxDefaultPosition,wxDefaultSize,style);
+		if(nil_check(parent)) {
+			_self->Create(unwrap<wxWindow*>(parent),id,
+				wxDefaultPosition,wxDefaultSize,style
+			);
+		}
 	}
 
 	rb_call_super(argc,argv);
@@ -119,18 +123,22 @@ DLL_LOCAL void Init_WXSpinButton(VALUE rb_mWX)
 	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
 
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
-
-	rb_define_attr(rb_cWXSpinButton,"value",1,1);
-	rb_define_attr(rb_cWXSpinButton,"min",1,1);
-	rb_define_attr(rb_cWXSpinButton,"max",1,1);
-
-	rb_define_attr(rb_cWXSpinEvent,"value",1,1);
 #endif
 
 #if wxUSE_SPINBTN
 	using namespace RubyWX::SpinButton;
 	rb_cWXSpinButton = rb_define_class_under(rb_mWX,"SpinButton",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXSpinButton,_alloc);
+
+	rb_cWXSpinEvent = rb_define_class_under(rb_cWXEvent,"Spin",rb_cWXNotifyEvent);
+
+#if 0
+	rb_define_attr(rb_cWXSpinButton,"value",1,1);
+	rb_define_attr(rb_cWXSpinButton,"min",1,1);
+	rb_define_attr(rb_cWXSpinButton,"max",1,1);
+
+	rb_define_attr(rb_cWXSpinEvent,"value",1,1);
+#endif
 
 	rb_define_method(rb_cWXSpinButton,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
@@ -141,7 +149,7 @@ DLL_LOCAL void Init_WXSpinButton(VALUE rb_mWX)
 	rb_define_method(rb_cWXSpinButton,"vertical?",RUBY_METHOD_FUNC(_IsVertical),0);
 	rb_define_const(rb_cWXSpinButton,"VERTICAL",INT2NUM(wxSP_VERTICAL));
 
-	rb_cWXSpinEvent = rb_define_class_under(rb_cWXEvent,"Spin",rb_cWXNotifyEvent);
+
 
 	rb_define_attr_method(rb_cWXSpinEvent,"value",Event::_getValue,Event::_setValue);
 
@@ -153,6 +161,3 @@ DLL_LOCAL void Init_WXSpinButton(VALUE rb_mWX)
 #endif
 
 }
-
-
-
