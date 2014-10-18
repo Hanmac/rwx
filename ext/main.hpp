@@ -377,6 +377,30 @@ DLL_LOCAL bool set_hash_option(VALUE hash,const char* name,T& val,T func(const V
 
 }
 
+template <typename C, typename T>
+DLL_LOCAL bool set_hash_option(VALUE hash,const char* name,void (C::*set)(const T&), C& obj,T func(const VALUE&) = unwrap<T> )
+{
+	T val;
+	bool result = set_hash_option(hash,name,val,func);
+	if(result) {
+		(obj.*set)(val);
+	}
+	return result;
+
+}
+template <typename C, typename T>
+DLL_LOCAL bool set_hash_option(VALUE hash,const char* name,void (C::*set)(T), C& obj,T func(const VALUE&) = unwrap<T> )
+{
+	T val;
+	bool result = set_hash_option(hash,name,val,func);
+	if(result) {
+		(obj.*set)(val);
+	}
+	return result;
+
+}
+
+
 DLL_LOCAL bool set_hash_flag_option(VALUE hash,const char* name,const int& flag,int& val);
 
 #define macro_attr(attr,type) macro_attr_func(attr,Get##attr(),Set##attr,wrap,unwrap<type>,true)
