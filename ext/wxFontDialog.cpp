@@ -111,7 +111,14 @@ DLL_LOCAL void Init_WXFontDialog(VALUE rb_mWX)
 	rb_cWXTopLevel = rb_define_class_under(rb_mWX,"TopLevel",rb_cWXWindow);
 
 	rb_cWXDialog = rb_define_class_under(rb_mWX,"Dialog",rb_cWXTopLevel);
+#endif
+#if wxUSE_FONTDLG
+	using namespace RubyWX::FontDialog;
+	rb_cWXFontDialog = rb_define_class_under(rb_mWX,"FontDialog",rb_cWXDialog);
+	rb_define_alloc_func(rb_cWXFontDialog,_alloc);
+	rb_define_method(rb_cWXFontDialog,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
+#if 0
 	rb_define_attr(rb_cWXFontDialog,"initial_font",1,1);
 	rb_define_attr(rb_cWXFontDialog,"chosen_font",1,1);
 
@@ -120,12 +127,6 @@ DLL_LOCAL void Init_WXFontDialog(VALUE rb_mWX)
 	rb_define_attr(rb_cWXFontDialog,"allow_symbols",1,1);
 	rb_define_attr(rb_cWXFontDialog,"show_help",1,1);
 #endif
-
-#if wxUSE_FONTDLG
-	using namespace RubyWX::FontDialog;
-	rb_cWXFontDialog = rb_define_class_under(rb_mWX,"FontDialog",rb_cWXDialog);
-	rb_define_alloc_func(rb_cWXFontDialog,_alloc);
-	rb_define_method(rb_cWXFontDialog,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_attr_method(rb_cWXFontDialog,"initial_font",_getInitialFont,_setInitialFont);
 	rb_define_attr_method(rb_cWXFontDialog,"chosen_font",_getChosenFont,_setChosenFont);
