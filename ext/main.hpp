@@ -438,6 +438,15 @@ DLL_LOCAL VALUE _##func(VALUE self)\
 	return wrap(_self->func());\
 }
 
+#define singlereturn_array(func,T) \
+DLL_LOCAL VALUE _##func(VALUE self)\
+{\
+	T ary;\
+	_self->func(ary);\
+	return wrap(ary);\
+}
+
+
 #define singlereturn_frozen(func) \
 DLL_LOCAL VALUE _##func(VALUE self)\
 {\
