@@ -7,6 +7,7 @@
 
 
 #include "wxSpinCtrl.hpp"
+#include "wxSpinButton.hpp"
 
 
 VALUE rb_cWXSpinCtrl;
@@ -39,10 +40,10 @@ APP_PROTECT(wxSpinCtrl)
 
 /*
  * call-seq:
- *   SpinButton.new(parent, name, [options])
- *   SpinButton.new(parent, [options])
+ *   SpinCtrl.new(parent, name, [options])
+ *   SpinCtrl.new(parent, [options])
  *
- * creates a new SpinButton widget.
+ * creates a new SpinCtrl widget.
  * ===Arguments
  * * parent of this window or nil
  * * name is a String describing a resource in a loaded xrc
@@ -127,6 +128,8 @@ DLL_LOCAL void Init_WXSpinCtrl(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXSpinCtrl,"max",_GetMax,_setMax);
 
 	registerInfo<wxSpinCtrl>(rb_cWXSpinCtrl);
+
+	registerEventType("spinctrl", wxEVT_SPINCTRL,rb_cWXSpinEvent);
 #endif
 
 }
