@@ -45,6 +45,9 @@ macro_attr(Directory,wxString)
 macro_attr(Filename,wxString)
 macro_attr(Path,wxString)
 
+singlereturn_array(GetPaths,wxArrayString)
+singlereturn_array(GetFilenames,wxArrayString)
+
 singlereturn(GetFilterIndex)
 
 
@@ -139,6 +142,15 @@ singlereturn(GetFile)
 /* Document-attr: filename
  * the filename of the FileCtrl. String
  */
+/* Document-attr: path
+ * the path of the FileCtrl. String
+ */
+/* Document-attr: filenames
+ * the filenames of the FileCtrl. Array<String>
+ */
+/* Document-attr: paths
+ * the paths of the FileCtrl. Array<String>
+ */
 
 /* Document-const: OPEN
  * creates control in "open" mode
@@ -166,11 +178,26 @@ DLL_LOCAL void Init_WXFileCtrlBase(VALUE rb_mWX)
 
 	rb_cWXEvent = rb_define_class_under(rb_mWX,"Event",rb_cObject);
 	rb_cWXCommandEvent = rb_define_class_under(rb_cWXEvent,"Command",rb_cWXEvent);
+#endif
 
+
+#if wxUSE_FILECTRL
+	using namespace RubyWX::FileCtrlBase;
+	rb_cWXFileCtrlBase = rb_define_class_under(rb_mWX,"FileCtrlBase",rb_cWXControl);
+	rb_undef_alloc_func(rb_cWXFileCtrlBase);
+
+	rb_cWXFileCtrlEvent = rb_define_class_under(rb_cWXEvent,"FileCtrl",rb_cWXCommandEvent);
+
+#if 0
 	rb_define_attr(rb_cWXFileCtrlBase,"wildcard",1,1);
 	rb_define_attr(rb_cWXFileCtrlBase,"directory",1,1);
 	rb_define_attr(rb_cWXFileCtrlBase,"filename",1,1);
+	rb_define_attr(rb_cWXFileCtrlBase,"path",1,1);
 	rb_define_attr(rb_cWXFileCtrlBase,"filter_index",1,1);
+
+	rb_define_attr(rb_cWXFileCtrlBase,"filenames",1,0);
+	rb_define_attr(rb_cWXFileCtrlBase,"paths",1,0);
+
 
 	rb_define_attr(rb_cWXFileCtrlEvent,"directory",1,1);
 	rb_define_attr(rb_cWXFileCtrlEvent,"filter_index",1,1);
@@ -179,17 +206,16 @@ DLL_LOCAL void Init_WXFileCtrlBase(VALUE rb_mWX)
 
 #endif
 
-#if wxUSE_FILECTRL
-	using namespace RubyWX::FileCtrlBase;
-	rb_cWXFileCtrlBase = rb_define_class_under(rb_mWX,"FileCtrlBase",rb_cWXControl);
-	rb_undef_alloc_func(rb_cWXFileCtrlBase);
-
 	rb_define_method(rb_cWXFileCtrlBase,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_attr_method(rb_cWXFileCtrlBase,"wildcard",_getWildcard,_setWildcard);
 	rb_define_attr_method(rb_cWXFileCtrlBase,"directory",_getDirectory,_setDirectory);
 	rb_define_attr_method(rb_cWXFileCtrlBase,"filename",_getFilename,_setFilename);
+	rb_define_attr_method(rb_cWXFileCtrlBase,"path",_getPath,_setPath);
 	rb_define_attr_method(rb_cWXFileCtrlBase,"filter_index",_GetFilterIndex,_setFilterIndex);
+
+	rb_define_attr_method(rb_cWXFileCtrlBase,"filenames",_GetFilenames,NULL);
+	rb_define_attr_method(rb_cWXFileCtrlBase,"paths",_GetPaths,NULL);
 
 	rb_define_const(rb_cWXFileCtrlBase,"OPEN",INT2NUM(wxFC_OPEN));
 	rb_define_const(rb_cWXFileCtrlBase,"SAVE",INT2NUM(wxFC_SAVE));
@@ -198,8 +224,6 @@ DLL_LOCAL void Init_WXFileCtrlBase(VALUE rb_mWX)
 
 	rb_define_const(rb_cWXFileCtrlBase,"DEFAULT_STYLE",INT2NUM(wxFC_DEFAULT_STYLE));
 
-
-	rb_cWXFileCtrlEvent = rb_define_class_under(rb_cWXEvent,"FileCtrl",rb_cWXCommandEvent);
 	registerEventType("filectrl_selectionchanged",wxEVT_FILECTRL_SELECTIONCHANGED,rb_cWXFileCtrlEvent);
 	registerEventType("filectrl_fileactivated",wxEVT_FILECTRL_FILEACTIVATED,rb_cWXFileCtrlEvent);
 	registerEventType("filectrl_folderchanged",wxEVT_FILECTRL_FOLDERCHANGED,rb_cWXFileCtrlEvent);
