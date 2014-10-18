@@ -544,16 +544,17 @@ DLL_LOCAL void Init_WXMenu(VALUE rb_mWX)
 {
 #if 0
 	rb_mWXEvtHandler = rb_define_module_under(rb_mWX,"EvtHandler");
-
-	rb_define_attr(rb_cWXMenu,"title",1,1);
-	rb_define_attr(rb_cWXMenu,"parent",1,1);
-
 #endif
 
 #if wxUSE_MENUS
 	using namespace RubyWX::Menu;
 	rb_cWXMenu = rb_define_class_under(rb_mWX,"Menu",rb_cObject);
 	rb_define_alloc_func(rb_cWXMenu,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXMenu,"title",1,1);
+	rb_define_attr(rb_cWXMenu,"parent",1,1);
+#endif
 
 	rb_define_method(rb_cWXMenu,"initialize",RUBY_METHOD_FUNC(_initialize),1);
 
