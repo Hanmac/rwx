@@ -85,15 +85,16 @@ DLL_LOCAL void Init_WXColorPickerWidget(VALUE rb_mWX)
 	rb_cWXAnyButton = rb_define_class_under(rb_mWX,"AnyButton",rb_cWXControl);
 
 	rb_cWXButton = rb_define_class_under(rb_mWX,"Button",rb_cWXAnyButton);
-
-	rb_define_attr(rb_cWXColorPickerWidget,"color",1,1);
-
 #endif
 
 #if wxUSE_COLOURPICKERCTRL
 	using namespace RubyWX::ColorPickerWidget;
 	rb_cWXColorPickerWidget = rb_define_class_under(rb_mWX,"ColorPickerWidget",rb_cWXButton);
 	rb_define_alloc_func(rb_cWXColorPickerWidget,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXColorPickerWidget,"color",1,1);
+#endif
 
 	rb_define_method(rb_cWXColorPickerWidget,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
