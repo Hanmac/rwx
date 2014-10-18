@@ -122,14 +122,16 @@ DLL_LOCAL void Init_WXSingleChoiceDialog(VALUE rb_mWX)
 {
 #if 0
 	rb_cWXAnyChoiceDialog = rb_define_class_under(rb_mWX,"AnyChoiceDialog",rb_cWXDialog);
-
-	rb_define_attr(rb_cWXSingleChoiceDialog,"selection",1,1);
 #endif
 
 #if wxUSE_CHOICEDLG
 	using namespace RubyWX::SingleChoiceDialog;
 	rb_cWXSingleChoiceDialog = rb_define_class_under(rb_mWX,"SingleChoiceDialog",rb_cWXAnyChoiceDialog);
 	rb_define_alloc_func(rb_cWXSingleChoiceDialog,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXSingleChoiceDialog,"selection",1,1);
+#endif
 
 	rb_define_method(rb_cWXSingleChoiceDialog,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
