@@ -139,7 +139,14 @@ DLL_LOCAL void Init_WXGrid(VALUE rb_mWX)
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
 
 	rb_cWXPanel = rb_define_class_under(rb_mWX,"Panel",rb_cWXControl);
+#endif
 
+#if wxUSE_GRID
+	using namespace RubyWX::Grid;
+	rb_cWXGrid = rb_define_class_under(rb_mWX,"Grid",rb_cWXPanel);
+	rb_define_alloc_func(rb_cWXGrid,_alloc);
+
+#if 0
 	rb_define_attr(rb_cWXGrid,"table",1,1);
 	rb_define_attr(rb_cWXGrid,"line_color",1,1);
 	rb_define_attr(rb_cWXGrid,"label_background_color",1,1);
@@ -165,11 +172,6 @@ DLL_LOCAL void Init_WXGrid(VALUE rb_mWX)
 	rb_define_attr(rb_cWXGrid,"editable",1,1);
 
 #endif
-
-#if wxUSE_GRID
-	using namespace RubyWX::Grid;
-	rb_cWXGrid = rb_define_class_under(rb_mWX,"Grid",rb_cWXPanel);
-	rb_define_alloc_func(rb_cWXGrid,_alloc);
 
 	rb_define_method(rb_cWXGrid,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
