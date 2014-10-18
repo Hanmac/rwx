@@ -119,14 +119,16 @@ DLL_LOCAL void Init_WXMultiChoiceDialog(VALUE rb_mWX)
 {
 #if 0
 	rb_cWXAnyChoiceDialog = rb_define_class_under(rb_mWX,"AnyChoiceDialog",rb_cWXDialog);
-
-	rb_define_attr(rb_cWXMultiChoiceDialog,"selections",1,1);
 #endif
 
 #if wxUSE_CHOICEDLG
 	using namespace RubyWX::MultiChoiceDialog;
 	rb_cWXMultiChoiceDialog = rb_define_class_under(rb_mWX,"MultiChoiceDialog",rb_cWXAnyChoiceDialog);
 	rb_define_alloc_func(rb_cWXMultiChoiceDialog,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXMultiChoiceDialog,"selections",1,1);
+#endif
 
 	rb_define_method(rb_cWXMultiChoiceDialog,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
