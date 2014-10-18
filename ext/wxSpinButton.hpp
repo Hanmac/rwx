@@ -10,7 +10,7 @@
 
 #include "wxControl.hpp"
 
-extern VALUE rb_cWXSpinButton;
+extern VALUE rb_cWXSpinButton, rb_cWXSpinEvent;
 
 void Init_WXSpinButton(VALUE rb_mWX);
 #if wxUSE_SPINBTN

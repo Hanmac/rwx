@@ -149,8 +149,6 @@ DLL_LOCAL void Init_WXSpinButton(VALUE rb_mWX)
 	rb_define_method(rb_cWXSpinButton,"vertical?",RUBY_METHOD_FUNC(_IsVertical),0);
 	rb_define_const(rb_cWXSpinButton,"VERTICAL",INT2NUM(wxSP_VERTICAL));
 
-
-
 	rb_define_attr_method(rb_cWXSpinEvent,"value",Event::_getValue,Event::_setValue);
 
 	registerEventType("spin", wxEVT_SPIN,rb_cWXSpinEvent);
