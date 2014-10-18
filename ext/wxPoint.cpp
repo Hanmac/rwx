@@ -193,15 +193,15 @@ DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
 DLL_LOCAL void Init_WXPoint(VALUE rb_mWX)
 {
 
-#if 0
-	rb_define_attr(rb_cwxPoint,"x",1,1);
-	rb_define_attr(rb_cwxPoint,"y",1,1);
-#endif
-
 	using namespace RubyWX::Point;
 	rb_cwxPoint = rb_define_class_under(rb_mWX,"Point",rb_cObject);
 
 	rb_define_alloc_func(rb_cwxPoint,_alloc);
+
+#if 0
+	rb_define_attr(rb_cwxPoint,"x",1,1);
+	rb_define_attr(rb_cwxPoint,"y",1,1);
+#endif
 
 	rb_define_method(rb_cwxPoint,"initialize",RUBY_METHOD_FUNC(_initialize),2);
 	rb_define_private_method(rb_cwxPoint,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),1);
