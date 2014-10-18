@@ -104,15 +104,18 @@ DLL_LOCAL void Init_WXColorPicker(VALUE rb_mWX)
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
 
 	rb_cWXPickerBase = rb_define_class_under(rb_mWX,"PickerBase",rb_cWXControl);
-
-	rb_define_attr(rb_cWXColorPicker,"color",1,1);
-	rb_define_attr(rb_cWXColorPickerEvent,"color",1,1);
 #endif
 
 #if wxUSE_COLOURPICKERCTRL
 	using namespace RubyWX::ColorPicker;
 	rb_cWXColorPicker = rb_define_class_under(rb_mWX,"ColorPicker",rb_cWXPickerBase);
 	rb_define_alloc_func(rb_cWXColorPicker,_alloc);
+	rb_cWXColorPickerEvent = rb_define_class_under(rb_cWXEvent,"ColorPicker",rb_cWXEvent);
+
+#if 0
+	rb_define_attr(rb_cWXColorPicker,"color",1,1);
+	rb_define_attr(rb_cWXColorPickerEvent,"color",1,1);
+#endif
 
 	rb_define_method(rb_cWXColorPicker,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
@@ -121,7 +124,6 @@ DLL_LOCAL void Init_WXColorPicker(VALUE rb_mWX)
 	rb_define_const(rb_cWXColorPicker,"DEFAULT_STYLE",INT2NUM(wxCLRP_DEFAULT_STYLE));
 	rb_define_const(rb_cWXColorPicker,"SHOW_LABEL",INT2NUM(wxCLRP_SHOW_LABEL));
 
-	rb_cWXColorPickerEvent = rb_define_class_under(rb_cWXEvent,"ColorPicker",rb_cWXEvent);
 	registerEventType("colorpicker_changed",wxEVT_COLOURPICKER_CHANGED,rb_cWXColorPickerEvent);
 
 	rb_define_attr_method(rb_cWXColorPickerEvent,"color",
