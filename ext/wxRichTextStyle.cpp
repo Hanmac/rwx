@@ -60,17 +60,17 @@ DLL_LOCAL VALUE _initialize_copy(VALUE self, VALUE other)
 
 DLL_LOCAL void Init_WXRichTextStyle(VALUE rb_mWX)
 {
+#if wxUSE_RICHTEXT
+	using namespace RubyWX::RichTextStyle;
+	rb_cWXRichTextStyle = rb_define_class_under(rb_mWX,"RichTextStyle",rb_cObject);
+	rb_undef_alloc_func(rb_cWXRichTextStyle);
+
 #if 0
 	rb_define_attr(rb_cWXRichTextStyle,"name",1,1);
 	rb_define_attr(rb_cWXRichTextStyle,"description",1,1);
 	rb_define_attr(rb_cWXRichTextStyle,"base_style",1,1);
 	rb_define_attr(rb_cWXRichTextStyle,"style",1,1);
 #endif
-
-#if wxUSE_RICHTEXT
-	using namespace RubyWX::RichTextStyle;
-	rb_cWXRichTextStyle = rb_define_class_under(rb_mWX,"RichTextStyle",rb_cObject);
-	rb_undef_alloc_func(rb_cWXRichTextStyle);
 
 	rb_define_private_method(rb_cWXRichTextStyle,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),1);
 
