@@ -159,6 +159,17 @@ DLL_LOCAL VALUE _getAlpha(VALUE self)
 		return CHR2FIX(0);
 }
 
+DLL_LOCAL void init_values(wxColor *self, char &red, char &green, char &blue, char &alpha)
+{
+	if(self->IsOk()) {
+		red = self->Red();
+		green = self->Green();
+		blue = self->Blue();
+		alpha = self->Alpha();
+	}
+}
+
+
 DLL_LOCAL char val_to_char(VALUE val)
 {
 	char cval(0);
@@ -173,42 +184,43 @@ DLL_LOCAL VALUE _setRed(VALUE self,VALUE val)
 {
 	rb_check_frozen(self);
 
-	if(_self->IsOk())
-		_self->Set(val_to_char(val),_self->Green(),_self->Blue(),_self->Alpha());
-	else
-		_self->Set(val_to_char(val),0,0,0);
+	char red(0), green(0), blue(0), alpha(0);
+	init_values(_self, red, green, blue, alpha);
+	red = val_to_char(val);
+	_self->Set(red, green, blue, alpha);
+
 	return val;
 }
 
 DLL_LOCAL VALUE _setGreen(VALUE self,VALUE val)
 {
 	rb_check_frozen(self);
-	if(_self->IsOk())
-		_self->Set(_self->Red(),val_to_char(val),_self->Blue(),_self->Alpha());
-	else
-		_self->Set(0,val_to_char(val),0,0);
+
+	char red(0), green(0), blue(0), alpha(0);
+	init_values(_self, red, green, blue, alpha);
+	green = val_to_char(val);
+	_self->Set(red, green, blue, alpha);
+
 	return val;
 }
 DLL_LOCAL VALUE _setBlue(VALUE self,VALUE val)
 {
 	rb_check_frozen(self);
-	if(_self->IsOk())
-		_self->Set(_self->Red(),_self->Green(),val_to_char(val),_self->Alpha());
-	else
-		_self->Set(0,0,val_to_char(val),0);
+
+	char red(0), green(0), blue(0), alpha(0);
+	init_values(_self, red, green, blue, alpha);
+	blue = val_to_char(val);
+	_self->Set(red, green, blue, alpha);
+
 	return val;
 }
 DLL_LOCAL VALUE _setAlpha(VALUE self,VALUE val)
 {
 	rb_check_frozen(self);
 
-	int red(0), green(0), blue(0), alpha(0);
+	char red(0), green(0), blue(0), alpha(0);
 
-	if(_self->IsOk()) {
-		red = _self->Red();
-		green = _self->Green();
-		blue = _self->Blue();
-	}
+	init_values(_self, red, green, blue, alpha);
 
 	if(!RTEST(val))
 		alpha = wxALPHA_OPAQUE;
