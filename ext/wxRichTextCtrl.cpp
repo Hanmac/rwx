@@ -400,7 +400,14 @@ DLL_LOCAL void Init_WXRichTextCtrl(VALUE rb_mWX)
 
 	rb_mWXTextArea = rb_define_module_under(rb_mWX,"TextArea");
 	rb_mWXTextEntry = rb_define_module_under(rb_mWX,"TextEntry");
+#endif
 
+#if wxUSE_RICHTEXT
+	using namespace RubyWX::RichTextCtrl;
+	rb_cWXRichTextCtrl = rb_define_class_under(rb_mWX,"RichTextCtrl",rb_cWXControl);
+	rb_define_alloc_func(rb_cWXRichTextCtrl,_alloc);
+
+#if 0
 	rb_define_attr(rb_cWXRichTextCtrl,"value",1,1);
 	rb_define_attr(rb_cWXRichTextCtrl,"filename",1,1);
 	rb_define_attr(rb_cWXRichTextCtrl,"text_cursor",1,1);
@@ -410,11 +417,6 @@ DLL_LOCAL void Init_WXRichTextCtrl(VALUE rb_mWX)
 	rb_define_attr(rb_cWXRichTextCtrl,"basic_style",1,1);
 	rb_define_attr(rb_cWXRichTextCtrl,"style_sheet",1,1);
 #endif
-
-#if wxUSE_RICHTEXT
-	using namespace RubyWX::RichTextCtrl;
-	rb_cWXRichTextCtrl = rb_define_class_under(rb_mWX,"RichTextCtrl",rb_cWXControl);
-	rb_define_alloc_func(rb_cWXRichTextCtrl,_alloc);
 
 	rb_include_module(rb_cWXRichTextCtrl,rb_mWXTextArea);
 	rb_include_module(rb_cWXRichTextCtrl,rb_mWXTextEntry);
