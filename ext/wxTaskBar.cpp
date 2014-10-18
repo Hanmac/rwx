@@ -65,16 +65,18 @@ DLL_LOCAL void Init_WXTaskBar(VALUE rb_mWX)
 {
 #if wxUSE_TASKBARICON
 #if 0
-	rb_define_attr(rb_cWXTaskBar,"menu",1,1);
-	rb_define_attr(rb_cWXTaskBar,"icon",1,1);
-	rb_define_attr(rb_cWXTaskBar,"tooltip",1,1);
-
 	rb_mWXEvtHandler = rb_define_module_under(rb_mWX,"EvtHandler");
 #endif
 	using namespace RubyWX::TaskBar;
 
 	rb_cWXTaskBar = rb_define_class_under(rb_mWX,"TaskBar",rb_cObject);
 	rb_define_alloc_func(rb_cWXTaskBar,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXTaskBar,"menu",1,1);
+	rb_define_attr(rb_cWXTaskBar,"icon",1,1);
+	rb_define_attr(rb_cWXTaskBar,"tooltip",1,1);
+#endif
 
 	rb_undef_method(rb_cWXTaskBar,"initialize_copy");
 	rb_undef_method(rb_cWXTaskBar,"_load");
