@@ -820,6 +820,14 @@ DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 
 DLL_LOCAL void Init_WXImage(VALUE rb_mWX)
 {
+#if wxUSE_IMAGE
+
+	wxInitAllImageHandlers();
+
+	using namespace RubyWX::Image;
+	rb_cWXImage = rb_define_class_under(rb_mWX,"Image",rb_cObject);
+	rb_define_alloc_func(rb_cWXImage,_alloc);
+
 #if 0
 	rb_define_attr(rb_cWXImage,"width",1,0);
 	rb_define_attr(rb_cWXImage,"height",1,0);
@@ -830,15 +838,6 @@ DLL_LOCAL void Init_WXImage(VALUE rb_mWX)
 	rb_define_attr(rb_cWXImage,"mask",1,1);
 	rb_define_attr(rb_cWXImage,"palette",1,1);
 #endif
-
-#if wxUSE_IMAGE
-
-	wxInitAllImageHandlers();
-
-	using namespace RubyWX::Image;
-	rb_cWXImage = rb_define_class_under(rb_mWX,"Image",rb_cObject);
-	rb_define_alloc_func(rb_cWXImage,_alloc);
-
 
 	rb_define_method(rb_cWXImage,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 	rb_define_private_method(rb_cWXImage,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),1);
