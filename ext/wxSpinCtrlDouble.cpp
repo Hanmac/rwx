@@ -7,6 +7,7 @@
 
 
 #include "wxSpinCtrlDouble.hpp"
+#include "wxNotifyEvent.hpp"
 
 VALUE rb_cWXSpinCtrlDouble, rb_cWXSpinDoubleEvent;
 
