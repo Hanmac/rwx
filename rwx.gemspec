@@ -22,13 +22,15 @@ newest Binding for wxWidgets 3.0+, it was made after wxRuby died.
   spec.add_development_dependency "rdoc", '~> 4.0'
   spec.add_development_dependency "rake", '~> 10.0'
   spec.add_development_dependency "test-unit", '~> 3.0'
-
+  spec.add_development_dependency "rspec", '~> 3.0'
+  
   # Gem contents
   begin
     spec.files         = `git ls-files`.split("\n")
   ensure
     spec.files         = Dir["*.rdoc", "COPYING", "Rakefile", "VERSION",
-      "rwx.gemspec", "ext/extconf.rb", "ext/*.*pp", "samples/**/**", "tests/**"
+      "rwx.gemspec", "ext/extconf.rb", "ext/*.*pp", "samples/**/**", "tests/**",
+      ".rspec", "spec/*"
     ] if spec.files.empty?
   end
   
