@@ -11,6 +11,11 @@
 VALUE rb_cWXDirCtrl;
 
 #if wxUSE_DIRDLG
+
+#if !defined(HAVE_WXDIRCTRL)
+#define wxDirCtrl wxGenericDirCtrl
+#endif
+
 #define _self unwrap<wxDirCtrl*>(self)
 
 namespace RubyWX {
