@@ -435,17 +435,19 @@ DLL_LOCAL void Init_WXRichTextStyleSheet(VALUE rb_mWX)
 {
 #if 0
 	rb_mWX = rb_define_module("WX");
-
-	rb_define_attr(rb_cWXRichTextStyleSheet,"name",1,1);
-	rb_define_attr(rb_cWXRichTextStyleSheet,"description",1,1);
-	rb_define_attr(rb_cWXRichTextStyleSheet,"next_sheet",1,1);
-	rb_define_attr(rb_cWXRichTextStyleSheet,"previous_sheet",1,1);
 #endif
 
 #if wxUSE_RICHTEXT
 	using namespace RubyWX::RichTextStyleSheet;
 	rb_cWXRichTextStyleSheet = rb_define_class_under(rb_mWX,"RichTextStyleSheet",rb_cObject);
 	rb_define_alloc_func(rb_cWXRichTextStyleSheet,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXRichTextStyleSheet,"name",1,1);
+	rb_define_attr(rb_cWXRichTextStyleSheet,"description",1,1);
+	rb_define_attr(rb_cWXRichTextStyleSheet,"next_sheet",1,1);
+	rb_define_attr(rb_cWXRichTextStyleSheet,"previous_sheet",1,1);
+#endif
 
 	rb_define_private_method(rb_cWXRichTextStyleSheet,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),1);
 
