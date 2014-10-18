@@ -8,6 +8,11 @@ require "rubygems/package_task"
 require "rdoc/task"
 
 begin
+require "rspec/core/rake_task"
+rescue LoadError
+end
+
+begin
 require 'rake/extensiontask'
 rescue LoadError
 end
@@ -55,6 +60,9 @@ end
 Rake::TestTask.new do |t|
   t.verbose = true
 end
+
+RSpec::Core::RakeTask.new if Object.const_defined?(:RSpec)
+
 
 RDoc::Task.new do |rdoc|
   rdoc.title = "rwx RDocs"
