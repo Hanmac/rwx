@@ -406,6 +406,9 @@ DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
  */
 DLL_LOCAL void Init_WXColor(VALUE rb_mWX)
 {
+#if 0
+	rb_mWX = rb_define_module("WX");
+#endif
 	using namespace RubyWX::Color;
 	rb_cWXColor = rb_define_class_under(rb_mWX,"Color",rb_cObject);
 
