@@ -133,7 +133,15 @@ DLL_LOCAL void Init_WXMenuItem(VALUE rb_mWX)
 {
 #if 0
 	rb_cWXMenu = rb_define_class_under(rb_mWX,"Menu",rb_cObject);
+#endif
 
+#if wxUSE_MENUS
+	using namespace RubyWX::MenuItem;
+	//
+	rb_cWXMenuItem = rb_define_class_under(rb_cWXMenu,"Item",rb_cObject);
+	rb_define_alloc_func(rb_cWXMenuItem,_alloc);
+
+#if 0
 	rb_define_attr(rb_cWXMenuItem,"menu",1,1);
 	rb_define_attr(rb_cWXMenuItem,"label",1,1);
 	rb_define_attr(rb_cWXMenuItem,"id",1,1);
@@ -145,12 +153,6 @@ DLL_LOCAL void Init_WXMenuItem(VALUE rb_mWX)
 	rb_define_attr(rb_cWXMenuItem,"bitmap",1,1);
 
 #endif
-
-#if wxUSE_MENUS
-	using namespace RubyWX::MenuItem;
-	//
-	rb_cWXMenuItem = rb_define_class_under(rb_cWXMenu,"Item",rb_cObject);
-	rb_define_alloc_func(rb_cWXMenuItem,_alloc);
 
 	rb_define_private_method(rb_cWXMenuItem,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),0);
 
