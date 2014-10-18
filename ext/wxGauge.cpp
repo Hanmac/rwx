@@ -139,15 +139,17 @@ DLL_LOCAL void Init_WXGauge(VALUE rb_mWX)
 	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
 
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
-
-	rb_define_attr(rb_cWXGauge,"range",1,1);
-	rb_define_attr(rb_cWXGauge,"value",1,1);
 #endif
 
 #if wxUSE_GAUGE
 	using namespace RubyWX::Gauge;
 	rb_cWXGauge = rb_define_class_under(rb_mWX,"Gauge",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXGauge,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXGauge,"range",1,1);
+	rb_define_attr(rb_cWXGauge,"value",1,1);
+#endif
 
 	rb_define_method(rb_cWXGauge,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
