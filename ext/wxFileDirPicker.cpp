@@ -63,16 +63,17 @@ DLL_LOCAL void Init_WXFileDirPicker(VALUE rb_mWX)
 	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
 	rb_cWXPickerBase = rb_define_class_under(rb_mWX,"PickerBase",rb_cWXControl);
-
-
-	rb_define_attr(rb_cWXFileDirPicker,"path",1,1);
-	rb_define_attr(rb_cWXFileDirPickerEvent,"path",1,1);
 #endif
 
 #if wxUSE_FILEPICKERCTRL || wxUSE_DIRPICKERCTRL
 	using namespace RubyWX::FileDirPicker;
 	rb_cWXFileDirPicker = rb_define_class_under(rb_mWX,"FileDirPicker",rb_cWXPickerBase);
 	rb_undef_alloc_func(rb_cWXFileDirPicker);
+
+#if 0
+	rb_define_attr(rb_cWXFileDirPicker,"path",1,1);
+	rb_define_attr(rb_cWXFileDirPickerEvent,"path",1,1);
+#endif
 
 	rb_define_attr_method(rb_cWXFileDirPicker,"path",_getPath,_setPath);
 
