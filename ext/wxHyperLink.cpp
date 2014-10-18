@@ -116,20 +116,21 @@ DLL_LOCAL void Init_WXHyperLink(VALUE rb_mWX)
 	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
 
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
-
-	rb_define_attr(rb_cWXHyperLink,"hover_color",1,1);
-	rb_define_attr(rb_cWXHyperLink,"normal_color",1,1);
-	rb_define_attr(rb_cWXHyperLink,"visited_color",1,1);
-
-	rb_define_attr(rb_cWXHyperLink,"url",1,1);
-	rb_define_attr(rb_cWXHyperLink,"visited",1,1);
-
 #endif
 
 #if wxUSE_HYPERLINKCTRL
 	using namespace RubyWX::HyperLink;
 	rb_cWXHyperLink = rb_define_class_under(rb_mWX,"HyperLink",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXHyperLink,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXHyperLink,"hover_color",1,1);
+	rb_define_attr(rb_cWXHyperLink,"normal_color",1,1);
+	rb_define_attr(rb_cWXHyperLink,"visited_color",1,1);
+
+	rb_define_attr(rb_cWXHyperLink,"url",1,1);
+	rb_define_attr(rb_cWXHyperLink,"visited",1,1);
+#endif
 
 	rb_define_method(rb_cWXHyperLink,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
