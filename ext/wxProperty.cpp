@@ -603,8 +603,12 @@ VALUE find_prop_class(VALUE self,VALUE name)
  */
 DLL_LOCAL void Init_WXProperty(VALUE rb_mWX)
 {
-#if 0
+#if wxUSE_PROPGRID
+	using namespace RubyWX::Property;
+	rb_cWXProperty = rb_define_class_under(rb_mWX,"Property",rb_cObject);
+	rb_define_alloc_func(rb_cWXProperty,_alloc);
 
+#if 0
 	rb_define_attr(rb_cWXProperty,"name",1,1);
 	rb_define_attr(rb_cWXProperty,"label",1,1);
 	rb_define_attr(rb_cWXProperty,"help_string",1,1);
@@ -625,13 +629,7 @@ DLL_LOCAL void Init_WXProperty(VALUE rb_mWX)
 
 	rb_define_attr(rb_cWXProperty,"depth",1,0);
 	rb_define_attr(rb_cWXProperty,"grid",1,0);
-
 #endif
-
-#if wxUSE_PROPGRID
-	using namespace RubyWX::Property;
-	rb_cWXProperty = rb_define_class_under(rb_mWX,"Property",rb_cObject);
-	rb_define_alloc_func(rb_cWXProperty,_alloc);
 
 	//TODO check if its possible to add this methods
 	rb_undef_method(rb_cWXProperty,"initialize_copy");
