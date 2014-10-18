@@ -47,23 +47,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 		if(rb_obj_is_kind_of(hash,rb_cHash))
 		{
-			wxColour color(wxNullColour);
-			wxFont font(wxNullFont);
-			bool symbols(false);
-			bool show_help(false);
 
-			set_hash_option(hash,"color",color);
-			set_hash_option(hash,"font",font);
-			set_hash_option(hash,"symbols",symbols);
-			set_hash_option(hash,"show_help",show_help);
-
-			if(color.IsOk())
-				data.SetColour(color);
-			if(font.IsOk())
-				data.SetInitialFont(font);
-
-			data.SetAllowSymbols(symbols);
-			data.SetShowHelp(show_help);
+			set_hash_option(hash,"color",&wxFontData::SetColour, data);
+			set_hash_option(hash,"font",&wxFontData::SetInitialFont, data);
+			set_hash_option(hash,"symbols",&wxFontData::SetAllowSymbols, data);
+			set_hash_option(hash,"show_help",&wxFontData::SetShowHelp, data);
 
 		}
 		_self->Create(unwrap<wxWindow*>(parent),data);
