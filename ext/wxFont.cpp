@@ -414,6 +414,11 @@ DLL_LOCAL VALUE _class_get(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL void Init_WXFont(VALUE rb_mWX)
 {
+
+	using namespace RubyWX::Font;
+	rb_cWXFont = rb_define_class_under(rb_mWX,"Font",rb_cObject);
+	rb_define_alloc_func(rb_cWXFont,_alloc);
+
 #if 0
 	rb_define_attr(rb_cWXFont,"point_size",1,1);
 	rb_define_attr(rb_cWXFont,"pixel_size",1,1);
@@ -430,10 +435,6 @@ DLL_LOCAL void Init_WXFont(VALUE rb_mWX)
 	rb_define_const(rb_cWXFont,"SMALL",wrap(wxSMALL_FONT));
 	rb_define_const(rb_cWXFont,"SWISS",wrap(wxSWISS_FONT));
 #endif
-
-	using namespace RubyWX::Font;
-	rb_cWXFont = rb_define_class_under(rb_mWX,"Font",rb_cObject);
-	rb_define_alloc_func(rb_cWXFont,_alloc);
 
 	rb_define_method(rb_cWXFont,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
