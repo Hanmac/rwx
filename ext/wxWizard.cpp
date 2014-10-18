@@ -270,19 +270,21 @@ DLL_LOCAL void Init_WXWizard(VALUE rb_mWX)
 	rb_cWXEvent = rb_define_class_under(rb_mWX,"Event",rb_cObject);
 	rb_cWXCommandEvent = rb_define_class_under(rb_cWXEvent,"Command",rb_cWXEvent);
 	rb_cWXNotifyEvent = rb_define_class_under(rb_cWXEvent,"Notify",rb_cWXCommandEvent);
-
-	rb_define_attr(rb_cWXWizard, "bitmap",1,1);
-	rb_define_attr(rb_cWXWizard, "page_size",1,1);
-
-	rb_define_attr(rb_cWXWizardEvent, "direction",1,0);
-	rb_define_attr(rb_cWXWizardEvent, "page",1,0);
-
 #endif
 
 #if wxUSE_WIZARDDLG
 	using namespace RubyWX::Wizard;
 	rb_cWXWizard = rb_define_class_under(rb_mWX,"Wizard",rb_cWXDialog);
 	rb_define_alloc_func(rb_cWXWizard,_alloc);
+	rb_cWXWizardEvent = rb_define_class_under(rb_cWXEvent,"Wizard",rb_cWXNotifyEvent);
+
+#if 0
+	rb_define_attr(rb_cWXWizard, "bitmap",1,1);
+	rb_define_attr(rb_cWXWizard, "page_size",1,1);
+
+	rb_define_attr(rb_cWXWizardEvent, "direction",1,0);
+	rb_define_attr(rb_cWXWizardEvent, "page",1,0);
+#endif
 
 	rb_define_attr_method(rb_cWXWizard, "bitmap",_getBitmap,_setBitmap);
 	rb_define_attr_method(rb_cWXWizard, "page_size",_getPageSize,_setPageSize);
@@ -304,10 +306,8 @@ DLL_LOCAL void Init_WXWizard(VALUE rb_mWX)
 
 	registerInfo<wxWizard>(rb_cWXWizard);
 
-	rb_cWXWizardEvent = rb_define_class_under(rb_cWXEvent,"Wizard",rb_cWXNotifyEvent);
-
-	rb_define_method(rb_cWXWizardEvent,"direction",RUBY_METHOD_FUNC(Event::_GetDirection),0);
-	rb_define_method(rb_cWXWizardEvent,"page",RUBY_METHOD_FUNC(Event::_GetPage),0);
+	rb_define_attr_method(rb_cWXWizardEvent,"direction",Event::_GetDirection,NULL);
+	rb_define_attr_method(rb_cWXWizardEvent,"page",Event::_GetPage,NULL);
 
 	registerEventType("wizard_page_changed",wxEVT_WIZARD_PAGE_CHANGED,rb_cWXWizardEvent);
 	registerEventType("wizard_page_changing",wxEVT_WIZARD_PAGE_CHANGING,rb_cWXWizardEvent);
