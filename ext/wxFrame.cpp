@@ -239,16 +239,18 @@ DLL_LOCAL void Init_WXFrame(VALUE rb_mWX)
 	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
 
 	rb_cWXTopLevel = rb_define_class_under(rb_mWX,"TopLevel",rb_cWXWindow);
-
-	rb_define_attr(rb_cWXFrame,"menubar",1,1);
-	rb_define_attr(rb_cWXFrame,"statusbar",1,1);
-	rb_define_attr(rb_cWXFrame,"statusbar_pane",1,1);
-	rb_define_attr(rb_cWXFrame,"toolbar",1,1);
 #endif
 
 	using namespace RubyWX::Frame;
 	rb_cWXFrame = rb_define_class_under(rb_mWX,"Frame",rb_cWXTopLevel);
 	rb_define_alloc_func(rb_cWXFrame,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXFrame,"menubar",1,1);
+	rb_define_attr(rb_cWXFrame,"statusbar",1,1);
+	rb_define_attr(rb_cWXFrame,"statusbar_pane",1,1);
+	rb_define_attr(rb_cWXFrame,"toolbar",1,1);
+#endif
 
 	rb_define_method(rb_cWXFrame,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
