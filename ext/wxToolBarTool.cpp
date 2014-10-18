@@ -127,7 +127,16 @@ DLL_LOCAL void Init_WXToolBarTool(VALUE rb_mWX)
 {
 #if 0
 	rb_cWXToolBarBase = rb_define_class_under(rb_mWX,"ToolBarBase",rb_cWXControl);
+#endif
 
+#if wxUSE_TOOLBAR
+	using namespace RubyWX::ToolBarTool;
+	rb_cWXToolBarTool = rb_define_class_under(rb_cWXToolBarBase,"Tool",rb_cObject);
+
+	//should that really have alloc?
+	rb_define_alloc_func(rb_cWXToolBarTool,_alloc);
+
+#if 0
 	rb_define_attr(rb_cWXToolBarTool,"normal_bitmap",1,1);
 	rb_define_attr(rb_cWXToolBarTool,"disabled_bitmap",1,1);
 
@@ -139,15 +148,7 @@ DLL_LOCAL void Init_WXToolBarTool(VALUE rb_mWX)
 	rb_define_attr(rb_cWXToolBarTool,"toggled",1,1);
 
 	rb_define_attr(rb_cWXToolBarTool,"dropdown_menu",1,1);
-
 #endif
-
-#if wxUSE_TOOLBAR
-	using namespace RubyWX::ToolBarTool;
-	rb_cWXToolBarTool = rb_define_class_under(rb_cWXToolBarBase,"Tool",rb_cObject);
-
-	//should that really have alloc?
-	rb_define_alloc_func(rb_cWXToolBarTool,_alloc);
 
 	rb_undef_method(rb_cWXToolBarTool,"initialize_copy");
 	rb_undef_method(rb_cWXToolBarTool,"_load");
