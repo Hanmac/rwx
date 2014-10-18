@@ -6,6 +6,7 @@
  */
 
 #include "wxDirCtrl.hpp"
+#include "wxFileCtrlBase.hpp"
 
 VALUE rb_cWXDirCtrl;
 
@@ -16,6 +17,13 @@ namespace RubyWX {
 namespace DirCtrl {
 
 APP_PROTECT(wxDirCtrl)
+
+macro_attr_with_func(Filter,wrap,unwrapWildCard)
+
+macro_attr(Path,wxString)
+
+singlereturn(GetFilterIndex)
+singlereturn_array(GetFilePaths,wxArrayString)
 
 /*
  * call-seq:
@@ -52,6 +60,14 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"style",style);
 
 			set_hash_option(hash,"default_directory",defaultDirectory);
+
+			set_hash_flag_option(hash, "dir_only", wxDIRCTRL_DIR_ONLY, style);
+			set_hash_flag_option(hash, "select_first", wxDIRCTRL_SELECT_FIRST, style);
+			set_hash_flag_option(hash, "show_filters", wxDIRCTRL_SHOW_FILTERS, style);
+			set_hash_flag_option(hash, "internal_3d", wxDIRCTRL_3D_INTERNAL, style);
+			set_hash_flag_option(hash, "edit_labels", wxDIRCTRL_EDIT_LABELS, style);
+			set_hash_flag_option(hash, "multiple", wxDIRCTRL_MULTIPLE, style);
+
 		}
 
 		if(nil_check(parent)) {
@@ -69,9 +85,36 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 
 
+
+VALUE _setFilterIndex(VALUE self,VALUE other)
+{
+	rb_check_frozen(self);
+	int filter(NUM2INT(other));
+
+	if(check_filter_index(filter,_self->GetFilter()))
+		_self->SetFilterIndex(filter);
+
+	return other;
+}
+
+
 }
 }
 #endif
+
+/* Document-attr: filter
+ * the filter of the DirCtrl. String, raise an ArgumentError if filter has wrong format
+ */
+/* Document-attr: filter_index
+ * the filter_index of the DirCtrl.
+ * Can't be higher than filters in filter. Integer
+ */
+/* Document-attr: path
+ * the path of the DirCtrl. String
+ */
+/* Document-attr: file_paths
+ * the file paths of the DirCtrl. Array<String>
+ */
 
 DLL_LOCAL void Init_WXDirCtrl(VALUE rb_mWX)
 {
@@ -87,7 +130,21 @@ DLL_LOCAL void Init_WXDirCtrl(VALUE rb_mWX)
 	rb_cWXDirCtrl = rb_define_class_under(rb_mWX,"DirCtrl",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXDirCtrl,_alloc);
 
+#if 0
+	rb_define_attr(rb_cWXDirCtrl,"filter",1,1);
+	rb_define_attr(rb_cWXDirCtrl,"path",1,1);
+	rb_define_attr(rb_cWXDirCtrl,"filter_index",1,1);
+
+	rb_define_attr(rb_cWXDirCtrl,"file_paths",1,0);
+#endif
+
 	rb_define_method(rb_cWXDirCtrl,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
+
+	rb_define_attr_method(rb_cWXDirCtrl,"filter",_getFilter,_setFilter);
+	rb_define_attr_method(rb_cWXDirCtrl,"path",_getPath,_setPath);
+	rb_define_attr_method(rb_cWXDirCtrl,"filter_index",_GetFilterIndex,_setFilterIndex);
+
+	rb_define_attr_method(rb_cWXDirCtrl,"file_paths",_GetFilePaths,NULL);
 
 	registerInfo<wxFileCtrl>(rb_cWXDirCtrl);
 #endif
