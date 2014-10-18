@@ -258,6 +258,11 @@ DLL_LOCAL VALUE _class_get(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL void Init_WXPen(VALUE rb_mWX)
 {
+
+	using namespace RubyWX::Pen;
+	rb_cWXPen = rb_define_class_under(rb_mWX,"Pen",rb_cObject);
+	rb_define_alloc_func(rb_cWXPen,_alloc);
+
 #if 0
 	rb_define_attr(rb_cWXPen,"width",1,1);
 	rb_define_attr(rb_cWXPen,"color",1,1);
@@ -278,10 +283,6 @@ DLL_LOCAL void Init_WXPen(VALUE rb_mWX)
 	rb_define_const(rb_cWXPen,"TRANSPARENT",wrap(wxTRANSPARENT_PEN));
 	rb_define_const(rb_cWXPen,"WHITE",wrap(wxWHITE_PEN));
 #endif
-
-	using namespace RubyWX::Pen;
-	rb_cWXPen = rb_define_class_under(rb_mWX,"Pen",rb_cObject);
-	rb_define_alloc_func(rb_cWXPen,_alloc);
 
 	rb_define_method(rb_cWXPen,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 	rb_define_private_method(rb_cWXPen,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),1);
