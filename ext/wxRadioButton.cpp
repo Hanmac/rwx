@@ -89,14 +89,16 @@ DLL_LOCAL void Init_WXRadioButton(VALUE rb_mWX)
 	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
 
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
-
-	rb_define_attr(rb_cWXRadioButton,"value",1,1);
 #endif
 
 #if wxUSE_RADIOBTN
 	using namespace RubyWX::RadioButton;
 	rb_cWXRadioButton = rb_define_class_under(rb_mWX,"RadioButton",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXRadioButton,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXRadioButton,"value",1,1);
+#endif
 
 	rb_define_method(rb_cWXRadioButton,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
