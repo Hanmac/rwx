@@ -357,15 +357,16 @@ DLL_LOCAL void Init_WXRadioBox(VALUE rb_mWX)
 	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
 
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
-
-	rb_define_attr(rb_cWXRadioBox,"selection",1,1);
-	rb_define_attr(rb_cWXRadioBox,"string_selection",1,1);
-
 #endif
 #if wxUSE_RADIOBOX
 	using namespace RubyWX::RadioBox;
 	rb_cWXRadioBox = rb_define_class_under(rb_mWX,"RadioBox",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXRadioBox,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXRadioBox,"selection",1,1);
+	rb_define_attr(rb_cWXRadioBox,"string_selection",1,1);
+#endif
 
 	rb_define_method(rb_cWXRadioBox,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
