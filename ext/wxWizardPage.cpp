@@ -111,18 +111,19 @@ DLL_LOCAL void Init_WXWizardPage(VALUE rb_mWX)
 	rb_mWX = rb_define_module("WX");
 	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
 	rb_cWXPanel = rb_define_class_under(rb_mWX,"Panel",rb_cWXWindow);
-
-	rb_define_attr(rb_cWXWizardPage,"prev",1,1);
-	rb_define_attr(rb_cWXWizardPage,"next",1,1);
-
-	rb_define_attr(rb_cWXWizardPage,"bitmap",1,1);
-
 #endif
 
 #if wxUSE_WIZARDDLG
 	using namespace RubyWX::WizardPage;
 	rb_cWXWizardPage = rb_define_class_under(rb_mWX,"WizardPage",rb_cWXPanel);
 	rb_define_alloc_func(rb_cWXWizardPage,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXWizardPage,"prev",1,1);
+	rb_define_attr(rb_cWXWizardPage,"next",1,1);
+
+	rb_define_attr(rb_cWXWizardPage,"bitmap",1,1);
+#endif
 
 	rb_define_method(rb_cWXWizardPage,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
