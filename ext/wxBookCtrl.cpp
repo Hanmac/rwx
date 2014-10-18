@@ -560,6 +560,19 @@ DLL_LOCAL void Init_WXBookCtrl(VALUE rb_mWX)
 	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
 
+	rb_cWXEvent = rb_define_class_under(rb_mWX,"Event",rb_cObject);
+	rb_cWXCommandEvent = rb_define_class_under(rb_cWXEvent,"Command",rb_cWXEvent);
+	rb_cWXNotifyEvent = rb_define_class_under(rb_cWXEvent,"Notify",rb_cWXCommandEvent);
+#endif
+
+#if wxUSE_BOOKCTRL
+	using namespace RubyWX::BookCtrl;
+	rb_cWXBookCtrlBase = rb_define_class_under(rb_mWX,"BookCtrl",rb_cWXControl);
+	rb_undef_alloc_func(rb_cWXBookCtrlBase);
+
+	rb_cWXBookCtrlEvent = rb_define_class_under(rb_cWXEvent,"BookCtrl",rb_cWXNotifyEvent);
+
+#if 0
 	rb_define_attr(rb_cWXBookCtrlBase,"selection",1,1);
 	rb_define_attr(rb_cWXBookCtrlBase,"image_list",1,1);
 	rb_define_attr(rb_cWXBookCtrlBase,"intenal_border",1,1);
@@ -567,17 +580,7 @@ DLL_LOCAL void Init_WXBookCtrl(VALUE rb_mWX)
 
 	rb_define_attr(rb_cWXBookCtrlEvent,"selection",1,1);
 	rb_define_attr(rb_cWXBookCtrlEvent,"old_selection",1,1);
-
-	rb_cWXEvent = rb_define_class_under(rb_mWX,"Event",rb_cObject);
-	rb_cWXCommandEvent = rb_define_class_under(rb_cWXEvent,"Command",rb_cWXEvent);
-	rb_cWXNotifyEvent = rb_define_class_under(rb_cWXEvent,"Notify",rb_cWXCommandEvent);
-
 #endif
-
-#if wxUSE_BOOKCTRL
-	using namespace RubyWX::BookCtrl;
-	rb_cWXBookCtrlBase = rb_define_class_under(rb_mWX,"BookCtrl",rb_cWXControl);
-	rb_undef_alloc_func(rb_cWXBookCtrlBase);
 
 	rb_define_method(rb_cWXBookCtrlBase,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
@@ -616,9 +619,6 @@ DLL_LOCAL void Init_WXBookCtrl(VALUE rb_mWX)
 	rb_define_const(rb_cWXBookCtrlBase,"BOTTOM",INT2NUM(wxBK_BOTTOM));
 	rb_define_const(rb_cWXBookCtrlBase,"LEFT",INT2NUM(wxBK_LEFT));
 	rb_define_const(rb_cWXBookCtrlBase,"RIGHT",INT2NUM(wxBK_RIGHT));
-
-
-	rb_cWXBookCtrlEvent = rb_define_class_under(rb_cWXEvent,"BookCtrl",rb_cWXNotifyEvent);
 
 	rb_define_attr_method(rb_cWXBookCtrlEvent,"selection",Event::_getSelection,Event::_setSelection);
 	rb_define_attr_method(rb_cWXBookCtrlEvent,"old_selection",Event::_getOldSelection,Event::_setOldSelection);
