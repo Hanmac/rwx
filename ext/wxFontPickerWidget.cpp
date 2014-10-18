@@ -101,16 +101,17 @@ DLL_LOCAL void Init_WXFontPickerWidget(VALUE rb_mWX)
 	rb_cWXAnyButton = rb_define_class_under(rb_mWX,"AnyButton",rb_cWXControl);
 
 	rb_cWXButton = rb_define_class_under(rb_mWX,"Button",rb_cWXAnyButton);
-
-	rb_define_attr(rb_cWXFontPickerWidget,"font",1,1);
-	rb_define_attr(rb_cWXFontPickerWidget,"selected_color",1,1);
-
 #endif
 
 #if wxUSE_FONTPICKERCTRL
 	using namespace RubyWX::FontPickerWidget;
 	rb_cWXFontPickerWidget = rb_define_class_under(rb_mWX,"FontPickerWidget",rb_cWXButton);
 	rb_define_alloc_func(rb_cWXFontPickerWidget,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXFontPickerWidget,"font",1,1);
+	rb_define_attr(rb_cWXFontPickerWidget,"selected_color",1,1);
+#endif
 
 	rb_define_method(rb_cWXFontPickerWidget,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
