@@ -38,14 +38,16 @@ DLL_LOCAL void Init_WXCalendarCtrlBase(VALUE rb_mWX)
 	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
 
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
-
-	rb_define_attr(rb_cWXCalendarCtrlBase,"date",1,1);
 #endif
 
 #if wxUSE_CALENDARCTRL
 	using namespace RubyWX::CalendarCtrlBase;
 	rb_cWXCalendarCtrlBase = rb_define_class_under(rb_mWX,"CalendarCtrlBase",rb_cWXControl);
 	rb_undef_alloc_func(rb_cWXCalendarCtrlBase);
+
+#if 0
+	rb_define_attr(rb_cWXCalendarCtrlBase,"date",1,1);
+#endif
 
 	rb_define_attr_method(rb_cWXCalendarCtrlBase,"date",_getDate,_setDate);
 
