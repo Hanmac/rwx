@@ -112,6 +112,8 @@
 
 #include "wxChoice.hpp"
 #include "wxComboBox.hpp"
+#include "wxComboCtrl.hpp"
+#include "wxOwnerDrawnComboBox.hpp"
 #include "wxBitmapComboBox.hpp"
 
 #include "wxSlider.hpp"
@@ -206,6 +208,8 @@
 #include "wxPropertyCell.hpp"
 
 #include "wxPreferences.hpp"
+
+#include <wx/apptrait.h>
 
 VALUE rb_mWX;
 
@@ -379,6 +383,8 @@ extern "C" void Init_rwx()
 
 	Init_WXChoice(rb_mWX);
 	Init_WXComboBox(rb_mWX);
+	Init_WXComboCtrl(rb_mWX);
+	Init_WXOwnerDrawnComboBox(rb_mWX);
 	Init_WXBitmapComboBox(rb_mWX);
 
 	Init_WXTreeCtrl(rb_mWX);
@@ -468,5 +474,12 @@ extern "C" void Init_rwx()
 		->add(wxICON_STOP,"stop")
 		->add(wxICON_ASTERISK,"asterisk")
 		->allow_array = false;
+
+/*
+	int min,max;
+	wxString port(wxPlatformInfo::GetPortIdName(wxGUIAppTraits().GetToolkitVersion(&min,&max), false));
+
+	rb_warn("%s %d.%d", port.c_str().AsChar(), min, max);
+//*/
 
 }
