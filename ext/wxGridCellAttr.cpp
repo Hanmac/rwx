@@ -42,17 +42,17 @@ APP_PROTECT(wxGridCellAttr)
 
 DLL_LOCAL void Init_WXGridCellAttr(VALUE rb_mWX)
 {
-#if 0
-	rb_define_attr(rb_cWXGridCellAttr,"text_color",1,1);
-	rb_define_attr(rb_cWXGridCellAttr,"background_color",1,1);
-	rb_define_attr(rb_cWXGridCellAttr,"font",1,1);
-
-#endif
 
 #if wxUSE_GRID
 	using namespace RubyWX::GridCellAttr;
 	rb_cWXGridCellAttr = rb_define_class_under(rb_mWX,"GridCellAttr",rb_cObject);
 	rb_define_alloc_func(rb_cWXGridCellAttr,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXGridCellAttr,"text_color",1,1);
+	rb_define_attr(rb_cWXGridCellAttr,"background_color",1,1);
+	rb_define_attr(rb_cWXGridCellAttr,"font",1,1);
+#endif
 
 	//TODO make GridCellAttr copyable
 	rb_undef_method(rb_cWXGridCellAttr,"initialize_copy");
