@@ -108,7 +108,14 @@ DLL_LOCAL void Init_WXAnyButton(VALUE rb_mWX)
 	rb_mWX = rb_define_module("WX");
 	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+#endif
 
+#ifdef wxHAS_ANY_BUTTON
+	using namespace RubyWX::AnyButton;
+	rb_cWXAnyButton = rb_define_class_under(rb_mWX,"AnyButton",rb_cWXControl);
+	rb_undef_alloc_func(rb_cWXAnyButton);
+
+#if 0
 	rb_define_attr(rb_cWXAnyButton,"bitmap_label",1,1);
 	rb_define_attr(rb_cWXAnyButton,"bitmap_pressed",1,1);
 	rb_define_attr(rb_cWXAnyButton,"bitmap_disabled",1,1);
@@ -116,13 +123,7 @@ DLL_LOCAL void Init_WXAnyButton(VALUE rb_mWX)
 	rb_define_attr(rb_cWXAnyButton,"bitmap_focus",1,1);
 	rb_define_attr(rb_cWXAnyButton,"bitmap_selected",1,1);
 	rb_define_attr(rb_cWXAnyButton,"bitmap_hover",1,1);
-
 #endif
-
-#ifdef wxHAS_ANY_BUTTON
-	using namespace RubyWX::AnyButton;
-	rb_cWXAnyButton = rb_define_class_under(rb_mWX,"AnyButton",rb_cWXControl);
-	rb_undef_alloc_func(rb_cWXAnyButton);
 
 	rb_define_method(rb_cWXAnyButton,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
