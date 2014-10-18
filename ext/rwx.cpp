@@ -120,6 +120,7 @@
 
 #include "wxSpinButton.hpp"
 #include "wxSpinCtrl.hpp"
+#include "wxSpinCtrlDouble.hpp"
 
 #include "wxTextArea.hpp"
 #include "wxTextEntry.hpp"
@@ -342,6 +343,7 @@ extern "C" void Init_rwx()
 	Init_WXSlider(rb_mWX);
 	Init_WXSpinButton(rb_mWX);
 	Init_WXSpinCtrl(rb_mWX);
+	Init_WXSpinCtrlDouble(rb_mWX);
 
 	Init_WXHyperLink(rb_mWX);
 
