@@ -114,6 +114,11 @@ DLL_LOCAL VALUE _alloc(VALUE self) {
 
 void define_const()
 {
+#if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXColor = rb_define_class_under(rb_mWX,"Color",rb_cObject);
+#endif
+
 	if(rb_const_defined(rb_cWXColor,rb_intern("BLACK")))
 		return;
 
@@ -391,6 +396,9 @@ DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
 /* Document-attr: alpha
  * returns the alpha value of Color.
  */
+/* Document-attr: name
+ * returns the name of the Color or nil if no name found
+ */
 
 /* Document-const: BLACK
  * predefined Color constant.
@@ -429,6 +437,7 @@ DLL_LOCAL void Init_WXColor(VALUE rb_mWX)
 	rb_define_attr(rb_cWXColor,"green",1,1);
 	rb_define_attr(rb_cWXColor,"blue",1,1);
 	rb_define_attr(rb_cWXColor,"alpha",1,1);
+	rb_define_attr(rb_cWXColor,"name",1,0);
 
 	rb_define_const(rb_cWXColor,"BLACK",wrap(wxBLACK));
 	rb_define_const(rb_cWXColor,"BLUE",wrap(wxBLUE));
@@ -451,8 +460,9 @@ DLL_LOCAL void Init_WXColor(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXColor,"blue",_getBlue,_setBlue);
 	rb_define_attr_method(rb_cWXColor,"alpha",_getAlpha,_setAlpha);
 
+	rb_define_attr_method(rb_cWXColor,"name",_name,NULL);
+
 	rb_define_method(rb_cWXColor,"to_s",RUBY_METHOD_FUNC(_tos),0);
-	rb_define_method(rb_cWXColor,"name",RUBY_METHOD_FUNC(_name),0);
 	rb_define_method(rb_cWXColor,"inspect",RUBY_METHOD_FUNC(_inspect),0);
 
 	rb_define_method(rb_cWXColor,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
