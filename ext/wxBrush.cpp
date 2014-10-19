@@ -61,6 +61,11 @@ singlereturn(IsHatch)
 
 void define_const()
 {
+#if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXBrush = rb_define_class_under(rb_mWX,"Brush",rb_cObject);
+#endif
+
 	if(rb_const_defined(rb_cWXBrush,rb_intern("BLACK")))
 		return;
 
@@ -241,6 +246,10 @@ DLL_LOCAL VALUE _class_get(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL void Init_WXBrush(VALUE rb_mWX)
 {
+#if 0
+	rb_mWX = rb_define_module("WX");
+#endif
+
 	using namespace RubyWX::Brush;
 	rb_cWXBrush = rb_define_class_under(rb_mWX,"Brush",rb_cObject);
 	rb_define_alloc_func(rb_cWXBrush,_alloc);
@@ -250,7 +259,6 @@ DLL_LOCAL void Init_WXBrush(VALUE rb_mWX)
 	rb_define_attr(rb_cWXBrush,"style",1,1);
 	rb_define_attr(rb_cWXBrush,"stipple",1,1);
 
-	//need to
 	rb_define_const(rb_cWXBrush,"BLACK",wrap(wxBLACK_BRUSH));
 	rb_define_const(rb_cWXBrush,"BLUE",wrap(wxBLUE_BRUSH));
 	rb_define_const(rb_cWXBrush,"CYAN",wrap(wxCYAN_BRUSH));
