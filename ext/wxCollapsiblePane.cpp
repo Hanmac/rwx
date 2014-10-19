@@ -78,6 +78,7 @@ DLL_LOCAL void Init_WXCollapsiblePane(VALUE rb_mWX)
 	rb_mWX = rb_define_module("WX");
 	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
+	rb_cWXEvent = rb_define_class_under(rb_mWX,"Event",rb_cObject);
 #endif
 
 #if wxUSE_COLLPANE
