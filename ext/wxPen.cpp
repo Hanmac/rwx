@@ -65,6 +65,11 @@ macro_attr(Stipple,wxBitmap)
 
 void define_const()
 {
+#if 0
+	rb_mWX = rb_define_module("WX");
+	rb_cWXPen = rb_define_class_under(rb_mWX,"Pen",rb_cObject);
+#endif
+
 	if(rb_const_defined(rb_cWXPen,rb_intern("BLACK")))
 		return;
 
@@ -258,6 +263,9 @@ DLL_LOCAL VALUE _class_get(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL void Init_WXPen(VALUE rb_mWX)
 {
+#if 0
+	rb_mWX = rb_define_module("WX");
+#endif
 
 	using namespace RubyWX::Pen;
 	rb_cWXPen = rb_define_class_under(rb_mWX,"Pen",rb_cObject);
