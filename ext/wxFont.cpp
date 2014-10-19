@@ -470,7 +470,7 @@ DLL_LOCAL void Init_WXFont(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXFont,"encoding",_getEncoding,_setEncoding);
 #endif
 	rb_define_method(rb_cWXFont,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
-	rb_define_method(rb_cWXFont,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
+	rb_define_method(rb_cWXFont,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),-2);
 
 	rb_define_singleton_method(rb_cWXFont,"[]",RUBY_METHOD_FUNC(_class_get),-1);
 

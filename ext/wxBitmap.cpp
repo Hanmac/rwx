@@ -313,7 +313,7 @@ DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
 	rb_define_method(rb_cWXBitmap,"to_image",RUBY_METHOD_FUNC(_to_image),0);
 
 	rb_define_method(rb_cWXBitmap,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
-	rb_define_method(rb_cWXBitmap,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
+	rb_define_method(rb_cWXBitmap,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),-2);
 #else
 	rb_undef_method(rb_cWXBitmap,"_load");
 	rb_undef_method(rb_cWXBitmap,"_dump");

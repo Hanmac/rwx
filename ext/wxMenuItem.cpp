@@ -167,7 +167,7 @@ DLL_LOCAL void Init_WXMenuItem(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXMenuItem,"bitmap",_GetBitmap,_SetBitmap);
 
 	rb_define_method(rb_cWXMenuItem,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
-	rb_define_method(rb_cWXMenuItem,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
+	rb_define_method(rb_cWXMenuItem,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),-2);
 
 
 	registerInfo<wxMenuItem>(rb_cWXMenuItem);
