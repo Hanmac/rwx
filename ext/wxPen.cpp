@@ -8,6 +8,7 @@
 #include "wxPen.hpp"
 #include "wxColor.hpp"
 #include "wxBitmap.hpp"
+#include "wxApp.hpp"
 
 #define _self unwrap<wxPen*>(self)
 
@@ -54,7 +55,7 @@ wxPen unwrap< wxPen >(const VALUE &vbitmap)
 namespace RubyWX {
 namespace Pen {
 DLL_LOCAL VALUE _alloc(VALUE self) {
-	return wrapTypedPtr(new wxPen(*wxBLACK), self);
+	return wrapTypedPtr(new wxPen, self);
 }
 
 macro_attr(Width,int)
@@ -153,6 +154,22 @@ DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
     return Qnil;
 }
 
+
+struct equal_obj {
+	wxPen* self;
+	VALUE other;
+};
+
+VALUE _equal_block(equal_obj *obj)
+{
+	return wrap(*obj->self == unwrap<wxPen>(obj->other));
+}
+
+VALUE _equal_rescue(VALUE val)
+{
+	return Qfalse;
+}
+
 /*
  * call-seq:
  *   == pen -> bool
@@ -163,15 +180,24 @@ DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
  */
 DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
 {
-	return wrap((*_self) == unwrap<wxPen>(other));
-}
+	equal_obj obj;
+	obj.self = _self;
+	obj.other = other;
 
+	return rb_rescue(
+		RUBY_METHOD_FUNC(_equal_block),(VALUE)&obj,
+		RUBY_METHOD_FUNC(_equal_rescue),Qnil
+	);
+}
 
 DLL_LOCAL VALUE _class_get(int argc,VALUE *argv,VALUE self)
 {
 
 	VALUE color,width,style;
 	rb_scan_args(argc, argv, "21",&color,&width,&style);
+
+	app_protected();
+
 	//TODO add refcounting
 	wxPen *pen = wxThePenList->FindOrCreatePen(
 		unwrap<wxColor>(color),
@@ -188,7 +214,7 @@ DLL_LOCAL VALUE _class_get(int argc,VALUE *argv,VALUE self)
 		return it->second;
 	} else {
 		//wrap wxPen pointer to ruby object
-		VALUE result = wrap(pen);
+		VALUE result = wrapTypedPtr(pen,self);
 
 		//PenList objects should not be changed
 		rb_obj_freeze(result);
@@ -302,7 +328,7 @@ DLL_LOCAL void Init_WXPen(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXPen,"stipple",_getStipple,_setStipple);
 
 	rb_define_method(rb_cWXPen,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
-	rb_define_method(rb_cWXPen,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
+	rb_define_method(rb_cWXPen,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),-2);
 
 	rb_define_method(rb_cWXPen,"==",RUBY_METHOD_FUNC(_equal),1);
 
