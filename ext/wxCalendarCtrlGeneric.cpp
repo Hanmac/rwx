@@ -83,7 +83,9 @@ DLL_LOCAL void Init_WXCalendarCtrlGeneric(VALUE rb_mWX)
 	rb_cWXCalendarCtrlBase = rb_define_class_under(rb_mWX,"CalendarCtrlBase",rb_cWXControl);
 #endif
 #if wxUSE_CALENDARCTRL
-#ifdef wxHAS_NATIVE_CALENDARCTRL
+#ifndef wxHAS_NATIVE_CALENDARCTRL
+	rb_define_const(rb_mWX,"CalendarCtrlGeneric",rb_cWXCalendarCtrl);
+#else
 	using namespace RubyWX::GenericCalendarCtrl;
 	rb_cWXCalendarCtrlGeneric = rb_define_class_under(rb_mWX,"CalendarCtrlGeneric",rb_cWXCalendarCtrlBase);
 	rb_define_alloc_func(rb_cWXCalendarCtrlGeneric,_alloc);
@@ -91,8 +93,6 @@ DLL_LOCAL void Init_WXCalendarCtrlGeneric(VALUE rb_mWX)
 	rb_define_method(rb_cWXCalendarCtrlGeneric,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	registerInfo<wxGenericCalendarCtrl>(rb_cWXCalendarCtrlGeneric);
-#else
-	rb_define_const(rb_mWX,"CalendarCtrlGeneric",rb_cWXCalendarCtrl);
 #endif
 #endif
 
