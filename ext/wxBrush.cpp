@@ -8,6 +8,7 @@
 #include "wxBrush.hpp"
 #include "wxColor.hpp"
 #include "wxBitmap.hpp"
+#include "wxApp.hpp"
 
 #define _self unwrap<wxBrush*>(self)
 
@@ -49,7 +50,7 @@ wxBrush unwrap< wxBrush >(const VALUE &vbrush)
 namespace RubyWX {
 namespace Brush {
 DLL_LOCAL VALUE _alloc(VALUE self) {
-	return wrap(new wxBrush(*wxBLACK));
+	return wrapTypedPtr(new wxBrush,self);
 }
 
 macro_attr(Colour,wxColour)
@@ -144,6 +145,21 @@ DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
 }
 
 
+struct equal_obj {
+	wxBrush* self;
+	VALUE other;
+};
+
+VALUE _equal_block(equal_obj *obj)
+{
+	return wrap(*obj->self == unwrap<wxBrush>(obj->other));
+}
+
+VALUE _equal_rescue(VALUE val)
+{
+	return Qfalse;
+}
+
 /*
  * call-seq:
  *   == brush -> bool
@@ -154,15 +170,24 @@ DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
  */
 DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
 {
-	return wrap((*_self) == unwrap<wxBrush>(other));
-}
+	equal_obj obj;
+	obj.self = _self;
+	obj.other = other;
 
+	return rb_rescue(
+		RUBY_METHOD_FUNC(_equal_block),(VALUE)&obj,
+		RUBY_METHOD_FUNC(_equal_rescue),Qnil
+	);
+}
 
 DLL_LOCAL VALUE _class_get(int argc,VALUE *argv,VALUE self)
 {
 
 	VALUE color,style;
 	rb_scan_args(argc, argv, "11",&color,&style);
+
+	app_protected();
+
 	//TODO add refcounting
 	wxBrush *brush = wxTheBrushList->FindOrCreateBrush(
 		unwrap<wxColor>(color),
@@ -178,7 +203,7 @@ DLL_LOCAL VALUE _class_get(int argc,VALUE *argv,VALUE self)
 		return it->second;
 	} else {
 		//wrap wxBrush pointer to ruby object
-		VALUE result = wrap(brush);
+		VALUE result = wrapTypedPtr(brush, self);
 
 		//BrushList objects should not be changed
 		rb_obj_freeze(result);
@@ -282,7 +307,7 @@ DLL_LOCAL void Init_WXBrush(VALUE rb_mWX)
 	rb_define_method(rb_cWXBrush,"hatch?",RUBY_METHOD_FUNC(_IsHatch),0);
 
 	rb_define_method(rb_cWXBrush,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
-	rb_define_method(rb_cWXBrush,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
+	rb_define_method(rb_cWXBrush,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),-2);
 
 	rb_define_method(rb_cWXBrush,"==",RUBY_METHOD_FUNC(_equal),1);
 
@@ -303,7 +328,8 @@ DLL_LOCAL void Init_WXBrush(VALUE rb_mWX)
 		->add(wxBRUSHSTYLE_FDIAGONAL_HATCH,"fdiagonal_hatch")
 		->add(wxBRUSHSTYLE_CROSS_HATCH,"cross_hatch")
 		->add(wxBRUSHSTYLE_HORIZONTAL_HATCH,"horizontal_hatch")
-		->add(wxBRUSHSTYLE_VERTICAL_HATCH,"vertical_hatch");
+		->add(wxBRUSHSTYLE_VERTICAL_HATCH,"vertical_hatch")
+		->allow_array = false;
 
 }
 
