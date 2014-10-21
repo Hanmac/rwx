@@ -31,7 +31,7 @@ template <>
 VALUE wrap< wxPen >(const wxPen &bitmap )
 {
 	if(bitmap.IsOk())
-		return wrapTypedPtr(const_cast<wxPen*>(&bitmap),rb_cWXPen);
+		return wrapTypedPtr(new wxPen(bitmap),rb_cWXPen);
 	return Qnil;
 }
 
@@ -334,7 +334,7 @@ DLL_LOCAL void Init_WXPen(VALUE rb_mWX)
 
 	rb_define_singleton_method(rb_cWXPen,"[]",RUBY_METHOD_FUNC(_class_get),-1);
 
-	registerDataType(rb_cWXPen);
+	registerType<wxPen>(rb_cWXPen,true);
 //
 //	rb_define_method(rb_cWXPen,"to_s",RUBY_METHOD_FUNC(_tos),0);
 //	rb_define_method(rb_cWXPen,"inspect",RUBY_METHOD_FUNC(_inspect),0);
