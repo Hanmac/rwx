@@ -30,7 +30,7 @@ template <>
 VALUE wrap< wxBrush >(const wxBrush &bitmap )
 {
 	if(bitmap.IsOk())
-		return wrapTypedPtr(const_cast<wxBrush*>(&bitmap),rb_cWXBrush);
+		return wrapTypedPtr(new wxBrush(bitmap),rb_cWXBrush);
 	return Qnil;
 }
 
@@ -50,7 +50,7 @@ wxBrush unwrap< wxBrush >(const VALUE &vbrush)
 namespace RubyWX {
 namespace Brush {
 DLL_LOCAL VALUE _alloc(VALUE self) {
-	return wrapTypedPtr(new wxBrush,self);
+	return wrapTypedPtr(new wxBrush,self, true);
 }
 
 macro_attr(Colour,wxColour)
@@ -315,7 +315,7 @@ DLL_LOCAL void Init_WXBrush(VALUE rb_mWX)
 //	rb_define_method(rb_cWXBrush,"to_s",RUBY_METHOD_FUNC(_tos),0);
 //	rb_define_method(rb_cWXBrush,"inspect",RUBY_METHOD_FUNC(_inspect),0);
 
-	registerInfo<wxBrush>(rb_cWXBrush);
+	registerInfo<wxBrush>(rb_cWXBrush,true);
 
 	registerEnum<wxBrushStyle>("WX::BrushStyle",wxBRUSHSTYLE_TRANSPARENT)
 		->add(wxBRUSHSTYLE_SOLID,"solid")
