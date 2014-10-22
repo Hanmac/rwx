@@ -145,34 +145,40 @@ LICENCE
 		}
 	end
 	
+	def create_menu_file(file)
+		file.append_normal(:file_open,"&Open file\tCtrl-O")
+    file.append_normal(:file_open2,"&Second open file\tCtrl-2")
+    file.append_normal(:files_open,"Open &files\tCtrl-Q")
+    file.append_normal(:file_save,"Sa&ve file\tCtrl-S")
+	end
+	
+	def create_menu_dir(dir)
+		dir.append_normal(:dir_choose,"&Choose a directory\tCtrl-D") {choice_dir(true)}
+    dir.append_normal(:dir_choose_new,"Choose a directory (with \"Ne&w\" button)\tShift-Ctrl-D") {choice_dir(false)}
+	end
+	
+	def create_menu_edit(edit)
+    edit << :undo << :redo
+    edit.append_separator
+    edit << :cut << :copy << :paste << :clear
+    edit.append_separator
+    edit << :select_all
+	end
+	
 	def create_menu
 		WX::MenuBar.new(nil) {|m|
 			m.append("&Dialogs") {|menu|
 
 			  menu.append_menu("&Choices and selectors", &method(:create_menu_select))
 			  
-        menu.append_menu("&File operations") {|file|
-          file.append_normal(:file_open,"&Open file\tCtrl-O")
-          file.append_normal(:file_open2,"&Second open file\tCtrl-2")
-          file.append_normal(:files_open,"Open &files\tCtrl-Q")
-          file.append_normal(:file_save,"Sa&ve file\tCtrl-S")
-        }
+        menu.append_menu("&File operations", &method(:create_menu_file))
         
-        menu.append_menu("&Directory operations") {|file|
-        file.append_normal(:dir_choose,"&Choose a directory\tCtrl-D") {choice_dir(true)}
-          file.append_normal(:dir_choose_new,"Choose a directory (with \"Ne&w\" button)\tShift-Ctrl-D") {choice_dir(false)}
-        }
+        menu.append_menu("&Directory operations", &method(:create_menu_dir))
 				
 				menu.append_menu("&Informative dialogs", &method(:create_menu_info))
 			}
 			
-      m.append(:edit) {|edit|
-        edit << :undo << :redo
-        edit.append_separator
-        edit << :cut << :copy << :paste << :clear
-        edit.append_separator
-        edit << :select_all
-      }
+      m.append(:edit, &method(:create_menu_edit))
 			
 			m.append(:help, &method(:create_menu_help))
 		}
