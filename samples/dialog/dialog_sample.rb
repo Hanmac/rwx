@@ -55,68 +55,102 @@ LICENCE
       :must_exist => exist_flag 
     )
 	end
-	
-	
-	def on_init
-	
-	
-#	
-#		#f = WX::Font.new(10,:script)
-#		#p f.faceName
-		@frame = WX::Frame.new(nil,:icon => "../sample.xpm")
-	
-		@index = 0
+
+	def create_menu_select(select)
+		select.append_normal(:single_choice,"&Single choice\tCtrl-C") {
+			dialog = WX::SingleChoiceDialog.new(@frame,
+				:message => "This is a small sample\nA single-choice convenience dialog",
+				:title => "Please select a value",
+				:choices => %w(one two three four five),
+				:selection => 2
+			)
+			
+			if dialog.show_modal == :ok
+				WX::message_box(@frame,dialog.string_selection,:caption => "Got string")
+			end
+		}
 		
-		@frame.menubar = WX::MenuBar.new(nil) {|m|
+		select.append_normal(:multi_choice,"M&ultiple choice\tCtrl-U") {
+			
+		}
+		
+		select.append_separator
+						 
+		select.append_normal(:single_choice2,"&Single choice per command") {
+			choice = WX::single_choice(
+				"This is a small sample\nA single-choice convenience dialog",
+				"Please select a value",%w(one two three four five),
+				:parent => @frame,:selection => 2
+			)
+			
+			WX::message_box(@frame,choice,:caption => "Got string")
+			
+		}
+		
+		select.append_separator
+		
+		select.append_normal(:rearrange,"&Rearrange dialog\tCtrl-R") {
+			dialog = WX::RearrangeDialog.new(@frame,
+				:items => "A".."E", :order => 0..4, :message => "Configure the columns shown:"
+			)
+			dialog.add_extra_controls(WX::Panel) {|pan|
+				pan.sizer = WX::BoxSizer.new {|box|
+					box.add(WX::StaticText.new(pan))
+					box.add(WX::TextCtrl.new(pan))
+					box.add(WX::Button.new(pan, :id => :rename, :label => "&Rename"))
+				}
+			}
+			dialog.show_modal
+		}
+	end
+
+	def create_menu_info(info)
+		info_normal = proc {|evt|
+			@index += 1
+			evt.event_object.show_message("Message #%d in the info bar." % @index) 
+		}
+		
+		info_advance = proc {|evt|
+			evt.event_object.show_message("Sorry, it didn't work out.",:warning)
+		}
+		
+		info.append_normal(:info_simple,"Simple &info bar\tCtrl-I", &info_normal)
+		info.append_normal(:info_adv,"&Advanced info bar\tShift-Ctrl-I", &info_advance)
+		
+		info.append_separator
+		
+		info.append_normal(:info_simple_generic,"Simple &info bar (generic)", &info_normal)
+		info.append_normal(:info_adv_generic,"&Advanced info bar (generic)", &info_advance)
+		
+		info.append_separator
+		
+		info.append_normal(:wx_info,"&wxWidgets information\tCtrl-W") {
+			WX::info_message_box(@frame)
+		}
+	end
+	
+	def create_menu_help(help)
+		help.append_normal(:about_simple,"&About (simple)...\tF1") {
+			WX::about_box(@frame,aboutinfo_minimal)
+		}
+		help.append_normal(:about_fancy,"About (&fancy)...\tShift-F1") {
+			WX::about_box(@frame,aboutinfo_website)
+		}
+		help.append_normal(:about_full,"About (f&ull)...\tCtrl-F1") {
+      WX::about_box(@frame,aboutinfo_all)
+		}
+		help.append_normal(:about_custom,"About (&custom)...\tCtrl-Shift-F1") {
+		  about = MyAboutDialog.new(@frame,aboutinfo_all)
+		  about.show_modal
+		}
+	end
+	
+	def create_menu
+		WX::MenuBar.new(nil) {|m|
 			m.append("&Dialogs") {|menu|
 
-			  menu.append_menu("&Choices and selectors") {|select|
-					select.append_normal(:single_choice,"&Single choice\tCtrl-C") {
-						dialog = WX::SingleChoiceDialog.new(@frame,
-							:message => "This is a small sample\nA single-choice convenience dialog",
-							:title => "Please select a value",
-							:choices => %w(one two three four five),
-							:selection => 2
-						)
-						
-						if dialog.show_modal == :ok
-							WX::message_box(@frame,dialog.string_selection,:caption => "Got string")
-						end
-					}
-					
-					select.append_normal(:multi_choice,"M&ultiple choice\tCtrl-U") {
-						
-					}
-					
-					select.append_separator
-									 
-					select.append_normal(:single_choice2,"&Single choice per command") {
-						choice = WX::single_choice(
-							"This is a small sample\nA single-choice convenience dialog",
-							"Please select a value",%w(one two three four five),
-							:parent => @frame,:selection => 2
-						)
-						
-						WX::message_box(@frame,choice,:caption => "Got string")
-						
-					}
-					
-					select.append_separator
-					
-					select.append_normal(:rearrange,"&Rearrange dialog\tCtrl-R") {
-						dialog = WX::RearrangeDialog.new(@frame,
-							:items => "A".."E", :order => 0..4, :message => "Configure the columns shown:"
-						)
-						dialog.add_extra_controls(WX::Panel) {|pan|
-							pan.sizer = WX::BoxSizer.new {|box|
-								box.add(WX::StaticText.new(pan))
-								box.add(WX::TextCtrl.new(pan))
-								box.add(WX::Button.new(pan, :id => :rename, :label => "&Rename"))
-							}
-						}
-						dialog.show_modal
-					}
-				}
+			  menu.append_menu("&Choices and selectors", &method(:create_menu_select))
+			  
         menu.append_menu("&File operations") {|file|
           file.append_normal(:file_open,"&Open file\tCtrl-O")
           file.append_normal(:file_open2,"&Second open file\tCtrl-2")
@@ -129,33 +163,7 @@ LICENCE
           file.append_normal(:dir_choose_new,"Choose a directory (with \"Ne&w\" button)\tShift-Ctrl-D") {choice_dir(false)}
         }
 				
-				menu.append_menu("&Informative dialogs") {|info|
-					info.append_normal(:info_simple,"Simple &info bar\tCtrl-I") {
-						@index += 1
-						@info.show_message("Message #%d in the info bar." % @index) 
-					}
-					info.append_normal(:info_adv,"&Advanced info bar\tShift-Ctrl-I") {
-						@info_adv.show_message("Sorry, it didn't work out.",:warning)
-					}
-					
-					info.append_separator
-					
-					info.append_normal(:info_simple_generic,"Simple &info bar (generic)") {
-						@index += 1
-						@info_generic.show_message("Message #%d in the info bar." % @index) 
-					}
-					info.append_normal(:info_adv_generic,"&Advanced info bar (generic)") {
-						@info_adv_generic.show_message("Sorry, it didn't work out.",:warning)
-					}
-					
-					info.append_separator
-					
-					info.append_normal(:wx_info,"&wxWidgets information\tCtrl-W") {
-						WX::info_message_box(@frame)
-					}
-					
-					
-				}
+				menu.append_menu("&Informative dialogs", &method(:create_menu_info))
 			}
 			
       m.append(:edit) {|edit|
@@ -166,36 +174,38 @@ LICENCE
         edit << :select_all
       }
 			
-			m.append(:help) {|help|
-				help.append_normal(:about_simple,"&About (simple)...\tF1") {
-					WX::about_box(@frame,aboutinfo_minimal)
-				}
-				help.append_normal(:about_fancy,"About (&fancy)...\tShift-F1") {
-					WX::about_box(@frame,aboutinfo_website)
-				}
-				help.append_normal(:about_full,"About (f&ull)...\tCtrl-F1") {
-          WX::about_box(@frame,aboutinfo_all)
-				}
-				help.append_normal(:about_custom,"About (&custom)...\tCtrl-Shift-F1") {
-				  about = MyAboutDialog.new(@frame,aboutinfo_all)
-				  about.show_modal
-				}
-				
-			}
+			m.append(:help, &method(:create_menu_help))
 		}
+	end
+	
+	def create_info(klass, box)
+		box.add(info = WX::InfoBar.new(@frame),:expand => true)
+		box.add(info_adv = WX::InfoBar.new(@frame),:expand => true)
+			
+		info_adv.add_button(:undo)
+		info_adv.add_button(:redo) { info_adv.show_message("Still no, sorry again.",:error) }
+			
+		info_adv.add_button(:exit)
+		info_adv.remove_button(:exit)
+			
+		info_adv.background_color = 0xc8ffff
+		
+		return info, info_adv
+	end
+	
+	
+	def on_init
+#	
+#		#f = WX::Font.new(10,:script)
+#		#p f.faceName
+		@frame = WX::Frame.new(nil,:icon => "../sample.xpm")
+	
+		@index = 0
+		
+		@frame.menubar = create_menu
 		
 		@frame.sizer = WX::BoxSizer.new(:vertical) {|box|
-			
-			box.add(@info = WX::InfoBar.new(@frame),:expand => true)
-			box.add(@info_adv = WX::InfoBar.new(@frame),:expand => true)
-			
-			@info_adv.add_button(:undo)
-			@info_adv.add_button(:redo) { @info_adv.show_message("Still no, sorry again.",:error) }
-			
-			@info_adv.add_button(:exit)
-			@info_adv.remove_button(:exit)
-			
-			@info_adv.background_color = 0xc8ffff
+			@info, @info_adv = create_info(WX::InfoBar, box)
 
 			#@info_adv.font.weight = :bold
 			f = @info_adv.font
@@ -204,17 +214,7 @@ LICENCE
 			@info_adv.font = f
 			
 			
-			box.add(@info_generic = WX::InfoBarGeneric.new(@frame),:expand => true)
-			box.add(@info_adv_generic = WX::InfoBarGeneric.new(@frame),:expand => true)
-			
-			@info_adv_generic.add_button(:undo)
-			@info_adv_generic.add_button(:redo) { @info_adv_generic.show_message("Still no, sorry again.",:error) }
-			
-			@info_adv_generic.add_button(:exit)
-			@info_adv_generic.remove_button(:exit)
-			
-			@info_adv_generic.background_color = 0xc8ffff
-
+			@info_generic, @info_adv_generic = create_info(WX::InfoBarGeneric, box)
 		}	
 		
 		@frame.show
