@@ -164,19 +164,20 @@ LICENCE
     edit.append_separator
     edit << :select_all
 	end
+	def create_menu_dialogs(menu)
+		[
+			["&Choices and selectors", :create_menu_select],
+			["&File operations", :create_menu_file],
+			["&Directory operations", :create_menu_dir],
+			["&Informative dialogs", :create_menu_info]
+		].each {|label, meth|
+			menu.append_menu(label, &method(meth))
+		}
+	end
 	
 	def create_menu
 		WX::MenuBar.new(nil) {|m|
-			m.append("&Dialogs") {|menu|
-
-			  menu.append_menu("&Choices and selectors", &method(:create_menu_select))
-			  
-        menu.append_menu("&File operations", &method(:create_menu_file))
-        
-        menu.append_menu("&Directory operations", &method(:create_menu_dir))
-				
-				menu.append_menu("&Informative dialogs", &method(:create_menu_info))
-			}
+			m.append("&Dialogs", &method(:create_menu_dialogs))
 			
       m.append(:edit, &method(:create_menu_edit))
 			
