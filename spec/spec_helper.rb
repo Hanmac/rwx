@@ -10,4 +10,6 @@ RSpec.configure do |config|
   end
 end
 
+Dir["./spec/shared*.rb"].each {|s| require s }
+
 WX::App() { break }
