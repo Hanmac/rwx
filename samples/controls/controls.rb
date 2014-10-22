@@ -1,7 +1,7 @@
 #Encoding: UTF-8
 require "../../ext/rwx"
 
-class A < WX::App
+class SamplesControlApp < WX::App
   
   def on_init
   
@@ -135,4 +135,4 @@ class A < WX::App
   end
 end
 
-A.new.main_loop
+SamplesControlApp.new.main_loop
