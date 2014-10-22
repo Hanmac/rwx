@@ -10,7 +10,7 @@ class MyAboutDialog < WX::AboutDialog
   end
 end
 
-class A < WX::App
+class SamplesDialogApp < WX::App
 	
 	def aboutinfo_minimal
 		{
@@ -221,4 +221,4 @@ LICENCE
 	end
 end
 
-A.new.main_loop
+SamplesDialogApp.new.main_loop
