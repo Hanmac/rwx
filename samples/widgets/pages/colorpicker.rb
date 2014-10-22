@@ -1,35 +1,41 @@
 #Encoding: UTF-8
 
 
-class ColorPickerPage < CommonPage 
+class ColorPickerPage < CommonPage
+  def create_boxleft
+    WX::BoxSizer.new(:vertical) {|boxleft|
+      boxleft.add(WX::StaticBox.new(self, :label => "&ColourPicker style").containing_sizer.tap {|box|
+        box.orientation = :vertical
+          
+        @textctrl = add_checkbox(box,"With textctrl")
+        @withLabel = add_checkbox(box,"With label")
+        
+        reset_boxes
+      }, :expand => true)
+      boxleft.add(WX::Button.new(self,:id => :reset,:label => "&Reset") {|but|
+        but.bind(:button) {
+          reset_boxes
+          recreate_picker
+        }
+      },:align => :center)
+      
+    }
+  end
+  
+  def create_boxright
+    WX::BoxSizer.new(:vertical) {|boxright|
+      boxright.add_stretch_spacer(5)
+      boxright.add(create_picker,:align => :center)  
+      boxright.add_stretch_spacer(5)
+    }
+  end
+  
   def create_content
     self.sizer = WX::BoxSizer.new {|siz|
     
-      siz.add(WX::BoxSizer.new(:vertical) {|boxleft|
-        
-        boxleft.add(WX::StaticBox.new(self, :label => "&ColourPicker style").containing_sizer.tap {|box|
-          box.orientation = :vertical
-          
-          @textctrl = add_checkbox(box,"With textctrl")
-          @withLabel = add_checkbox(box,"With label")
-          
-          reset_boxes
-        }, :expand => true)
-        boxleft.add(WX::Button.new(self,:id => :reset,:label => "&Reset") {|but|
-          but.bind(:button) {
-            reset_boxes
-            recreate_picker
-          }
-        },:align => :center)
-        
-      }, :expand => true)
+      siz.add(create_boxleft, :expand => true)
       
-      siz.add(@ctrl_sizer = WX::BoxSizer.new(:vertical) {|boxright|
-        boxright.add_stretch_spacer(5)
-        boxright.add(create_picker,:align => :center)  
-        boxright.add_stretch_spacer(5)
-      }, :expand => true)
-    
+      siz.add(@ctrl_sizer = create_boxright, :expand => true)
       
     }
     
@@ -43,10 +49,10 @@ class ColorPickerPage < CommonPage
     return style
   end
   
-  def reset_boxes   
-    @textctrl.value = (WX::ColorPicker::DEFAULT_STYLE & WX::ColorPicker::USE_TEXTCTRL) != 0
-    @withLabel.value = (WX::ColorPicker::DEFAULT_STYLE & WX::ColorPicker::SHOW_LABEL) != 0
-    
+  def reset_boxes
+    default = WX::ColorPicker::DEFAULT_STYLE
+    @textctrl.value = (default & WX::ColorPicker::USE_TEXTCTRL) != 0
+    @withLabel.value = (default & WX::ColorPicker::SHOW_LABEL) != 0
   end
   
   def create_picker
