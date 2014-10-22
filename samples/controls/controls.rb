@@ -13,11 +13,13 @@ class SamplesControlApp < WX::App
     }
   end
   
-  def create_list(panel, klass, choices)
+  def create_list_ctrl(panel, klass, choices)
     normal = klass.new(panel, :choices => choices, :position => [10,10], :size => [120,70], :multiple => true)
     sorted = klass.new(panel, :choices => choices[0,3], :position => [10,90], :size => [120,70], :sort => true)
-    both = [nornal,sorted]
-    
+    return [nornal,sorted]
+  end
+  
+  def create_list_buttons(panel, both)
     create_button(panel, "Select #&2", [180,30], both) { |list|
       list.selection = 2 if list.item_count > 2
     }
@@ -34,11 +36,14 @@ class SamplesControlApp < WX::App
       list.append "Hi kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk!"
     }
     
-    WX::Button.new(panel, :label => "D&elete selected item", :position => [180,130], :size => [140,30] ) {|button|
-      button.bind(:button) {
-        yield normal, sorted
+    create_button(panel, "D&elete selected item", [180,130], both ) { |list|
+      Array(list.selection).reverse_each {|sel| 
+        list.delete_item(sel) if sel != -1
       }
     }
+  end
+  def create_list(panel, klass, choices)
+    create_list_buttons(panel, create_list_ctrl(panel, klass, choices))
   end
   
   def create_bookctrl(frame, choices)
@@ -46,24 +51,11 @@ class SamplesControlApp < WX::App
     book.image_list = ["icons/list.xpm","icons/choice.xpm"]
       
     book.add_page(WX::Panel,"wxListBox",true,0) {|panel|
-      create_list(panel, WX::ListBox, choices) {|normal, sorted|
-        Array(normal.selection).reverse_each {|sel| 
-          normal.delete_item(sel) if sel != -1
-        }
-        
-        sel = sorted.selection
-        sorted.delete_item(sel) if sel != -1
-      }
+      create_list(panel, WX::ListBox, choices)
     }
     
     book.add_page(WX::Panel,"wxChoice",false,1) {|panel|
-      create_list(panel, WX::Choice, choices) {|normal, sorted|
-        sel = normal.selection 
-        normal.delete_item(sel) if sel != -1
-        
-        sel = sorted.selection
-        sorted.delete_item(sel) if sel != -1
-      }
+      create_list(panel, WX::Choice, choices)
     }
   end
   
