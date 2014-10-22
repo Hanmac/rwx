@@ -177,11 +177,13 @@ LICENCE
 	
 	def create_menu
 		WX::MenuBar.new(nil) {|m|
-			m.append("&Dialogs", &method(:create_menu_dialogs))
-			
-      m.append(:edit, &method(:create_menu_edit))
-			
-			m.append(:help, &method(:create_menu_help))
+			[
+				["&Dialogs", :create_menu_dialogs],
+				[:edit, :create_menu_edit],
+				[:help, :create_menu_help]
+			].each {|label, meth|
+				m.append(label, &method(meth))
+			}
 		}
 	end
 	
