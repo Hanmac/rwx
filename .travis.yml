@@ -10,6 +10,11 @@ rvm:
 - ruby-head-clang
 - ruby-head
 
+before_script:
+- "export DISPLAY=:99.0"
+- "sh -e /etc/init.d/xvfb start"
+- sleep 3
+
 before_install:
 - '[[ "$TRAVIS_RUBY_VERSION" == *-clang ]] && export CC=clang'
 - "sudo apt-key adv --fetch-keys http://repos.codelite.org/CodeLite.asc"
