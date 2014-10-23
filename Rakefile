@@ -106,3 +106,5 @@ task :rdoc => [:prepare_sources, :docs, :clean_sources]
 
 end
 
+task :default => [:compile, :test]
+
