@@ -16,8 +16,8 @@ before_script:
 - sleep 3
 
 before_install:
-- '[[ "$TRAVIS_RUBY_VERSION" == *-clang ]] && export CC=clang'
+- 'if [ "$TRAVIS_RUBY_VERSION" == *-clang ]; then; export CC=clang; fi'
 - "sudo apt-key adv --fetch-keys http://repos.codelite.org/CodeLite.asc"
-- "sudo add-apt-repository 'deb http://repos.codelite.org/wx3.0.2/ubuntu/ trusty universe'"
+- "sudo add-apt-repository 'deb http://repos.codelite.org/wx3.0/ubuntu/ precise universe'"
 - "sudo apt-get update"
-- "sudo apt-get install -y libwxbase3.0-0-unofficial libwxbase3.0-dev libwxgtk3.0-0-unofficial libwxgtk3.0-dev wx3.0-headers wx-common"
+- "sudo apt-get install -y  apt-get install libwxbase3.0-dev libwxgtk3.0-dev"
