@@ -16,7 +16,7 @@ before_script:
 - sleep 3
 
 before_install:
-- 'if [ "$TRAVIS_RUBY_VERSION" == *-clang ]; then; export CC=clang; fi'
+- 'if [ "$TRAVIS_RUBY_VERSION" == *-clang ]; then export CC=clang; fi'
 - "sudo apt-key adv --fetch-keys http://repos.codelite.org/CodeLite.asc"
 - "sudo add-apt-repository 'deb http://repos.codelite.org/wx3.0/ubuntu/ precise universe'"
 - "sudo apt-get update"
