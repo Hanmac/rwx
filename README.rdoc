@@ -1,7 +1,10 @@
 = RWX 
+{<img src="https://travis-ci.org/Hanmac/rwx.svg" alt="Build Status" />}[https://travis-ci.org/Hanmac/rwx]
 {<img src="https://codeclimate.com/github/Hanmac/rwx/badges/gpa.svg" />}[https://codeclimate.com/github/Hanmac/rwx]
 {<img src="https://www.versioneye.com/user/projects/5445187d1fea5f08a6000094//badge.svg?style=flat" alt="Dependency Status" />}[https://www.versioneye.com/user/projects/5445187d1fea5f08a6000094/]
 {<img src="https://gemnasium.com/Hanmac/rwx.svg" alt="Dependency Status" />}[https://gemnasium.com/Hanmac/rwx]
 {<img src="https://www.versioneye.com/ruby/rwx/0.0.1.1.dev/badge.svg" alt="Dependency Status" />}[https://www.versioneye.com/ruby/rwx/0.0.1.1.dev]
 {<img src="https://www.versioneye.com/ruby/rwx/reference_badge.svg?style=flat" alt="Reference Status" />}[https://www.versioneye.com/ruby/rwx/references]
 
+== Description
+rwx is a ruby extension that was created after wxRuby died.
