@@ -198,8 +198,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL VALUE _initialize_copy(VALUE self,VALUE other)
 {
-	//TODO delete old data?
-	RTYPEDDATA_DATA(self) = new wxBitmap(unwrap<wxBitmap>(other));
+	(*_self) = unwrap<wxBitmap>(other);
 	return self;
 }
 
@@ -291,6 +290,21 @@ wxBitmap wrapBitmap(const VALUE &vbitmap,wxWindowID id,wrapBitmapType type,const
 }
 
 
+/* Document-attr: width
+* returns the width of the Bitmap. Integer
+*/
+/* Document-attr: height
+* returns the height of the Bitmap. Integer
+*/
+/* Document-attr: depth
+* returns the depth of the Bitmap. Integer
+*/
+/* Document-attr: mask
+* returns the mask color of the Bitmap. WX::Mask
+*/
+/* Document-attr: palette
+* returns the color palette of the Bitmap. WX::Palette
+*/
 
 DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
 {
@@ -299,6 +313,14 @@ DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
 	using namespace RubyWX::Bitmap;
 	rb_cWXBitmap = rb_define_class_under(rb_mWX,"Bitmap",rb_cObject);
 	rb_define_alloc_func(rb_cWXBitmap,_alloc);
+	
+#if 0
+	rb_define_attr(rb_cWXBitmap,"width",1,1);
+	rb_define_attr(rb_cWXBitmap,"height",1,1);
+	rb_define_attr(rb_cWXBitmap,"depth",1,1);
+	rb_define_attr(rb_cWXBitmap,"mask",1,1);
+	rb_define_attr(rb_cWXBitmap,"palette",1,1);
+#endif
 
 	rb_define_method(rb_cWXBitmap,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 	rb_define_private_method(rb_cWXBitmap,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),1);
