@@ -215,12 +215,30 @@
 
 VALUE rb_mWX;
 
-void rb_define_attr_method(VALUE klass,std::string name,VALUE(get)(VALUE),VALUE(set)(VALUE,VALUE))
+void rb_define_attr_method_base(VALUE klass,const std::string& name,VALUE(get)(ANYARGS),VALUE(set)(ANYARGS), bool missing = false)
 {
 	if(get)
-		rb_define_method(klass,name.c_str(),RUBY_METHOD_FUNC(get),0);
+		rb_define_method(klass,name.c_str(),RUBY_METHOD_FUNC(get), missing ? -1 : 0);
 	if(set)
-		rb_define_method(klass,(name + "=").c_str(),RUBY_METHOD_FUNC(set),1);
+		rb_define_method(klass,(name + "=").c_str(),RUBY_METHOD_FUNC(set), missing ? -1 : 1);
+}
+
+void rb_define_attr_method(VALUE klass,const std::string& name,VALUE(get)(VALUE),VALUE(set)(VALUE,VALUE))
+{
+	rb_define_attr_method_base(
+		klass, name,
+		RUBY_METHOD_FUNC(get), RUBY_METHOD_FUNC(set)
+	);
+}
+
+void rb_define_attr_method_missing(VALUE klass,const std::string& name, bool get, bool set)
+{
+	rb_define_attr_method_base(
+		klass, name,
+		get ? RUBY_METHOD_FUNC(rb_f_notimplement) : NULL,
+		set ? RUBY_METHOD_FUNC(rb_f_notimplement) : NULL,
+		true
+	);
 }
 
 
