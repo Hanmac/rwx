@@ -61,8 +61,9 @@ DLL_LOCAL VALUE _alloc(VALUE self) {
 macro_attr(Width,int)
 macro_attr(Colour,wxColour)
 macro_attr_enum(Style,wxPenStyle)
+#if defined(__WXMSW__) or defined(__WXOSX__)
 macro_attr(Stipple,wxBitmap)
-
+#endif
 
 void define_const()
 {
@@ -114,7 +115,9 @@ DLL_LOCAL VALUE _initialize_copy(VALUE self, VALUE other)
 	_setColour(self,_getColour(other));
 	_setWidth(self,_getWidth(other));
 	_setStyle(self,_getStyle(other));
+#if defined(__WXMSW__) or defined(__WXOSX__)
 	_setStipple(self,_getStipple(other));
+#endif
 	return result;
 }
 
@@ -133,7 +136,11 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
     ptr[0] = _getColour(self);
     ptr[1] = _getWidth(self);
     ptr[2] = _getStyle(self);
+#if defined(__WXMSW__) or defined(__WXOSX__)
     ptr[3] = _getStipple(self);
+#else
+    ptr[3] = Qnil;
+#endif
     return rb_ary_new4(4, ptr);
 }
 
@@ -147,10 +154,17 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
  */
 DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
 {
+
+	data = rb_Array(data);
     _setColour(self, RARRAY_AREF(data,0));
     _setWidth(self, RARRAY_AREF(data,1));
     _setStyle(self, RARRAY_AREF(data,2));
-    _setStipple(self, RARRAY_AREF(data,3));
+
+#if defined(__WXMSW__) or defined(__WXOSX__)
+    VALUE val;
+    if(!NIL_P(val = RARRAY_AREF(data,3)))
+    	_setStipple(self, val);
+#endif
     return Qnil;
 }
 
@@ -247,7 +261,8 @@ DLL_LOCAL VALUE _class_get(int argc,VALUE *argv,VALUE self)
  * returns the style of the Pen. Symbol
  */
 /* Document-attr: stipple
- * returns the stipple of the Pen. WX::Bitmap
+ * returns the stipple of the Pen.
+ * only for wxMSW and wxOSX, raise NotImplmentError otherwise. WX::Bitmap
  */
 
 /* Document-const: BLACK_DASHED
@@ -325,10 +340,16 @@ DLL_LOCAL void Init_WXPen(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXPen,"color",_getColour,_setColour);
 
 	rb_define_attr_method(rb_cWXPen,"style",_getStyle,_setStyle);
+#if defined(__WXMSW__) or defined(__WXOSX__)
 	rb_define_attr_method(rb_cWXPen,"stipple",_getStipple,_setStipple);
+#else
+	rb_define_attr_method_missing(rb_cWXPen,"stipple");
+#endif
+
+
 
 	rb_define_method(rb_cWXPen,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
-	rb_define_method(rb_cWXPen,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),-2);
+	rb_define_method(rb_cWXPen,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
 	rb_define_method(rb_cWXPen,"==",RUBY_METHOD_FUNC(_equal),1);
 
