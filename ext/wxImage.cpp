@@ -769,6 +769,8 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
  */
 DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 {
+	data = rb_Array(data);
+
 	VALUE tmp = RARRAY_AREF(data,3);
 	unsigned char* alpha = NULL;
 	if(!NIL_P(tmp))
@@ -854,7 +856,7 @@ DLL_LOCAL void Init_WXImage(VALUE rb_mWX)
 	rb_define_method(rb_cWXImage,"to_bitmap",RUBY_METHOD_FUNC(_to_bitmap),0);
 
 	rb_define_method(rb_cWXImage,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
-	rb_define_method(rb_cWXImage,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),-2);
+	rb_define_method(rb_cWXImage,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
 	rb_define_attr_method(rb_cWXImage,"mask",_getMask,_setMask);
 #if wxUSE_PALETTE
