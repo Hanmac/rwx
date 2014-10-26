@@ -21,4 +21,14 @@ wxImage* unwrap< wxImage* >(const VALUE &vimage);
 template <>
 wxImage unwrap< wxImage >(const VALUE &vimage);
 #endif
+
+
+namespace RubyWX {
+namespace Image {
+
+bool check_equal(const wxImage &self, const wxImage &cother);
+
+}
+}
+
 #endif /* WXIMAGE_HPP_ */

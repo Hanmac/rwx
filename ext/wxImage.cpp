@@ -146,7 +146,13 @@ DLL_LOCAL VALUE _getSize(VALUE self)
 DLL_LOCAL VALUE _getData(VALUE self)
 {
 	if(_self->IsOk())
-		return rb_str_new((char*)_self->GetData(),_self->GetHeight() * _self->GetWidth() * 3);
+	{
+		//if(_self->GetType() == wxBITMAP_TYPE_INVALID)
+		//	return Qnil;
+		char* data = (char*)_self->GetData();
+		if(data)
+			return rb_str_new(data,_self->GetHeight() * _self->GetWidth() * 3);
+	}
 	return Qnil;
 }
 
@@ -247,6 +253,9 @@ DLL_LOCAL VALUE _set(int argc,VALUE *argv,VALUE self)
 {
 	VALUE vx,vy,value;
 	rb_scan_args(argc, argv, "21",&vx,&vy,&value);
+
+	rb_check_frozen(self);
+
 	if(_self->IsOk())
 	{
 		if(NIL_P(value)) {
@@ -351,6 +360,8 @@ DLL_LOCAL VALUE _resize_self(int argc,VALUE *argv,VALUE self)
 {
 	VALUE size, pos, color;
 	rb_scan_args(argc, argv, "12",&size,&pos, &color);
+
+	rb_check_frozen(self);
 
 	wxSize csize;
 	if(!check_negative_size(size,csize))
@@ -457,6 +468,8 @@ DLL_LOCAL VALUE _scale_self(int argc,VALUE *argv,VALUE self)
 	VALUE x_scale, y_scale;
 	rb_scan_args(argc, argv, "11",&x_scale,&y_scale);
 
+	rb_check_frozen(self);
+
 	if(NIL_P(y_scale))
 	{
 		wxSize size;
@@ -521,10 +534,19 @@ DLL_LOCAL VALUE _replace_color(VALUE self, VALUE color1, VALUE color2)
 */
 DLL_LOCAL VALUE _replace_color_self(VALUE self, VALUE color1, VALUE color2)
 {
+	rb_check_frozen(self);
 	wxColor c1(unwrap<wxColor>(color1));
 	wxColor c2(unwrap<wxColor>(color2));
 	_self->Replace(c1.Red(),c1.Green(),c1.Blue(),c2.Red(),c2.Green(),c2.Blue());
 	return self;
+}
+
+bool range_check(double val, double min, double max)
+{
+	bool result = val >= min && val <= max;
+	if(!result)
+		rb_raise(rb_eRangeError,"%f is out of range (%f..%f)", val, min, max);
+	return result;
 }
 
 
@@ -543,13 +565,14 @@ DLL_LOCAL VALUE _replace_color_self(VALUE self, VALUE color1, VALUE color2)
 */
 DLL_LOCAL VALUE _rotate_hue(VALUE self, VALUE angle)
 {
-	wxImage result(*_self);
 	double val = NUM2DBL(angle);
-	if(val >= -1.0 && val <= 1.0)
+	if(range_check(val, -1.0, 1.0)){
+		wxImage result(*_self);
 		result.RotateHue(val);
-	else
+		wrap(result);
+	}else
 		rb_raise(rb_eRangeError,"%f is out of range (-1..1)", val);
-	return wrap(result);
+	return Qnil;
 }
 
 /*
@@ -567,11 +590,10 @@ DLL_LOCAL VALUE _rotate_hue(VALUE self, VALUE angle)
 */
 DLL_LOCAL VALUE _rotate_hue_self(VALUE self, VALUE angle)
 {
+	rb_check_frozen(self);
 	double val = NUM2DBL(angle);
-	if(val >= -1.0 && val <= 1.0)
+	if(range_check(val, -1.0, 1.0))
 		_self->RotateHue(val);
-	else
-		rb_raise(rb_eRangeError,"%f is out of range (-1..1)", val);
 
 	return self;
 }
@@ -694,8 +716,7 @@ DLL_LOCAL VALUE _draw(VALUE self)
 	dc = new wxGCDC(wxGraphicsContext::Create(*_self));
 #else
 	wxBitmap bit(*_self);
-	wxMemoryDC *mdc = new wxMemoryDC;
-	mdc->SelectObject(bit);
+	wxMemoryDC *mdc = new wxMemoryDC(bit);
 	dc = mdc;
 #endif
 	rb_yield(wrap(dc));
@@ -718,13 +739,40 @@ DLL_LOCAL VALUE _to_bitmap(VALUE self)
 	return wrap(unwrap<wxBitmap*>(self));
 }
 
+bool check_equal(const wxImage &self, const wxImage &cother)
+{
+	if(self.GetHeight() != cother.GetHeight()){
+		return false;
+	}
+	if(self.GetWidth() != cother.GetWidth()) {
+		return false;
+	}
+	if(strcmp((char*)self.GetData(), (char*)cother.GetData()) != 0){
+		return false;
+	}
+	if(self.HasAlpha()) {
+		if(!cother.HasAlpha())
+			return false;
+		if(strcmp((char*)self.GetAlpha(), (char*)cother.GetAlpha()) != 0){
+			return false;
+		}
+	} else {
+		return !cother.HasAlpha();
+	}
+
+	return true;
+}
+
+
 /*
 */
 DLL_LOCAL VALUE _initialize_copy(VALUE self, VALUE other)
 {
 	VALUE result = rb_call_super(1,&other);
-	_self->SetData(unwrap<wxImage*>(other)->GetData());
-	_self->SetAlpha(unwrap<wxImage*>(other)->GetAlpha());
+	wxImage* cother = unwrap<wxImage*>(other);
+
+	_self->SetData(cother->GetData(),cother->GetWidth(),cother->GetHeight());
+	_self->SetAlpha(cother->GetAlpha());
 	_setMask(self,_getMask(other));
 
 #if wxUSE_PALETTE
@@ -733,6 +781,40 @@ DLL_LOCAL VALUE _initialize_copy(VALUE self, VALUE other)
 	return result;
 }
 
+struct equal_obj {
+	wxImage* self;
+	VALUE other;
+};
+
+VALUE _equal_block(equal_obj *obj)
+{
+	return wrap(check_equal(*obj->self, unwrap<wxImage>(obj->other)));
+}
+
+VALUE _equal_rescue(VALUE val)
+{
+	return Qfalse;
+}
+
+/*
+ * call-seq:
+ *   == image -> bool
+ *
+ * compares two image.
+ *
+ *
+ */
+DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
+{
+	equal_obj obj;
+	obj.self = _self;
+	obj.other = other;
+
+	return rb_rescue(
+		RUBY_METHOD_FUNC(_equal_block),(VALUE)&obj,
+		RUBY_METHOD_FUNC(_equal_rescue),Qnil
+	);
+}
 
 /*
  * call-seq:
@@ -746,8 +828,8 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
 {
 	VALUE result = rb_ary_new();
 
-	rb_ary_push(result,_getHeight(self));
 	rb_ary_push(result,_getWidth(self));
+	rb_ary_push(result,_getHeight(self));
 	rb_ary_push(result,_getData(self));
 	rb_ary_push(result,_getAlpha(self));
 	rb_ary_push(result,_getMask(self));
@@ -857,6 +939,8 @@ DLL_LOCAL void Init_WXImage(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXImage,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
 	rb_define_method(rb_cWXImage,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
+
+	rb_define_method(rb_cWXImage,"==",RUBY_METHOD_FUNC(_equal),1);
 
 	rb_define_attr_method(rb_cWXImage,"mask",_getMask,_setMask);
 #if wxUSE_PALETTE
