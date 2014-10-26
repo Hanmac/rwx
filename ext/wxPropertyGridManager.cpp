@@ -206,6 +206,9 @@ DLL_LOCAL VALUE _each(VALUE self)
 }
 #endif
 
+/* Document-const: DEFAULT_STYLE
+ * default style for this control.
+ */
 
 /* Document-method: tool_bar
  * call-seq:
