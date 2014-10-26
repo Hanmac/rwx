@@ -21,6 +21,11 @@ macro_attr_with_func(EscapeId,wrapID,unwrapID)
 macro_attr_with_func(ReturnCode,wrapID,unwrapID)
 macro_attr_with_func(AffirmativeId,wrapID,unwrapID)
 
+macro_attr_func(Modal,ShowModal(),EndModal,wrapID,unwrapID, true)
+
+singlereturn(IsModal)
+
+singlereturn(GetContentWindow)
 
 /*
  * call-seq:
@@ -61,18 +66,6 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 }
 
-DLL_LOCAL VALUE _ShowModal(VALUE self)
-{
-	return wrapID(_self->ShowModal());
-}
-
-DLL_LOCAL VALUE _EndModal(VALUE self,VALUE id)
-{
-	_self->EndModal(unwrapID(id));
-	return self;
-}
-
-
 DLL_LOCAL VALUE _CreateButtonSizer(VALUE self,VALUE flags)
 {
 	return wrap(_self->CreateButtonSizer(unwrap_buttonflag(flags)));
@@ -89,6 +82,43 @@ DLL_LOCAL VALUE _CreateTextSizer(VALUE self,VALUE text)
 }
 }
 
+/* Document-method: modal?
+ * call-seq:
+ *   modal? -> true/false
+ *
+ * Returns true if this dialog does run modal, false if otherwise.
+ * ===Return value
+ * true/false
+*/
+
+/* Document-const: DEFAULT_STYLE
+ * default style for this control.
+ */
+
+
+/* Document-attr: return_code
+ * Integer/Symbol
+ * Modal dialogs have a return code -
+ * usually the id of the last pressed button
+ */
+/* Document-attr: affirmative_id
+ * Integer/Symbol
+ * Set the identifier for the affirmative button: this button will close
+ * the dialog
+ */
+/* Document-attr: escape_id
+ * Integer/Symbol
+ * Set identifier for Esc key translation: the button with this id will
+ * close the dialog without doing anything else
+ */
+
+
+/* Document-attr: content_window
+ * WX::Window
+ * Returns a content window if there is one. This can be used by the layout adapter, for
+ * example to make the pages of a book control into scrolling windows
+ */
+
 DLL_LOCAL void Init_WXDialog(VALUE rb_mWX)
 {
 #if 0
@@ -104,10 +134,23 @@ DLL_LOCAL void Init_WXDialog(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXDialog,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-	rb_define_attr_method(rb_cWXDialog, "return_code",_getReturnCode,_setReturnCode);
+#if 0
+	rb_define_attr(rb_cWXDialog, "return_code",1,1);
+	rb_define_attr(rb_cWXDialog, "escape_id",1,1);
+	rb_define_attr(rb_cWXDialog, "affirmative_id",1,1);
 
-	rb_define_method(rb_cWXDialog,"show_modal",RUBY_METHOD_FUNC(_ShowModal),0);
-	rb_define_method(rb_cWXDialog,"end_modal",RUBY_METHOD_FUNC(_EndModal),1);
+	rb_define_attr(rb_cWXDialog, "content_window",1,0);
+#endif
+
+	rb_define_attr_method(rb_cWXDialog, "return_code",_getReturnCode,_setReturnCode);
+	rb_define_attr_method(rb_cWXDialog, "escape_id",_getEscapeId,_setEscapeId);
+	rb_define_attr_method(rb_cWXDialog, "affirmative_id",_getAffirmativeId,_setAffirmativeId);
+
+	rb_define_attr_method(rb_cWXDialog, "content_window",_getEscapeId,NULL);
+
+	rb_define_method(rb_cWXDialog,"show_modal",RUBY_METHOD_FUNC(_getModal),0);
+	rb_define_method(rb_cWXDialog,"end_modal",RUBY_METHOD_FUNC(_setModal),1);
+	rb_define_method(rb_cWXDialog,"modal?",RUBY_METHOD_FUNC(_IsModal),0);
 
 	rb_define_method(rb_cWXDialog,"create_button_sizer",RUBY_METHOD_FUNC(_CreateButtonSizer),-2);
 #if wxUSE_STATTEXT
