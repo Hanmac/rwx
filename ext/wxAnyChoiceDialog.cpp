@@ -63,6 +63,10 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
+
+/* Document-const: DEFAULT_STYLE
+ * default style for this control.
+ */
 DLL_LOCAL void Init_WXAnyChoiceDialog(VALUE rb_mWX)
 {
 
