@@ -1,5 +1,10 @@
 
 RSpec.describe WX::Color do
+  subject { ::WX::Color::RED }
+  
+  include_examples "copyable"
+  include_examples "dumpable"
+  
   it "overflow on bounderies" do
     c = WX::Color.new(40, 0, 0)
     
