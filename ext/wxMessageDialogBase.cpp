@@ -20,55 +20,41 @@ namespace MessageDialogBase {
 macro_attr(Message,wxString)
 macro_attr(ExtendedMessage,wxString)
 
+wxMessageDialogBase::ButtonLabel unwrapButtonLabel(VALUE val)
+{
+	if(FIXNUM_P(val) || SYMBOL_P(val)){
+		wxWindowID id = unwrapID(val);
+		if(wxIsStockID(id))
+			return id;
+	}
+	return unwrap<wxString>(val);
+}
+
 singlereturn(GetYesLabel)
 singlereturn(GetNoLabel)
-singlereturn(GetOKLabel)
+macro_attr_with_func(OKLabel,wrap,unwrapButtonLabel)
 singlereturn(GetCancelLabel)
-singlereturn(GetHelpLabel)
+macro_attr_with_func(HelpLabel,wrap,unwrapButtonLabel)
 
-DLL_LOCAL VALUE _SetOKLabel(VALUE self,VALUE val)
-{
-	if(FIXNUM_P(val) || SYMBOL_P(val))
-		_self->SetOKLabel(unwrapID(val));
-	else
-		_self->SetOKLabel(unwrap<wxString>(val));
-	return val;
-}
 
 DLL_LOCAL VALUE _SetYesLabel(VALUE self,VALUE val)
 {
-	if(FIXNUM_P(val) || SYMBOL_P(val))
-		_self->SetYesNoLabels(unwrapID(val),_self->GetNoLabel());
-	else
-		_self->SetYesNoLabels(unwrap<wxString>(val),_self->GetNoLabel());
+	rb_check_frozen(self);
+	_self->SetYesNoLabels(unwrapButtonLabel(val),_self->GetNoLabel());
 	return val;
 }
 
 DLL_LOCAL VALUE _SetNoLabel(VALUE self,VALUE val)
 {
-	if(FIXNUM_P(val) || SYMBOL_P(val))
-		_self->SetYesNoLabels(_self->GetYesLabel(),unwrapID(val));
-	else
-		_self->SetYesNoLabels(_self->GetYesLabel(),unwrap<wxString>(val));
+	rb_check_frozen(self);
+	_self->SetYesNoLabels(_self->GetYesLabel(),unwrapButtonLabel(val));
 	return val;
 }
 
 DLL_LOCAL VALUE _SetCancelLabel(VALUE self,VALUE val)
 {
-	if(FIXNUM_P(val) || SYMBOL_P(val))
-		_self->SetOKCancelLabels(_self->GetOKLabel(),unwrapID(val));
-	else
-		_self->SetOKCancelLabels(_self->GetOKLabel(),unwrap<wxString>(val));
-	return val;
-}
-
-
-DLL_LOCAL VALUE _SetHelpLabel(VALUE self,VALUE val)
-{
-	if(FIXNUM_P(val) || SYMBOL_P(val))
-		_self->SetHelpLabel(unwrapID(val));
-	else
-		_self->SetHelpLabel(unwrap<wxString>(val));
+	rb_check_frozen(self);
+	_self->SetOKCancelLabels(_self->GetOKLabel(),unwrapButtonLabel(val));
 	return val;
 }
 
@@ -118,6 +104,32 @@ DLL_LOCAL VALUE _InfoMessageBox(int argc,VALUE *argv,VALUE self)
 }
 }
 #endif
+
+
+
+/* Document-attr: message
+ * the message of this dialog. String
+ */
+/* Document-attr: extended_message
+ * the message of this dialog. String
+ */
+
+/* Document-attr: yes_label
+ * the label of the yes button. getter String, setter String/Symbol/Fixnum
+ */
+/* Document-attr: no_label
+ * the label of the no button. getter String, setter String/Symbol/Fixnum
+ */
+/* Document-attr: ok_label
+ * the label of the ok button. getter String, setter String/Symbol/Fixnum
+ */
+/* Document-attr: cancel_label
+ * the label of the cancel button. getter String, setter String/Symbol/Fixnum
+ */
+/* Document-attr: help_label
+ * the label of the help button. getter String, setter String/Symbol/Fixnum
+ */
+
 DLL_LOCAL void Init_WXMessageDialogBase(VALUE rb_mWX)
 {
 #if 0
@@ -133,14 +145,26 @@ DLL_LOCAL void Init_WXMessageDialogBase(VALUE rb_mWX)
 	rb_cWXMessageDialogBase = rb_define_class_under(rb_mWX,"MessageDialogBase",rb_cWXDialog);
 	rb_undef_alloc_func(rb_cWXMessageDialogBase);
 
+#if 0
+	rb_define_attr(rb_cWXMessageDialogBase,"message",1,1);
+	rb_define_attr(rb_cWXMessageDialogBase,"extended_message",1,1);
+
+	rb_define_attr(rb_cWXMessageDialogBase,"yes_label",1,1);
+	rb_define_attr(rb_cWXMessageDialogBase,"no_label",1,1);
+	rb_define_attr(rb_cWXMessageDialogBase,"ok_label",1,1);
+	rb_define_attr(rb_cWXMessageDialogBase,"cancel_label",1,1);
+	rb_define_attr(rb_cWXMessageDialogBase,"help_label",1,1);
+#endif
+
+
 	rb_define_attr_method(rb_cWXMessageDialogBase,"message",_getMessage,_setMessage);
 	rb_define_attr_method(rb_cWXMessageDialogBase,"extended_message",_getExtendedMessage,_setExtendedMessage);
 
 	rb_define_attr_method(rb_cWXMessageDialogBase,"yes_label",_GetYesLabel,_SetYesLabel);
 	rb_define_attr_method(rb_cWXMessageDialogBase,"no_label",_GetNoLabel,_SetNoLabel);
-	rb_define_attr_method(rb_cWXMessageDialogBase,"ok_label",_GetOKLabel,_SetOKLabel);
+	rb_define_attr_method(rb_cWXMessageDialogBase,"ok_label",_getOKLabel,_setOKLabel);
 	rb_define_attr_method(rb_cWXMessageDialogBase,"cancel_label",_GetCancelLabel,_SetCancelLabel);
-	rb_define_attr_method(rb_cWXMessageDialogBase,"help_label",_GetHelpLabel,_SetHelpLabel);
+	rb_define_attr_method(rb_cWXMessageDialogBase,"help_label",_getHelpLabel,_setHelpLabel);
 
 
 	rb_define_module_function(rb_mWX,"message_box",RUBY_METHOD_FUNC(_MessageBox),-1);
