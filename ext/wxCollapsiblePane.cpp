@@ -72,6 +72,18 @@ macro_attr(Collapsed,bool)
 }
 #endif
 
+
+/* Document-const: DEFAULT_STYLE
+ * default style for this control.
+ */
+
+/* Document-attr: collapsed
+ * says if the pane is collapsed or not. true/false
+ */
+/* Document-attr: pane
+ * the inner pane of this widget WX::Window
+ */
+
 DLL_LOCAL void Init_WXCollapsiblePane(VALUE rb_mWX)
 {
 #if 0
@@ -89,17 +101,18 @@ DLL_LOCAL void Init_WXCollapsiblePane(VALUE rb_mWX)
 
 #if 0
 	rb_define_attr(rb_cWXCollapsiblePane,"collapsed",1,1);
+	rb_define_attr(rb_cWXCollapsiblePane,"pane",1,0);
 	rb_define_attr(rb_cWXCollapsiblePaneEvent,"collapsed",1,1);
 #endif
 
 	rb_define_method(rb_cWXCollapsiblePane,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_attr_method(rb_cWXCollapsiblePane,"collapsed",_getCollapsed,_setCollapsed);
-
-	rb_define_method(rb_cWXCollapsiblePane,"pane",RUBY_METHOD_FUNC(_GetPane),0);
+	rb_define_attr_method(rb_cWXCollapsiblePane,"pane",_GetPane,NULL);
 
 	rb_define_attr_method(rb_cWXCollapsiblePaneEvent,"collapsed",Event::_getCollapsed,Event::_setCollapsed);
 
+	rb_define_const(rb_cWXCollapsiblePane,"DEFAULT_STYLE",INT2NUM(wxCP_DEFAULT_STYLE));
 
 	registerInfo<wxCollapsiblePane>(rb_cWXCollapsiblePane);
 
