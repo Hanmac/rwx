@@ -107,6 +107,29 @@ VALUE _setFilterIndex(VALUE self,VALUE other)
 }
 #endif
 
+/* Document-const: DEFAULT_STYLE
+ * default style for this control.
+ */
+
+/* Document-const: DIR_ONLY
+ * Only allow directory viewing/selection, no files
+ */
+/* Document-const: SELECT_FIRST
+ * When setting the default path, select the first file in the directory
+ */
+/* Document-const: SHOW_FILTERS
+ * Show the filter list
+ */
+/* Document-const: INTERNAL_3D
+ * Use 3D borders on internal controls
+ */
+/* Document-const: EDIT_LABELS
+ * Editable labels
+ */
+/* Document-const: MULTIPLE
+ * Allow multiple selection
+ */
+
 /* Document-attr: filter
  * the filter of the DirCtrl. String, raise an ArgumentError if filter has wrong format
  */
@@ -150,6 +173,19 @@ DLL_LOCAL void Init_WXDirCtrl(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXDirCtrl,"filter_index",_GetFilterIndex,_setFilterIndex);
 
 	rb_define_attr_method(rb_cWXDirCtrl,"file_paths",_GetFilePaths,NULL);
+
+#ifndef HAVE_CONST_WXDIRCTRL_DEFAULT_STYLE
+	rb_define_const(rb_cWXDirCtrl,"DEFAULT_STYLE",INT2NUM(wxDIRCTRL_3D_INTERNAL));
+#else
+	rb_define_const(rb_cWXDirCtrl,"DEFAULT_STYLE",INT2NUM(wxDIRCTRL_DEFAULT_STYLE));
+#endif
+
+	rb_define_const(rb_cWXDirCtrl,"DIR_ONLY",INT2NUM(wxDIRCTRL_DIR_ONLY));
+	rb_define_const(rb_cWXDirCtrl,"SELECT_FIRST",INT2NUM(wxDIRCTRL_SELECT_FIRST));
+	rb_define_const(rb_cWXDirCtrl,"SHOW_FILTERS",INT2NUM(wxDIRCTRL_SHOW_FILTERS));
+	rb_define_const(rb_cWXDirCtrl,"INTERNAL_3D",INT2NUM(wxDIRCTRL_3D_INTERNAL));
+	rb_define_const(rb_cWXDirCtrl,"EDIT_LABELS",INT2NUM(wxDIRCTRL_EDIT_LABELS));
+	rb_define_const(rb_cWXDirCtrl,"MULTIPLE",INT2NUM(wxDIRCTRL_MULTIPLE));
 
 	registerInfo<wxFileCtrl>(rb_cWXDirCtrl);
 #endif
