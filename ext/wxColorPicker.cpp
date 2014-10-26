@@ -89,6 +89,10 @@ macro_attr(Colour,wxColour)
 
 #endif
 
+/* Document-const: DEFAULT_STYLE
+ * default style for this control.
+ */
+
 /* Document-attr: color
  * the color of the ColorPicker. WX::Color
  */
