@@ -115,6 +115,10 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 #endif
 
+/* Document-const: DEFAULT_STYLE
+ * default style for this control.
+ */
+
 /* Document-method: caption_font
  * call-seq:
  *   caption_font -> WX::Font
