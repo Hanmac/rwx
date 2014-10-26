@@ -13,6 +13,10 @@
 #include <map>
 #include <wx/artprov.h>
 
+#if !wxUSE_IMAGE
+#include <wx/rawbmp.h>
+#endif
+
 #define _self unwrap<wxBitmap*>(self)
 
 VALUE rb_cWXBitmap, rb_cWXMask;
@@ -167,8 +171,7 @@ DLL_LOCAL VALUE _draw(VALUE self)
 	rb_check_frozen(self);
 
 	wxDC *dc;
-	wxMemoryDC *mdc = new wxMemoryDC;
-	mdc->SelectObject(*_self);
+	wxMemoryDC *mdc = new wxMemoryDC(*_self);
 #if wxUSE_GRAPHICS_CONTEXT
 	dc = new wxGCDC(*mdc);
 #else
@@ -186,12 +189,34 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	VALUE x,y;
 	rb_scan_args(argc, argv, "11",&x,&y);
 
-	if(NIL_P(x))
-	{
+	if(NIL_P(x)){
 		_self->LoadFile(unwrap<wxString>(x),wxBITMAP_TYPE_ANY);
-	}else
+	}else {
+#if wxUSE_IMAGE
+		(*_self) = wxBitmap(wxImage(NUM2INT(x),NUM2INT(y)));
+#else
 		_self->Create(NUM2INT(x),NUM2INT(y));
 
+		typedef wxPixelData<wxBitmap, wxNativePixelFormat> PixelData;
+
+		PixelData data(*_self);
+
+		PixelData::Iterator p(data);
+
+		for ( int cy = 0; cy < data.GetHeight(); ++cy )
+		{
+			PixelData::Iterator rowStart = p;
+
+			for ( int cx = 0; cx < data.GetWidth(); ++cx, ++p )
+			{
+				p.Red() = p.Green() = p.Blue() = 0;
+			}
+
+			p = rowStart;
+			p.OffsetY(data, 1);
+		}
+#endif
+	}
 	return self;
 }
 
@@ -220,7 +245,11 @@ DLL_LOCAL VALUE _to_image(VALUE self)
  */
 DLL_LOCAL VALUE _marshal_dump(VALUE self)
 {
-	return wrap(_self->ConvertToImage());
+	//TODO: turn the result into something that is compatible when image is missing
+
+	VALUE result = rb_ary_new();
+	rb_ary_push(result,wrap(_self->ConvertToImage()));
+	return result;
 }
 
 /*
@@ -233,8 +262,9 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
  */
 DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 {
+	data = rb_Array(data);
 	//TODO delete old data?
-	RTYPEDDATA_DATA(self) = new wxBitmap(unwrap<wxImage>(data));
+	(*_self) = wxBitmap(unwrap<wxImage>(RARRAY_AREF(data,0)));
 	return self;
 }
 
@@ -250,6 +280,54 @@ DLL_LOCAL VALUE _save_file(int argc,VALUE *argv,VALUE self)
 	VALUE name;
 	rb_scan_args(argc, argv, "10",&name);
 	return wrap(_self->SaveFile(unwrap<wxString>(name),wxBITMAP_TYPE_PNG));
+}
+
+
+struct equal_obj {
+	wxBitmap* self;
+	VALUE other;
+};
+
+VALUE _equal_block(equal_obj *obj)
+{
+	wxBitmap cbitmap = unwrap<wxBitmap>(obj->other);
+	if(obj->self->IsSameAs(cbitmap))
+		return Qtrue;
+#if wxUSE_IMAGE
+	if(RubyWX::Image::check_equal(
+		obj->self->ConvertToImage(), cbitmap.ConvertToImage()
+	))
+		return Qtrue;
+#endif
+	//TODO: add check with wxPIxelData if Image is not awailable
+
+	return Qfalse;
+
+}
+
+VALUE _equal_rescue(VALUE val)
+{
+	return Qfalse;
+}
+
+/*
+ * call-seq:
+ *   == brush -> bool
+ *
+ * compares two brush.
+ *
+ *
+ */
+DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
+{
+	equal_obj obj;
+	obj.self = _self;
+	obj.other = other;
+
+	return rb_rescue(
+		RUBY_METHOD_FUNC(_equal_block),(VALUE)&obj,
+		RUBY_METHOD_FUNC(_equal_rescue),Qnil
+	);
 }
 
 }
@@ -335,14 +413,18 @@ DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
 	rb_define_method(rb_cWXBitmap,"to_image",RUBY_METHOD_FUNC(_to_image),0);
 
 	rb_define_method(rb_cWXBitmap,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
-	rb_define_method(rb_cWXBitmap,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),-2);
+	rb_define_method(rb_cWXBitmap,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 #else
 	rb_undef_method(rb_cWXBitmap,"_load");
 	rb_undef_method(rb_cWXBitmap,"_dump");
 #endif
 
+	rb_define_method(rb_cWXBitmap,"==",RUBY_METHOD_FUNC(_equal),1);
+
 #if wxUSE_PALETTE
 	rb_define_attr_method(rb_cWXBitmap,"palette",_getPalette,_setPalette);
+#else
+	rb_define_attr_method_missing(rb_cWXBitmap,"palette");
 #endif
 
 	rb_define_method(rb_cWXBitmap,"draw",RUBY_METHOD_FUNC(_draw),0);
