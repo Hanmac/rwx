@@ -84,7 +84,7 @@ DLL_LOCAL VALUE _GetFieldRect(VALUE self,VALUE num)
 	if(check_index(cidx,_self->GetFieldsCount()))
 	{
 		wxRect rect;
-		if(_self->GetFieldRect(NUM2INT(num),rect))
+		if(_self->GetFieldRect(cidx,rect))
 			return wrap(rect);
 	}
 	return Qnil;
@@ -109,7 +109,7 @@ DLL_LOCAL VALUE _getStatusText2(VALUE self,VALUE num)
 {
 	int cidx = NUM2INT(num);
 	if(check_index(cidx,_self->GetFieldsCount()))
-		return wrap(_self->GetStatusText(NUM2INT(num)));
+		return wrap(_self->GetStatusText(cidx));
 	return Qnil;
 }
 
@@ -134,7 +134,7 @@ DLL_LOCAL VALUE _setStatusText2(VALUE self,VALUE str,VALUE num)
 	rb_check_frozen(self);
 	int cidx = NUM2INT(num);
 	if(check_index(cidx,_self->GetFieldsCount()))
-		_self->SetStatusText(unwrap<wxString>(str),NUM2INT(num));
+		_self->SetStatusText(unwrap<wxString>(str),cidx);
 
 	return Qnil;
 }
@@ -159,7 +159,7 @@ DLL_LOCAL VALUE _getStatusWidth(VALUE self,VALUE num)
 {
 	int cidx = NUM2INT(num);
 	if(check_index(cidx,_self->GetFieldsCount()))
-		return INT2NUM(_self->GetStatusWidth(NUM2INT(num)));
+		return INT2NUM(_self->GetStatusWidth(cidx));
 	return Qnil;
 }
 
@@ -323,6 +323,9 @@ macro_attr_bool2(Ellipsized,SetIsEllipsized)
 }
 #endif
 
+/* Document-const: DEFAULT_STYLE
+ * default style for this control.
+ */
 
 /* Document-attr: status_text
  * the current status text. String
