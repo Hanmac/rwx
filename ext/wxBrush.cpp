@@ -55,9 +55,34 @@ DLL_LOCAL VALUE _alloc(VALUE self) {
 
 macro_attr(Colour,wxColour)
 macro_attr_enum(Style,wxBrushStyle)
-macro_attr(Stipple,wxBitmap)
+//macro_attr(Stipple,wxBitmap)
 
 singlereturn(IsHatch)
+singlereturn(GetStipple)
+
+DLL_LOCAL VALUE _setStipple(VALUE self, VALUE val)
+{
+	rb_check_frozen(self);
+	wxBitmap bitmap = unwrap<wxBitmap>(val);
+	if(bitmap.IsOk()) {
+		_self->SetStipple(bitmap);
+	} else {
+		wxBrushStyle style = _self->GetStyle();
+
+		switch(style) {
+		case wxBRUSHSTYLE_STIPPLE_MASK_OPAQUE:
+		case wxBRUSHSTYLE_STIPPLE_MASK:
+		case wxBRUSHSTYLE_STIPPLE:
+			style = wxBRUSHSTYLE_SOLID;
+			break;
+		default:
+			break;
+		}
+
+		(*_self) = wxBrush(_self->GetColour(),style);
+	}
+	return val;
+}
 
 
 void define_const()
@@ -106,7 +131,11 @@ DLL_LOCAL VALUE _initialize_copy(VALUE self, VALUE other)
 	VALUE result = rb_call_super(1,&other);
 	_setColour(self,_getColour(other));
 	_setStyle(self,_getStyle(other));
-	_setStipple(self,_getStipple(other));
+
+	VALUE val;
+	if(!NIL_P(val = _GetStipple(other)))
+		_setStipple(self, val);
+
 	return result;
 }
 
@@ -124,7 +153,7 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
     VALUE ptr[3];
     ptr[0] = _getColour(self);
     ptr[1] = _getStyle(self);
-    ptr[2] = _getStipple(self);
+    ptr[2] = _GetStipple(self);
     return rb_ary_new4(3, ptr);
 }
 
@@ -138,9 +167,14 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
  */
 DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
 {
+	VALUE val;
+	data = rb_Array(data);
     _setColour(self, RARRAY_AREF(data,0));
     _setStyle(self, RARRAY_AREF(data,1));
-    _setStipple(self, RARRAY_AREF(data,2));
+
+    if(!NIL_P(val = RARRAY_AREF(data,2)))
+    	_setStipple(self, val);
+
     return Qnil;
 }
 
@@ -152,7 +186,33 @@ struct equal_obj {
 
 VALUE _equal_block(equal_obj *obj)
 {
-	return wrap(*obj->self == unwrap<wxBrush>(obj->other));
+	wxBrush cbrush = unwrap<wxBrush>(obj->other);
+	if(*obj->self == cbrush)
+		return Qtrue;
+	if(obj->self->GetColour() != cbrush.GetColour())
+		return Qfalse;
+	if(obj->self->GetStyle() != cbrush.GetStyle())
+		return Qfalse;
+	wxBitmap *bit = obj->self->GetStipple();
+	wxBitmap *obit = cbrush.GetStipple();
+
+	if((!bit || !bit->IsOk()) != (!obit || !obit->IsOk()))
+		return Qfalse;
+	if(bit == obit)
+		return Qtrue;
+	if(bit->IsSameAs(*obit))
+		return Qtrue;
+
+#if wxUSE_IMAGE
+	if(bit) {
+		if(RubyWX::Image::check_equal(
+			bit->ConvertToImage(), obit->ConvertToImage()
+		))
+			return Qtrue;
+	}
+#endif
+	return Qfalse;
+
 }
 
 VALUE _equal_rescue(VALUE val)
@@ -302,12 +362,12 @@ DLL_LOCAL void Init_WXBrush(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXBrush,"color",_getColour,_setColour);
 	rb_define_attr_method(rb_cWXBrush,"style",_getStyle,_setStyle);
-	rb_define_attr_method(rb_cWXBrush,"stipple",_getStipple,_setStipple);
+	rb_define_attr_method(rb_cWXBrush,"stipple",_GetStipple,_setStipple);
 
 	rb_define_method(rb_cWXBrush,"hatch?",RUBY_METHOD_FUNC(_IsHatch),0);
 
 	rb_define_method(rb_cWXBrush,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
-	rb_define_method(rb_cWXBrush,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),-2);
+	rb_define_method(rb_cWXBrush,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
 	rb_define_method(rb_cWXBrush,"==",RUBY_METHOD_FUNC(_equal),1);
 
