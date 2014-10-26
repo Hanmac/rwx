@@ -93,6 +93,10 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 #endif
 
+/* Document-const: DEFAULT_STYLE
+ * default style for this control.
+ */
+
 /* Document-attr: hover_color
  * the hover color of the HyperLink. WX::Color
  */
@@ -105,8 +109,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 /* Document-attr: url
  * the url of the HyperLink. String
  */
-/* Document-attr: visited_color
- * the visited of the HyperLink. bool
+/* Document-attr: visited
+ * if the link was visited. bool
  */
 
 DLL_LOCAL void Init_WXHyperLink(VALUE rb_mWX)
@@ -140,6 +144,8 @@ DLL_LOCAL void Init_WXHyperLink(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXHyperLink,"url",_getURL,_setURL);
 	rb_define_attr_method(rb_cWXHyperLink,"visited",_getVisited,_setVisited);
+
+	rb_define_const(rb_cWXHyperLink,"DEFAULT_STYLE",INT2NUM(wxHL_DEFAULT_STYLE));
 
 	registerInfo<wxHyperlinkCtrl>(rb_cWXHyperLink);
 #endif
