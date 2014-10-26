@@ -39,6 +39,7 @@ singlereturn(GetStringSelection)
  *   * choices [string]
  *   * selection Integer
  *   * message String
+ *   * caption String
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
@@ -53,17 +54,19 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		wxString message(wxEmptyString);
 		wxString caption(wxEmptyString);
 
+		bool selFlag = false;
+
 		if(rb_obj_is_kind_of(hash,rb_cHash)){
 			set_hash_option(hash,"style",style);
 			set_hash_option(hash,"choices",choices);
-			set_hash_option(hash,"selection",selection);
+			selFlag = set_hash_option(hash,"selection",selection);
 			set_hash_option(hash,"message",message);
 			set_hash_option(hash,"caption",caption);
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),message,caption,choices,(void **)NULL,style);
 		
-		if(check_index(selection,choices.GetCount()))
+		if(selFlag && check_index(selection,choices.GetCount()))
 			_self->SetSelection(selection);
 	}
 	rb_call_super(argc,argv);
@@ -71,7 +74,28 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 }
 
-
+/*
+ * call-seq:
+ *   single_choice(message, caption, choices, [options]) -> String/Integer
+ *
+ * creates a new SingleChoiceDialog widget.
+ * ===Arguments
+ * * message for the Dialog. String
+ * * caption for the Dialog. String
+ * * choices [string]
+ *
+ * *options: Hash with possible options to set:
+ *   *
+ *   * selection Integer
+ *   * parent of this window or nil
+ *   * x of the dialog Integer
+ *   * y of the dialog Integer
+ *   * width of the dialog Integer
+ *   * height of the dialog Integer
+ *   * center if the dialog is center aligned true/false
+ *   * index if the dialog should return index instead of String true/false
+ *
+*/
 VALUE _GetSingleChoice(int argc,VALUE *argv,VALUE self)
 {
 	VALUE message,caption,choices,hash;
@@ -89,7 +113,12 @@ VALUE _GetSingleChoice(int argc,VALUE *argv,VALUE self)
 
 	int selection(-1);
 
+	bool index(false);
+
 	wxArrayString cchoices = unwrap<wxArrayString>(choices);
+
+	wxString cmessage = unwrap<wxString>(message);
+	wxString ccaption = unwrap<wxString>(caption);
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
@@ -103,21 +132,38 @@ VALUE _GetSingleChoice(int argc,VALUE *argv,VALUE self)
 		set_hash_option(hash,"width",width);
 		set_hash_option(hash,"height",height);
 
+		set_hash_option(hash,"index",index);
+
 		if(set_hash_option(hash,"selection",selection))
 			if(!check_index(selection,cchoices.GetCount()))
 				return Qnil;
 	}
 
-	return wrap(wxGetSingleChoice(
-			unwrap<wxString>(message), unwrap<wxString>(caption),
-			cchoices,
+	if(index) {
+		return wrap(wxGetSingleChoiceIndex(
+			cmessage, ccaption, cchoices,
 			parent, x, y, centre, width, height, selection
-	));
+		));
+	}else {
+		return wrap(wxGetSingleChoice(
+			cmessage, ccaption, cchoices,
+			parent, x, y, centre, width, height, selection
+		));
+	}
 }
 
 }
 }
 #endif
+
+
+/* Document-attr: selection
+ * Integer/nil the index of the current selected choice, or nil if none is selected.
+ */
+/* Document-attr: string_selection
+ * String the current selected choice, empty string if none is selected
+ */
+
 DLL_LOCAL void Init_WXSingleChoiceDialog(VALUE rb_mWX)
 {
 #if 0
@@ -131,13 +177,13 @@ DLL_LOCAL void Init_WXSingleChoiceDialog(VALUE rb_mWX)
 
 #if 0
 	rb_define_attr(rb_cWXSingleChoiceDialog,"selection",1,1);
+	rb_define_attr(rb_cWXSingleChoiceDialog,"string_selection",1,0);
 #endif
 
 	rb_define_method(rb_cWXSingleChoiceDialog,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_attr_method(rb_cWXSingleChoiceDialog,"selection",_getSelection,_setSelection);
-
-	rb_define_method(rb_cWXSingleChoiceDialog,"string_selection",RUBY_METHOD_FUNC(_GetStringSelection),0);
+	rb_define_attr_method(rb_cWXSingleChoiceDialog,"string_selection",_getSelection,NULL);
 
 	rb_define_module_function(rb_mWX,"single_choice",RUBY_METHOD_FUNC(_GetSingleChoice),-1);
 
