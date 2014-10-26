@@ -102,6 +102,10 @@ DLL_LOCAL VALUE _getText(int argc,VALUE *argv,VALUE self)
 
 #endif
 
+/* Document-const: DEFAULT_STYLE
+ * default style for this control.
+ */
+
 /* Document-attr: value
  * the value of the TextEntryDialog. String
  */
