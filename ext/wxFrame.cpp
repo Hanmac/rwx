@@ -102,15 +102,17 @@ DLL_LOCAL VALUE _CreateStatusBar(int argc,VALUE *argv,VALUE self)
 	int number = 1;
 	long style = wxSTB_DEFAULT_STYLE;
 	wxWindowID wid = wxID_ANY;
+	wxString name(wxStatusLineNameStr);
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		set_hash_option(hash,"number",number);
 		set_hash_option(hash,"style",style);
 		set_hash_option(hash,"id",wid,unwrapID);
+		set_hash_option(hash,"name",name);
 	}
 
-	return wrap(_self->CreateStatusBar(number,style,wid));
+	return wrap(_self->CreateStatusBar(number, style, wid, name));
 
 }
 
@@ -184,16 +186,17 @@ macro_attr(ToolBar,wxToolBar*)
 
 /*
  * call-seq:
- *   create_statusbar(**options) -> WX::StatusBar
+ *   create_toolbar(**options) -> WX::StatusBar
  *
- * creates a new status bar and add it to this frame.
+ * creates a new tool bar and add it to this frame.
  * ===Arguments
  * * options
  *   * style  Integer
  *   * id     Symbol/Integer
+ *   * name   name of the tool bar
  *
  * ===Return value
- * WX::StatusBar
+ * WX::ToolBar
 */
 DLL_LOCAL VALUE _CreateToolBar(int argc,VALUE *argv,VALUE self)
 {
@@ -202,14 +205,16 @@ DLL_LOCAL VALUE _CreateToolBar(int argc,VALUE *argv,VALUE self)
 
 	long style = -1;
 	wxWindowID wid = wxID_ANY;
+	wxString name(wxToolBarNameStr);
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		set_hash_option(hash,"style",style);
 		set_hash_option(hash,"id",wid,unwrapID);
+		set_hash_option(hash,"name",name);
 	}
 
-	return wrap(_self->CreateToolBar(style,wid));
+	return wrap(_self->CreateToolBar(style, wid, name));
 
 }
 
@@ -217,6 +222,9 @@ DLL_LOCAL VALUE _CreateToolBar(int argc,VALUE *argv,VALUE self)
 }
 }
 
+/* Document-const: DEFAULT_STYLE
+ * default style for this control.
+ */
 
 /* Document-attr: menubar
  * the menu bar of the Frame. WX::MenuBar
@@ -271,6 +279,9 @@ DLL_LOCAL void Init_WXFrame(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXFrame,"toolbar",_getToolBar,_setToolBar);
 	rb_define_method(rb_cWXFrame,"create_toolbar",RUBY_METHOD_FUNC(_CreateToolBar),-1);
 #endif // wxUSE_TOOLBAR
+
+	rb_define_const(rb_cWXFrame,"DEFAULT_STYLE",INT2NUM(wxDEFAULT_FRAME_STYLE));
+
 
 	registerInfo<wxFrame>(rb_cWXFrame);
 }
