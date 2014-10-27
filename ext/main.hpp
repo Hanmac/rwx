@@ -73,6 +73,48 @@
 
 #endif
 
+#ifndef RUBY_TYPED_DEFAULT_FREE
+#ifndef RUBY_DEFAULT_FREE
+#define RUBY_DEFAULT_FREE ((RUBY_DATA_FUNC)-1)
+#endif
+#define RUBY_TYPED_DEFAULT_FREE RUBY_DEFAULT_FREE
+#endif
+
+#ifndef RUBY_TYPED_NEVER_FREE
+#ifndef RUBY_NEVER_FREE
+#define RUBY_NEVER_FREE ((RUBY_DATA_FUNC)0)
+#endif
+#define RUBY_TYPED_NEVER_FREE RUBY_NEVER_FREE
+#endif
+
+#ifndef PRIsVALUE
+#if defined PRIdPTR && !defined PRI_VALUE_PREFIX
+#define PRIdVALUE PRIdPTR
+#define PRIoVALUE PRIoPTR
+#define PRIuVALUE PRIuPTR
+#define PRIxVALUE PRIxPTR
+#define PRIXVALUE PRIXPTR
+#define PRIsVALUE PRIiPTR
+#else
+#define PRIdVALUE PRI_VALUE_PREFIX"d"
+#define PRIoVALUE PRI_VALUE_PREFIX"o"
+#define PRIuVALUE PRI_VALUE_PREFIX"u"
+#define PRIxVALUE PRI_VALUE_PREFIX"x"
+#define PRIXVALUE PRI_VALUE_PREFIX"X"
+#define PRIsVALUE PRI_VALUE_PREFIX"i"
+#endif
+#ifndef PRI_VALUE_PREFIX
+# define PRI_VALUE_PREFIX ""
+#endif
+#endif
+
+#ifndef RETURN_SIZED_ENUMERATOR
+#define RETURN_SIZED_ENUMERATOR(obj, argc, argv, size) RETURN_ENUMERATOR(obj, argc, argv)
+#endif
+
+#ifndef Check_TypedStruct
+#define Check_TypedStruct(v,t) rb_check_typeddata((VALUE)(v),(t))
+#endif
 
 template< class T > struct remove_pointer                    {typedef T type;};
 template< class T > struct remove_pointer<T*>                {typedef T type;};
