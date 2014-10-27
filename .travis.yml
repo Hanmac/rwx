@@ -5,7 +5,7 @@ cache:
 - apt
 
 rvm:
-#- rbx-2.2.7
+- rbx-2.2.7
 #- 2.1.1-clang
 - 2.1.1
 #- 2.1.3-clang
