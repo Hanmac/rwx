@@ -43,7 +43,7 @@ DLL_LOCAL VALUE _alloc(VALUE self)
 {
 	app_protected();
 
-	for(VALUE klass = self; klass != rb_cWXProperty; klass = rb_class_get_superclass(klass))
+	for(VALUE klass = self; klass != rb_cWXProperty; klass = RCLASS_SUPER(klass))
 	{
 		for(infoholdertype::const_iterator it = infoklassholder.begin(); it != infoklassholder.end();++it) {
 			if(it->second == klass) {
