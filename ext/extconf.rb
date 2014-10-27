@@ -15,23 +15,25 @@ if(wx_config = find_executable('wx-config'))
 		abort("wx version outdated, please update to 3.0.0 or newer")
 	end
 	
+	ruby_cc = CONFIG["CC"]
+	ruby_cxx = CONFIG["CXX"]
 	# An ruby extension does need to be build against
 	# the same compiler as ruby was
-	unless CONFIG["CC"] && find_executable(CONFIG["CC"])
+	unless ruby_cc && find_executable(ruby_cc)
 		abort("C compiler not found!")
 	end
-	unless CONFIG["CXX"] && find_executable(CONFIG["CXX"])
+	unless ruby_cxx && find_executable(ruby_cxx)
 		abort("C++ compiler not found!")
 	end
 	
 	cc = `#{wx_config} --cc`.chomp
-	unless cc == CONFIG["CC"]
-		warn("CC compiler missmatch %s == %s" % [cc, CONFIG["CC"]])
+	unless cc == ruby_cc
+		abort("CC compiler missmatch %s == %s" % [cc, ruby_cc])
 	end
 	
 	cxx = `#{wx_config} --cxx`.chomp
-	unless cxx == CONFIG["CXX"]
-		warn("CXX compiler missmatch %s == %s" % [cxx, CONFIG["CXX"]])
+	unless cxx == ruby_cxx
+		abort("CXX compiler missmatch %s == %s" % [cxx, ruby_cxx])
 	end
 	
 	#earlier versions of ruby does not have that constant
