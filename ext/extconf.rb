@@ -51,7 +51,7 @@ if(wx_config = find_executable('wx-config'))
 	extra_libs.each {|l|
 		pkg = pkg_config(l)
 		#because pkg forgot to add the include paths to cxx flags
-		$CXXFLAGS << pkg[0] if pkg && !$CXXFLAGS[pkg[0]]
+		$CXXFLAGS << " " << pkg[0] if pkg && !$CXXFLAGS[pkg[0]]
 	}
 	
 	all = " -fvisibility-inlines-hidden"
@@ -65,6 +65,8 @@ if(wx_config = find_executable('wx-config'))
 	$CXXFLAGS << `#{wx_config} --cxxflags`.chomp
 	$CPPFLAGS << `#{wx_config} --cppflags`.chomp
 	$LDFLAGS << `#{wx_config} --libs all`.chomp
+	
+	# TODO add extra check if a lib of wx is missing
 	
 	with_cflags(" -x c++ ") {
 		# need c++ for some of the tests
