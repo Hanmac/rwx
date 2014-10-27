@@ -5,11 +5,13 @@ cache:
 - apt
 
 rvm:
-- 2.1.1-clang
+- rbx-2.2.7
+- rbx-head
+#- 2.1.1-clang
 - 2.1.1
-- 2.1.3-clang
+#- 2.1.3-clang
 - 2.1.3
-- ruby-head-clang
+#- ruby-head-clang
 - ruby-head
 
 before_script:
