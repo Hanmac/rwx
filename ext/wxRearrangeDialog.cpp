@@ -73,7 +73,7 @@ DLL_LOCAL VALUE _AddExtraControls(int argc,VALUE *argv,VALUE self)
 	rb_check_frozen(self);
 
 	VALUE wnd,hash;
-	wxWindow *cwnd;
+	wxWindow *cwnd = NULL;
 	rb_scan_args(argc, argv, "01:",&wnd,&hash);
 	if(rb_obj_is_kind_of(wnd,rb_cClass) && rb_class_inherited(wnd,rb_cWXWindow)) {
 		VALUE args[] = {self,hash};
