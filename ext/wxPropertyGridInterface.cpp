@@ -64,7 +64,7 @@ DLL_LOCAL void _set_extra_style(wxWindow *wnd,VALUE hash)
 DLL_LOCAL VALUE _append(int argc,VALUE *argv,VALUE self)
 {
 	VALUE val,prop,hash;
-	rb_scan_args(argc, argv, "11:",&val,prop,&hash);
+	rb_scan_args(argc, argv, "11:",&val,&prop,&hash);
 
 	wxPGProperty * cprop = unwrap<wxPGProperty*>(val);
 
