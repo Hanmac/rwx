@@ -41,7 +41,11 @@ wxFontEncoding unwrapenum< wxFontEncoding >(const VALUE &venc)
 	VALUE tmp = venc;
 	if(rb_obj_is_kind_of(tmp,rb_cString))
 	{
-		tmp = rb_enc_from_encoding(rb_enc_find(unwrap<char*>(tmp)));
+		rb_encoding *rb_enc = rb_enc_find(unwrap<char*>(tmp));
+		if(rb_enc)
+			tmp = rb_enc_from_encoding(rb_enc);
+		else
+			return wxFONTENCODING_DEFAULT;
 	}
 	for(encodingholdertype::iterator it = encodingholder.begin();it != encodingholder.end();++it)
 	{
@@ -53,7 +57,10 @@ wxFontEncoding unwrapenum< wxFontEncoding >(const VALUE &venc)
 
 void registerEnc(wxFontEncoding enc,const char* name)
 {
-	encodingholder[enc]=rb_enc_from_encoding(rb_enc_find(name));
+	rb_encoding *rb_enc = rb_enc_find(name);
+
+	if(rb_enc)
+		encodingholder[enc]=rb_enc_from_encoding(rb_enc);
 }
 #endif
 
