@@ -72,19 +72,44 @@ void registerDataType(VALUE klass)
 	registerDataType(klass, RUBY_TYPED_NEVER_FREE, NULL);
 }
 
+bool check_class(VALUE obj, VALUE klass)
+{
+	bool result = rb_obj_is_kind_of(obj, klass);
+	if(!result)
+		rb_raise(rb_eTypeError,
+			"Expected %"PRIsVALUE" got %"PRIsVALUE"!",
+			RB_CLASSNAME(klass),
+			RB_OBJ_CLASSNAME(obj)
+		);
+	return result;
+}
+
+VALUE wrap(wxObject *obj, wxClassInfo *info)
+{
+	//wxClassInfo *info = obj->GetClassInfo();
+	VALUE klass = wrapClass(info);
+	if(!NIL_P(klass))
+	{
+		return wrapTypedPtr(obj,klass);
+	}
+	rb_warn("%s type unknown",wxString(info->GetClassName()).c_str().AsChar());
+	return Qnil;
+}
+
+
 void* unwrapTypedPtr(const VALUE &obj, rb_data_type_t* rbdata)
 {
 	if(NIL_P(obj))
 		return NULL;
 
 	if(!rbdata) {
-		rb_raise(rb_eTypeError,"%s unknown datatype", rb_obj_classname(obj));
+		rb_raise(rb_eTypeError,"%"PRIsVALUE" unknown datatype", RB_OBJ_CLASSNAME(obj));
 		return NULL;
 	}
 	void* data = Check_TypedStruct(obj, rbdata);
 	if(!data) {
 		rb_raise(
-			rb_eRuntimeError, "destroyed object of %s", rb_obj_classname(obj)
+			rb_eRuntimeError, "destroyed object of %"PRIsVALUE, RB_OBJ_CLASSNAME(obj)
 		);
 		return NULL;
 	}
@@ -118,7 +143,7 @@ VALUE wrapTypedPtr(void *arg,VALUE klass, bool allowNull)
 	if(arg || allowNull){
 		rb_data_type_t* datatype = unwrapDataType(klass);
 		if(!datatype)
-			rb_fatal("%"PRIsVALUE" unknown datatype", klass);
+			rb_fatal("%"PRIsVALUE" unknown datatype", RB_CLASSNAME(klass));
 
 		return TypedData_Wrap_Struct(klass, datatype, arg);
 	}
@@ -315,7 +340,7 @@ int unwrap_iconflag(const VALUE &val,int mask)
 	int result = unwrapenum(val,"icon_flag");
 
 	if((result & mask) != result)
-		rb_raise(rb_eTypeError,"%"PRIsVALUE" is not a in %d mask", val, mask);
+		rb_raise(rb_eTypeError,"%"PRIsVALUE" is not a in %d mask", RB_OBJ_STRING(val), mask);
 	
 	return result;
 

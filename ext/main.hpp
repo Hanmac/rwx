@@ -87,25 +87,15 @@
 #define RUBY_TYPED_NEVER_FREE RUBY_NEVER_FREE
 #endif
 
-#ifndef PRIsVALUE
-#if defined PRIdPTR && !defined PRI_VALUE_PREFIX
-#define PRIdVALUE PRIdPTR
-#define PRIoVALUE PRIoPTR
-#define PRIuVALUE PRIuPTR
-#define PRIxVALUE PRIxPTR
-#define PRIXVALUE PRIXPTR
-#define PRIsVALUE PRIiPTR
+#ifdef PRIsVALUE
+#define RB_OBJ_CLASSNAME(obj) rb_obj_class(obj)
+#define RB_CLASSNAME(obj) (obj)
+#define RB_OBJ_STRING(obj) (obj)
 #else
-#define PRIdVALUE PRI_VALUE_PREFIX"d"
-#define PRIoVALUE PRI_VALUE_PREFIX"o"
-#define PRIuVALUE PRI_VALUE_PREFIX"u"
-#define PRIxVALUE PRI_VALUE_PREFIX"x"
-#define PRIXVALUE PRI_VALUE_PREFIX"X"
-#define PRIsVALUE PRI_VALUE_PREFIX"i"
-#endif
-#ifndef PRI_VALUE_PREFIX
-# define PRI_VALUE_PREFIX ""
-#endif
+#define PRIsVALUE "s"
+#define RB_OBJ_CLASSNAME(obj) rb_obj_classname(obj)
+#define RB_CLASSNAME(obj) rb_class2name(obj)
+#define RB_OBJ_STRING(obj) rb_string_value_cstr((volatile VALUE*)&obj)
 #endif
 
 #ifndef RETURN_SIZED_ENUMERATOR
@@ -214,19 +204,14 @@ DLL_LOCAL VALUE wrapClass(const wxClassInfo * info);
 
 DLL_LOCAL rb_data_type_t* unwrapDataType(const VALUE& klass);
 
+DLL_LOCAL VALUE wrap(wxObject *obj, wxClassInfo *info);
+
 template <typename T>
 VALUE wrap(T *arg)
 {
 	if(!arg)
 		return Qnil;
-	wxClassInfo *info = arg->GetClassInfo();
-	VALUE klass = wrapClass(info);
-	if(!NIL_P(klass))
-	{
-		return wrapTypedPtr(arg,klass);
-	}
-	rb_warn("%s type unknown",wxString(info->GetClassName()).c_str().AsChar());
-	return Qnil;
+	return wrap(arg,arg->GetClassInfo());
 }
 
 template <typename T>
@@ -237,6 +222,7 @@ VALUE wrap(const T *arg)
 	return result;
 }
 
+bool check_class(VALUE obj, VALUE klass);
 
 DLL_LOCAL void* unwrapTypedPtr(const VALUE &obj, rb_data_type_t* rbdata);
 
@@ -248,14 +234,9 @@ T* unwrapTypedPtr(const VALUE &obj,const VALUE &klass, rb_data_type_t* rbdata = 
 
 	if(rb_obj_is_instance_of(obj,rb_cClass) && rb_class_inherited(obj,klass)) {
 		return unwrapTypedPtr<T>(rb_class_new_instance(0,NULL,obj), klass, rbdata);
-	}else if (rb_obj_is_kind_of(obj, klass)){
+	}else if (check_class(obj, klass)){
 		return (T*)unwrapTypedPtr(obj, rbdata ? rbdata : unwrapDataType(klass));
 	}else{
-		rb_raise(rb_eTypeError,
-			"Expected %s got %s!",
-			rb_class2name(klass),
-			rb_obj_classname(obj)
-		);
 		return NULL;
 	}
 
@@ -377,7 +358,9 @@ DLL_LOCAL bool window_parent_check(VALUE window, wxWindow* parent, T* &w)
 	w = unwrap<T*>(window);
 	if(w && w->GetParent() != parent)
 	{
-		rb_raise(rb_eArgError, "%s has wrong parent.",unwrap<char*>(window));
+		rb_raise(rb_eArgError, "%"PRIsVALUE" has wrong parent.",
+			RB_OBJ_STRING(window)
+		);
 		return false;
 	}
 	return true;
