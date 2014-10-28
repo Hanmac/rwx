@@ -16,7 +16,10 @@ wxString unwrapWildCard(const VALUE &val)
 	wxArrayString wild,desc;
 
 	if(!wxParseCommonDialogsFilter(wildcard,wild,desc)){
-		rb_raise(rb_eArgError,"'%"PRIsVALUE"' is not a valid wildcard", val);
+		rb_raise(rb_eArgError,
+			"'%"PRIsVALUE"' is not a valid wildcard",
+			RB_OBJ_STRING(val)
+		);
 		return wxEmptyString;
 	}
 	return wildcard;

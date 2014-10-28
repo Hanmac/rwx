@@ -46,7 +46,10 @@ bool loadxrc(wxObject *self,VALUE name,wxWindow *parent)
 
 		wxString classname = wxString(self->GetClassInfo()->GetClassName());
 		if(!(wxXmlResource::Get()->LoadObjectRecursively(self,parent,unwrap<wxString>(name),classname)))
-			rb_raise(rb_eNameError,"Named %s '%"PRIsVALUE"' is not found.", classname.GetData().AsChar(), name);
+			rb_raise(rb_eNameError,
+				"Named %s '%"PRIsVALUE"' is not found.",
+				classname.GetData().AsChar(), RB_OBJ_STRING(name)
+			);
 		return true;
 	}
 	return false;

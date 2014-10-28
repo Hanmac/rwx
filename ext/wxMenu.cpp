@@ -48,17 +48,12 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-singlereturn(GetMenuBar);
-
-DLL_LOCAL VALUE _each_size(VALUE self)
-{
-	return UINT2NUM(_self->GetMenuItemCount());
-}
-
+singlereturn(GetMenuBar)
+singlereturn(GetMenuItemCount)
 
 DLL_LOCAL VALUE _each(VALUE self)
 {
-	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_each_size));
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_GetMenuItemCount));
 	std::size_t count = _self->GetMenuItemCount();
 	for(std::size_t i = 0;i < count;++i)
 		rb_yield(wrap(_self->FindItemByPosition(i)));
@@ -75,9 +70,9 @@ void bind_callback(wxMenu* menu,wxWindowID id)
 
 DLL_LOCAL bool check_title(wxWindowID wid, VALUE id, VALUE text)
 {
-	if(!wxIsStockID(wid) && (NIL_P(text) || rb_str_length(text) == INT2FIX(0)))
+	if(!wxIsStockID(wid) && (NIL_P(text) || RSTRING_LEN(text) == 0))
 	{
-		rb_raise(rb_eArgError,"id %"PRIsVALUE"s (%d) needs an text", id, wid);
+		rb_raise(rb_eArgError,"id %"PRIsVALUE"s (%d) needs an text", RB_OBJ_STRING(id), wid);
 		return false;
 	}
 	return true;
@@ -237,7 +232,10 @@ DLL_LOCAL VALUE _appendShift(VALUE self,VALUE val)
 	} else {
 		wxWindowID id = unwrapID(val);
 		if(!wxIsStockID(id))
-			rb_raise(rb_eArgError,"id \"%"PRIsVALUE"\" cant be fast added", val);
+			rb_raise(
+				rb_eArgError, "id \"%"PRIsVALUE"\" cant be fast added",
+				RB_OBJ_STRING(val)
+			);
 		_self->Append(id);
 	}
 	return self;

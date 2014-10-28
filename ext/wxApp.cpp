@@ -53,7 +53,7 @@ public:
 void app_protected()
 {
 	if(!ruby_app_inited)
-		rb_raise(rb_eArgError,"%"PRIsVALUE" is not running.",rb_cWXApp);
+		rb_raise(rb_eArgError,"%"PRIsVALUE" is not running.",RB_CLASSNAME(rb_cWXApp));
 }
 
 

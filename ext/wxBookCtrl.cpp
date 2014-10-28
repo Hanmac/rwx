@@ -195,7 +195,10 @@ DLL_LOCAL VALUE _get_page_image(VALUE self,VALUE idx)
 #if wxUSE_AUI
 	//TODO should be fixed in wx
 	if(rb_obj_is_kind_of(self,rb_cWXAuiNotebook))
-		rb_raise(rb_eArgError,"get_page_image is not supported for %"PRIsVALUE,rb_cWXAuiNotebook);
+		rb_raise(
+			rb_eArgError,"get_page_image is not supported for %"PRIsVALUE,
+			RB_CLASSNAME(rb_cWXAuiNotebook)
+		);
 #endif
 	int cidx(NUM2INT(idx));
 	if(check_index(cidx,_self->GetPageCount()))

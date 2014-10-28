@@ -264,6 +264,8 @@ DLL_LOCAL VALUE _set(int argc,VALUE *argv,VALUE self)
 				wxSize size(_self->GetSize());
 				wxRect vrect(unwrap<wxRect>(vx));
 
+
+
 				if(wxRect(size).Contains(vrect))
 				{
 					_self->SetRGB(vrect,c.Red(),c.Green(),c.Blue());
@@ -274,9 +276,10 @@ DLL_LOCAL VALUE _set(int argc,VALUE *argv,VALUE self)
 									_self->SetAlpha(i,j,c.Alpha());
 					}
 				} else {
+					VALUE rsize = _getSize(self);
 					rb_raise(rb_eArgError,
 						"%"PRIsVALUE" does not fit into image of %"PRIsVALUE,
-						rb_inspect(vx), rb_inspect(wrap(size))
+						RB_OBJ_STRING(vx), RB_OBJ_STRING(rsize)
 					);
 				}
 			} else {

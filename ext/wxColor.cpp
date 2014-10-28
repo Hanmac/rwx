@@ -73,7 +73,8 @@ wxColor unwrap< wxColor >(const VALUE &vcolor)
 		if(!col.IsOk())
 			rb_raise(
 				rb_eTypeError,
-				"%"PRIsVALUE" is not valid %"PRIsVALUE, vcolor, rb_cWXColor
+				"%"PRIsVALUE" is not valid %"PRIsVALUE,
+				RB_OBJ_STRING(vcolor), RB_CLASSNAME(rb_cWXColor)
 			);
 		return col;
 	}else if(FIXNUM_P(vcolor))
@@ -99,7 +100,9 @@ wxColor unwrap< wxColor >(const VALUE &vcolor)
 	}else{
 		wxColor *col = unwrap<wxColor*>(vcolor);
 		if(!col->IsOk())
-			rb_raise(rb_eTypeError,"invalid %"PRIsVALUE, rb_cWXColor);
+			rb_raise(rb_eTypeError,
+				"invalid %"PRIsVALUE, RB_CLASSNAME(rb_cWXColor)
+			);
 		return *col;
 	}
 
