@@ -271,34 +271,29 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE temp;
-		bool disabled = false;
-
-		set_option(extra_style,ExtraStyle,int)
-		set_option(name,Name,wxString)
-		set_option(label,Label,wxString)
+		set_obj_option(hash,"extra_style",&wxWindow::SetExtraStyle,_self);
+		set_obj_option(hash,"name",&wxWindow::SetName,_self);
+		set_obj_option(hash,"label",&wxWindow::SetLabel,_self);
 
 #if wxUSE_HELP
-		set_option(help_text,HelpText,wxString)
+		set_obj_option(hash,"help_text",&wxWindow::SetHelpText,_self);
 #endif // wxUSE_HELP
 #if wxUSE_TOOLTIPS
-		set_option(tool_tip,ToolTip,wxToolTip*)
+		set_obj_option(hash,"tool_tip",&wxWindow::SetToolTip,_self);
 #endif // wxUSE_TOOLTIPS
 
-		set_option(font,Font,wxFont)
-		set_option(cursor,Cursor,wxCursor)
+		set_obj_option(hash,"font",&wxWindow::SetFont,_self);
+		set_obj_option(hash,"cursor",&wxWindow::SetCursor,_self);
 
-		set_option(background_color,BackgroundColour,wxColour)
-		set_option(foreground_color,ForegroundColour,wxColour)
+		set_obj_option(hash,"background_color",&wxWindow::SetBackgroundColour,_self);
+		set_obj_option(hash,"foreground_color",&wxWindow::SetForegroundColour,_self);
 
-		set_option_func(id,Id,unwrapID)
+		set_obj_option(hash,"id",&wxWindow::SetId,_self, &unwrapID );
 
-		set_option(size,Size,wxSize)
-		set_option(position,Position,wxPoint)
+		set_obj_option(hash,"size",&wxWindow::SetSize,_self);
+		set_obj_option(hash,"position",&wxWindow::SetPosition,_self);
 
-		set_hash_option(hash,"disabled",disabled);
-		if(disabled)
-			_self->Disable();
+		set_obj_option(hash,"disabled",&wxWindow::Disable,_self);
 
 	}
 
