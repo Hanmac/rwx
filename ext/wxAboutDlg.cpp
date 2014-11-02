@@ -39,22 +39,6 @@ namespace AboutDlg {
 
 APP_PROTECT(RubyAboutDlg)
 
-#undef set_option
-#define set_option(name,cname,type) \
-	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern(#name))))) \
-		info.Set##cname(unwrap<type>(value));
-
-#define set_option2(name,cname) \
-	if(RTEST(value = rb_hash_aref(hash,ID2SYM(rb_intern(#name))))) \
-	{\
-		value = rb_ary_to_ary(value);\
-		if(RARRAY_LEN(value) > 1) {\
-			info.Set##cname(unwrap<wxString>(RARRAY_AREF(value,0)),unwrap<wxString>(RARRAY_AREF(value,1)));\
-		}else \
-		{\
-			info.Set##cname(unwrap<wxString>(RARRAY_AREF(value,0)));\
-		}\
-	}
 
 wxAboutDialogInfo toInto(VALUE hash)
 {
@@ -62,20 +46,19 @@ wxAboutDialogInfo toInto(VALUE hash)
 	if(NIL_P(hash))
 		return info;
 
-	VALUE value;
+	set_obj_option(hash, "name", &wxAboutDialogInfo::SetName, info);
+	set_obj_option(hash, "version", &wxAboutDialogInfo::SetVersion, info);
+	set_obj_option(hash, "description", &wxAboutDialogInfo::SetDescription, info);
+	set_obj_option(hash, "copyright", &wxAboutDialogInfo::SetCopyright, info);
+	set_obj_option(hash, "licence", &wxAboutDialogInfo::SetLicence, info);
+	set_obj_option(hash, "web_site", &wxAboutDialogInfo::SetWebSite, info);
 
-	set_option(name,Name,wxString)
-	set_option2(version,Version)
-	set_option(description,Description,wxString)
-	set_option(copyright,Copyright,wxString)
-	set_option(licence,Licence,wxString)
-	set_option2(web_site,WebSite)
-	set_option(icon,Icon,wxIcon)
+	set_obj_option(hash, "icon", &wxAboutDialogInfo::SetIcon, info);
 
-	set_option(developers,Developers,wxArrayString)
-	set_option(doc_writers,DocWriters,wxArrayString)
-	set_option(artists,Artists,wxArrayString)
-	set_option(translators,Translators,wxArrayString)
+	set_obj_option(hash, "developers", &wxAboutDialogInfo::SetDevelopers, info);
+	set_obj_option(hash, "doc_writers", &wxAboutDialogInfo::SetDocWriters, info);
+	set_obj_option(hash, "artists", &wxAboutDialogInfo::SetArtists, info);
+	set_obj_option(hash, "translators", &wxAboutDialogInfo::SetTranslators, info);
 
 	return info;
 }
@@ -83,7 +66,7 @@ wxAboutDialogInfo toInto(VALUE hash)
 DLL_LOCAL VALUE _aboutBox(int argc,VALUE *argv,VALUE self)
 {
 	VALUE hash,parent;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
+	rb_scan_args(argc, argv, "10:",&parent,&hash);
 
 	app_protected();
 
@@ -99,7 +82,7 @@ DLL_LOCAL VALUE _aboutBox(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL VALUE _genericaboutBox(int argc,VALUE *argv,VALUE self)
 {
 	VALUE hash,parent;
-	rb_scan_args(argc, argv, "11",&parent,&hash);
+	rb_scan_args(argc, argv, "10:",&parent,&hash);
 
 	app_protected();
 
