@@ -82,13 +82,13 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	if(rb_obj_is_kind_of(hash,rb_cString) &&
 		rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE temp;
+		set_obj_option(hash,"wildcard", &wxFileDialogBase::SetWildcard, _self, unwrapWildCard);
 
-		set_option_func(wildcard,Wildcard,unwrapWildCard)
-		set_option(message,Message,wxString)
-		set_option(directory,Directory,wxString)
-		set_option(filename,Filename,wxString)
-		set_option(path,Path,wxString)
+		set_obj_option(hash,"message", &wxFileDialogBase::SetMessage, _self);
+		set_obj_option(hash,"directory", &wxFileDialogBase::SetDirectory, _self);
+		set_obj_option(hash,"filename", &wxFileDialogBase::SetFilename, _self);
+		set_obj_option(hash,"path", &wxFileDialogBase::SetPath, _self);
+		set_obj_option(hash,"wildcard", &wxFileDialogBase::SetPath, _self);
 
 	}
 
