@@ -48,10 +48,10 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		if(rb_obj_is_kind_of(hash,rb_cHash))
 		{
 
-			set_hash_option(hash,"color",&wxFontData::SetColour, data);
-			set_hash_option(hash,"font",&wxFontData::SetInitialFont, data);
-			set_hash_option(hash,"symbols",&wxFontData::SetAllowSymbols, data);
-			set_hash_option(hash,"show_help",&wxFontData::SetShowHelp, data);
+			set_obj_option(hash,"color",&wxFontData::SetColour, data);
+			set_obj_option(hash,"font",&wxFontData::SetInitialFont, data);
+			set_obj_option(hash,"symbols",&wxFontData::SetAllowSymbols, data);
+			set_obj_option(hash,"show_help",&wxFontData::SetShowHelp, data);
 
 		}
 		_self->Create(unwrap<wxWindow*>(parent),data);
