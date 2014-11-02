@@ -358,7 +358,7 @@ DLL_LOCAL bool window_parent_check(VALUE window, wxWindow* parent, T* &w)
 	w = unwrap<T*>(window);
 	if(w && w->GetParent() != parent)
 	{
-		rb_raise(rb_eArgError, "%"PRIsVALUE" has wrong parent.",
+		rb_raise(rb_eArgError, "%" PRIsVALUE " has wrong parent.",
 			RB_OBJ_STRING(window)
 		);
 		return false;
@@ -388,9 +388,8 @@ DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
 	return other;\
 }
 
-
-template <typename T>
-DLL_LOCAL bool set_hash_option(VALUE hash,const char* name,T& val,T func(const VALUE&) = unwrap<T> )
+template <typename T, typename T2>
+DLL_LOCAL bool set_hash_option(VALUE hash,const char* name,T& val,T2 func(const VALUE&) )
 {
 	VALUE temp;
 	if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern(name)))))
@@ -399,27 +398,79 @@ DLL_LOCAL bool set_hash_option(VALUE hash,const char* name,T& val,T func(const V
 		return true;
 	}
 	return false;
-
 }
 
-template <typename C, typename T>
-DLL_LOCAL bool set_hash_option(VALUE hash,const char* name,void (C::*set)(const T&), C& obj,T func(const VALUE&) = unwrap<T> )
+template <typename T>
+DLL_LOCAL bool set_hash_option(VALUE hash,const char* name,T& val)
+{
+	return set_hash_option(hash, name, val, unwrap<T>);
+}
+
+
+
+template <typename C, typename C2, typename T, typename V>
+DLL_LOCAL bool set_obj_option(VALUE hash,const char* name,V (C::*set)(const T&), C2 *obj,T func(const VALUE&) = unwrap<T> )
 {
 	T val;
 	bool result = set_hash_option(hash,name,val,func);
 	if(result) {
-		(obj.*set)(val);
+		(obj->*set)(val);
 	}
 	return result;
 
 }
-template <typename C, typename T>
-DLL_LOCAL bool set_hash_option(VALUE hash,const char* name,void (C::*set)(T), C& obj,T func(const VALUE&) = unwrap<T> )
+
+
+template <typename C, typename C2, typename T, typename V>
+DLL_LOCAL bool set_obj_option(VALUE hash,const char* name,V (C::*set)(T), C2* obj,T func(const VALUE&) = unwrap<T>)
 {
 	T val;
 	bool result = set_hash_option(hash,name,val,func);
 	if(result) {
-		(obj.*set)(val);
+		(obj->*set)(val);
+	}
+	return result;
+
+}
+
+
+template <typename C, typename C2, typename V>
+DLL_LOCAL bool set_obj_option(VALUE hash,const char* name,V (C::*set)(), C2* obj)
+{
+	bool val;
+	bool result = set_hash_option(hash,name,val,unwrap<bool>);
+	if(val) {
+		(obj->*set)();
+	}
+	return result;
+
+}
+
+//*
+template <typename C, typename V>
+DLL_LOCAL bool set_obj_option(VALUE hash,const char* name,V (C::*set)(), C& obj)
+{
+	return set_obj_option(hash, name, set, &obj);
+}
+template <typename C,typename T, typename V>
+DLL_LOCAL bool set_obj_option(VALUE hash,const char* name,V (C::*set)(T), C& obj,T func(const VALUE&) = unwrap<T>)
+{
+	return set_obj_option(hash, name, set, &obj, func);
+}
+template <typename C, typename T, typename V>
+DLL_LOCAL bool set_obj_option(VALUE hash,const char* name,V (C::*set)(const T&), C& obj,T func(const VALUE&) = unwrap<T> )
+{
+	return set_obj_option(hash, name, set, &obj, func);
+}
+//*/
+
+template <typename C, typename V>
+DLL_LOCAL bool set_obj_option(VALUE hash,const char* name,V (C::*set)(const wxString&, const wxString&), C& obj)
+{
+	wxArrayString val;
+	bool result = set_hash_option(hash,name,val);
+	if(result) {
+		(obj.*set)(val[0], val.size() > 1 ? val[1] : wxString() );
 	}
 	return result;
 

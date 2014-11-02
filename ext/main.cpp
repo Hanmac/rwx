@@ -77,7 +77,7 @@ bool check_class(VALUE obj, VALUE klass)
 	bool result = rb_obj_is_kind_of(obj, klass);
 	if(!result)
 		rb_raise(rb_eTypeError,
-			"Expected %"PRIsVALUE" got %"PRIsVALUE"!",
+			"Expected %" PRIsVALUE " got %" PRIsVALUE "!",
 			RB_CLASSNAME(klass),
 			RB_OBJ_CLASSNAME(obj)
 		);
@@ -103,13 +103,13 @@ void* unwrapTypedPtr(const VALUE &obj, rb_data_type_t* rbdata)
 		return NULL;
 
 	if(!rbdata) {
-		rb_raise(rb_eTypeError,"%"PRIsVALUE" unknown datatype", RB_OBJ_CLASSNAME(obj));
+		rb_raise(rb_eTypeError,"%" PRIsVALUE " unknown datatype", RB_OBJ_CLASSNAME(obj));
 		return NULL;
 	}
 	void* data = Check_TypedStruct(obj, rbdata);
 	if(!data) {
 		rb_raise(
-			rb_eRuntimeError, "destroyed object of %"PRIsVALUE, RB_OBJ_CLASSNAME(obj)
+			rb_eRuntimeError, "destroyed object of %" PRIsVALUE, RB_OBJ_CLASSNAME(obj)
 		);
 		return NULL;
 	}
@@ -143,7 +143,7 @@ VALUE wrapTypedPtr(void *arg,VALUE klass, bool allowNull)
 	if(arg || allowNull){
 		rb_data_type_t* datatype = unwrapDataType(klass);
 		if(!datatype)
-			rb_fatal("%"PRIsVALUE" unknown datatype", RB_CLASSNAME(klass));
+			rb_fatal("%" PRIsVALUE " unknown datatype", RB_CLASSNAME(klass));
 
 		return TypedData_Wrap_Struct(klass, datatype, arg);
 	}
@@ -340,7 +340,7 @@ int unwrap_iconflag(const VALUE &val,int mask)
 	int result = unwrapenum(val,"icon_flag");
 
 	if((result & mask) != result)
-		rb_raise(rb_eTypeError,"%"PRIsVALUE" is not a in %d mask", RB_OBJ_STRING(val), mask);
+		rb_raise(rb_eTypeError,"%" PRIsVALUE " is not a in %d mask", RB_OBJ_STRING(val), mask);
 	
 	return result;
 
