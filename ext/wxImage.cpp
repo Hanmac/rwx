@@ -278,7 +278,7 @@ DLL_LOCAL VALUE _set(int argc,VALUE *argv,VALUE self)
 				} else {
 					VALUE rsize = _getSize(self);
 					rb_raise(rb_eArgError,
-						"%"PRIsVALUE" does not fit into image of %"PRIsVALUE,
+						"%" PRIsVALUE " does not fit into image of %" PRIsVALUE,
 						RB_OBJ_STRING(vx), RB_OBJ_STRING(rsize)
 					);
 				}

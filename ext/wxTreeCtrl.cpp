@@ -332,7 +332,7 @@ VALUE RubyTreeCtrlItem::GetPrevSibling()
 void RubyTreeCtrlItem::checkDestroyed()
 {
 	if(!GetId().IsOk())
-		rb_raise(rb_eTypeError,"%"PRIsVALUE" has been destroyed",rb_cWXTreeCtrlItem);
+		rb_raise(rb_eTypeError,"%" PRIsVALUE " has been destroyed",rb_cWXTreeCtrlItem);
 }
 
 
