@@ -72,11 +72,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	rb_call_super(argc,argv);
 
-
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE temp;
-		set_option(image_list,ImageList,wxImageList*)
+		set_obj_option(hash, "image_list", &wxBookCtrlBase::SetImageList, _self);
 	}
 
 	return self;
@@ -196,7 +194,7 @@ DLL_LOCAL VALUE _get_page_image(VALUE self,VALUE idx)
 	//TODO should be fixed in wx
 	if(rb_obj_is_kind_of(self,rb_cWXAuiNotebook))
 		rb_raise(
-			rb_eArgError,"get_page_image is not supported for %"PRIsVALUE,
+			rb_eArgError,"get_page_image is not supported for %" PRIsVALUE,
 			RB_CLASSNAME(rb_cWXAuiNotebook)
 		);
 #endif
