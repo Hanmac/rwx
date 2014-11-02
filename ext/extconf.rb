@@ -87,6 +87,7 @@ if(wx_config = find_executable('wx-config'))
 		have_func("wxMessageDialog()","wx/msgdlg.h")
 		have_func("wxGenericMessageDialog()","wx/generic/msgdlgg.h")
 		have_func("wxRichMessageDialog()","wx/richmsgdlg.h")
+    have_func("wxBusyInfoFlags()","wx/busyinfo.h")
 		
 		#check for instance methods, that classes need to have default constuctor
 		have_member_func("wxFontPickerCtrl","GetSelectedColour","wx/fontpicker.h")
@@ -116,5 +117,7 @@ CONFIG["warnflags"].gsub!(
 		"-Wextra" #wxAUI is a bit buggy
 	), "")
 
-create_header
-create_makefile "rwx"
+with_cppflags("-std=c++11") {
+  create_header
+  create_makefile "rwx"
+}
