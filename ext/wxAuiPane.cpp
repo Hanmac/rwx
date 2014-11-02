@@ -20,14 +20,6 @@ VALUE wrap< wxAuiPaneInfo >(wxAuiPaneInfo *vinfo)
 	return wrapTypedPtr(vinfo,rb_cWXAuiPane);
 }
 
-#define set_aui_option(name, cname, func) \
-	if(!NIL_P(temp=rb_hash_aref(vinfo,ID2SYM(rb_intern(#name)))))\
-		info.cname(func(temp));
-
-#define set_aui_option_bool(name, cname) \
-	if(RTEST(rb_hash_aref(vinfo,ID2SYM(rb_intern(#name)))))\
-		info.cname();
-
 template <>
 wxAuiPaneInfo unwrap< wxAuiPaneInfo >(const VALUE &vinfo)
 {
@@ -44,51 +36,28 @@ wxAuiPaneInfo unwrap< wxAuiPaneInfo >(const VALUE &vinfo)
 			return wxAuiPaneInfo().CenterPane();
 		else
 			return wxAuiPaneInfo();
-
-
 	}
 	else if(rb_obj_is_kind_of(vinfo,rb_cHash))
 	{
 		wxAuiPaneInfo info;
-		VALUE temp;
 
-		set_aui_option_bool(default,DefaultPane)
-		set_aui_option_bool(toolbar,ToolbarPane)
+		set_obj_option(vinfo, "default", &wxAuiPaneInfo::DefaultPane, info);
+		set_obj_option(vinfo, "toolbar", &wxAuiPaneInfo::ToolbarPane, info);
 
-		set_aui_option(caption,Caption,unwrap<wxString>)
-		set_aui_option(name,Name,unwrap<wxString>)
-		set_aui_option(icon,Icon,unwrap<wxIcon>)
-		set_aui_option(direction,Direction,unwrapenum< wxAuiManagerDock >)
-		set_aui_option(layer,Layer,NUM2INT)
-		set_aui_option(row,Row,NUM2INT)
+		set_obj_option(vinfo, "caption", &wxAuiPaneInfo::Caption, info);
+		set_obj_option(vinfo, "name", &wxAuiPaneInfo::Caption, info);
+		set_obj_option(vinfo, "icon", &wxAuiPaneInfo::Caption, info);
+		//set_obj_option(vinfo, "direction", &wxAuiPaneInfo::Direction, info, unwrapenum< wxAuiManagerDock >);
+		set_obj_option(vinfo, "layer", &wxAuiPaneInfo::Layer, info);
+		set_obj_option(vinfo, "row", &wxAuiPaneInfo::Row, info);
 
-		set_aui_option(min_size,MinSize,unwrap<wxSize>)
-		set_aui_option(max_size,MaxSize,unwrap<wxSize>)
-		set_aui_option(best_size,BestSize,unwrap<wxSize>)
+		set_obj_option(vinfo, "gripper", &wxAuiPaneInfo::Gripper, info);
+		set_obj_option(vinfo, "gripper_top", &wxAuiPaneInfo::GripperTop, info);
+		set_obj_option(vinfo, "close_button", &wxAuiPaneInfo::CloseButton, info);
+		set_obj_option(vinfo, "maximize_button", &wxAuiPaneInfo::MaximizeButton, info);
+		set_obj_option(vinfo, "minimize_button", &wxAuiPaneInfo::MinimizeButton, info);
+		set_obj_option(vinfo, "pin_button", &wxAuiPaneInfo::PinButton, info);
 
-
-		set_aui_option_bool(dock,Dock)
-		set_aui_option_bool(float,Float)
-		set_aui_option_bool(fixed,Fixed)
-		set_aui_option_bool(resizable,Resizable)
-
-		set_aui_option(top_dockable,TopDockable,RTEST)
-		set_aui_option(bottom_dockable,BottomDockable,RTEST)
-		set_aui_option(left_dockable,LeftDockable,RTEST)
-		set_aui_option(right_dockable,RightDockable,RTEST)
-		set_aui_option(dockable,Dockable,RTEST)
-
-		set_aui_option(floatable,Floatable,RTEST)
-		set_aui_option(movable,Movable,RTEST)
-		set_aui_option(resizable,Resizable,RTEST)
-
-		set_aui_option(gripper,Gripper,RTEST)
-		set_aui_option(gripper_top,GripperTop,RTEST)
-
-		set_aui_option(close_button,CloseButton,RTEST)
-		set_aui_option(maximize_button,MaximizeButton,RTEST)
-		set_aui_option(minimize_button,MinimizeButton,RTEST)
-		set_aui_option(pin_button,PinButton,RTEST)
 		return info;
 	}else
 		return *unwrapTypedPtr<wxAuiPaneInfo>(vinfo, rb_cWXAuiPane);
