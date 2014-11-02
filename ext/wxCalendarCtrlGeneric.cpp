@@ -58,12 +58,6 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	rb_call_super(argc,argv);
 
-	if(rb_obj_is_kind_of(name,rb_cString) &&
-		rb_obj_is_kind_of(hash,rb_cHash))
-	{
-		VALUE temp;
-		set_option(date,Date,wxDateTime)
-	}
 	return self;
 }
 
