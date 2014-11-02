@@ -17,7 +17,7 @@ wxString unwrapWildCard(const VALUE &val)
 
 	if(!wxParseCommonDialogsFilter(wildcard,wild,desc)){
 		rb_raise(rb_eArgError,
-			"'%"PRIsVALUE"' is not a valid wildcard",
+			"'%" PRIsVALUE "' is not a valid wildcard",
 			RB_OBJ_STRING(val)
 		);
 		return wxEmptyString;
@@ -100,11 +100,12 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		int filter;
-		VALUE temp;
-		set_option_func(wildcard,Wildcard,unwrapWildCard)
-		set_option(directory,Directory,wxString)
-		set_option(filename,Filename,wxString)
-		set_option(path,Path,wxString)
+
+		set_obj_option(hash,"wildcard", &wxFileCtrlBase::SetWildcard, _self, unwrapWildCard);
+
+		set_obj_option(hash,"directory", &wxFileCtrlBase::SetDirectory, _self);
+		set_obj_option(hash,"filename", &wxFileCtrlBase::SetFilename, _self);
+		set_obj_option(hash,"path", &wxFileCtrlBase::SetPath, _self);
 
 		if(set_hash_option(hash,"filter_index",filter))
 		{
