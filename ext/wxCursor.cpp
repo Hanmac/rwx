@@ -7,6 +7,12 @@
 
 #include "wxCursor.hpp"
 #include "wxApp.hpp"
+#include "wxBitmap.hpp"
+#include "wxColor.hpp"
+
+#if wxUSE_BUSYINFO
+#include <wx/busyinfo.h>
+#endif
 
 VALUE rb_cWXCursor;
 
@@ -21,7 +27,7 @@ wxCursor* unwrap< wxCursor* >(const VALUE &vbitmap)
 {
 	if(NIL_P(vbitmap))
 		return &wxNullCursor;
-	if(SYMBOL_P(vbitmap))
+	if(FIXNUM_P(vbitmap) || SYMBOL_P(vbitmap))
 	{
 		return new wxCursor(unwrapenum<wxStockCursor>(vbitmap));
 	}else if(rb_obj_is_kind_of(vbitmap,rb_cWXCursor))
@@ -50,10 +56,7 @@ DLL_LOCAL VALUE _busy(int argc,VALUE *argv,VALUE self)
 
 	app_protected();
 
-	if(NIL_P(cursor))
-		cursor = ID2SYM(rb_intern("wait"));
-
-	wxBeginBusyCursor(unwrap<wxCursor*>(cursor));
+	wxBeginBusyCursor(NIL_P(cursor) ? wxHOURGLASS_CURSOR : unwrap<wxCursor*>(cursor));
 	rb_yield(Qnil);
 	wxEndBusyCursor();
 	return self;
@@ -65,6 +68,43 @@ DLL_LOCAL VALUE _isBusy(VALUE self)
 	return wrap(wxIsBusy());
 }
 
+#if wxUSE_BUSYINFO
+
+DLL_LOCAL VALUE _busyinfo(int argc,VALUE *argv,VALUE self)
+{
+	VALUE message, parent, hash;
+	rb_scan_args(argc, argv, "11:",&message, &parent, &hash);
+
+	app_protected();
+#ifdef HAVE_WXBUSYINFOFLAGS
+	wxBusyInfoFlags flags;
+	flags.Label(unwrap<wxString>(message));
+	flags.Parent(unwrap<wxWindow*>(parent));
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+
+		set_obj_option(hash,"icon",&wxBusyInfoFlags::Icon, flags);
+		set_obj_option(hash,"title",&wxBusyInfoFlags::Title, flags);
+		set_obj_option(hash,"text",&wxBusyInfoFlags::Text, flags);
+		set_obj_option(hash,"label",&wxBusyInfoFlags::Label, flags);
+		set_obj_option(hash,"parent",&wxBusyInfoFlags::Parent, flags);
+		set_obj_option(hash,"foreground",&wxBusyInfoFlags::Foreground, flags);
+		set_obj_option(hash,"background",&wxBusyInfoFlags::Background, flags);
+		//set_obj_option(hash,"transparency",&wxBusyInfoFlags::Transparency, flags, unwrap<unsigned int>);
+
+	}
+
+	wxBusyInfo info(flags);
+#else
+	wxBusyInfo info(unwrap<wxString>(message),unwrap<wxWindow*>(parent));
+#endif
+	rb_yield(Qnil);
+	return self;
+}
+#endif
+
+
 DLL_LOCAL void Init_WXCursor(VALUE rb_mWX)
 {
 	rb_cWXCursor = rb_define_class_under(rb_mWX,"Cursor",rb_cObject);
@@ -72,7 +112,9 @@ DLL_LOCAL void Init_WXCursor(VALUE rb_mWX)
 
 	rb_define_module_function(rb_mWX,"busy",RUBY_METHOD_FUNC(_busy),-1);
 	rb_define_module_function(rb_mWX,"busy?",RUBY_METHOD_FUNC(_isBusy),0);
-
+#if wxUSE_BUSYINFO
+	rb_define_module_function(rb_mWX,"busy_info",RUBY_METHOD_FUNC(_busyinfo),-1);
+#endif
 	registerType<wxCursor>(rb_cWXCursor);
 
 	registerEnum<wxStockCursor>("WX::StockCursor")
