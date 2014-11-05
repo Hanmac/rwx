@@ -34,11 +34,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 #ifdef HAVE_WXMESSAGEDIALOG
 	if(!_created && rb_obj_is_kind_of(name,rb_cString)) {
 
-		if(rb_obj_is_kind_of(hash,rb_cHash)) {
-			set_hash_option(hash,"message",message);
-			set_hash_option(hash,"caption",caption);
-			set_hash_option(hash,"style",style);
-		}
+		MessageDialogBase::_set_options(hash, message, caption, style);
 
 		_self->Create(
 			unwrap<wxWindow*>(parent),message,caption,style
@@ -46,11 +42,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	}
 #else
-	if(rb_obj_is_kind_of(hash,rb_cHash)) {
-		set_hash_option(hash,"message",message);
-		set_hash_option(hash,"caption",caption);
-		set_hash_option(hash,"style",style);
-	}
+	MessageDialogBase::_set_options(hash, message, caption, style);
 
 	RTYPEDDATA_DATA(self) = new wxGenericMessageDialog(
 		unwrap<wxWindow*>(parent),message,caption,style

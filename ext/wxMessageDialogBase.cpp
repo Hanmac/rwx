@@ -14,8 +14,18 @@ VALUE rb_cWXMessageDialogBase;
 #if wxUSE_MSGDLG
 #define _self unwrap<wxMessageDialogBase*>(self)
 
+
+
 namespace RubyWX {
 namespace MessageDialogBase {
+
+void _set_options(VALUE hash, wxString &message, wxString &caption, int &style) {
+	if(rb_obj_is_kind_of(hash,rb_cHash)) {
+		set_hash_option(hash,"message",message);
+		set_hash_option(hash,"caption",caption);
+		set_hash_option(hash,"style",style);
+	}
+}
 
 macro_attr(Message,wxString)
 macro_attr(ExtendedMessage,wxString)
