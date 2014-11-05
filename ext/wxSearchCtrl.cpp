@@ -83,21 +83,14 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE temp;
+		set_obj_option(hash, "value", &wxSearchCtrl::SetValue, _self);
 
-		bool search;
-		bool cancel;
-
-		set_option(value,Value,wxString)
 #if wxUSE_MENUS
-		set_option(menu,Menu,wxMenu*)
+		set_obj_option(hash, "menu", &wxSearchCtrl::SetMenu, _self);
 #endif
 
-		if(set_hash_option(hash,"search",search))
-			_self->ShowSearchButton(search);
-
-		if(set_hash_option(hash,"cancel",cancel))
-			_self->ShowCancelButton(cancel);
+		set_obj_option(hash, "search", &wxSearchCtrl::ShowSearchButton, _self);
+		set_obj_option(hash, "cancel", &wxSearchCtrl::ShowCancelButton, _self);
 	}
 	return self;
 }
