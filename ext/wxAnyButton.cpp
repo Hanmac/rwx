@@ -60,16 +60,14 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_call_super(argc,argv);
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE temp;
-		set_option(bitmap_label,BitmapLabel,wxBitmap)
-		set_option(bitmap_pressed,BitmapPressed,wxBitmap)
-		set_option(bitmap_disabled,BitmapDisabled,wxBitmap)
-		set_option(bitmap_current,BitmapCurrent,wxBitmap)
-		set_option(bitmap_focus,BitmapFocus,wxBitmap)
-		set_option(bitmap_selected,BitmapSelected,wxBitmap)
-		set_option(bitmap_hover,BitmapHover,wxBitmap)
-
-		set_option(bitmap_margins,BitmapMargins,wxSize)
+		set_obj_option(hash,"bitmap_label",&wxAnyButton::SetBitmapLabel,_self);
+		set_obj_option(hash,"bitmap_pressed",&wxAnyButton::SetBitmapPressed,_self);
+		set_obj_option(hash,"bitmap_disabled",&wxAnyButton::SetBitmapDisabled,_self);
+		set_obj_option(hash,"bitmap_current",&wxAnyButton::SetBitmapCurrent,_self);
+		set_obj_option(hash,"bitmap_focus",&wxAnyButton::SetBitmapFocus,_self);
+		set_obj_option(hash,"bitmap_selected",&wxAnyButton::SetBitmapSelected,_self);
+		set_obj_option(hash,"bitmap_hover",&wxAnyButton::SetBitmapHover,_self);
+		set_obj_option(hash,"bitmap_margins",&wxAnyButton::SetBitmapMargins,_self);
 	}
 
 	return self;
