@@ -498,6 +498,28 @@ DLL_LOCAL bool set_hash_flag_option(VALUE hash,const char* name,const int& flag,
 #define macro_attr_prop_enum(attr,type) macro_attr_func(_##attr,attr,attr = ,wrapenum<type>,unwrapenum<type>,true)
 #define macro_attr_prop_with_func(attr,getf,setf) macro_attr_func(_##attr,attr,attr = ,getf,setf,true)
 
+#define macro_attr_item_func(attr,funcget,funcset,funcsize,wrapget,wrapset) \
+\
+DLL_LOCAL VALUE _get##attr(VALUE self,VALUE idx)\
+{\
+	int cidx = NUM2INT(idx);\
+	if(check_index(cidx,_self->funcsize()))\
+		return wrapget(_self->funcget(cidx));\
+	return Qnil;\
+}\
+DLL_LOCAL VALUE _set##attr(VALUE self,VALUE idx,VALUE val)\
+{\
+	rb_check_frozen(self);\
+\
+	int cidx = NUM2INT(idx);\
+	if(check_index(cidx,_self->funcsize()))\
+		_self->funcset(cidx,wrapset(val));\
+\
+	return self;\
+}
+
+#define macro_attr_item(attr,funcget,funcset,funcsize,type) macro_attr_item_func(attr,funcget,funcset,funcsize,wrap,unwrap<type>)
+
 
 /*
  * special macro for select attributes that manages wxNOT_FOUND
