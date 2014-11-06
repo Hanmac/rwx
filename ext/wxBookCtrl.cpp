@@ -128,51 +128,7 @@ DLL_LOCAL VALUE _each(VALUE self)
 	return self;
 }
 
-/*
- * call-seq:
- *   get_page_text(pos) -> String
- *
- * returns the text of the given page.
- * ===Arguments
- * * pos is a Integer
- *
- * ===Return value
- * String
- * === Exceptions
- * [IndexError]
- * * pos is greater than the count of pages
-*/
-DLL_LOCAL VALUE _get_page_text(VALUE self,VALUE idx)
-{
-	int cidx(NUM2INT(idx));
-	if(check_index(cidx,_self->GetPageCount()))
-		return wrap(_self->GetPageText(cidx));
-	return Qnil;
-}
-
-/*
- * call-seq:
- *   set_page_text(pos,text) -> self
- *
- * returns the text of the given page.
- * ===Arguments
- * * pos is a Integer
- * * text is a String
- *
- * ===Return value
- * self
- * === Exceptions
- * [IndexError]
- * * pos is greater than the count of pages
-*/
-DLL_LOCAL VALUE _set_page_text(VALUE self,VALUE idx,VALUE str)
-{
-	rb_check_frozen(self);
-	int cidx(NUM2INT(idx));
-	if(check_index(cidx,_self->GetPageCount()))
-		_self->SetPageText(cidx,unwrap<wxString>(str));
-	return self;
-}
+macro_attr_item(PageText,GetPageText, SetPageText, GetPageCount, wxString)
 
 /*
  * call-seq:
@@ -451,6 +407,37 @@ DLL_LOCAL VALUE _prev_page(VALUE self)
 	return self;
 }
 
+/* Document-method: get_page_text
+ * call-seq:
+ *   get_page_text(pos) -> String
+ *
+ * returns the text of the given page.
+ * ===Arguments
+ * * pos is a Integer
+ *
+ * ===Return value
+ * String
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of pages
+*/
+
+/* Document-method: set_page_text
+ * call-seq:
+ *   set_page_text(pos,text) -> self
+ *
+ * returns the text of the given page.
+ * ===Arguments
+ * * pos is a Integer
+ * * text is a String
+ *
+ * ===Return value
+ * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of pages
+*/
+
 /* Document-method: delete_all_pages
  * call-seq:
  *   delete_all_pages -> self
@@ -598,8 +585,8 @@ DLL_LOCAL void Init_WXBookCtrl(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXBookCtrlBase,"page",RUBY_METHOD_FUNC(_page),1);
 
-	rb_define_method(rb_cWXBookCtrlBase,"get_page_text",RUBY_METHOD_FUNC(_get_page_text),1);
-	rb_define_method(rb_cWXBookCtrlBase,"set_page_text",RUBY_METHOD_FUNC(_set_page_text),2);
+	rb_define_method(rb_cWXBookCtrlBase,"get_page_text",RUBY_METHOD_FUNC(_getPageText),1);
+	rb_define_method(rb_cWXBookCtrlBase,"set_page_text",RUBY_METHOD_FUNC(_setPageText),2);
 
 	rb_define_method(rb_cWXBookCtrlBase,"get_page_image",RUBY_METHOD_FUNC(_get_page_image),1);
 	rb_define_method(rb_cWXBookCtrlBase,"set_page_image",RUBY_METHOD_FUNC(_set_page_image),2);
