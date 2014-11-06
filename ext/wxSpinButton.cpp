@@ -70,10 +70,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE temp;
-		set_option(value,Value,int)
-		set_option(min,Min,int)
-		set_option(max,Max,int)
+		set_obj_option(hash,"value", &wxSpinButton::SetValue, _self);
+		set_obj_option(hash,"min", &wxSpinButton::SetMin, _self);
+		set_obj_option(hash,"max", &wxSpinButton::SetMax, _self);
 	}
 
 
