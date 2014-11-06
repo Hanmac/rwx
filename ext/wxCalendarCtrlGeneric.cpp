@@ -41,11 +41,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		wxDateTime date(wxDefaultDateTime);
 		int style(wxCAL_SHOW_HOLIDAYS);
 
-		if(rb_obj_is_kind_of(hash,rb_cHash)) {
-			set_hash_option(hash,"id",id,unwrapID);
-			set_hash_option(hash,"date",date);
-			set_hash_option(hash,"style",style);
-		}
+		CalendarCtrlBase::_set_options(hash,id, date, style);
 
 		if(nil_check(parent)) {
 			_self->Create(

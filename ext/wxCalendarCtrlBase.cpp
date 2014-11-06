@@ -23,6 +23,17 @@ namespace CalendarCtrlBase {
 
 macro_attr(Date,wxDateTime)
 
+
+void _set_options(VALUE hash, wxWindowID &id, wxDateTime &date, int &style
+)
+{
+	if(rb_obj_is_kind_of(hash,rb_cHash)) {
+		set_hash_option(hash,"id",id,unwrapID);
+		set_hash_option(hash,"date",date);
+		set_hash_option(hash,"style",style);
+	}
+}
+
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,name,hash;

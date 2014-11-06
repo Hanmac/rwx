@@ -21,6 +21,18 @@ void Init_WXCalendarCtrlBase(VALUE rb_mWX);
 template <>
 wxCalendarCtrlBase* unwrap<wxCalendarCtrlBase*>(const VALUE &arg);
 
+namespace RubyWX {
+namespace CalendarCtrlBase {
+
+void _set_options(VALUE hash,
+		wxWindowID &id,
+		wxDateTime &date,
+		int &style
+);
+
+}
+}
+
 #endif
 
 #endif /* WXCALENDARCTRLBASE_HPP_ */
