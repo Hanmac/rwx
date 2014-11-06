@@ -19,6 +19,20 @@ namespace DirDialog {
 
 APP_PROTECT(wxDirDialog)
 
+
+DLL_LOCAL void set_style_flags(VALUE hash, int &style)
+{
+	set_hash_flag_option(hash,"must_exist",wxDD_DIR_MUST_EXIST,style);
+	set_hash_flag_option(hash,"change_dir",wxDD_CHANGE_DIR,style);
+}
+
+DLL_LOCAL void set_default_values(VALUE hash, wxString &message, wxString &path, int &style)
+{
+	set_hash_option(hash,"message",message);
+	set_hash_option(hash,"path",path);
+	set_hash_option(hash,"style",style);
+}
+
 /*
  * call-seq:
  *   DirDialog.new(parent, name, [options])
@@ -46,14 +60,10 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 		if(rb_obj_is_kind_of(hash,rb_cHash))
 		{
-			set_hash_option(hash,"message",message);
-			set_hash_option(hash,"path",path);
-			set_hash_option(hash,"style",style);
+			set_default_values(hash,message,path,style);
 
 			TopLevel::set_style_flags(hash,style);
-			set_hash_flag_option(hash,"must_exist",wxDD_DIR_MUST_EXIST,style);
-			set_hash_flag_option(hash,"change_dir",wxDD_CHANGE_DIR,style);
-
+			set_style_flags(hash,style);
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),message,path,style);
@@ -62,12 +72,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	rb_call_super(argc,argv);
 
-	if(rb_obj_is_kind_of(hash,rb_cString) &&
-		rb_obj_is_kind_of(hash,rb_cHash))
+	if(rb_obj_is_kind_of(name, rb_cString) &&
+		rb_obj_is_kind_of(hash, rb_cHash))
 	{
-		VALUE temp;
-		set_option(message,Message,wxString)
-		set_option(path,Path,wxString)
+		set_obj_option(hash, "message", &wxDirDialog::SetMessage, _self);
+		set_obj_option(hash, "path", &wxDirDialog::SetPath, _self);
 	}
 
 	return self;
@@ -91,13 +100,11 @@ DLL_LOCAL VALUE _getUserDir(int argc,VALUE *argv,VALUE self)
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		set_hash_option(hash,"message",message);
-		set_hash_option(hash,"path",defaultPath);
-		set_hash_option(hash,"style",style);
+		set_default_values(hash,message,defaultPath,style);
+
 		set_hash_option(hash,"pos",pos);
 
-		set_hash_flag_option(hash,"must_exist",wxDD_DIR_MUST_EXIST,style);
-		set_hash_flag_option(hash,"change_dir",wxDD_CHANGE_DIR,style);
+		set_style_flags(hash,style);
 
 	}
 
