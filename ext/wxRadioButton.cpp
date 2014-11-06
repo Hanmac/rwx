@@ -68,8 +68,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE temp;
-		set_option(value,Value,bool)
+		set_obj_option(hash, "value", &wxRadioButton::SetValue,_self);
 	}
 	return self;
 }
