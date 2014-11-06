@@ -54,8 +54,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_call_super(argc,argv);
 
 	if(rb_obj_is_kind_of(hash,rb_cHash)) {
-		VALUE temp;
-		set_option(id,Value,bool);
+		set_obj_option(hash, "value", &wxToggleButton::SetValue,_self);
 	}
 
 	return self;
@@ -77,14 +76,16 @@ DLL_LOCAL void Init_WXToggleButton(VALUE rb_mWX)
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
 
 	rb_cWXAnyButton = rb_define_class_under(rb_mWX,"AnyButton",rb_cWXControl);
-
-	rb_define_attr(rb_cWXToggleButton,"value",1,1);
 #endif
 
 #if wxUSE_TOGGLEBTN
 	using namespace RubyWX::ToggleButton;
 	rb_cWXToggleButton = rb_define_class_under(rb_mWX,"ToggleButton",rb_cWXAnyButton);
 	rb_define_alloc_func(rb_cWXToggleButton,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXToggleButton,"value",1,1);
+#endif
 
 	rb_define_method(rb_cWXToggleButton,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
