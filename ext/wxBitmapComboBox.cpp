@@ -128,7 +128,14 @@ DLL_LOCAL VALUE _each_bitmap(VALUE self)
 	return self;
 }
 
-/*
+macro_attr_item(ItemBitmap,GetItemBitmap, SetItemBitmap, GetCount, wxBitmap)
+
+
+}
+}
+#endif
+
+/* Document-method: get_item_bitmap
  * call-seq:
  *   get_item_bitmap(pos) -> WX::Bitmap
  *
@@ -142,15 +149,8 @@ DLL_LOCAL VALUE _each_bitmap(VALUE self)
  * * pos is greater than the count of items
  *
 */
-DLL_LOCAL VALUE _getItemBitmap(VALUE self,VALUE idx)
-{
-	int cidx = NUM2INT(idx);
-	if(check_index(cidx,_self->GetCount()))
-		return wrap(_self->GetItemBitmap(cidx));
-	return Qnil;
-}
 
-/*
+/* Document-method: set_item_bitmap
  * call-seq:
  *   set_item_bitmap(pos,text) -> self
  *
@@ -165,21 +165,6 @@ DLL_LOCAL VALUE _getItemBitmap(VALUE self,VALUE idx)
  * * pos is greater than the count of items
  *
 */
-DLL_LOCAL VALUE _setItemBitmap(VALUE self,VALUE idx,VALUE val)
-{
-	rb_check_frozen(self);
-
-	int cidx = NUM2INT(idx);
-	if(check_index(cidx,_self->GetCount()))
-		_self->SetItemBitmap(cidx,unwrap<wxBitmap>(val));
-
-	return self;
-}
-
-
-}
-}
-#endif
 
 /* Document-method: clear
  * call-seq:
