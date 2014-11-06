@@ -171,54 +171,8 @@ DLL_LOCAL VALUE _setItems(VALUE self,VALUE items)
 	return items;
 }
 
+macro_attr_item(ItemString,GetString, SetString, GetCount, wxString)
 
-/*
- * call-seq:
- *   get_item_string(pos) -> String
- *
- * returns the String of the item at the given position.
- * ===Arguments
- * * pos of the item. Integer
- * ===Return value
- * String
- * === Exceptions
- * [IndexError]
- * * pos is greater than the count of items
- *
-*/
-DLL_LOCAL VALUE _getItemString(VALUE self,VALUE idx)
-{
-	int cidx = NUM2INT(idx);
-	if(check_index(cidx,_self->GetCount()))
-		return wrap(_self->GetString(cidx));
-	return Qnil;
-}
-
-/*
- * call-seq:
- *   set_item_string(pos,text) -> self
- *
- * sets the String of the item at the given position.
- * ===Arguments
- * * pos of the item. Integer
- * * text of the item. String
- * ===Return value
- * self
- * === Exceptions
- * [IndexError]
- * * pos is greater than the count of items
- *
-*/
-DLL_LOCAL VALUE _setItemString(VALUE self,VALUE idx,VALUE val)
-{
-	rb_check_frozen(self);
-
-	int cidx = NUM2INT(idx);
-	if(check_index(cidx,_self->GetCount()))
-		_self->SetString(cidx,unwrap<wxString>(val));
-
-	return self;
-}
 
 
 }
@@ -261,6 +215,37 @@ DLL_LOCAL VALUE _setItemString(VALUE self,VALUE idx,VALUE val)
  * true/false
 */
 
+/* Document-method: get_item_string
+ * call-seq:
+ *   get_item_string(pos) -> String
+ *
+ * returns the String of the item at the given position.
+ * ===Arguments
+ * * pos of the item. Integer
+ * ===Return value
+ * String
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of items
+ *
+*/
+
+/* Document-method: set_item_string
+ * call-seq:
+ *   set_item_string(pos,text) -> self
+ *
+ * sets the String of the item at the given position.
+ * ===Arguments
+ * * pos of the item. Integer
+ * * text of the item. String
+ * ===Return value
+ * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of items
+ *
+*/
+
 /* Document-attr: selection
  * Integer/nil returns the index of the current selected item, or nil if none is selected.
  */
@@ -275,17 +260,17 @@ DLL_LOCAL VALUE _setItemString(VALUE self,VALUE idx,VALUE val)
 DLL_LOCAL void Init_WXItemContainer(VALUE rb_mWX)
 {
 
+#if wxUSE_CONTROLS
+	using namespace RubyWX::ItemContainer;
+
+	rb_mWXItemContainer = rb_define_module_under(rb_mWX,"ItemContainer");
+
 #if 0
 	rb_define_attr(rb_mWXItemContainer,"selection",1,1);
 	rb_define_attr(rb_mWXItemContainer,"string_selection",1,1);
 
 	rb_define_attr(rb_mWXItemContainer,"items",1,1);
 #endif
-
-#if wxUSE_CONTROLS
-	using namespace RubyWX::ItemContainer;
-
-	rb_mWXItemContainer = rb_define_module_under(rb_mWX,"ItemContainer");
 
 	rb_define_method(rb_mWXItemContainer,"clear",RUBY_METHOD_FUNC(_Clear),0);
 
