@@ -71,99 +71,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-
-/*
- * call-seq:
- *   get_page_bitmap(pos) -> WX::Bitmap
- *
- * returns the bitmap of the given page.
- * ===Arguments
- * * pos is a Integer
- *
- * ===Return value
- * WX::Bitmap
- * === Exceptions
- * [IndexError]
- * * pos is greater than the count of pages
-*/
-DLL_LOCAL VALUE _get_page_bitmap(VALUE self,VALUE idx)
-{
-	int cidx(NUM2INT(idx));
-	if(check_index(cidx,_self->GetPageCount()))
-		return wrap(_self->GetPageBitmap(cidx));
-	return Qnil;
-}
-
-/*
- * call-seq:
- *   set_page_bitmap(pos,bitmap) -> self
- *
- * sets the bitmap of the given page.
- * ===Arguments
- * * pos is a Integer
- * * bitmap is a WX::Bitmap
- *
- * ===Return value
- * self
- * === Exceptions
- * [IndexError]
- * * pos is greater than the count of pages
-*/
-DLL_LOCAL VALUE _set_page_bitmap(VALUE self,VALUE idx,VALUE str)
-{
-	rb_check_frozen(self);
-	int cidx(NUM2INT(idx));
-	if(check_index(cidx,_self->GetPageCount()))
-		_self->SetPageBitmap(cidx,unwrap<wxBitmap>(str));
-	return self;
-}
-
-/*
- * call-seq:
- *   get_page_tooltip(pos) -> String
- *
- * returns the tool tip of the given page.
- * ===Arguments
- * * pos is a Integer
- *
- * ===Return value
- * String
- * === Exceptions
- * [IndexError]
- * * pos is greater than the count of pages
-*/
-DLL_LOCAL VALUE _get_page_tooltip(VALUE self,VALUE idx)
-{
-	int cidx(NUM2INT(idx));
-	if(check_index(cidx,_self->GetPageCount()))
-		return wrap(_self->GetPageToolTip(cidx));
-	return Qnil;
-}
-
-/*
- * call-seq:
- *   set_page_tooltip(pos,tooltip) -> self
- *
- * sets the tool tip of the given page.
- * ===Arguments
- * * pos is a Integer
- * * tooltip is a String
- *
- * ===Return value
- * self
- * === Exceptions
- * [IndexError]
- * * pos is greater than the count of pages
-*/
-DLL_LOCAL VALUE _set_page_tooltip(VALUE self,VALUE idx,VALUE str)
-{
-	rb_check_frozen(self);
-	int cidx(NUM2INT(idx));
-	if(check_index(cidx,_self->GetPageCount()))
-		_self->SetPageToolTip(cidx,unwrap<wxString>(str));
-	return self;
-}
-
+macro_attr_item(PageBitmap,GetPageBitmap, SetPageBitmap, GetPageCount, wxBitmap)
+macro_attr_item(PageToolTip,GetPageToolTip, SetPageToolTip, GetPageCount, wxString)
 
 DLL_LOCAL bool check_imagelist(wxAuiNotebook* self, VALUE imageid, int& iid)
 {
@@ -351,6 +260,67 @@ DLL_LOCAL VALUE _prependPage(int argc,VALUE *argv,VALUE self)
 }
 #endif
 
+/* Document-method: get_page_bitmap
+ * call-seq:
+ *   get_page_bitmap(pos) -> WX::Bitmap
+ *
+ * returns the bitmap of the given page.
+ * ===Arguments
+ * * pos is a Integer
+ *
+ * ===Return value
+ * WX::Bitmap
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of pages
+*/
+
+/* Document-method: set_page_bitmap
+ * call-seq:
+ *   set_page_bitmap(pos,bitmap) -> self
+ *
+ * sets the bitmap of the given page.
+ * ===Arguments
+ * * pos is a Integer
+ * * bitmap is a WX::Bitmap
+ *
+ * ===Return value
+ * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of pages
+*/
+
+/* Document-method: get_page_tooltip
+ * call-seq:
+ *   get_page_tooltip(pos) -> String
+ *
+ * returns the tool tip of the given page.
+ * ===Arguments
+ * * pos is a Integer
+ *
+ * ===Return value
+ * String
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of pages
+*/
+
+/* Document-method: set_page_tooltip
+ * call-seq:
+ *   set_page_tooltip(pos,tooltip) -> self
+ *
+ * sets the tool tip of the given page.
+ * ===Arguments
+ * * pos is a Integer
+ * * tooltip is a String
+ *
+ * ===Return value
+ * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the count of pages
+*/
 
 /* Document-const: TAB_SPLIT
  *  Allows the tab control to be split by dragging a tab.
@@ -411,11 +381,11 @@ DLL_LOCAL void Init_WXAuiNoteBookCtrl(VALUE rb_mWX)
 	rb_define_method(rb_cWXAuiNotebook,"insert_page",RUBY_METHOD_FUNC(_insertPage),-1);
 	rb_define_method(rb_cWXAuiNotebook,"prepend_page",RUBY_METHOD_FUNC(_prependPage),-1);
 
-	rb_define_method(rb_cWXAuiNotebook,"get_page_tooltip",RUBY_METHOD_FUNC(_get_page_tooltip),1);
-	rb_define_method(rb_cWXAuiNotebook,"set_page_tooltip",RUBY_METHOD_FUNC(_set_page_tooltip),2);
+	rb_define_method(rb_cWXAuiNotebook,"get_page_tooltip",RUBY_METHOD_FUNC(_getPageToolTip),1);
+	rb_define_method(rb_cWXAuiNotebook,"set_page_tooltip",RUBY_METHOD_FUNC(_setPageToolTip),2);
 
-	rb_define_method(rb_cWXAuiNotebook,"get_page_bitmap",RUBY_METHOD_FUNC(_get_page_bitmap),1);
-	rb_define_method(rb_cWXAuiNotebook,"set_page_bitmap",RUBY_METHOD_FUNC(_set_page_bitmap),2);
+	rb_define_method(rb_cWXAuiNotebook,"get_page_bitmap",RUBY_METHOD_FUNC(_getPageBitmap),1);
+	rb_define_method(rb_cWXAuiNotebook,"set_page_bitmap",RUBY_METHOD_FUNC(_setPageBitmap),2);
 
 //	rb_define_method(rb_cWXAuiNotebook,"each_page",RUBY_METHOD_FUNC(_each),0);
 //	rb_define_method(rb_cWXAuiNotebook,"page",RUBY_METHOD_FUNC(_page),1);
