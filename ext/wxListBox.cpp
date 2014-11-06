@@ -166,8 +166,15 @@ DLL_LOCAL VALUE _each_selection(VALUE self)
 	return self;
 }
 
+macro_attr_item(ItemSelection,IsSelected, SetSelection, GetCount, bool)
 
-/*
+}
+}
+
+#endif
+
+
+/* Document-method: get_item_selection
  * call-seq:
  *   get_item_selection(pos) -> true/false
  *
@@ -181,15 +188,8 @@ DLL_LOCAL VALUE _each_selection(VALUE self)
  * * pos is greater than the count of items
  *
 */
-DLL_LOCAL VALUE _getItemSelection(VALUE self,VALUE idx)
-{
-	int cidx = NUM2INT(idx);
-	if(check_index(cidx,_self->GetCount()))
-		return wrap(_self->IsSelected(cidx));
-	return Qnil;
-}
 
-/*
+/* Document-method: set_item_selection
  * call-seq:
  *   set_item_selection(pos,val) -> self
  *
@@ -204,22 +204,6 @@ DLL_LOCAL VALUE _getItemSelection(VALUE self,VALUE idx)
  * * pos is greater than the count of items
  *
 */
-DLL_LOCAL VALUE _setItemSelection(VALUE self,VALUE idx,VALUE val)
-{
-	rb_check_frozen(self);
-
-	int cidx = NUM2INT(idx);
-	if(check_index(cidx,_self->GetCount()))
-		_self->SetSelection(cidx,RTEST(val));
-
-	return self;
-}
-
-}
-}
-
-#endif
-
 
 /* Document-attr: selection
  * Integer/Array/nil returns the index of the current selected item,
@@ -255,13 +239,16 @@ DLL_LOCAL void Init_WXListBox(VALUE rb_mWX)
 
 	rb_mWXItemContainer = rb_define_module_under(rb_mWX,"ItemContainer");
 
-	rb_define_attr(rb_cWXListBox,"selection",1,1);
-	rb_define_attr(rb_cWXListBox,"string_selection",1,1);
 #endif
 #if wxUSE_LISTBOX
 	using namespace RubyWX::ListBox;
 	rb_cWXListBox = rb_define_class_under(rb_mWX,"ListBox",rb_cWXControl);
 	rb_define_alloc_func(rb_cWXListBox,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXListBox,"selection",1,1);
+	rb_define_attr(rb_cWXListBox,"string_selection",1,1);
+#endif
 
 	rb_define_method(rb_cWXListBox,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
