@@ -65,7 +65,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		if(rb_obj_is_kind_of(hash,rb_cHash))
 		{
 			set_hash_option(hash,"id",id,unwrapID);
-			set_hash_option(hash,"range",style);
+			set_hash_option(hash,"range",range);
 			set_hash_option(hash,"style",style);
 
 			set_hash_flag_option(hash,"vertical",wxGA_VERTICAL,style);
@@ -82,9 +82,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE temp;
-
-		set_option(value,Value,int)
+		set_obj_option(hash, "value", &wxGauge::SetValue, _self);
 	}
 	return self;
 }
