@@ -73,11 +73,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE temp;
-
-		set_option(selected_font,SelectedFont,wxFont)
+		set_obj_option(hash, "selected_font", &wxFontPickerCtrl::SetSelectedFont, _self);
 #ifdef HAVE_WXFONTPICKERCTRL_GETSELECTEDCOLOUR
-		set_option(selected_color,SelectedColour,wxColor)
+		set_obj_option(hash, "selected_color", &wxFontPickerCtrl::SetSelectedColour, _self);
 #endif
 	}
 	return self;
@@ -147,6 +145,8 @@ DLL_LOCAL void Init_WXFontPicker(VALUE rb_mWX)
 
 #ifdef HAVE_WXFONTPICKERCTRL_GETSELECTEDCOLOUR
 	rb_define_attr_method(rb_cWXFontPicker,"selected_color",_getSelectedColour,_setSelectedColour);
+#else
+	rb_define_attr_method_missing(rb_cWXFontPicker,"selected_color");
 #endif
 
 	rb_cWXFontPickerEvent = rb_define_class_under(rb_cWXEvent,"FontPicker",rb_cWXEvent);
