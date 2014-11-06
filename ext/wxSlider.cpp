@@ -85,16 +85,16 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE temp;
 		if(rb_obj_is_kind_of(name,rb_cString))
 		{
-			set_option(min,Min,int)
-			set_option(max,Max,int)
-			set_option(value,Value,int)
+			set_obj_option(hash, "min", &wxSlider::SetMin,_self);
+			set_obj_option(hash, "max", &wxSlider::SetMax,_self);
+			set_obj_option(hash, "value", &wxSlider::SetValue,_self);
 		}
-		set_option(line_size,LineSize,int)
-		set_option(page_size,PageSize,int)
-		set_option(thumb_length,ThumbLength,int)
+		set_obj_option(hash, "line_size", &wxSlider::SetLineSize,_self);
+		set_obj_option(hash, "page_size", &wxSlider::SetPageSize,_self);
+		set_obj_option(hash, "thumb_length", &wxSlider::SetThumbLength,_self);
+
 	}
 
 	rb_call_super(argc,argv);
