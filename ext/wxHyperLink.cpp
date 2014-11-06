@@ -78,12 +78,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE temp;
-		set_option(hover_color,HoverColour,wxColour)
-		set_option(normal_color,NormalColour,wxColour)
-		set_option(visited_color,VisitedColour,wxColour)
+		set_obj_option(hash, "hover_color", &wxHyperlinkCtrl::SetHoverColour, _self);
+		set_obj_option(hash, "normal_color", &wxHyperlinkCtrl::SetNormalColour, _self);
+		set_obj_option(hash, "visited_color", &wxHyperlinkCtrl::SetVisitedColour, _self);
 
-		set_option(visited,Visited,bool)
+		set_obj_option(hash, "visited", &wxHyperlinkCtrl::SetVisited, _self);
 	}
 
 	return self;
