@@ -87,7 +87,22 @@ DLL_LOCAL VALUE _each(VALUE self)
 	return self;
 }
 
-/*
+macro_attr_item(ItemString,GetString, SetString, GetCount, wxString)
+macro_attr_item(ItemShown,IsItemShown, Show, GetCount, bool)
+macro_attr_item(ItemEnabled,IsItemEnabled, Enable, GetCount, bool)
+#if wxUSE_TOOLTIPS
+macro_attr_item(ItemToolTip,GetItemToolTip, SetItemToolTip, GetCount, wxString)
+#endif
+#if wxUSE_HELP
+macro_attr_item(ItemHelpText,GetItemHelpText, SetItemHelpText, GetCount, wxString)
+#endif
+
+}
+}
+
+#endif
+
+/* Document-method: get_item_string
  * call-seq:
  *   get_item_string(pos) -> String
  *
@@ -101,16 +116,8 @@ DLL_LOCAL VALUE _each(VALUE self)
  * * pos is greater than the count of items
  *
 */
-DLL_LOCAL VALUE _getItemString(VALUE self,VALUE idx)
-{
-	int cidx = NUM2INT(idx);
-	if(check_index(cidx,_self->GetCount()))
-		return wrap(_self->GetString(cidx));
-	return Qnil;
-}
 
-
-/*
+/* Document-method: set_item_string
  * call-seq:
  *   set_item_string(pos,text) -> self
  *
@@ -125,18 +132,8 @@ DLL_LOCAL VALUE _getItemString(VALUE self,VALUE idx)
  * * pos is greater than the count of items
  *
 */
-DLL_LOCAL VALUE _setItemString(VALUE self,VALUE idx,VALUE val)
-{
-	rb_check_frozen(self);
 
-	int cidx = NUM2INT(idx);
-	if(check_index(cidx,_self->GetCount()))
-		_self->SetString(cidx,unwrap<wxString>(val));
-
-	return self;
-}
-
-/*
+/* Document-method: get_item_shown
  * call-seq:
  *   get_item_shown(pos) -> true/false
  *
@@ -150,16 +147,8 @@ DLL_LOCAL VALUE _setItemString(VALUE self,VALUE idx,VALUE val)
  * * pos is greater than the count of items
  *
 */
-DLL_LOCAL VALUE _getItemShown(VALUE self,VALUE idx)
-{
-	int cidx = NUM2INT(idx);
-	if(check_index(cidx,_self->GetCount()))
-		return wrap(_self->IsItemShown(cidx));
-	return Qnil;
-}
 
-
-/*
+/* Document-method: set_item_shown
  * call-seq:
  *   set_item_shown(pos, val) -> self
  *
@@ -174,19 +163,8 @@ DLL_LOCAL VALUE _getItemShown(VALUE self,VALUE idx)
  * * pos is greater than the count of items
  *
 */
-DLL_LOCAL VALUE _setItemShown(VALUE self,VALUE idx,VALUE val)
-{
-	rb_check_frozen(self);
 
-	int cidx = NUM2INT(idx);
-	if(check_index(cidx,_self->GetCount()))
-		_self->Show(cidx,RTEST(val));
-
-	return self;
-}
-
-
-/*
+/* Document-method: get_item_enabled
  * call-seq:
  *   get_item_enabled(pos) -> true/false
  *
@@ -200,15 +178,8 @@ DLL_LOCAL VALUE _setItemShown(VALUE self,VALUE idx,VALUE val)
  * * pos is greater than the count of items
  *
 */
-DLL_LOCAL VALUE _getItemEnabled(VALUE self,VALUE idx)
-{
-	int cidx = NUM2INT(idx);
-	if(check_index(cidx,_self->GetCount()))
-		return wrap(_self->IsItemEnabled(cidx));
-	return Qnil;
-}
 
-/*
+/* Document-method: set_item_enabled
  * call-seq:
  *   set_item_enabled(pos, val) -> self
  *
@@ -223,19 +194,8 @@ DLL_LOCAL VALUE _getItemEnabled(VALUE self,VALUE idx)
  * * pos is greater than the count of items
  *
 */
-DLL_LOCAL VALUE _setItemEnabled(VALUE self,VALUE idx,VALUE val)
-{
-	rb_check_frozen(self);
 
-	int cidx = NUM2INT(idx);
-	if(check_index(cidx,_self->GetCount()))
-		_self->Enable(cidx,RTEST(val));
-
-	return self;
-}
-
-#if wxUSE_TOOLTIPS
-/*
+/* Document-method: get_item_tooltip
  * call-seq:
  *   get_item_tooltip(pos) -> String/nil
  *
@@ -249,15 +209,8 @@ DLL_LOCAL VALUE _setItemEnabled(VALUE self,VALUE idx,VALUE val)
  * * pos is greater than the count of items
  *
 */
-DLL_LOCAL VALUE _getItemToolTip(VALUE self,VALUE idx)
-{
-	int cidx = NUM2INT(idx);
-	if(check_index(cidx,_self->GetCount()))
-		return wrap(_self->GetItemToolTip(cidx));
-	return Qnil;
-}
 
-/*
+/* Document-method: set_item_tooltip
  * call-seq:
  *   set_item_tooltip(pos, val) -> self
  *
@@ -272,20 +225,8 @@ DLL_LOCAL VALUE _getItemToolTip(VALUE self,VALUE idx)
  * * pos is greater than the count of items
  *
 */
-DLL_LOCAL VALUE _setItemToolTip(VALUE self,VALUE idx,VALUE val)
-{
-	rb_check_frozen(self);
 
-	int cidx = NUM2INT(idx);
-	if(check_index(cidx,_self->GetCount()))
-		_self->SetItemToolTip(cidx,unwrap<wxString>(val));
-
-	return self;
-}
-#endif
-
-#if wxUSE_HELP
-/*
+/* Document-method: get_item_helptext
  * call-seq:
  *   get_item_helptext(pos) -> String
  *
@@ -299,16 +240,9 @@ DLL_LOCAL VALUE _setItemToolTip(VALUE self,VALUE idx,VALUE val)
  * * pos is greater than the count of items
  *
 */
-DLL_LOCAL VALUE _getItemHelpText(VALUE self,VALUE idx)
-{
-	int cidx = NUM2INT(idx);
-	if(check_index(cidx,_self->GetCount()))
-		return wrap(_self->GetItemHelpText(cidx));
-	return Qnil;
-}
 
 
-/*
+/* Document-method: set_item_helptext
  * call-seq:
  *   set_item_helptext(pos, val) -> self
  *
@@ -323,24 +257,6 @@ DLL_LOCAL VALUE _getItemHelpText(VALUE self,VALUE idx)
  * * pos is greater than the count of items
  *
 */
-DLL_LOCAL VALUE _setItemHelpText(VALUE self,VALUE idx,VALUE val)
-{
-	rb_check_frozen(self);
-
-	int cidx = NUM2INT(idx);
-	if(check_index(cidx,_self->GetCount()))
-		_self->SetItemHelpText(cidx,unwrap<wxString>(val));
-
-	return self;
-}
-#endif
-
-
-}
-}
-
-#endif
-
 
 /* Document-attr: selection
  * Integer/nil returns the index of the current selected item, or nil if none is selected.
