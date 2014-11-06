@@ -54,6 +54,23 @@ singlereturn_array(GetFilenames,wxArrayString)
 singlereturn(GetFilterIndex)
 
 
+void _set_options(VALUE hash,
+		wxWindowID &id,
+		int &style,
+		wxString &defaultDirectory,
+		wxString &defaultFilename,
+		wxString &defaultWildCard
+)
+{
+	set_hash_option(hash,"id",id,unwrapID);
+	set_hash_option(hash,"style",style);
+
+	set_hash_option(hash,"default_directory",defaultDirectory);
+	set_hash_option(hash,"default_filename",defaultFilename);
+	set_hash_option(hash,"default_wildcard",defaultWildCard,unwrapWildCard);
+
+}
+
 void set_style_flags(VALUE hash,int& flags)
 {
 
@@ -97,9 +114,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
 
 	rb_call_super(argc,argv);
-	if(rb_obj_is_kind_of(hash,rb_cHash))
+
+	if(rb_obj_is_kind_of(name,rb_cString) && rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		int filter;
 
 		set_obj_option(hash,"wildcard", &wxFileCtrlBase::SetWildcard, _self, unwrapWildCard);
 
@@ -107,11 +124,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		set_obj_option(hash,"filename", &wxFileCtrlBase::SetFilename, _self);
 		set_obj_option(hash,"path", &wxFileCtrlBase::SetPath, _self);
 
-		if(set_hash_option(hash,"filter_index",filter))
-		{
-			if(check_filter_index(filter,_self->GetWildcard()))
-				_self->SetFilterIndex(filter);
-		}
+		set_ruby_option(hash, "filter_index", _setFilterIndex, self);
 	}
 	return self;
 }

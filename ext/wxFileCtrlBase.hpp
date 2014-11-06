@@ -25,6 +25,14 @@ bool check_filter_index(int& filter,const wxString& wildcard);
 namespace RubyWX {
 namespace FileCtrlBase {
 
+void _set_options(VALUE hash,
+		wxWindowID &id,
+		int &style,
+		wxString &defaultDirectory,
+		wxString &defaultFilename,
+		wxString &defaultWildCard
+);
+
 void set_style_flags(VALUE hash,int& flags);
 
 }

@@ -49,13 +49,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 		if(rb_obj_is_kind_of(hash,rb_cHash))
 		{
-			set_hash_option(hash,"id",id,unwrapID);
-			set_hash_option(hash,"style",style);
-
-			set_hash_option(hash,"default_directory",defaultDirectory);
-			set_hash_option(hash,"default_filename",defaultFilename);
-			set_hash_option(hash,"default_wildcard",defaultWildCard,unwrapWildCard);
-
+			FileCtrlBase::_set_options(hash, id, style, defaultDirectory, defaultFilename, defaultWildCard);
 			FileCtrlBase::set_style_flags(hash,style);
 
 		}
