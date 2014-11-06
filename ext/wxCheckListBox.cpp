@@ -103,7 +103,16 @@ DLL_LOCAL VALUE _getCheckedItems(VALUE self)
 	return wrap(data);
 }
 
-/*
+macro_attr_item(ItemChecked,IsChecked, Check, GetCount, bool)
+
+
+
+}
+}
+
+#endif
+
+/* Document-method: get_item_checked
  * call-seq:
  *   get_item_checked(pos) -> true/false
  *
@@ -117,15 +126,8 @@ DLL_LOCAL VALUE _getCheckedItems(VALUE self)
  * * pos is greater than the count of items
  *
 */
-DLL_LOCAL VALUE _getItemChecked(VALUE self,VALUE idx)
-{
-	int cidx = NUM2INT(idx);
-	if(check_index(cidx,_self->GetCount()))
-		return wrap(_self->IsChecked(cidx));
-	return Qnil;
-}
 
-/*
+/* Document-method: set_item_selection
  * call-seq:
  *   set_item_selection(pos,val) -> self
  *
@@ -140,23 +142,7 @@ DLL_LOCAL VALUE _getItemChecked(VALUE self,VALUE idx)
  * * pos is greater than the count of items
  *
 */
-DLL_LOCAL VALUE _setItemChecked(VALUE self,VALUE idx,VALUE val)
-{
-	rb_check_frozen(self);
 
-	int cidx = NUM2INT(idx);
-	if(check_index(cidx,_self->GetCount()))
-		_self->Check(cidx,RTEST(val));
-
-	return self;
-}
-
-
-
-}
-}
-
-#endif
 DLL_LOCAL void Init_WXCheckListBox(VALUE rb_mWX)
 {
 #if 0
