@@ -404,10 +404,27 @@ bool check_file_saveable(const wxString& path)
 	return true;
 }
 
+bool set_hash_option(VALUE hash,const char* name,VALUE& val)
+{
+	val = rb_hash_aref(hash,ID2SYM(rb_intern(name)));
+	return !NIL_P(val);
+}
+
+bool set_ruby_option(VALUE hash,const char* name,VALUE func(VALUE, VALUE), VALUE self)
+{
+	VALUE temp;
+	if(set_hash_option(hash, name, temp))
+	{
+		func(self, temp);
+		return true;
+	}
+	return false;
+}
+
 bool set_hash_flag_option(VALUE hash,const char* name,const int& flag,int& val)
 {
 	VALUE temp;
-	if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern(name)))))
+	if(set_hash_option(hash, name, temp))
 	{
 		if(RTEST(temp))
 			val |= flag;

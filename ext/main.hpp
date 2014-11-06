@@ -388,11 +388,13 @@ DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
 	return other;\
 }
 
+DLL_LOCAL bool set_hash_option(VALUE hash,const char* name,VALUE& val);
+
 template <typename T, typename T2>
 DLL_LOCAL bool set_hash_option(VALUE hash,const char* name,T& val,T2 func(const VALUE&) )
 {
 	VALUE temp;
-	if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern(name)))))
+	if(set_hash_option(hash,name,temp))
 	{
 		val = func(temp);
 		return true;
@@ -476,6 +478,8 @@ DLL_LOCAL bool set_obj_option(VALUE hash,const char* name,V (C::*set)(const wxSt
 
 }
 
+
+DLL_LOCAL bool set_ruby_option(VALUE hash,const char* name,VALUE func(VALUE, VALUE), VALUE self);
 
 DLL_LOCAL bool set_hash_flag_option(VALUE hash,const char* name,const int& flag,int& val);
 
