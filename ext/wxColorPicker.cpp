@@ -70,9 +70,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	if(rb_obj_is_kind_of(name,rb_cString) &&
 		rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE temp;
-
-		set_option(color,Colour,wxColour)
+		set_ruby_option(hash, "color", _setColour, self);
 	}
 
 	return self;
