@@ -252,6 +252,8 @@ extern "C" void Init_rwx()
 
 	rb_mWX = rb_define_module("WX");
 
+	Init_WXEvtHandler(rb_mWX);
+
 	Init_WXError(rb_mWX);
 
 	Init_WXColor(rb_mWX);
@@ -278,16 +280,13 @@ extern "C" void Init_rwx()
 	Init_WXKeyEvent(rb_mWX);
 	Init_WXMouseEvent(rb_mWX);
 
-	Init_WXEvtHandler(rb_mWX);
 	Init_WXTimer(rb_mWX);
 	Init_WXTaskBar(rb_mWX);
-
 
 	Init_WXMenu(rb_mWX);
 		Init_WXMenuItem(rb_mWX);
 
 	Init_WXApp(rb_mWX);
-
 
 	Init_WXWindow(rb_mWX);
 	Init_WXPanel(rb_mWX);
