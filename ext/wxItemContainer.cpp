@@ -53,13 +53,13 @@ namespace ItemContainer {
 macro_attr_selection(Selection,GetCount)
 macro_attr(StringSelection,wxString)
 
+macro_attr_func(Items,GetStrings(),Set,wrap,unwrap<wxArrayString>, true);
+
 singlefunc(Clear)
 
 singlereturn(GetCount)
 singlereturn(IsSorted)
 singlereturn(IsEmpty)
-singlereturn(GetStrings)
-
 
 
 /*
@@ -164,16 +164,7 @@ DLL_LOCAL VALUE _Delete(VALUE self,VALUE idx)
 	return self;
 }
 
-DLL_LOCAL VALUE _setItems(VALUE self,VALUE items)
-{
-	rb_check_frozen(self);
-	_self->Set(unwrap<wxArrayString>(items));
-	return items;
-}
-
 macro_attr_item(ItemString,GetString, SetString, GetCount, wxString)
-
-
 
 }
 }
@@ -295,7 +286,7 @@ DLL_LOCAL void Init_WXItemContainer(VALUE rb_mWX)
 	rb_define_attr_method(rb_mWXItemContainer,"selection",_getSelection,_setSelection);
 	rb_define_attr_method(rb_mWXItemContainer,"string_selection",_getStringSelection,_setStringSelection);
 
-	rb_define_attr_method(rb_mWXItemContainer,"items",_GetStrings,_setItems);
+	rb_define_attr_method(rb_mWXItemContainer,"items",_getItems,_setItems);
 
 	//registerType<wxItemContainer>(rb_mWXItemContainer);
 #endif

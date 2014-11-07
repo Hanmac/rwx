@@ -14,4 +14,16 @@ extern VALUE rb_mWXItemContainer;
 
 void Init_WXItemContainer(VALUE rb_mWX);
 
+#if wxUSE_CONTROLS
+
+namespace RubyWX {
+namespace ItemContainer {
+
+DLL_LOCAL VALUE _setItems(VALUE self, VALUE other);
+DLL_LOCAL VALUE _setSelection(VALUE self, VALUE other);
+
+}
+}
+#endif
+
 #endif /* WXITEMCONTAINER_HPP_ */
