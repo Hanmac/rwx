@@ -49,14 +49,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		wxWindowID id(wxID_ANY);
 		wxArrayString choices;
 		int style(0);
-		int selection(-1);
-		bool selflag(false);
 
 		if(rb_obj_is_kind_of(hash,rb_cHash)) {
 			set_hash_option(hash,"id",id,unwrapID);
 			set_hash_option(hash,"choices",choices);
 			set_hash_option(hash,"style",style);
-			selflag = set_hash_option(hash,"selection",selection);
 
 			set_style_flags(hash,style);
 		}
@@ -66,13 +63,15 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 				wxDefaultPosition,wxDefaultSize,
 				choices,style
 			);
-
-			if(selflag && check_index(selection,_self->GetCount()))
-				_self->SetSelection(selection);
 		}
-
 	}
+
 	rb_call_super(argc,argv);
+
+	if(rb_obj_is_kind_of(hash,rb_cHash)) {
+		set_ruby_option(hash, "selection", ItemContainer::_setSelection, self);
+	}
+
 	return self;
 }
 
