@@ -93,17 +93,16 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE temp;
-		set_option(caption_background_color,CaptionBackgroundColour,wxColour);
-		set_option(selection_background_color,SelectionBackgroundColour,wxColour);
+		set_obj_option(hash,"caption_background_color",&wxPropertyGrid::SetCaptionBackgroundColour,_self);
+		set_obj_option(hash,"selection_background_color",&wxPropertyGrid::SetSelectionBackgroundColour,_self);
 
-		set_option(cell_background_color,CellBackgroundColour,wxColour);
-		set_option(cell_text_color,CellTextColour,wxColour);
-		set_option(cell_diabled_text_color,CellDisabledTextColour,wxColour);
+		set_obj_option(hash,"cell_background_color",&wxPropertyGrid::SetCellBackgroundColour,_self);
+		set_obj_option(hash,"cell_text_color",&wxPropertyGrid::SetCellTextColour,_self);
+		set_obj_option(hash,"cell_diabled_text_color",&wxPropertyGrid::SetCellDisabledTextColour,_self);
 
-		set_option(empty_space_color,EmptySpaceColour,wxColour);
-		set_option(line_color,LineColour,wxColour);
-		set_option(margin_color,MarginColour,wxColour);
+		set_obj_option(hash,"empty_space_color",&wxPropertyGrid::SetEmptySpaceColour,_self);
+		set_obj_option(hash,"line_color",&wxPropertyGrid::SetLineColour,_self);
+		set_obj_option(hash,"margin_color",&wxPropertyGrid::SetMarginColour,_self);
 
 		PropertyGridInterface::_set_extra_style(_self,hash);
 	}
