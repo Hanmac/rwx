@@ -57,13 +57,14 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,name,hash;
 	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
+
+	rb_call_super(argc,argv);
+
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE temp;
-		set_option(title,Title,wxString)
-		set_option(icon,Icon,wxIcon)
+		set_obj_option(hash, "title", &wxTopLevelWindow::SetTitle,_self);
+		set_obj_option(hash, "icon", &wxTopLevelWindow::SetIcon,_self);
 	}
-	rb_call_super(argc,argv);
 	return self;
 }
 
@@ -86,13 +87,6 @@ DLL_LOCAL void Init_WXTopLevel(VALUE rb_mWX)
 #if 0
 	rb_mWX = rb_define_module("WX");
 	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
-
-	rb_define_attr(rb_cWXTopLevel, "title",1,1);
-	rb_define_attr(rb_cWXTopLevel, "icon",1,1);
-
-	rb_define_attr(rb_cWXTopLevel, "default_item",1,1);
-	rb_define_attr(rb_cWXTopLevel, "tmp_default_item",1,1);
-
 #endif
 
 	using namespace RubyWX::TopLevel;
@@ -100,6 +94,15 @@ DLL_LOCAL void Init_WXTopLevel(VALUE rb_mWX)
 	rb_undef_alloc_func(rb_cWXTopLevel);
 
 	rb_define_method(rb_cWXTopLevel,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
+
+#if 0
+	rb_define_attr(rb_cWXTopLevel, "title",1,1);
+	rb_define_attr(rb_cWXTopLevel, "icon",1,1);
+
+	rb_define_attr(rb_cWXTopLevel, "default_item",1,1);
+	rb_define_attr(rb_cWXTopLevel, "tmp_default_item",1,1);
+
+#endif
 
 	rb_define_attr_method(rb_cWXTopLevel, "title",_getTitle,_setTitle);
 	rb_define_attr_method(rb_cWXTopLevel, "icon",_getIcon,_setIcon);
