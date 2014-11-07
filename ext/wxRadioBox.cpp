@@ -41,15 +41,12 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		wxString label;
 		wxArrayString choices;
 		int style(wxRA_SPECIFY_COLS);
-		int selection(-1);
-		bool selset(false);
 
 		if(rb_obj_is_kind_of(hash,rb_cHash)) {
 			set_hash_option(hash,"id",id,unwrapID);
 			set_hash_option(hash,"label",label);
 			set_hash_option(hash,"choices",choices);
 			set_hash_option(hash,"style",style);
-			selset = set_hash_option(hash,"selection",selection);
 		}
 
 		if(nil_check(parent)) {
@@ -58,11 +55,15 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 				wxDefaultPosition,wxDefaultSize,
 				choices,0,style
 			);
-			if(selset && check_index(selection,_self->GetCount()))
-				_self->SetSelection(selection);
+
 		}
 	}
 	rb_call_super(argc,argv);
+
+	if(rb_obj_is_kind_of(hash,rb_cHash)) {
+		set_ruby_option(hash, "selection", _setSelection, self);
+	}
+
 	return self;
 }
 
