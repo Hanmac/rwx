@@ -48,28 +48,27 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
 	if(!_created && !rb_obj_is_kind_of(hash,rb_cString)){
 		int style(wxCHOICEDLG_STYLE);
-		int selection(-1);
 		wxArrayString choices;
 
 		wxString message(wxEmptyString);
 		wxString caption(wxEmptyString);
 
-		bool selFlag = false;
-
 		if(rb_obj_is_kind_of(hash,rb_cHash)){
 			set_hash_option(hash,"style",style);
 			set_hash_option(hash,"choices",choices);
-			selFlag = set_hash_option(hash,"selection",selection);
 			set_hash_option(hash,"message",message);
 			set_hash_option(hash,"caption",caption);
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent),message,caption,choices,(void **)NULL,style);
 		
-		if(selFlag && check_index(selection,choices.GetCount()))
-			_self->SetSelection(selection);
 	}
 	rb_call_super(argc,argv);
+
+	if(rb_obj_is_kind_of(hash,rb_cHash)) {
+		set_ruby_option(hash, "selection", _setSelection, self);
+	}
+
 	return self;
 
 }
