@@ -50,8 +50,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE temp;
-		set_option(label_text,LabelText,wxString)
+		set_obj_option(hash, "label_text", &wxControl::SetLabelText,_self);
 	}
 
 	return self;
@@ -71,15 +70,16 @@ DLL_LOCAL void Init_WXControl(VALUE rb_mWX)
 #if 0
 	rb_mWX = rb_define_module("WX");
 	rb_cWXWindow = rb_define_class_under(rb_mWX,"Window",rb_cObject);
-
-
-	rb_define_attr(rb_cWXControl,"label_text",1,1);
 #endif
 
 #if wxUSE_CONTROLS
 	using namespace RubyWX::Control;
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
 	rb_define_alloc_func(rb_cWXControl,_alloc);
+
+#if 0
+	rb_define_attr(rb_cWXControl,"label_text",1,1);
+#endif
 
 	rb_define_method(rb_cWXControl,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
