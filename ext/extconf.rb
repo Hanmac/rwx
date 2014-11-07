@@ -117,7 +117,7 @@ CONFIG["warnflags"].gsub!(
 		"-Wextra" #wxAUI is a bit buggy
 	), "")
 
-with_cppflags("-std=c++11") {
+#with_cppflags("-std=c++11") {
   create_header
   create_makefile "rwx"
-}
+#}
