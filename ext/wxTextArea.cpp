@@ -64,11 +64,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
 
 	rb_call_super(argc,argv);
+
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE temp;
-		set_option(modified,Modified,bool)
-		set_option(default_style,DefaultStyle,wxTextAttr)
+		set_obj_option(hash, "modified", &wxTextAreaBase::SetModified,_self);
+		set_obj_option(hash, "default_style", &wxTextAreaBase::SetDefaultStyle,_self);
 	}
 
 	return self;
@@ -116,15 +116,15 @@ VALUE _save_file(VALUE self,VALUE file)
 
 DLL_LOCAL void Init_WXTextArea(VALUE rb_mWX)
 {
-#if 0
-	rb_define_attr(rb_mWXTextArea,"modified",1,1);
-	rb_define_attr(rb_mWXTextArea,"default_style",1,1);
-#endif
-
 #if wxUSE_TEXTCTRL
 	using namespace RubyWX::TextArea;
 	rb_mWXTextArea = rb_define_module_under(rb_mWX,"TextArea");
 	rb_define_method(rb_mWXTextArea,"each_line",RUBY_METHOD_FUNC(_each_line),0);
+
+#if 0
+	rb_define_attr(rb_mWXTextArea,"modified",1,1);
+	rb_define_attr(rb_mWXTextArea,"default_style",1,1);
+#endif
 
 	rb_define_method(rb_mWXTextArea,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
