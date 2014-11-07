@@ -26,8 +26,10 @@ evttypeclassholdertype evttypeclassholder;
 template <>
 wxEvtHandler* unwrap< wxEvtHandler* >(const VALUE &vhandler)
 {
-	if(TYPE(vhandler) == T_DATA)
+	if(TYPE(vhandler) == T_DATA) {
 		return unwrapTypedPtr<wxEvtHandler>(vhandler,rb_mWXEvtHandler);
+	}
+
 	evthandlerholdertype::iterator it = evthandlerholder.find(vhandler);
 	if(it != evthandlerholder.end())
 		return it->second;
@@ -284,7 +286,7 @@ DLL_LOCAL void Init_WXEvtHandler(VALUE rb_mWX)
 	rb_define_method(rb_mWXEvtHandler,"call_after",RUBY_METHOD_FUNC(_callafter),-1);
 
 	//because only Evthandler are created different
-	registerInfo<wxEvtHandler>(Qnil);
+	registerInfo<wxEvtHandler>(rb_mWXEvtHandler);
 
 	rwx_IDcall = rb_intern("call");
 	rwx_IDid = rb_intern("id");

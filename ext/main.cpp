@@ -6,6 +6,7 @@
  */
 
 #include "main.hpp"
+#include "wxEvtHandler.hpp"
 
 #include <wx/arrstr.h>
 
@@ -45,12 +46,22 @@ bool rwx_unrefobject(VALUE object)
 
 void registerDataType(VALUE klass, RUBY_DATA_FUNC freefunc, size_t (*sizefunc)(const void *))
 {
+
 	if(!NIL_P(klass))
 	{
+		rb_data_type_t *parent = NULL;
+		if(rb_obj_is_kind_of(klass, rb_cClass)) {
+			parent = unwrapDataType(RCLASS_SUPER(klass));
+			//if the class does include EvtHandler,
+			// add it as a parent if class doesnt already have one
+			if(!parent && rb_class_inherited_p(klass, rb_mWXEvtHandler))
+				parent = unwrapDataType(rb_mWXEvtHandler);
+		}
+
 		rb_data_type_t str = {
 			rb_class2name(klass),
 			{0, freefunc, sizefunc,},
-			unwrapDataType(RCLASS_SUPER(klass)), NULL,
+			parent, NULL,
 		};
 
 		datatypeholder[klass] = str;
@@ -131,10 +142,15 @@ rb_data_type_t* unwrapDataType(const VALUE& klass)
 {
 	if(klass == rb_cObject)
 		return NULL;
+
 	datatypeholdertype::iterator it = datatypeholder.find(klass);
 	if(it != datatypeholder.end())
 		return &it->second;
-	return unwrapDataType(RCLASS_SUPER(klass));
+
+	if(rb_obj_is_kind_of(klass, rb_cClass))
+		return unwrapDataType(RCLASS_SUPER(klass));
+
+	return NULL;
 }
 
 
