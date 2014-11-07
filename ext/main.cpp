@@ -54,7 +54,7 @@ void registerDataType(VALUE klass, RUBY_DATA_FUNC freefunc, size_t (*sizefunc)(c
 			parent = unwrapDataType(RCLASS_SUPER(klass));
 			//if the class does include EvtHandler,
 			// add it as a parent if class doesnt already have one
-			if(!parent && rb_mod_include_p(klass, rb_mWXEvtHandler))
+			if(!parent && rb_class_inherited_p(klass, rb_mWXEvtHandler))
 				parent = unwrapDataType(rb_mWXEvtHandler);
 		}
 
