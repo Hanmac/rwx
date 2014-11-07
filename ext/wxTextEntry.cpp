@@ -105,10 +105,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE temp;
-		set_option(hint,Hint,wxString)
-		set_option(editable,Editable,bool)
-		set_option(margins,Margins,wxPoint)
+		set_obj_option(hash, "hint", &wxTextEntryBase::SetHint,_self);
+		set_obj_option(hash, "editable", &wxTextEntryBase::SetEditable,_self);
+		set_obj_option(hash, "margins", &wxTextEntryBase::SetMargins,_self);
 	}
 
 	return self;
