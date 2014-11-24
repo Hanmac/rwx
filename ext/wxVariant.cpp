@@ -22,6 +22,8 @@ VALUE wrap< wxVariant >(const wxVariant &var)
 		return wrap(var.GetArrayString());
 	else if(type == "long")
 		return LONG2NUM(var.GetLong());
+	else if(type == "double")
+		return DBL2NUM(var.GetDouble());
 	else if(type == "wxFont")
 		return wrap((wxFont)var);
 	else if(type == "wxBitmap")
@@ -44,6 +46,8 @@ wxVariant unwrapVariant(VALUE obj,const wxString &type)
 		result = RTEST(obj);
 	else if(type == "long")
 		result = NUM2LONG(obj);
+	else if(type == "double")
+		result = NUM2DBL(obj);
 	else if(type == "wxFont")
 		result = wxVariant(unwrap<wxFont>(obj));
 #if wxUSE_DATAVIEWCTRL
