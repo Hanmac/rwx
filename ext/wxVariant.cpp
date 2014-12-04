@@ -28,8 +28,10 @@ VALUE wrap< wxVariant >(const wxVariant &var)
 		return DBL2NUM(var.GetDouble());
 	else if(type == "wxFont")
 		return wrap((wxFont)var);
+#if wxUSE_ANY
 	else if(type == "wxColour" || type == "wxColor")
-		return wrap((wxColour)var);
+		return wrap(wxANY_AS(var.GetAny(),wxColour));
+#endif
 	else if(type == "wxBitmap")
 		return wrap((wxBitmap)var);
 	else if(type == "wxIcon")
