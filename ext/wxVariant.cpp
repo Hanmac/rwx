@@ -7,6 +7,8 @@
 #include "wxVariant.hpp"
 #include "wxDataView.hpp"
 #include "wxFont.hpp"
+#include "wxBitmap.hpp"
+#include "wxColor.hpp"
 template <>
 VALUE wrap< wxVariant >(const wxVariant &var)
 {
