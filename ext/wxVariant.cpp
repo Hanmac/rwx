@@ -26,6 +26,8 @@ VALUE wrap< wxVariant >(const wxVariant &var)
 		return DBL2NUM(var.GetDouble());
 	else if(type == "wxFont")
 		return wrap((wxFont)var);
+	else if(type == "wxColour" || type == "wxColor")
+		return wrap((wxColour)var);
 	else if(type == "wxBitmap")
 		return wrap((wxBitmap)var);
 	else if(type == "wxIcon")
@@ -50,6 +52,8 @@ wxVariant unwrapVariant(VALUE obj,const wxString &type)
 		result = NUM2DBL(obj);
 	else if(type == "wxFont")
 		result = wxVariant(unwrap<wxFont>(obj));
+	else if(type == "wxColour" || type == "wxColor")
+		result = wxVariant(unwrap<wxColour>(obj));
 #if wxUSE_DATAVIEWCTRL
 	else if(type == "wxDataViewIconText")
 	{
