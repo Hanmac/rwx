@@ -51,11 +51,12 @@ void registerDataType(VALUE klass, RUBY_DATA_FUNC freefunc, size_t (*sizefunc)(c
 	{
 		rb_data_type_t *parent = NULL;
 		if(rb_obj_is_kind_of(klass, rb_cClass)) {
-			parent = unwrapDataType(RCLASS_SUPER(klass));
+			parent = unwrapDataType(rb_class_superclass(klass));
 			//if the class does include EvtHandler,
 			// add it as a parent if class doesnt already have one
-			if(!parent && rb_class_inherited_p(klass, rb_mWXEvtHandler))
+			if(!parent && rb_class_inherited_p(klass, rb_mWXEvtHandler) == Qtrue) {
 				parent = unwrapDataType(rb_mWXEvtHandler);
+			}
 		}
 
 		rb_data_type_t str = {
@@ -117,6 +118,18 @@ void* unwrapTypedPtr(const VALUE &obj, rb_data_type_t* rbdata)
 		rb_raise(rb_eTypeError,"%" PRIsVALUE " unknown datatype", RB_OBJ_CLASSNAME(obj));
 		return NULL;
 	}
+
+	const rb_data_type_t* rbdata_obj = RTYPEDDATA_TYPE(obj);
+
+	if(rbdata_obj != rbdata) {
+		if(!rb_typeddata_inherited_p(rbdata_obj, rbdata)) {
+			rb_warn("%s is not a %s but inherit from %s",
+				rbdata_obj->wrap_struct_name, rbdata->wrap_struct_name,
+				rbdata_obj->parent->wrap_struct_name
+			);
+		}
+	}
+
 	void* data = Check_TypedStruct(obj, rbdata);
 	if(!data) {
 		rb_raise(
@@ -147,8 +160,16 @@ rb_data_type_t* unwrapDataType(const VALUE& klass)
 	if(it != datatypeholder.end())
 		return &it->second;
 
+	for(it = datatypeholder.begin(); it != datatypeholder.end(); ++it)
+	{
+		if(wxString(rb_class2name(it->first)) == wxString(rb_class2name(klass))) {
+			//rb_warn("compare broken for %s", rb_class2name(klass));
+			return &it->second;
+		}
+	}
+
 	if(rb_obj_is_kind_of(klass, rb_cClass))
-		return unwrapDataType(RCLASS_SUPER(klass));
+		return unwrapDataType(rb_class_superclass(klass));
 
 	return NULL;
 }
