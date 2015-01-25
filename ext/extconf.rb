@@ -7,6 +7,11 @@ def have_member_func(klass,member,header)
 	end
 end
 
+unless have_macro("HAVE_RB_DATA_TYPE_T_PARENT")
+	abort("rb_data_type_t needs parent attribute!")
+end
+
+
 dir_config "rwx"
 
 if(wx_config = find_executable('wx-config'))
@@ -87,13 +92,13 @@ if(wx_config = find_executable('wx-config'))
 		have_func("wxMessageDialog()","wx/msgdlg.h")
 		have_func("wxGenericMessageDialog()","wx/generic/msgdlgg.h")
 		have_func("wxRichMessageDialog()","wx/richmsgdlg.h")
-    have_func("wxBusyInfoFlags()","wx/busyinfo.h")
+		have_func("wxBusyInfoFlags()","wx/busyinfo.h")
 		
 		#check for instance methods, that classes need to have default constuctor
 		have_member_func("wxFontPickerCtrl","GetSelectedColour","wx/fontpicker.h")
 		have_member_func("wxInfoBar","GetButtonCount","wx/infobar.h")
 		
-    have_member_func("wxOwnerDrawnComboBox","IsListEmpty","wx/odcombo.h")
+		have_member_func("wxOwnerDrawnComboBox","IsListEmpty","wx/odcombo.h")
 		
 		#check for enum flags
 		have_const("wxFD_NO_FOLLOW","wx/filedlg.h")
