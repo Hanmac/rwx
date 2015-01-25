@@ -6,7 +6,7 @@
  */
 
 #ifndef WXRICHMESSAGEDIALOG_HPP_
-#define WXMESSAGEDIALOG_HPP_
+#define WXRICHMESSAGEDIALOG_HPP_
 
 #include "wxMessageDialogBase.hpp"
 
