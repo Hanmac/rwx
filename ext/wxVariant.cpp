@@ -56,8 +56,10 @@ wxVariant unwrapVariant(VALUE obj,const wxString &type)
 		result = NUM2DBL(obj);
 	else if(type == "wxFont")
 		result = wxVariant(unwrap<wxFont>(obj));
+#if wxUSE_ANY
 	else if(type == "wxColour" || type == "wxColor")
-		result = wxVariant(unwrap<wxColour>(obj));
+		result = wxVariant(wxAny(unwrap<wxColour>(obj)));
+#endif
 #if wxUSE_DATAVIEWCTRL
 	else if(type == "wxDataViewIconText")
 	{
