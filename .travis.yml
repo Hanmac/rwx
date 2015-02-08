@@ -5,7 +5,8 @@ cache:
 - apt
 
 rvm:
-- rbx-2.2.7
+#rbx doesnt work anymore with rwx
+#- rbx-2.2.7
 #rbx does not have a head
 #- rbx-head
 #- 2.1.1-clang
