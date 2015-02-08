@@ -6,6 +6,7 @@
  */
 
 #include "wxColor.hpp"
+#include "wxApp.hpp"
 
 #define _self unwrap<wxColor*>(self)
 
@@ -66,16 +67,19 @@ wxColor unwrap< wxColor >(const VALUE &vcolor)
 	//	if(NIL_P(vcolor))
 	//		return wxNullColour;
 
-	if(rb_obj_is_kind_of(vcolor, rb_cString)){
+	if(SYMBOL_P(vcolor)) {
+		app_protected();
+		wxSystemColour sys = unwrapenum<wxSystemColour>(vcolor);
+		wxColor col = wxSystemSettings::GetColour(sys);
+		if(!col.IsOk())
+			not_valid(vcolor,rb_cWXColor);
+		return col;
+	}else if(rb_obj_is_kind_of(vcolor, rb_cString)){
 		wxLogNull logNo;
 		wxString name(unwrap<wxString>(vcolor));
 		wxColor col(name);
 		if(!col.IsOk())
-			rb_raise(
-				rb_eTypeError,
-				"%" PRIsVALUE " is not valid %" PRIsVALUE,
-				RB_OBJ_STRING(vcolor), RB_CLASSNAME(rb_cWXColor)
-			);
+			not_valid(vcolor,rb_cWXColor);
 		return col;
 	}else if(FIXNUM_P(vcolor))
 		return wxColor(FIX2LONG(vcolor));
@@ -100,9 +104,7 @@ wxColor unwrap< wxColor >(const VALUE &vcolor)
 	}else{
 		wxColor *col = unwrap<wxColor*>(vcolor);
 		if(!col->IsOk())
-			rb_raise(rb_eTypeError,
-				"invalid %" PRIsVALUE, RB_CLASSNAME(rb_cWXColor)
-			);
+			not_valid(vcolor,rb_cWXColor);
 		return *col;
 	}
 
@@ -135,38 +137,6 @@ void define_const()
 	rb_define_const(rb_cWXColor,"WHITE",wrap(wxWHITE));
 }
 
-DLL_LOCAL VALUE _getRed(VALUE self)
-{
-	if(_self->IsOk())
-		return CHR2FIX(_self->Red());
-	else
-		return CHR2FIX(0);
-}
-
-DLL_LOCAL VALUE _getGreen(VALUE self)
-{
-	if(_self->IsOk())
-		return CHR2FIX(_self->Green());
-	else
-		return CHR2FIX(0);
-}
-
-DLL_LOCAL VALUE _getBlue(VALUE self)
-{
-	if(_self->IsOk())
-		return CHR2FIX(_self->Blue());
-	else
-		return CHR2FIX(0);
-}
-
-DLL_LOCAL VALUE _getAlpha(VALUE self)
-{
-	if(_self->IsOk())
-		return CHR2FIX(_self->Alpha());
-	else
-		return CHR2FIX(0);
-}
-
 DLL_LOCAL void init_values(wxColor *self, char &red, char &green, char &blue, char &alpha)
 {
 	if(self->IsOk()) {
@@ -176,7 +146,6 @@ DLL_LOCAL void init_values(wxColor *self, char &red, char &green, char &blue, ch
 		alpha = self->Alpha();
 	}
 }
-
 
 DLL_LOCAL char val_to_char(VALUE val)
 {
@@ -188,40 +157,37 @@ DLL_LOCAL char val_to_char(VALUE val)
 	return cval;
 }
 
-DLL_LOCAL VALUE _setRed(VALUE self,VALUE val)
-{
-	rb_check_frozen(self);
-
-	char red(0), green(0), blue(0), alpha(0);
-	init_values(_self, red, green, blue, alpha);
-	red = val_to_char(val);
-	_self->Set(red, green, blue, alpha);
-
-	return val;
+#define attr(name,val) DLL_LOCAL VALUE _get##name(VALUE self)\
+{\
+	if(_self->IsOk())\
+		return CHR2FIX(_self->name());\
+	else\
+		return CHR2FIX(0);\
+}\
+DLL_LOCAL VALUE _set##name(VALUE self,VALUE cval)\
+{\
+	rb_check_frozen(self);\
+\
+	char red(0), green(0), blue(0), alpha(0);\
+	init_values(_self, red, green, blue, alpha);\
+	val = val_to_char(cval);\
+	_self->Set(red, green, blue, alpha);\
+\
+	return val;\
 }
 
-DLL_LOCAL VALUE _setGreen(VALUE self,VALUE val)
+attr(Red,red)
+attr(Green,green)
+attr(Blue,blue)
+
+DLL_LOCAL VALUE _getAlpha(VALUE self)
 {
-	rb_check_frozen(self);
-
-	char red(0), green(0), blue(0), alpha(0);
-	init_values(_self, red, green, blue, alpha);
-	green = val_to_char(val);
-	_self->Set(red, green, blue, alpha);
-
-	return val;
+	if(_self->IsOk())
+		return CHR2FIX(_self->Alpha());
+	else
+		return CHR2FIX(0);
 }
-DLL_LOCAL VALUE _setBlue(VALUE self,VALUE val)
-{
-	rb_check_frozen(self);
 
-	char red(0), green(0), blue(0), alpha(0);
-	init_values(_self, red, green, blue, alpha);
-	blue = val_to_char(val);
-	_self->Set(red, green, blue, alpha);
-
-	return val;
-}
 DLL_LOCAL VALUE _setAlpha(VALUE self,VALUE val)
 {
 	rb_check_frozen(self);
@@ -377,7 +343,29 @@ DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
 }
 
 
+DLL_LOCAL VALUE _class_get(VALUE self, VALUE name)
+{
+	wxColor col;
+	if(SYMBOL_P(name)) {
+		if(ruby_app_inited)
+			col = wxSystemSettings::GetColour(unwrapenum<wxSystemColour>(name));
+	}else if(wxColourDatabase *database = wxTheColourDatabase) {
+		col = database->Find(unwrap<wxString>(name));
+	}
+	if(col.IsOk())
+		return wrap(col);
+	return Qnil;
+}
 
+DLL_LOCAL VALUE _class_set(VALUE self, VALUE name, VALUE color)
+{
+	wxColor col;
+	if(wxColourDatabase *database = wxTheColourDatabase) {
+		database->AddColour(unwrap<wxString>(name), unwrap<wxColor>(color));
+	}else
+		return Qnil;
+	return color;
+}
 }
 }
 
@@ -474,10 +462,50 @@ DLL_LOCAL void Init_WXColor(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXColor,"==",RUBY_METHOD_FUNC(_equal),1);
 
+	rb_define_singleton_method(rb_cWXColor,"[]",RUBY_METHOD_FUNC(_class_get),1);
+	rb_define_singleton_method(rb_cWXColor,"[]=",RUBY_METHOD_FUNC(_class_set),2);
+
 	rwxID_red = rb_intern("red");
 	rwxID_blue = rb_intern("blue");
 	rwxID_green = rb_intern("green");
 	rwxID_alpha = rb_intern("alpha");
 
 	registerType<wxColor>(rb_cWXColor, true);
+	
+	//*
+	registerEnum<wxSystemColour>("wxSystemColour")
+		->add(wxSYS_COLOUR_SCROLLBAR,"scrollbar")
+		->add(wxSYS_COLOUR_DESKTOP,"desktop")
+		->add(wxSYS_COLOUR_ACTIVECAPTION,"active_caption")
+		->add(wxSYS_COLOUR_INACTIVECAPTION,"inactive_caption")
+		->add(wxSYS_COLOUR_MENU,"menu")
+		->add(wxSYS_COLOUR_WINDOW,"window")
+		->add(wxSYS_COLOUR_WINDOWFRAME,"window_frame")
+		->add(wxSYS_COLOUR_MENUTEXT,"menu_text")
+		->add(wxSYS_COLOUR_WINDOWTEXT,"window_text")
+		->add(wxSYS_COLOUR_CAPTIONTEXT,"caption_text")
+		->add(wxSYS_COLOUR_ACTIVEBORDER,"active_border")
+		->add(wxSYS_COLOUR_INACTIVEBORDER,"inactive_border")
+		->add(wxSYS_COLOUR_APPWORKSPACE,"app_workspace")
+		->add(wxSYS_COLOUR_HIGHLIGHT,"highlight")
+		->add(wxSYS_COLOUR_HIGHLIGHTTEXT,"highlight_text")
+		->add(wxSYS_COLOUR_BTNFACE,"btn_face")
+		->add(wxSYS_COLOUR_BTNSHADOW,"btn_shadow")
+		->add(wxSYS_COLOUR_GRAYTEXT,"gray_text")
+		->add(wxSYS_COLOUR_BTNTEXT,"btn_text")
+		->add(wxSYS_COLOUR_INACTIVECAPTIONTEXT,"inactive_captiontext")
+		->add(wxSYS_COLOUR_BTNHIGHLIGHT,"btn_highlight")
+		->add(wxSYS_COLOUR_3DDKSHADOW,"threeD_shadow")
+		->add(wxSYS_COLOUR_3DLIGHT,"threeD_light")
+		->add(wxSYS_COLOUR_INFOTEXT,"info_text")
+		->add(wxSYS_COLOUR_INFOBK,"info_background")
+		->add(wxSYS_COLOUR_LISTBOX,"listbox")
+		->add(wxSYS_COLOUR_HOTLIGHT,"hotlight")
+		->add(wxSYS_COLOUR_GRADIENTACTIVECAPTION,"gradient_active_caption")
+		->add(wxSYS_COLOUR_GRADIENTINACTIVECAPTION,"gradient_inactive_caption")
+		->add(wxSYS_COLOUR_MENUHILIGHT,"menu_highlight")
+		->add(wxSYS_COLOUR_MENUBAR,"menubar")
+		->add(wxSYS_COLOUR_LISTBOXTEXT,"listbox_text")
+		->add(wxSYS_COLOUR_LISTBOXHIGHLIGHTTEXT,"listbox_highlight_text");
+	//*/
 }
