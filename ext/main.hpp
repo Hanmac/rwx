@@ -478,6 +478,7 @@ DLL_LOCAL bool set_obj_option(VALUE hash,const char* name,V (C::*set)(const wxSt
 
 }
 
+DLL_LOCAL void not_valid(VALUE val, VALUE klass);
 
 DLL_LOCAL bool set_ruby_option(VALUE hash,const char* name,VALUE func(VALUE, VALUE), VALUE self);
 

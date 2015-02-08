@@ -187,6 +187,15 @@ VALUE wrapTypedPtr(void *arg,VALUE klass, bool allowNull)
 	return Qnil;
 }
 
+DLL_LOCAL void not_valid(VALUE val, VALUE klass)
+{
+	rb_raise(
+		rb_eTypeError,
+		"%" PRIsVALUE " is not valid %" PRIsVALUE,
+		RB_OBJ_STRING(val), RB_CLASSNAME(klass)
+	);
+}
+
 #define type_wrap(t,get,set) \
 template <>\
 t unwrap< t >(const VALUE &val )\
