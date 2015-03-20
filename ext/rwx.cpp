@@ -180,6 +180,8 @@
 #include "wxRichTextStyle.hpp"
 #include "wxRichTextStyleSheet.hpp"
 
+#include "wxActivityIndicator.hpp"
+
 #include "wxSTC.hpp"
 #include "wxXRC.hpp"
 
@@ -203,7 +205,6 @@
 #include "wxPropertyGridPage.hpp"
 #include "wxPropertyGridManager.hpp"
 #include "wxPropertyGridInterface.hpp"
-
 
 #include "wxProperty.hpp"
 
@@ -429,6 +430,7 @@ extern "C" void Init_rwx()
 	Init_WXAuiManager(rb_mWX);
 	Init_WXAuiPane(rb_mWX);
 
+	Init_WXActivityIndicator(rb_mWX);
 
 	Init_WXBookCtrl(rb_mWX);
 	Init_WXChoiceBookCtrl(rb_mWX);
