@@ -212,6 +212,8 @@
 
 #include "wxPreferences.hpp"
 
+#include "wxAddRemoveCtrl.hpp"
+
 #include <wx/apptrait.h>
 
 VALUE rb_mWX;
@@ -467,6 +469,8 @@ extern "C" void Init_rwx()
 	Init_WXRichTextStyleSheet(rb_mWX);
 
 	Init_WXXRC(rb_mWX);
+
+	Init_WXAddRemoveCtrl(rb_mWX);
 
 	rb_define_const(rb_mWX,"WXVERSION",wrap(wxString(wxVERSION_NUM_DOT_STRING)));
 
