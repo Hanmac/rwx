@@ -6,6 +6,7 @@ class CommonPage < WX::Panel
     super
     
     create_content
+    layout
   end
   
   
@@ -13,5 +14,12 @@ class CommonPage < WX::Panel
     cb = WX::CheckBox.new(self,:label => label, :id => id)
     sizer.add(cb)
     return cb
+  end
+  
+  def add_button(sizer, label, id = nil, &block)
+    cb = WX::Button.new(self,:label => label, :id => id)
+    sizer.add(cb)
+    cb.bind(:button, &block) unless block.nil?
+    return cb    
   end
 end
