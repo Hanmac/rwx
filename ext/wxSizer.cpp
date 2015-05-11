@@ -23,6 +23,8 @@ wxSizerFlags unwrap< wxSizerFlags >(const VALUE &hash)
 
 	if(RTEST(rb_hash_aref(hash,ID2SYM(rb_intern("expand")))))
 			result.Expand();
+	if(RTEST(rb_hash_aref(hash,ID2SYM(rb_intern("shaped")))))
+			result.Shaped();
 	if(RTEST(rb_hash_aref(hash,ID2SYM(rb_intern("border")))))
 			result.Border();
 	if(!NIL_P(val=rb_hash_aref(hash,ID2SYM(rb_intern("proportion")))))
