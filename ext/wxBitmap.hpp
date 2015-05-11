@@ -51,10 +51,4 @@ wxIcon* unwrap< wxIcon* >(const VALUE &vbitmap);
 template <>
 wxIcon unwrap< wxIcon >(const VALUE &vbitmap);
 
-template <>
-VALUE wrap< wxImageList >(wxImageList *imagelist );
-
-template <>
-wxImageList* unwrap< wxImageList* >(const VALUE &imagelist);
-
 #endif /* WXBITMAP_HPP_ */
