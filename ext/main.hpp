@@ -439,7 +439,7 @@ DLL_LOCAL bool set_obj_option(VALUE hash,const char* name,V (C::*set)(T), C2* ob
 template <typename C, typename C2, typename V>
 DLL_LOCAL bool set_obj_option(VALUE hash,const char* name,V (C::*set)(), C2* obj)
 {
-	bool val;
+	bool val(false);
 	bool result = set_hash_option(hash,name,val,unwrap<bool>);
 	if(val) {
 		(obj->*set)();
