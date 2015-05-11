@@ -21,7 +21,7 @@
 #include "wxTreeBook.hpp"
 
 
-#include "wxBitmap.hpp"
+#include "wxImageList.hpp"
 
 VALUE rb_cWXBookCtrlBase,rb_cWXBookCtrlEvent;
 

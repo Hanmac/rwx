@@ -20,6 +20,7 @@
 
 #include "wxImage.hpp"
 #include "wxBitmap.hpp"
+#include "wxImageList.hpp"
 
 #include "wxEvent.hpp"
 #include "wxCommandEvent.hpp"
@@ -267,6 +268,7 @@ extern "C" void Init_rwx()
 
 	Init_WXImage(rb_mWX);
 	Init_WXBitmap(rb_mWX);
+	Init_WXImageList(rb_mWX);
 
 	Init_WXCursor(rb_mWX);
 

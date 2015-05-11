@@ -8,7 +8,7 @@
 #include "wxTreeCtrl.hpp"
 #include "wxFont.hpp"
 #include "wxColor.hpp"
-#include "wxBitmap.hpp"
+#include "wxImageList.hpp"
 
 #include "wxPoint.hpp"
 

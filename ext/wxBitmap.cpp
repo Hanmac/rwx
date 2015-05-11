@@ -111,28 +111,6 @@ wxIcon unwrap< wxIcon >(const VALUE &vbitmap)
 	return *unwrap<wxIcon*>(vbitmap);
 }
 
-template <>
-VALUE wrap< wxImageList >(wxImageList *imagelist )
-{
-	VALUE result = rb_ary_new();
-	int count = imagelist->GetImageCount();
-	for(int i = 0;i < count;++i)
-		rb_ary_push(result,wrap(imagelist->GetBitmap(i)));
-	return result;
-}
-
-template <>
-wxImageList* unwrap< wxImageList* >(const VALUE &imagelist)
-{
-	wxImageList *result = new wxImageList;
-	VALUE dup(rb_Array(imagelist));
-	result->Create();
-	std::size_t count = RARRAY_LEN(dup);
-	for(std::size_t i = 0;i < count;++i)
-		result->Add(unwrap<wxBitmap>(RARRAY_AREF(dup,i)));
-	return result;
-}
-
 
 namespace RubyWX {
 namespace Bitmap {
