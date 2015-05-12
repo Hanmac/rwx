@@ -4,48 +4,32 @@
 class ColorPickerPage < CommonPage
   def create_boxleft
     WX::BoxSizer.new(:vertical) {|boxleft|
-      boxleft.add(WX::StaticBox.new(self, :label => "&ColourPicker style").containing_sizer.tap {|box|
-        box.orientation = :vertical
-          
-        @textctrl = add_checkbox(box,"With textctrl")
-        @withLabel = add_checkbox(box,"With label")
-        
-        reset_boxes
-      }, :expand => true)
-      boxleft.add(WX::Button.new(self,:id => :reset,:label => "&Reset") {|but|
-        but.bind(:button) {
+      boxleft.add(
+        add_statbox("&ColourPicker style", :vertical) {|box|
+          @textctrl = add_checkbox(box,"With textctrl")
+          @withLabel = add_checkbox(box,"With label")
+
           reset_boxes
-          recreate_picker
-        }
-      },:align => :center)
+        },
+        :expand => true
+      )
+      p boxleft.orientation
+      p boxleft.vertical?
+      add_button(boxleft, "&Reset", :reset, :align => :center_horizontal) {
+        reset_boxes
+        recreate_widget
+      }
+      
+      bind(:checkbox) {recreate_widget}
       
     }
-  end
-  
-  def create_boxright
-    WX::BoxSizer.new(:vertical) {|boxright|
-      boxright.add_stretch_spacer(5)
-      boxright.add(create_picker,:align => :center)  
-      boxright.add_stretch_spacer(5)
-    }
-  end
-  
-  def create_content
-    self.sizer = WX::BoxSizer.new {|siz|
-    
-      siz.add(create_boxleft, :expand => true)
-      
-      siz.add(@ctrl_sizer = create_boxright, :expand => true)
-      
-    }
-    
-    bind(:checkbox) {recreate_picker}
   end
   
   def get_style
     style = 0
     style |= WX::ColorPicker::USE_TEXTCTRL if @textctrl.value
     style |= WX::ColorPicker::SHOW_LABEL if @withLabel.value
+
     return style
   end
   
@@ -55,18 +39,19 @@ class ColorPickerPage < CommonPage
     @withLabel.value = (default & WX::ColorPicker::SHOW_LABEL) != 0
   end
   
-  def create_picker
+  def create_widget
     @picker = WX::ColorPicker.new(self,:style => get_style)
   end
   
-  def recreate_picker
-    
+  def recreate_widget
+
     @ctrl_sizer.remove(1)
-    
+
     @picker.destroy
-    
-    @ctrl_sizer.insert(1,create_picker,:align => :center)
-    
+
+    @ctrl_sizer.insert(1,create_widget,:align => :center)
+
     @ctrl_sizer.layout
+
   end
 end
