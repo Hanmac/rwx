@@ -43,6 +43,11 @@ wxSizerFlags unwrap< wxSizerFlags >(const VALUE &hash)
 				result.Top();
 			if(SYM2ID(val) == rb_intern("center"))
 				result.Center();
+			if(SYM2ID(val) == rb_intern("center_vertical"))
+				result.CenterVertical();
+			if(SYM2ID(val) == rb_intern("center_horizontal"))
+				result.CenterHorizontal();
+
 
 		}
 	}
