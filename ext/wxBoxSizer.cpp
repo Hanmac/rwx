@@ -30,6 +30,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "01",&orient);
 	if(!NIL_P(orient))
 		_setOrientation(self,orient);
+
+	rb_call_super(argc,argv);
+
 	return self;
 }
 
@@ -44,6 +47,8 @@ DLL_LOCAL void Init_WXBoxSizer(VALUE rb_mWX)
 	using namespace RubyWX::BoxSizer;
 	rb_cWXBoxSizer = rb_define_class_under(rb_mWX,"BoxSizer",rb_cWXSizer);
 	rb_define_alloc_func(rb_cWXBoxSizer,_alloc);
+
+	rb_define_method(rb_cWXBoxSizer,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_attr_method(rb_cWXBoxSizer,"orientation",_getOrientation,_setOrientation);
 
