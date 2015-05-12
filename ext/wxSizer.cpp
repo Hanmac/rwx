@@ -44,10 +44,17 @@ wxSizerFlags unwrap< wxSizerFlags >(const VALUE &hash)
 			if(SYM2ID(val) == rb_intern("center"))
 				result.Center();
 #ifdef HAVE_CONST_WXALIGN_CENTER_VERTICAL
+#ifdef HAVE_WXSIZERFLAGS_CENTERVERTICAL
 			if(SYM2ID(val) == rb_intern("center_vertical"))
 				result.CenterVertical();
 			if(SYM2ID(val) == rb_intern("center_horizontal"))
 				result.CenterHorizontal();
+#else
+			if(SYM2ID(val) == rb_intern("center_vertical"))
+				result.Align(wxALIGN_CENTER_VERTICAL);
+			if(SYM2ID(val) == rb_intern("center_horizontal"))
+				result.Align(wxALIGN_CENTER_HORIZONTAL);
+#endif
 #endif
 		}
 	}

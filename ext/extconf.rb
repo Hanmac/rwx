@@ -107,6 +107,7 @@ if(wx_config = find_executable('wx-config'))
     have_const("wxSTC_LEX_DMAP",["wx/wx.h", "wx/stc/stc.h"])
 
 		have_const("wxALIGN_CENTER_VERTICAL","wx/sizer.h")
+		have_member_func("wxSizerFlags","CenterVertical","wx/sizer.h")
 	}
 else
 		abort("wx-config executable not found!")
