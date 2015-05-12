@@ -7,6 +7,7 @@
 
 #include "wxStaticBox.hpp"
 #include "wxSizer.hpp"
+#include "wxBoxSizer.hpp"
 
 VALUE rb_cWXStaticBox;
 
@@ -51,6 +52,13 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	}
 
 	rb_call_super(argc,argv);
+
+	if(rb_obj_is_kind_of(hash,rb_cHash)) {
+		wxOrientation orient(wxHORIZONTAL);
+		if(set_hash_option(hash,"orientation",orient,unwrapenum<wxOrientation>)) {
+			new wxStaticBoxSizer(_self,orient);
+		}
+	}
 	return self;
 }
 
