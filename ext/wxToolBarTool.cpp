@@ -22,16 +22,41 @@ struct wxToolBarTool;
 namespace RubyWX {
 namespace ToolBarTool {
 
-macro_attr(Label,wxString)
-macro_attr(ShortHelp,wxString)
-macro_attr(LongHelp,wxString)
+
+#define macro_tool_attr_func(name, type, get, set, settool) \
+DLL_LOCAL VALUE _get##name(VALUE self)\
+{ \
+	return wrap(_self->get());\
+}\
+\
+DLL_LOCAL VALUE _set##name(VALUE self,VALUE other)\
+{\
+	rb_check_frozen(self);\
+	wxToolBarBase *toolbar = _self->GetToolBar();\
+	if(toolbar) {\
+		int id = _self->GetId();\
+		if(toolbar->FindById(id)) {\
+			toolbar->settool(id, unwrap<type>(other));\
+			return other;\
+		}\
+	}\
+	_self->set(unwrap<type>(other));\
+	return other;\
+}
+
+#define macro_tool_attr(name, type) macro_tool_attr_func(name, type, Get##name, Set##name, SetTool##name)
+#define macro_tool_attr_bool(name, set) macro_tool_attr_func(name, bool, Is##name, set, set##Tool)
+
+macro_attr(Label, wxString)
+macro_tool_attr(ShortHelp, wxString)
+macro_tool_attr(LongHelp, wxString)
 
 #if wxUSE_MENUS
-macro_attr(DropdownMenu,wxMenu*)
+macro_tool_attr_func(DropdownMenu,wxMenu*, GetDropdownMenu, SetDropdownMenu, SetDropdownMenu)
 #endif
 
-macro_attr_bool2(Enabled,Enable)
-macro_attr_bool2(Toggled,Toggle)
+macro_tool_attr_bool(Enabled,Enable)
+macro_tool_attr_bool(Toggled,Toggle)
 
 singlereturn(GetToolBar)
 singlereturn(GetBitmap)
@@ -41,14 +66,34 @@ singlereturn(GetDisabledBitmap)
 DLL_LOCAL VALUE _SetNormalBitmap(VALUE self,VALUE val)
 {
 	rb_check_frozen(self);
-	_self->SetNormalBitmap(wrapBitmap(val,_self->GetId(),WRAP_BITMAP_RAISE,wxART_TOOLBAR));
+	wxBitmap bitmap = wrapBitmap(val,_self->GetId(),WRAP_BITMAP_RAISE,wxART_TOOLBAR);
+
+	wxToolBarBase *toolbar = _self->GetToolBar();
+	if(toolbar) {
+		int id = _self->GetId();
+		if(toolbar->FindById(id)) {
+			toolbar->SetToolNormalBitmap(id, bitmap);
+			return val;
+		}
+	}
+	_self->SetNormalBitmap(bitmap);
 	return val;
 }
 
 DLL_LOCAL VALUE _SetDisabledBitmap(VALUE self,VALUE val)
 {
 	rb_check_frozen(self);
-	_self->SetDisabledBitmap(wrapBitmap(val,_self->GetId(),WRAP_BITMAP_NULL,wxART_TOOLBAR));
+	wxBitmap bitmap = wrapBitmap(val,_self->GetId(),WRAP_BITMAP_RAISE,wxART_TOOLBAR);
+
+	wxToolBarBase *toolbar = _self->GetToolBar();
+	if(toolbar) {
+		int id = _self->GetId();
+		if(toolbar->FindById(id)) {
+			toolbar->SetToolDisabledBitmap(id, bitmap);
+			return val;
+		}
+	}
+	_self->SetDisabledBitmap(bitmap);
 	return val;
 }
 
@@ -73,22 +118,12 @@ DLL_LOCAL VALUE _alloc(VALUE self)
 #endif
 
 
-/* Document-method: toolbar
- * call-seq:
- *   toolbar -> WX::ToolBar or nil
- *
- * returns the toolbar that has this ToolBarTool of nil.
- * ===Return value
- * WX::ToolBar or nil
+/* Document-attr: toolbar
+ * the toolbar that has this ToolBarTool or nil.
  */
 
-/* Document-method: bitmap
- * call-seq:
- *   bitmap -> WX::Bitmap
- *
- * returns the current bitmap of this tool bar item.
- * ===Return value
- * WX::Bitmap
+/* Document-attr: bitmap
+ * the current bitmap of this tool bar item.
  */
 
 
@@ -137,6 +172,10 @@ DLL_LOCAL void Init_WXToolBarTool(VALUE rb_mWX)
 	rb_define_alloc_func(rb_cWXToolBarTool,_alloc);
 
 #if 0
+	rb_define_attr(rb_cWXToolBarTool,"control",1,0);
+	rb_define_attr(rb_cWXToolBarTool,"toolbar,1,0);
+	rb_define_attr(rb_cWXToolBarTool,"bitmap",1,0);
+
 	rb_define_attr(rb_cWXToolBarTool,"normal_bitmap",1,1);
 	rb_define_attr(rb_cWXToolBarTool,"disabled_bitmap",1,1);
 
@@ -154,11 +193,11 @@ DLL_LOCAL void Init_WXToolBarTool(VALUE rb_mWX)
 	rb_undef_method(rb_cWXToolBarTool,"_load");
 	rb_undef_method(rb_cWXToolBarTool,"_dump");
 
-	rb_define_method(rb_cWXToolBarTool,"control",RUBY_METHOD_FUNC(_getControl),0);
+	rb_define_attr_method(rb_cWXToolBarTool,"control",_getControl,0);
 
-	rb_define_method(rb_cWXToolBarTool,"toolbar",RUBY_METHOD_FUNC(_GetToolBar),0);
+	rb_define_attr_method(rb_cWXToolBarTool,"toolbar",_GetToolBar,0);
 
-	rb_define_method(rb_cWXToolBarTool,"bitmap",RUBY_METHOD_FUNC(_GetBitmap),0);
+	rb_define_attr_method(rb_cWXToolBarTool,"bitmap",_GetBitmap,0);
 
 	rb_define_attr_method(rb_cWXToolBarTool,"normal_bitmap",_GetNormalBitmap,_SetNormalBitmap);
 	rb_define_attr_method(rb_cWXToolBarTool,"disabled_bitmap",_GetDisabledBitmap,_SetDisabledBitmap);
