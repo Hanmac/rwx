@@ -20,8 +20,8 @@ if(wx_config = find_executable('wx-config'))
 		abort("wx version outdated, please update to 3.0.0 or newer")
 	end
 	
-	ruby_cc = CONFIG["CC"]
-	ruby_cxx = CONFIG["CXX"]
+    ruby_cc = RbConfig::CONFIG["CC"]
+	ruby_cxx = RbConfig::CONFIG["CXX"]
 	# An ruby extension does need to be build against
 	# the same compiler as ruby was
 	unless ruby_cc && find_executable(ruby_cc)
@@ -32,19 +32,67 @@ if(wx_config = find_executable('wx-config'))
 	end
 	
 	cc = `#{wx_config} --cc`.chomp
-	unless cc == ruby_cc
-		abort("CC compiler missmatch %s == %s" % [cc, ruby_cc])
-	end
 	
 	cxx = `#{wx_config} --cxx`.chomp
-	unless cxx == ruby_cxx
-		abort("CXX compiler missmatch %s == %s" % [cxx, ruby_cxx])
+        cxxversion_wx = `#{cxx} -v 2>&1`.split("\n")
+        cxxversion_rb = `#{ruby_cxx} -v 2>&1`.split("\n")
+        ccversion_wx = `#{cc} -v 2>&1`.split("\n")
+        ccversion_rb = `#{ruby_cc} -v 2>&1`.split("\n")
+        puts ccversion_wx[0],ccversion_rb[0]
+	unless ccversion_rb.include?(ccversion_wx[0])
+		abort("CC compiler missmatch %s == %s" % [ccversion_wx, ccversion_rb])
+	end
+	unless cxxversion_rb.include?(cxxversion_wx[0])
+		abort("CXX compiler missmatch %s == %s" % [cxxversion_wx,cxxversion_rb])
 	end
 	
 	#earlier versions of ruby does not have that constant
-	$CXXFLAGS = CONFIG["CXXFLAGS"] unless defined?($CXXFLAGS)
-	
-	#for some function add the base classes
+    #remove bad paths in flags
+    rmnonpaths = lambda {|x|
+        if (x[0,2]=="-L" ||x[0,2]=="-I") then
+            if File.exist?(x[2,x.length-2]) then
+                x
+            else
+                nil
+            end
+        else
+            x
+        end
+    }
+    if (RbConfig::CONFIG["CXXFLAGS"]) then
+        $CXXFLAGS = RbConfig::CONFIG["CXXFLAGS"]
+        $CXXFLAGS=$CXXFLAGS.split()
+        $CXXFLAGS.map!(&rmnonpaths)
+    end
+    if (RbConfig::CONFIG["CPPFLAGS"]) then
+        $CPPFLAGS = RbConfig::CONFIG["CXXFLAGS"]
+        $CPPFLAGS=$CPPFLAGS.split()
+        $CPPFLAGS.map!(&rmnonpaths)
+    end
+    if (RbConfig::CONFIG["CCFLAGS"]) then
+        $CCFLAGS = RbConfig::CONFIG["CXXFLAGS"]
+        $CCFLAGS=$CCFLAGS.split()
+        $CCFLAGS.map!(&rmnonpaths)
+    end
+    if (RbConfig::CONFIG["LDFLAGS"]) then
+        $LDFLAGS = RbConfig::CONFIG["CXXFLAGS"]
+        $LDFLAGS=$LDFLAGS.split()
+        $LDFLAGS.map!(&rmnonpaths)
+    end
+    if ($CXXFLAGS) then
+        $CXXFLAGS=$CXXFLAGS.join(" ")
+    end
+    if ($CPPFLAGS) then
+        $CPPFLAGS=$CPPFLAGS.join(" ")
+    end
+    if ($CCFLAGS) then
+        $CCFLAGS=$CCFLAGS.join(" ")
+    end
+    if ($LDFLAGS) then
+        $LDFLAGS=$LDFLAGS.join(" ")
+    end
+    $CXXFLAGS = RbConfig::CONFIG["CXXFLAGS"] unless defined?($CXXFLAGS)
+    #for some function add the base classes
 	extra_libs = []
 	case `#{wx_config} --basename`
 	when /gtk2/
@@ -56,30 +104,52 @@ if(wx_config = find_executable('wx-config'))
 	extra_libs.each {|l|
 		pkg = pkg_config(l)
 		#because pkg forgot to add the include paths to cxx flags
+        puts L
+        puts pkg[0]
 		$CXXFLAGS << " " << pkg[0] if pkg && !$CXXFLAGS[pkg[0]]
 	}
-	
 	all = " -fvisibility-inlines-hidden"
 	$CFLAGS << all << " -x c++ -g -Wall "
 	$CXXFLAGS << all << " -g -Wall "
-	$CPPFLAGS << all << " -g "
+	$CPPFLAGS << all << " -g -x c++ "
 	$LDFLAGS << all << " "
+    #set up special flags for testing
+    moreflags = ""
+	with_cflags(" -x c++ ") {
+	  moreflags += " -DHAVE_TYPE_TRAITS " if have_header("type_traits")
+	  moreflags += " -DHAVE_TR1_TYPE_TRAITS " if have_header("tr1/type_traits")
+	  moreflags += " -DHAVE_STD_UNORDERED_MAP " if have_header("unordered_map")
+	  moreflags += " -DHAVE_TR1_UNORDERED_MAP " if have_header("tr1/unordered_map")
+        }
 	
 	# add the wx-config flags
 	$CFLAGS << `#{wx_config} --cflags`.chomp
 	$CXXFLAGS << `#{wx_config} --cxxflags`.chomp
 	$CPPFLAGS << `#{wx_config} --cppflags`.chomp
 	$LDFLAGS << `#{wx_config} --libs all`.chomp
-	
+	puts $LDFLAGS
 	# TODO add extra check if a lib of wx is missing
 	
-	with_cflags(" -x c++ ") {
+	with_cflags(" -x c++ "+moreflags) {
 		# need c++ for some of the tests
-		RbConfig::CONFIG["CC"] = CONFIG["CXX"]
-		
-		have_header("wx/preferences.h")
-		
-		#check for better Bind commmand
+		CONFIG["CC"] = CONFIG["CXX"]
+        #C++98tr1 c++11 differences
+        have_header("type_traits")
+        have_header("tr1/type_traits")
+        if try_header("unordered_map")
+            checking_for "unordered_map" do
+                $defs.push(format("-DHAVE_STD_%s", "unordered_map".tr_cpp))
+            end
+        end
+        have_header("tr1/unordered_map")
+        if try_header("unordered_set")
+            checking_for "unordered_set" do
+                $defs.push(format("-DHAVE_STD_%s", "unordered_set".tr_cpp))
+            end
+        end
+        have_header("tr1/unordered_set")
+        have_header("wx/preferences.h","wx/defs.h")
+        #check for better Bind commmand
 		unless have_macro("wxHAS_EVENT_BIND","wx/wx.h")
 			abort("need wxHAS_EVENT_BIND, update your compiler!")
 		end
@@ -104,7 +174,7 @@ if(wx_config = find_executable('wx-config'))
 		have_const("wxFD_NO_FOLLOW","wx/filedlg.h")
 		have_const("wxDIRCTRL_DEFAULT_STYLE",["wx/wx.h", "wx/dirctrl.h"])
 		have_func("wxDirCtrl()",["wx/wx.h", "wx/dirctrl.h"])
-    have_const("wxSTC_LEX_DMAP",["wx/wx.h", "wx/stc/stc.h"])
+        have_const("wxSTC_LEX_DMAP",["wx/wx.h", "wx/stc/stc.h"])
 
 		have_const("wxALIGN_CENTER_VERTICAL","wx/sizer.h")
 		have_member_func("wxSizerFlags","CenterVertical","wx/sizer.h")
@@ -124,7 +194,7 @@ CONFIG["warnflags"].gsub!(
 		"-Wextra" #wxAUI is a bit buggy
 	), "")
 
-#with_cppflags("-std=c++11") {
+with_cppflags("-std=c++11") {
   create_header
   create_makefile "rwx"
-#}
+}
