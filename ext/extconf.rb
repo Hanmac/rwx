@@ -52,10 +52,11 @@ if(wx_config = find_executable('wx-config'))
         if (x[0,2]=="-L" ||x[0,2]=="-I") then
             if File.exist?(x[2,x.length-2]) then
                 x
-                else
+            else
+                puts "removing %s"%x 
                 nil
             end
-            else
+        else
             x
         end
     }
