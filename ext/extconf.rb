@@ -115,14 +115,18 @@ if(wx_config = find_executable('wx-config'))
     $CPPFLAGS << all << " -g -x c++ "
     $LDFLAGS << all << " "
     # add the wx-config flags
+    puts "cflags"
     $CFLAGS << `#{wx_config} --cflags`.chomp
-    puts $CFLAGS
+    puts `#{wx_config} --cflags`
+    puts "cxxflags"
     $CXXFLAGS << `#{wx_config} --cxxflags`.chomp
-    puts $CXXFLAGS
+    puts `#{wx_config} --cxxflags`
+    puts "cppflags"
     $CPPFLAGS << `#{wx_config} --cppflags`.chomp
-    #puts $CPPFLAGS
+    #puts `#{wx_config} --cppflags`
+    puts "ldflags"
     $LDFLAGS << `#{wx_config} --libs all`.chomp
-    #puts $LDFLAGS
+    #puts `#{wx_config} --libs all`
     # TODO add extra check if a lib of wx is missing
     with_cflags(" -x c++ ") {
         # need c++ for some of the tests
