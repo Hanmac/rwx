@@ -45,7 +45,7 @@ if(wx_config = find_executable('wx-config'))
     unless cxxversion_rb.include?(cxxversion_wx[0])
         abort("CXX compiler missmatch %s == %s" % [cxxversion_wx,cxxversion_rb])
     end
-    
+    puts "compilers matched"
     #earlier versions of ruby does not have that constant
     #remove bad paths in flags
     rmnonpaths = lambda {|x|
@@ -60,6 +60,7 @@ if(wx_config = find_executable('wx-config'))
             x
         end
     }
+    puts "removing nonexistent paths"
     if (RbConfig::CONFIG["CXXFLAGS"]) then
         $CXXFLAGS = RbConfig::CONFIG["CXXFLAGS"]
         $CXXFLAGS=$CXXFLAGS.split()
@@ -92,7 +93,7 @@ if(wx_config = find_executable('wx-config'))
         moreflags += " -DHAVE_STD_UNORDERED_MAP " if have_header("unordered_map")
         moreflags += " -DHAVE_TR1_UNORDERED_MAP " if have_header("tr1/unordered_map")
     }
-    
+    print "moreflags set"
     $CXXFLAGS = RbConfig::CONFIG["CXXFLAGS"] unless defined?($CXXFLAGS)
     #for some function add the base classes
     extra_libs = []
@@ -102,7 +103,7 @@ if(wx_config = find_executable('wx-config'))
         when /gtk3/
         extra_libs << "gtk+-x11-3.0" << "gdk-x11-3.0"
     end
-    
+    puts "fixing",extra_libs
     extra_libs.each {|l|
         pkg = pkg_config(l)
         #because pkg forgot to add the include paths to cxx flags
@@ -115,9 +116,9 @@ if(wx_config = find_executable('wx-config'))
     $LDFLAGS << all << " "
     # add the wx-config flags
     $CFLAGS << `#{wx_config} --cflags`.chomp
-    #puts $CFLAGS
+    puts $CFLAGS
     $CXXFLAGS << `#{wx_config} --cxxflags`.chomp
-    #puts $CXXFLAGS
+    puts $CXXFLAGS
     $CPPFLAGS << `#{wx_config} --cppflags`.chomp
     #puts $CPPFLAGS
     $LDFLAGS << `#{wx_config} --libs all`.chomp
@@ -177,7 +178,7 @@ if(wx_config = find_executable('wx-config'))
         have_const("wxALIGN_CENTER_VERTICAL","wx/sizer.h")
         have_member_func("wxSizerFlags","CenterVertical","wx/sizer.h")
     }
-    else
+else
     abort("wx-config executable not found!")
     
 end
