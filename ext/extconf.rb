@@ -38,7 +38,7 @@ if(wx_config = find_executable('wx-config'))
         cxxversion_rb = `#{ruby_cxx} -v 2>&1`.split("\n")
         ccversion_wx = `#{cc} -v 2>&1`.split("\n")
         ccversion_rb = `#{ruby_cc} -v 2>&1`.split("\n")
-        puts ccversion_wx[0],ccversion_rb[0]
+        #puts ccversion_wx[0],ccversion_rb[0]
 	unless ccversion_rb.include?(ccversion_wx[0])
 		abort("CC compiler missmatch %s == %s" % [ccversion_wx, ccversion_rb])
 	end
@@ -63,19 +63,21 @@ if(wx_config = find_executable('wx-config'))
         $CXXFLAGS = RbConfig::CONFIG["CXXFLAGS"]
         $CXXFLAGS=$CXXFLAGS.split()
         $CXXFLAGS.map!(&rmnonpaths)
-    end
+     end
     if (RbConfig::CONFIG["CPPFLAGS"]) then
-        $CPPFLAGS = RbConfig::CONFIG["CXXFLAGS"]
+        $CPPFLAGS = RbConfig::CONFIG["CPPFLAGS"]
         $CPPFLAGS=$CPPFLAGS.split()
+        #puts $CPPFLAGS
         $CPPFLAGS.map!(&rmnonpaths)
-    end
-    if (RbConfig::CONFIG["CCFLAGS"]) then
-        $CCFLAGS = RbConfig::CONFIG["CXXFLAGS"]
-        $CCFLAGS=$CCFLAGS.split()
-        $CCFLAGS.map!(&rmnonpaths)
-    end
+        #puts $CPPFLAGS
+     end
+    if (RbConfig::CONFIG["CFLAGS"]) then
+        $CFLAGS = RbConfig::CONFIG["CFLAGS"]
+        $CFLAGS=$CFLAGS.split()
+        $CFLAGS.map!(&rmnonpaths)
+     end
     if (RbConfig::CONFIG["LDFLAGS"]) then
-        $LDFLAGS = RbConfig::CONFIG["CXXFLAGS"]
+        $LDFLAGS = RbConfig::CONFIG["LDFLAGS"]
         $LDFLAGS=$LDFLAGS.split()
         $LDFLAGS.map!(&rmnonpaths)
     end
@@ -85,8 +87,8 @@ if(wx_config = find_executable('wx-config'))
     if ($CPPFLAGS) then
         $CPPFLAGS=$CPPFLAGS.join(" ")
     end
-    if ($CCFLAGS) then
-        $CCFLAGS=$CCFLAGS.join(" ")
+    if ($CFLAGS) then
+        $CFLAGS=$CFLAGS.join(" ")
     end
     if ($LDFLAGS) then
         $LDFLAGS=$LDFLAGS.join(" ")
@@ -104,17 +106,15 @@ if(wx_config = find_executable('wx-config'))
 	extra_libs.each {|l|
 		pkg = pkg_config(l)
 		#because pkg forgot to add the include paths to cxx flags
-        puts L
-        puts pkg[0]
-		$CXXFLAGS << " " << pkg[0] if pkg && !$CXXFLAGS[pkg[0]]
+	        $CXXFLAGS << " " << pkg[0] if pkg && !$CXXFLAGS[pkg[0]]
 	}
 	all = " -fvisibility-inlines-hidden"
 	$CFLAGS << all << " -x c++ -g -Wall "
 	$CXXFLAGS << all << " -g -Wall "
 	$CPPFLAGS << all << " -g -x c++ "
 	$LDFLAGS << all << " "
-    #set up special flags for testing
-    moreflags = ""
+        #set up special flags for testing
+        moreflags = ""
 	with_cflags(" -x c++ ") {
 	  moreflags += " -DHAVE_TYPE_TRAITS " if have_header("type_traits")
 	  moreflags += " -DHAVE_TR1_TYPE_TRAITS " if have_header("tr1/type_traits")
@@ -124,16 +124,19 @@ if(wx_config = find_executable('wx-config'))
 	
 	# add the wx-config flags
 	$CFLAGS << `#{wx_config} --cflags`.chomp
-	$CXXFLAGS << `#{wx_config} --cxxflags`.chomp
-	$CPPFLAGS << `#{wx_config} --cppflags`.chomp
-	$LDFLAGS << `#{wx_config} --libs all`.chomp
-	puts $LDFLAGS
+        #puts $CFLAGS
+ 	$CXXFLAGS << `#{wx_config} --cxxflags`.chomp
+        #puts $CXXFLAGS
+ 	$CPPFLAGS << `#{wx_config} --cppflags`.chomp
+        #puts $CPPFLAGS
+ 	$LDFLAGS << `#{wx_config} --libs all`.chomp
+	#puts $LDFLAGS
 	# TODO add extra check if a lib of wx is missing
 	
 	with_cflags(" -x c++ "+moreflags) {
 		# need c++ for some of the tests
 		CONFIG["CC"] = CONFIG["CXX"]
-        #C++98tr1 c++11 differences
+        #C++03tr1 c++11 differences
         have_header("type_traits")
         have_header("tr1/type_traits")
         if try_header("unordered_map")
@@ -174,7 +177,7 @@ if(wx_config = find_executable('wx-config'))
 		have_const("wxFD_NO_FOLLOW","wx/filedlg.h")
 		have_const("wxDIRCTRL_DEFAULT_STYLE",["wx/wx.h", "wx/dirctrl.h"])
 		have_func("wxDirCtrl()",["wx/wx.h", "wx/dirctrl.h"])
-        have_const("wxSTC_LEX_DMAP",["wx/wx.h", "wx/stc/stc.h"])
+                have_const("wxSTC_LEX_DMAP",["wx/wx.h", "wx/stc/stc.h"])
 
 		have_const("wxALIGN_CENTER_VERTICAL","wx/sizer.h")
 		have_member_func("wxSizerFlags","CenterVertical","wx/sizer.h")
@@ -193,8 +196,8 @@ CONFIG["warnflags"].gsub!(
 		"-Wimplicit-function-declaration",
 		"-Wextra" #wxAUI is a bit buggy
 	), "")
-
-with_cppflags("-std=c++11") {
+puts $CXXFLAGS
+#with_cppflags("-std=c++11") {
   create_header
   create_makefile "rwx"
-}
+#}
