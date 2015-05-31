@@ -75,18 +75,22 @@ if(wxversion = pkg_config("wx","version"))
     $LDFLAGS << " " << wxldflags
     #for some function add the base classes
     wxpkg = pkg_config("wx","basename")
+    print "#{$CFLAGS} \n"
     case wxpkg
         when /gtk2/
         gdkflags = pkg_config("gdk-x11-2.0")
         $CXXFLAGS += " " << gdkflags[0] if gdkflags[0] # because even though the Ruby doc source code says it does this, it doesn't
+        print "#{$INCFLAGS} \n"
         gtkflags = pkg_config("gtk+-x11-2.0")
         $CXXFLAGS += " " << gtkflags[0] if gtkflags[0]
+        print "#{$INCFLAGS} \n"
         when /gtk3/
         gdkflags = pkg_config("gdk-x11-3.0")
         $CXXFLAGS += " " << gdkflags[0] if gdkflags[0]
         gtkflags = pkg_config("gtk+-x11-3.0")
         $CXXFLAGS += " " << gtkflags[0] if gtkflags[0]
     end
+    print "#{$CFLAGS} \n"
     all = " -fvisibility-inlines-hidden"
     $CFLAGS << all << " -x c++ -g -Wall "
     $CXXFLAGS << all << " -g -Wall "
