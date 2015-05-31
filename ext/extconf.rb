@@ -63,23 +63,41 @@ if(wxversion = pkg_config("wx","version"))
         moreflags += " -DHAVE_STD_UNORDERED_MAP " if have_header("unordered_map")
         moreflags += " -DHAVE_TR1_UNORDERED_MAP " if have_header("tr1/unordered_map")
     }
-   wxpkg = pkg_config("wx","basename")
-    print "#{$CFLAGS} \n"
+    wxpkg = pkg_config("wx","basename")
+    # create a proc that works across all ruby versions to replace pkg_config issues
+    pkg_conf = proc {|pkg|
+        print "#{$CFLAGS} \n"
+        print "#{$CXXFLAGS} \n"
+        print "#{$libs} \n"
+        print "#{$INCFLAGS} \n"
+        if (pkglibs = pkg_config(pkg,"libs")) then
+            if (pkgcinc = pkg_config(pkg,"cflags-only-I")) then
+                pkgcflags = pkg_config(pkg,"cflags-only-other")
+                else
+                pkgcflags =  pkg_config(pkg,"cflags")
+            end
+            pkglibsonly = pkg_config(pkg,"libs-only-l")
+            pkgldflags = (Shellwords.shellwords(pkglibs) - Shellwords.shellwords(pkglibsonly)).quote.join(" ")
+            $CFLAGS += " " << pkgcflags
+            $CXXFLAGS += " " << pkgcflags
+            $INCFLAGS += " " << pkgcinc
+            $libs += " " << pkglibsonly
+        else
+            abort("package configuration for %s is missing\n" % [pkg])
+        end
+        print "#{$CFLAGS} \n"
+        print "#{$CXXFLAGS} \n"
+        print "#{$libs} \n"
+        print "#{$INCFLAGS} \n"
+    }
     case wxpkg
         when /gtk2/
-        gdkflags = pkg_config("gdk-x11-2.0")
-        $CXXFLAGS += " " << gdkflags[0] if gdkflags[0] # because even though the Ruby doc source code says it does this, it doesn't
-        print "#{$INCFLAGS} \n"
-        gtkflags = pkg_config("gtk+-x11-2.0")
-        $CXXFLAGS += " " << gtkflags[0] if gtkflags[0]
-        print "#{$INCFLAGS} \n"
+        pkg_conf("gdk-x11-2.0")
+        pkg_conf("gtk+-x11-2.0")
         when /gtk3/
-        gdkflags = pkg_config("gdk-x11-3.0")
-        $CXXFLAGS += " " << gdkflags[0] if gdkflags[0]
-        gtkflags = pkg_config("gtk+-x11-3.0")
-        $CXXFLAGS += " " << gtkflags[0] if gtkflags[0]
+        pkg_conf("gdk-x11-3.0")
+        pkg_conf("gtk+-x11-3.0")
     end
-    print "#{$CFLAGS} \n"
     wxcppflags=pkg_config("wx","cppflags")
     $CPPFLAGS += " " << wxcppflags
     wxcflags=pkg_config("wx","cflags")
