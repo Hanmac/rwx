@@ -63,18 +63,7 @@ if(wxversion = pkg_config("wx","version"))
         moreflags += " -DHAVE_STD_UNORDERED_MAP " if have_header("unordered_map")
         moreflags += " -DHAVE_TR1_UNORDERED_MAP " if have_header("tr1/unordered_map")
     }
-    wxcppflags=pkg_config("wx","cppflags")
-    $CPPFLAGS += " " << wxcppflags
-    wxcflags=pkg_config("wx","cflags")
-    $CFLAGS += " " << wxcflags
-    wxcxxflags=pkg_config("wx","cxxflags")
-    $CXXFLAGS += " " << wxcxxflags
-    wxlibs=pkg_config("wx","libs all")
-    $libs += " " << wxlibs
-    wxldflags=pkg_config("wx","linkdeps")
-    $LDFLAGS << " " << wxldflags
-    #for some function add the base classes
-    wxpkg = pkg_config("wx","basename")
+   wxpkg = pkg_config("wx","basename")
     print "#{$CFLAGS} \n"
     case wxpkg
         when /gtk2/
@@ -91,6 +80,17 @@ if(wxversion = pkg_config("wx","version"))
         $CXXFLAGS += " " << gtkflags[0] if gtkflags[0]
     end
     print "#{$CFLAGS} \n"
+    wxcppflags=pkg_config("wx","cppflags")
+    $CPPFLAGS += " " << wxcppflags
+    wxcflags=pkg_config("wx","cflags")
+    $CFLAGS += " " << wxcflags
+    wxcxxflags=pkg_config("wx","cxxflags")
+    $CXXFLAGS += " " << wxcxxflags
+    wxlibs=pkg_config("wx","libs all")
+    $libs += " " << wxlibs
+    wxldflags=pkg_config("wx","linkdeps")
+    $LDFLAGS << " " << wxldflags
+    #for some function add the base classes
     all = " -fvisibility-inlines-hidden"
     $CFLAGS << all << " -x c++ -g -Wall "
     $CXXFLAGS << all << " -g -Wall "
