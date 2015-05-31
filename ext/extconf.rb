@@ -20,9 +20,13 @@ def pkg_conf(pkg)
         pkglibsonly = pkg_config(pkg,"libs-only-l")
         pkgldflags = (Shellwords.shellwords(pkglibs) - Shellwords.shellwords(pkglibsonly)).quote.join(" ")
         $CFLAGS += " " << pkgcflags
+        $CFLAGS = $CFLAGS.split.uniq.join(" ")
         $CXXFLAGS += " " << pkgcflags
+        $CXXFLAGS = $CXXFLAGS.split.uniq.join(" ")
         $INCFLAGS += " " << pkgcinc
+        $INCFLAGS = $INCFLAGS.split.uniq.join(" ")
         $libs += " " << pkglibsonly
+        $libs = $libs.split.uniq.join(" ")
     else
         abort("package configuration for %s is missing\n" % [pkg])
     end
