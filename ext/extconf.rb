@@ -53,7 +53,7 @@ if(wxversion = pkg_config("wx","version"))
     $CXXFLAGS=CONFIG["CXXFLAGS"]
     $LDFLAGS=CONFIG["LDFLAGS"]
     $LDFLAGS=$LDFLAGS.split.delete_if {|x| x[0,2]=="-L" && !File.exist?(x[2,x.length-2])}.join(" ")
-    $LIBS=CONFIG["LIBS"]
+
 
     #set up special flags for testing
     moreflags = ""
@@ -64,13 +64,13 @@ if(wxversion = pkg_config("wx","version"))
         moreflags += " -DHAVE_TR1_UNORDERED_MAP " if have_header("tr1/unordered_map")
     }
     wxcppflags=pkg_config("wx","cppflags")
-    $CPPFLAGS << " " << wxcppflags
+    $CPPFLAGS += " " << wxcppflags
     wxcflags=pkg_config("wx","cflags")
-    $CFLAGS << " " << wxcflags
+    $CFLAGS += " " << wxcflags
     wxcxxflags=pkg_config("wx","cxxflags")
-    $CPPFLAGS << " " << wxcxxflags
+    $CXXFLAGS += " " << wxcxxflags
     wxlibs=pkg_config("wx","libs all")
-    $LIBS << " " << wxlibs
+    $libs += " " << wxlibs
     wxldflags=pkg_config("wx","linkdeps")
     $LDFLAGS << " " << wxldflags
     #for some function add the base classes
@@ -78,30 +78,14 @@ if(wxversion = pkg_config("wx","version"))
     case wxpkg
         when /gtk2/
         gdkflags = pkg_config("gdk-x11-2.0")
-        if gdkflags
-            $CXXFLAGS << " " << gdkflags[0]
-            $LIBS << " " << gdkflags[1]
-            $LDFLAGS << " " << gdkflags[2]
-        end
+        $CXXFLAGS += " " << gdkflags[0] if gdkflags[0] # because even though the Ruby doc source code says it does this, it doesn't
         gtkflags = pkg_config("gtk+-x11-2.0")
-        if gtkflags
-            $CXXFLAGS << " " << gtkflags[0]
-            $LIBS << " " << gtkflags[1]
-            $LDFLAGS << " " << gtkflags[2]
-        end
+        $CXXFLAGS += " " << gtkflags[0] if gtkflags[0]
         when /gtk3/
         gdkflags = pkg_config("gdk-x11-3.0")
-        if gdkflags
-            $CXXFLAGS << " " << gdkflags[0]
-            $LIBS << " " << gdkflags[1]
-            $LDFLAGS << " " << gdkflags[2]
-        end
+        $CXXFLAGS += " " << gdkflags[0] if gdkflags[0]
         gtkflags = pkg_config("gtk+-x11-3.0")
-        if gtkflags
-            $CXXFLAGS << " " << gtkflags[0]
-            $LIBS << " " << gtkflags[1]
-            $LDFLAGS << " " << gtkflags[2]
-        end
+        $CXXFLAGS += " " << gtkflags[0] if gtkflags[0]
     end
     all = " -fvisibility-inlines-hidden"
     $CFLAGS << all << " -x c++ -g -Wall "
