@@ -6,6 +6,31 @@ def have_member_func(klass,member,header)
         $defs[-1] = "-DHAVE_#{klass.tr_cpp}_#{member.tr_cpp}"
     end
 end
+def pkg_conf(pkg)
+    print "#{$CFLAGS} \n"
+    print "#{$CXXFLAGS} \n"
+    print "#{$libs} \n"
+    print "#{$INCFLAGS} \n"
+    if (pkglibs = pkg_config(pkg,"libs")) then
+        if (pkgcinc = pkg_config(pkg,"cflags-only-I")) then
+            pkgcflags = pkg_config(pkg,"cflags-only-other")
+            else
+            pkgcflags =  pkg_config(pkg,"cflags")
+        end
+        pkglibsonly = pkg_config(pkg,"libs-only-l")
+        pkgldflags = (Shellwords.shellwords(pkglibs) - Shellwords.shellwords(pkglibsonly)).quote.join(" ")
+        $CFLAGS += " " << pkgcflags
+        $CXXFLAGS += " " << pkgcflags
+        $INCFLAGS += " " << pkgcinc
+        $libs += " " << pkglibsonly
+    else
+        abort("package configuration for %s is missing\n" % [pkg])
+    end
+    print "#{$CFLAGS} \n"
+    print "#{$CXXFLAGS} \n"
+    print "#{$libs} \n"
+    print "#{$INCFLAGS} \n"
+end
 
 unless have_macro("HAVE_RB_DATA_TYPE_T_PARENT")
     abort("rb_data_type_t needs parent attribute!")
