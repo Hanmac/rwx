@@ -1,0 +1,48 @@
+"gcc -o conftest -I/Users/macuser/.rvm/rubies/ruby-2.1.2/include/ruby-2.1.0/x86_64-darwin13.0 -I/Users/macuser/.rvm/rubies/ruby-2.1.2/include/ruby-2.1.0/ruby/backward -I/Users/macuser/.rvm/rubies/ruby-2.1.2/include/ruby-2.1.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/Users/travis/.sm/pkg/active/include -fPIC -mmacosx-version-min=10.7 -pipe conftest.c  -L. -L/Users/macuser/.rvm/rubies/ruby-2.1.2/lib -L/usr/local/Cellar/gtk+/2.24.28/lib -L/usr/local/Cellar/pango/1.36.8/lib -L/opt/X11/lib -L/usr/local/Cellar/gdk-pixbuf/2.30.8/lib -L/usr/local/Cellar/glib/2.44.1/lib -L/usr/local/opt/gettext/lib -lgdk-x11-2.0 -lpangocairo-1.0 -lpango-1.0 -lcairo -lgdk_pixbuf-2.0 -lgobject-2.0 -lglib-2.0 -lintl   -arch x86_64   -lruby-static -framework CoreFoundation  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main(int argc, char **argv)
+4: {
+5:   return 0;
+6: }
+/* end */
+
+"gcc -o conftest -I/Users/macuser/.rvm/rubies/ruby-2.1.2/include/ruby-2.1.0/x86_64-darwin13.0 -I/Users/macuser/.rvm/rubies/ruby-2.1.2/include/ruby-2.1.0/ruby/backward -I/Users/macuser/.rvm/rubies/ruby-2.1.2/include/ruby-2.1.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/Users/travis/.sm/pkg/active/include -fPIC -mmacosx-version-min=10.7 -pipe conftest.c  -L. -L/Users/macuser/.rvm/rubies/ruby-2.1.2/lib -L/usr/local/Cellar/gtk+/2.24.28/lib -L/usr/local/Cellar/pango/1.36.8/lib -L/opt/X11/lib -L/usr/local/Cellar/gdk-pixbuf/2.30.8/lib -L/usr/local/Cellar/glib/2.44.1/lib -L/usr/local/opt/gettext/lib -lgdk-x11-2.0 -lpangocairo-1.0 -lpango-1.0 -lcairo -lgdk_pixbuf-2.0 -lgobject-2.0 -lglib-2.0 -lintl   -arch x86_64   -lruby-static -framework CoreFoundation  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main() {return 0;}
+/* end */
+
+package configuration for gdk-x11-2.0
+cflags: -D_REENTRANT -I/usr/local/Cellar/gtk+/2.24.28/include/gtk-2.0 -I/usr/local/Cellar/gtk+/2.24.28/lib/gtk-2.0/include -I/usr/local/Cellar/pango/1.36.8/include/pango-1.0 -I/opt/X11/include/cairo -I/opt/X11/include/pixman-1 -I/opt/X11/include -I/opt/X11/include/freetype2 -I/opt/X11/include/libpng15 -I/opt/X11/include -I/usr/local/Cellar/gdk-pixbuf/2.30.8/include/gdk-pixbuf-2.0 -I/opt/X11/include/libpng15 -I/usr/local/Cellar/glib/2.44.1/include/glib-2.0 -I/usr/local/Cellar/glib/2.44.1/lib/glib-2.0/include -I/usr/local/opt/gettext/include
+ldflags: -L/usr/local/Cellar/gtk+/2.24.28/lib -L/usr/local/Cellar/pango/1.36.8/lib -L/opt/X11/lib -L/usr/local/Cellar/gdk-pixbuf/2.30.8/lib -L/usr/local/Cellar/glib/2.44.1/lib -L/usr/local/opt/gettext/lib
+libs: -lgdk-x11-2.0 -lpangocairo-1.0 -lpango-1.0 -lcairo -lgdk_pixbuf-2.0 -lgobject-2.0 -lglib-2.0 -lintl
+
+"gcc -o conftest -I/Users/macuser/.rvm/rubies/ruby-2.1.2/include/ruby-2.1.0/x86_64-darwin13.0 -I/Users/macuser/.rvm/rubies/ruby-2.1.2/include/ruby-2.1.0/ruby/backward -I/Users/macuser/.rvm/rubies/ruby-2.1.2/include/ruby-2.1.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/Users/travis/.sm/pkg/active/include -fPIC -mmacosx-version-min=10.7 -pipe -D_REENTRANT -I/usr/local/Cellar/gtk+/2.24.28/include/gtk-2.0 -I/usr/local/Cellar/gtk+/2.24.28/lib/gtk-2.0/include -I/usr/local/Cellar/pango/1.36.8/include/pango-1.0 -I/opt/X11/include/cairo -I/opt/X11/include/pixman-1 -I/opt/X11/include -I/opt/X11/include/freetype2 -I/opt/X11/include/libpng15 -I/opt/X11/include -I/usr/local/Cellar/gdk-pixbuf/2.30.8/include/gdk-pixbuf-2.0 -I/opt/X11/include/libpng15 -I/usr/local/Cellar/glib/2.44.1/include/glib-2.0 -I/usr/local/Cellar/glib/2.44.1/lib/glib-2.0/include -I/usr/local/opt/gettext/include conftest.c  -L. -L/Users/macuser/.rvm/rubies/ruby-2.1.2/lib -L/usr/local/Cellar/gtk+/2.24.28/lib -L/usr/local/Cellar/pango/1.36.8/lib -L/usr/local/Cellar/atk/2.16.0/lib -L/opt/X11/lib -L/usr/local/Cellar/gdk-pixbuf/2.30.8/lib -L/usr/local/Cellar/glib/2.44.1/lib -L/usr/local/Cellar/pango/1.36.8/lib -L/usr/local/Cellar/glib/2.44.1/lib -L/usr/local/opt/gettext/lib -L/opt/X11/lib -lgtk-x11-2.0 -lgdk-x11-2.0 -lpangocairo-1.0 -latk-1.0 -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lpangoft2-1.0 -lpango-1.0 -lgobject-2.0 -lglib-2.0 -lintl -lfontconfig -lfreetype   -arch x86_64   -lgdk-x11-2.0 -lpangocairo-1.0 -lpango-1.0 -lcairo -lgdk_pixbuf-2.0 -lgobject-2.0 -lglib-2.0 -lintl -lruby-static -framework CoreFoundation  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main() {return 0;}
+/* end */
+
+package configuration for gtk+-x11-2.0
+cflags: -D_REENTRANT -I/usr/local/Cellar/gtk+/2.24.28/include/gtk-2.0 -I/usr/local/Cellar/gtk+/2.24.28/lib/gtk-2.0/include -I/usr/local/Cellar/pango/1.36.8/include/pango-1.0 -I/usr/local/Cellar/atk/2.16.0/include/atk-1.0 -I/opt/X11/include/cairo -I/opt/X11/include/pixman-1 -I/opt/X11/include/libpng15 -I/opt/X11/include -I/usr/local/Cellar/gdk-pixbuf/2.30.8/include/gdk-pixbuf-2.0 -I/opt/X11/include/libpng15 -I/usr/local/Cellar/pango/1.36.8/include/pango-1.0 -I/usr/local/Cellar/harfbuzz/0.9.40/include/harfbuzz -I/usr/local/Cellar/pango/1.36.8/include/pango-1.0 -I/usr/local/Cellar/glib/2.44.1/include/glib-2.0 -I/usr/local/Cellar/glib/2.44.1/lib/glib-2.0/include -I/usr/local/opt/gettext/include -I/opt/X11/include -I/opt/X11/include/freetype2
+ldflags: -L/usr/local/Cellar/gtk+/2.24.28/lib -L/usr/local/Cellar/pango/1.36.8/lib -L/usr/local/Cellar/atk/2.16.0/lib -L/opt/X11/lib -L/usr/local/Cellar/gdk-pixbuf/2.30.8/lib -L/usr/local/Cellar/glib/2.44.1/lib -L/usr/local/Cellar/pango/1.36.8/lib -L/usr/local/Cellar/glib/2.44.1/lib -L/usr/local/opt/gettext/lib -L/opt/X11/lib
+libs: -lgtk-x11-2.0 -lgdk-x11-2.0 -lpangocairo-1.0 -latk-1.0 -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lpangoft2-1.0 -lpango-1.0 -lgobject-2.0 -lglib-2.0 -lintl -lfontconfig -lfreetype
+
+"gcc -o conftest -I/Users/macuser/.rvm/rubies/ruby-2.1.2/include/ruby-2.1.0/x86_64-darwin13.0 -I/Users/macuser/.rvm/rubies/ruby-2.1.2/include/ruby-2.1.0/ruby/backward -I/Users/macuser/.rvm/rubies/ruby-2.1.2/include/ruby-2.1.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -I/Users/travis/.sm/pkg/active/include -fPIC -mmacosx-version-min=10.7 -pipe -D_REENTRANT -I/usr/local/Cellar/gtk+/2.24.28/include/gtk-2.0 -I/usr/local/Cellar/gtk+/2.24.28/lib/gtk-2.0/include -I/usr/local/Cellar/pango/1.36.8/include/pango-1.0 -I/opt/X11/include/cairo -I/opt/X11/include/pixman-1 -I/opt/X11/include -I/opt/X11/include/freetype2 -I/opt/X11/include/libpng15 -I/opt/X11/include -I/usr/local/Cellar/gdk-pixbuf/2.30.8/include/gdk-pixbuf-2.0 -I/opt/X11/include/libpng15 -I/usr/local/Cellar/glib/2.44.1/include/glib-2.0 -I/usr/local/Cellar/glib/2.44.1/lib/glib-2.0/include -I/usr/local/opt/gettext/include -D_REENTRANT -I/usr/local/Cellar/gtk+/2.24.28/include/gtk-2.0 -I/usr/local/Cellar/gtk+/2.24.28/lib/gtk-2.0/include -I/usr/local/Cellar/pango/1.36.8/include/pango-1.0 -I/usr/local/Cellar/atk/2.16.0/include/atk-1.0 -I/opt/X11/include/cairo -I/opt/X11/include/pixman-1 -I/opt/X11/include/libpng15 -I/opt/X11/include -I/usr/local/Cellar/gdk-pixbuf/2.30.8/include/gdk-pixbuf-2.0 -I/opt/X11/include/libpng15 -I/usr/local/Cellar/pango/1.36.8/include/pango-1.0 -I/usr/local/Cellar/harfbuzz/0.9.40/include/harfbuzz -I/usr/local/Cellar/pango/1.36.8/include/pango-1.0 -I/usr/local/Cellar/glib/2.44.1/include/glib-2.0 -I/usr/local/Cellar/glib/2.44.1/lib/glib-2.0/include -I/usr/local/opt/gettext/include -I/opt/X11/include -I/opt/X11/include/freetype2 conftest.c  -L. -L/Users/macuser/.rvm/rubies/ruby-2.1.2/lib -L/usr/local/lib   -framework IOKit -framework Carbon -framework Cocoa -framework AudioToolbox -framework System -framework OpenGL -lwx_osx_cocoau_xrc-3.0 -lwx_osx_cocoau_webview-3.0 -lwx_osx_cocoau_html-3.0 -lwx_osx_cocoau_qa-3.0 -lwx_osx_cocoau_adv-3.0 -lwx_osx_cocoau_core-3.0 -lwx_baseu_xml-3.0 -lwx_baseu_net-3.0 -lwx_baseu-3.0   -arch x86_64   -lgdk-x11-2.0 -lpangocairo-1.0 -lpango-1.0 -lcairo -lgdk_pixbuf-2.0 -lgobject-2.0 -lglib-2.0 -lintl -lgtk-x11-2.0 -lgdk-x11-2.0 -lpangocairo-1.0 -latk-1.0 -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lpangoft2-1.0 -lpango-1.0 -lgobject-2.0 -lglib-2.0 -lintl -lfontconfig -lfreetype -lruby-static -framework CoreFoundation  -lpthread -ldl -lobjc "
+ld: library not found for -lintl
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main() {return 0;}
+/* end */
+
+package configuration for wx is not found

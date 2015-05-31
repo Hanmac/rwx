@@ -14,9 +14,9 @@ end
 
 dir_config "rwx"
 
-if(wx_config = find_executable('wx-config'))
+if(wxversion = pkg_config("wx","version"))
     
-    if `#{wx_config} --version`.chomp < "3.0.0"
+    if wxversion.chomp < "3.0.0"
         abort("wx version outdated, please update to 3.0.0 or newer")
     end
     
@@ -31,60 +31,30 @@ if(wx_config = find_executable('wx-config'))
         abort("C++ compiler not found!")
     end
     
-    cc = `#{wx_config} --cc`.chomp
+    cc = pkg_config("wx","cc")
+    cxx = pkg_config("wx","cxx")
     
-    cxx = `#{wx_config} --cxx`.chomp
     cxxversion_wx = `#{cxx} -v 2>&1`.split("\n")
     cxxversion_rb = `#{ruby_cxx} -v 2>&1`.split("\n")
     ccversion_wx = `#{cc} -v 2>&1`.split("\n")
     ccversion_rb = `#{ruby_cc} -v 2>&1`.split("\n")
-    #puts ccversion_wx[0],ccversion_rb[0]
     unless ccversion_rb.include?(ccversion_wx[0])
         abort("CC compiler missmatch %s == %s" % [ccversion_wx, ccversion_rb])
     end
     unless cxxversion_rb.include?(cxxversion_wx[0])
         abort("CXX compiler missmatch %s == %s" % [cxxversion_wx,cxxversion_rb])
     end
-    puts "compilers matched"
+
     #earlier versions of ruby does not have that constant
     #remove bad paths in flags
-    rmnonpaths = lambda {|x|
-        if (x[0,2]=="-L" ||x[0,2]=="-I") then
-            if File.exist?(x[2,x.length-2]) then
-                x
-            else
-                puts "removing %s"%x 
-                nil
-            end
-        else
-            x
-        end
-    }
-    puts "removing nonexistent paths"
-    if (RbConfig::CONFIG["CXXFLAGS"]) then
-        $CXXFLAGS = RbConfig::CONFIG["CXXFLAGS"]
-        $CXXFLAGS=$CXXFLAGS.split()
-        $CXXFLAGS.map!(&rmnonpaths)
-        $CXXFLAGS=$CXXFLAGS.join(" ")
-    end
-    if (RbConfig::CONFIG["CPPFLAGS"]) then
-        $CPPFLAGS = RbConfig::CONFIG["CPPFLAGS"]
-        $CPPFLAGS=$CPPFLAGS.split()
-        $CPPFLAGS.map!(&rmnonpaths)
-        $CPPFLAGS=$CPPFLAGS.join(" ")
-    end
-    if (RbConfig::CONFIG["CFLAGS"]) then
-        $CFLAGS = RbConfig::CONFIG["CFLAGS"]
-        $CFLAGS=$CFLAGS.split()
-        $CFLAGS.map!(&rmnonpaths)
-        $CFLAGS=$CFLAGS.join(" ")
-    end
-    if (RbConfig::CONFIG["LDFLAGS"]) then
-        $LDFLAGS = RbConfig::CONFIG["LDFLAGS"]
-        $LDFLAGS=$LDFLAGS.split()
-        $LDFLAGS.map!(&rmnonpaths)
-        $LDFLAGS=$LDFLAGS.join(" ")
-    end
+    $CPPFLAGS=CONFIG["CPPFLAGS"]
+    $CFLAGS=CONFIG["CFLAGS"]
+    $CFLAGS=$CFLAGS.split.delete_if {|x| x[0,2]=="-I" && !File.exist?(x[2,x.length-2])}.join(" ")
+    $CXXFLAGS=CONFIG["CXXFLAGS"]
+    $LDFLAGS=CONFIG["LDFLAGS"]
+    $LDFLAGS=$LDFLAGS.split.delete_if {|x| x[0,2]=="-L" && !File.exist?(x[2,x.length-2])}.join(" ")
+    $LIBS=CONFIG["LIBS"]
+
     #set up special flags for testing
     moreflags = ""
     with_cflags(" -x c++ ") {
@@ -93,40 +63,52 @@ if(wx_config = find_executable('wx-config'))
         moreflags += " -DHAVE_STD_UNORDERED_MAP " if have_header("unordered_map")
         moreflags += " -DHAVE_TR1_UNORDERED_MAP " if have_header("tr1/unordered_map")
     }
-    print "moreflags set"
-    $CXXFLAGS = RbConfig::CONFIG["CXXFLAGS"] unless defined?($CXXFLAGS)
+    wxcppflags=pkg_config("wx","cppflags")
+    $CPPFLAGS << " " << wxcppflags
+    wxcflags=pkg_config("wx","cflags")
+    $CFLAGS << " " << wxcflags
+    wxcxxflags=pkg_config("wx","cxxflags")
+    $CPPFLAGS << " " << wxcxxflags
+    wxlibs=pkg_config("wx","libs all")
+    $LIBS << " " << wxlibs
+    wxldflags=pkg_config("wx","linkdeps")
+    $LDFLAGS << " " << wxldflags
     #for some function add the base classes
-    extra_libs = []
-    case `#{wx_config} --basename`
+    wxpkg = pkg_config("wx","basename")
+    case wxpkg
         when /gtk2/
-        extra_libs << "gtk+-x11-2.0" << "gdk-x11-2.0"
+        gdkflags = pkg_config("gdk-x11-2.0")
+        if gdkflags
+            $CXXFLAGS << " " << gdkflags[0]
+            $LIBS << " " << gdkflags[1]
+            $LDFLAGS << " " << gdkflags[2]
+        end
+        gtkflags = pkg_config("gtk+-x11-2.0")
+        if gtkflags
+            $CXXFLAGS << " " << gtkflags[0]
+            $LIBS << " " << gtkflags[1]
+            $LDFLAGS << " " << gtkflags[2]
+        end
         when /gtk3/
-        extra_libs << "gtk+-x11-3.0" << "gdk-x11-3.0"
+        gdkflags = pkg_config("gdk-x11-3.0")
+        if gdkflags
+            $CXXFLAGS << " " << gdkflags[0]
+            $LIBS << " " << gdkflags[1]
+            $LDFLAGS << " " << gdkflags[2]
+        end
+        gtkflags = pkg_config("gtk+-x11-3.0")
+        if gtkflags
+            $CXXFLAGS << " " << gtkflags[0]
+            $LIBS << " " << gtkflags[1]
+            $LDFLAGS << " " << gtkflags[2]
+        end
     end
-    puts "fixing",extra_libs
-    extra_libs.each {|l|
-        pkg = pkg_config(l)
-        #because pkg forgot to add the include paths to cxx flags
-        $CXXFLAGS << " " << pkg[0] if pkg && !$CXXFLAGS[pkg[0]]
-    }
     all = " -fvisibility-inlines-hidden"
     $CFLAGS << all << " -x c++ -g -Wall "
     $CXXFLAGS << all << " -g -Wall "
     $CPPFLAGS << all << " -g -x c++ "
     $LDFLAGS << all << " "
     # add the wx-config flags
-    puts "cflags"
-    $CFLAGS << `#{wx_config} --cflags`.chomp
-    puts `#{wx_config} --cflags`
-    puts "cxxflags"
-    $CXXFLAGS << `#{wx_config} --cxxflags`.chomp
-    puts `#{wx_config} --cxxflags`
-    puts "cppflags"
-    $CPPFLAGS << `#{wx_config} --cppflags`.chomp
-    #puts `#{wx_config} --cppflags`
-    puts "ldflags"
-    $LDFLAGS << `#{wx_config} --libs all`.chomp
-    #puts `#{wx_config} --libs all`
     # TODO add extra check if a lib of wx is missing
     with_cflags(" -x c++ ") {
         # need c++ for some of the tests
