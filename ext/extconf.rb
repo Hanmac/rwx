@@ -6,6 +6,18 @@ def have_member_func(klass,member,header)
         $defs[-1] = "-DHAVE_#{klass.tr_cpp}_#{member.tr_cpp}"
     end
 end
+
+def have_std_header(header, preheaders = nil, opt = "", &b)
+    checking_for header do
+        if try_header(cpp_include(preheaders)+cpp_include(header), opt, &b)
+            $defs.push(format("-DHAVE_STD_%s", header.tr_cpp))
+            true
+        else
+            false
+        end
+    end
+end
+
 def pkg_conf(pkg)
     if (pkglibs = pkg_config(pkg,"libs")) then
         if (pkgcinc = pkg_config(pkg,"cflags-only-I")) then
@@ -76,14 +88,6 @@ if(wxversion = pkg_config("wx","version"))
     $LDFLAGS=$LDFLAGS.split.delete_if {|x| x[0,2]=="-L" && !File.exist?(x[2,x.length-2])}.join(" ")
 
 
-    #set up special flags for testing
-    moreflags = ""
-    with_cflags(" -x c++ ") {
-        moreflags += " -DHAVE_TYPE_TRAITS " if have_header("type_traits")
-        moreflags += " -DHAVE_TR1_TYPE_TRAITS " if have_header("tr1/type_traits")
-        moreflags += " -DHAVE_STD_UNORDERED_MAP " if have_header("unordered_map")
-        moreflags += " -DHAVE_TR1_UNORDERED_MAP " if have_header("tr1/unordered_map")
-    }
     wxpkg = pkg_config("wx","basename")
     # create a proc that works across all ruby versions to replace pkg_config issues
     pkg_conf = proc {|pkg|
@@ -137,29 +141,23 @@ if(wxversion = pkg_config("wx","version"))
     $LDFLAGS << all << " "
     # add the wx-config flags
     # TODO add extra check if a lib of wx is missing
+    #set up special flags for testing
+    olddefs = $defs
+    $defs.clear
     with_cflags(" -x c++ ") {
-        # need c++ for some of the tests
-        CONFIG["CC"] = CONFIG["CXX"]
-        #C++03tr1 c++11 differences
         have_header("type_traits")
         have_header("tr1/type_traits")
-        if try_header("unordered_map")
-            checking_for "unordered_map" do
-                $defs.push(format("-DHAVE_STD_%s", "unordered_map".tr_cpp))
-            end
-        end
+        have_std_header("unordered_map")
         have_header("tr1/unordered_map")
-        if try_header("unordered_set")
-            checking_for "unordered_set" do
-                $defs.push(format("-DHAVE_STD_%s", "unordered_set".tr_cpp))
-            end
-        end
+        have_std_header("unordered_set")
+        have_header("tr1/unordered_set")
     }
-    with_cflags(" -x c++ "+moreflags) {
+    moreflags = $defs.join(" ")
+    $defs = olddefs + $defs
+    with_cflags(" -x c++ " + moreflags) {
         # need c++ for some of the tests
         CONFIG["CC"] = CONFIG["CXX"]
         #C++03tr1 c++11 differences
-        have_header("tr1/unordered_set")
         have_header("wx/preferences.h","wx/defs.h")
         #check for better Bind commmand
         unless have_macro("wxHAS_EVENT_BIND","wx/wx.h")
@@ -179,7 +177,6 @@ if(wxversion = pkg_config("wx","version"))
         #check for instance methods, that classes need to have default constuctor
         have_member_func("wxFontPickerCtrl","GetSelectedColour","wx/fontpicker.h")
         have_member_func("wxInfoBar","GetButtonCount","wx/infobar.h")
-        
         have_member_func("wxOwnerDrawnComboBox","IsListEmpty","wx/odcombo.h")
         
         #check for enum flags
