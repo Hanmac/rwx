@@ -14,9 +14,9 @@ end
 
 dir_config "rwx"
 
-if(wx_config = find_executable('wx-config'))
+if(wxversion = pkg_config('wx', 'version'))
 	
-	if `#{wx_config} --version`.chomp < "3.0.0"
+	if wxversion < "3.0.0"
 		abort("wx version outdated, please update to 3.0.0 or newer")
 	end
 	
@@ -31,14 +31,14 @@ if(wx_config = find_executable('wx-config'))
 		abort("C++ compiler not found!")
 	end
 	
-	cc = `#{wx_config} --cc`.chomp
-	unless cc == ruby_cc
-		abort("CC compiler missmatch %s == %s" % [cc, ruby_cc])
+	wxcc = pkg_config('wx', 'cc')
+	unless wxcc == ruby_cc
+		abort("CC compiler missmatch %s == %s" % [wxcc, ruby_cc])
 	end
 	
-	cxx = `#{wx_config} --cxx`.chomp
-	unless cxx == ruby_cxx
-		abort("CXX compiler missmatch %s == %s" % [cxx, ruby_cxx])
+	wxcxx = pkg_config('wx', 'cxx')
+	unless wxcxx == ruby_cxx
+		abort("CXX compiler missmatch %s == %s" % [wxcxx, ruby_cxx])
 	end
 	
 	#earlier versions of ruby does not have that constant
@@ -46,7 +46,7 @@ if(wx_config = find_executable('wx-config'))
 	
 	#for some function add the base classes
 	extra_libs = []
-	case `#{wx_config} --basename`
+	case pkg_config('wx', 'basename')
 	when /gtk2/
 		extra_libs << "gtk+-x11-2.0" << "gdk-x11-2.0"
 	when /gtk3/
@@ -66,10 +66,10 @@ if(wx_config = find_executable('wx-config'))
 	$LDFLAGS << all << " "
 	
 	# add the wx-config flags
-	$CFLAGS << `#{wx_config} --cflags`.chomp
-	$CXXFLAGS << `#{wx_config} --cxxflags`.chomp
-	$CPPFLAGS << `#{wx_config} --cppflags`.chomp
-	$LDFLAGS << `#{wx_config} --libs all`.chomp
+	$CFLAGS << pkg_config('wx', 'cflags')
+	$CXXFLAGS << pkg_config('wx', 'cxxflags')
+	$CPPFLAGS << pkg_config('wx', 'cppflags')
+	$LDFLAGS << pkg_config('wx', 'libs all')
 	
 	# TODO add extra check if a lib of wx is missing
 	
