@@ -89,32 +89,6 @@ if(wxversion = pkg_config("wx","version"))
 
 
     wxpkg = pkg_config("wx","basename")
-    # create a proc that works across all ruby versions to replace pkg_config issues
-    pkg_conf = proc {|pkg|
-        print "#{$CFLAGS} \n"
-        print "#{$CXXFLAGS} \n"
-        print "#{$libs} \n"
-        print "#{$INCFLAGS} \n"
-        if (pkglibs = pkg_config(pkg,"libs")) then
-            if (pkgcinc = pkg_config(pkg,"cflags-only-I")) then
-                pkgcflags = pkg_config(pkg,"cflags-only-other")
-                else
-                pkgcflags =  pkg_config(pkg,"cflags")
-            end
-            pkglibsonly = pkg_config(pkg,"libs-only-l")
-            pkgldflags = (Shellwords.shellwords(pkglibs) - Shellwords.shellwords(pkglibsonly)).quote.join(" ")
-            $CFLAGS += " " << pkgcflags
-            $CXXFLAGS += " " << pkgcflags
-            $INCFLAGS += " " << pkgcinc
-            $libs += " " << pkglibsonly
-        else
-            abort("package configuration for %s is missing\n" % [pkg])
-        end
-        print "#{$CFLAGS} \n"
-        print "#{$CXXFLAGS} \n"
-        print "#{$libs} \n"
-        print "#{$INCFLAGS} \n"
-    }
     case wxpkg
         when /gtk2/
         pkg_conf("gdk-x11-2.0")
