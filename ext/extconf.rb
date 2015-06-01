@@ -7,10 +7,6 @@ def have_member_func(klass,member,header)
     end
 end
 def pkg_conf(pkg)
-    print "#{$CFLAGS} \n"
-    print "#{$CXXFLAGS} \n"
-    print "#{$libs} \n"
-    print "#{$INCFLAGS} \n"
     if (pkglibs = pkg_config(pkg,"libs")) then
         if (pkgcinc = pkg_config(pkg,"cflags-only-I")) then
             pkgcflags = pkg_config(pkg,"cflags-only-other")
@@ -30,10 +26,6 @@ def pkg_conf(pkg)
     else
         abort("package configuration for %s is missing\n" % [pkg])
     end
-    print "#{$CFLAGS} \n"
-    print "#{$CXXFLAGS} \n"
-    print "#{$libs} \n"
-    print "#{$INCFLAGS} \n"
 end
 
 unless have_macro("HAVE_RB_DATA_TYPE_T_PARENT")
