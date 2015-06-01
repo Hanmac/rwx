@@ -173,7 +173,7 @@ DLL_LOCAL void Init_WXToolBarTool(VALUE rb_mWX)
 
 #if 0
 	rb_define_attr(rb_cWXToolBarTool,"control",1,0);
-	rb_define_attr(rb_cWXToolBarTool,"toolbar,1,0);
+	rb_define_attr(rb_cWXToolBarTool,"toolbar",1,0);
 	rb_define_attr(rb_cWXToolBarTool,"bitmap",1,0);
 
 	rb_define_attr(rb_cWXToolBarTool,"normal_bitmap",1,1);
