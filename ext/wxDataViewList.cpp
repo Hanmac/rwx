@@ -93,13 +93,13 @@ DLL_LOCAL VALUE _AppendItem(int argc,VALUE *argv,VALUE self)
 	VALUE arg;
 	rb_scan_args(argc, argv, "*",&arg);
 
-	std::size_t count = _self->GetColumnCount();
+	unsigned int count = _self->GetColumnCount();
 	if(count > (unsigned int)argc)
 		rb_raise(rb_eArgError,"to few arguments need more then %d.",(int)count);
 
 	wxVector<wxVariant> vecvar;
 
-	for(std::size_t i = 0; i < count;++i)
+	for(unsigned int i = 0; i < count;++i)
 		vecvar.push_back(unwrapVariant(RARRAY_AREF(arg,i),_self->GetColumn(i)->GetRenderer()->GetVariantType()));
 	_self->AppendItem(vecvar,0);
 	return wrap(_self->GetModel(),_self->GetStore()->GetItem(_self->GetStore()->GetCount() - 1));
@@ -110,13 +110,13 @@ DLL_LOCAL VALUE _PrependItem(int argc,VALUE *argv,VALUE self)
 	VALUE arg;
 	rb_scan_args(argc, argv, "*",&arg);
 
-	std::size_t count = _self->GetColumnCount();
+	unsigned int count = _self->GetColumnCount();
 	if(count > (unsigned int)argc)
 		rb_raise(rb_eArgError,"to few arguments need more then %d.",(int)count);
 
 	wxVector<wxVariant> vecvar;
 
-	for(std::size_t i = 0; i < count;++i){
+	for(unsigned int i = 0; i < count;++i){
 		vecvar.push_back(unwrapVariant(RARRAY_AREF(arg,i),_self->GetColumn(i)->GetRenderer()->GetVariantType()));
 	}
 	_self->PrependItem(vecvar,0);
@@ -128,16 +128,16 @@ DLL_LOCAL VALUE _InsertItem(int argc,VALUE *argv,VALUE self)
 	VALUE index,arg;
 	rb_scan_args(argc, argv, "1*",&index,&arg);
 
-	std::size_t count = _self->GetColumnCount() ;
+	unsigned int count = _self->GetColumnCount() ;
 	if((count + 1) > (unsigned int)argc)
 		rb_raise(rb_eArgError,"to few arguments need more then %d.",(int)count + 1);
 
 	wxVector<wxVariant> vecvar;
 
-	for(std::size_t i = 0; i < count;++i)
+	for(unsigned int i = 0; i < count;++i)
 		vecvar.push_back(unwrapVariant(RARRAY_AREF(arg,i),_self->GetModel()->GetColumnType(i)));
 	_self->InsertItem(NUM2INT(index),vecvar,0);
-	return wrap(_self->GetModel(),_self->GetStore()->GetItem(index));
+	return wrap(_self->GetModel(),_self->GetStore()->GetItem(NUM2INT(index)));
 }
 
 

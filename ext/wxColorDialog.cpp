@@ -38,7 +38,7 @@ DLL_LOCAL VALUE _getCustomColors(VALUE self)
 {
 	VALUE result = rb_ary_new();
 	wxColourData &data = _self->GetColourData();
-	for(std::size_t i = 0; i < wxColourData::NUM_CUSTOM; ++i)
+	for(int i = 0; i < wxColourData::NUM_CUSTOM; ++i)
 		rb_ary_push(result,wrap(data.GetCustomColour(i)));
 	return result;
 }
@@ -47,7 +47,7 @@ DLL_LOCAL VALUE _setCustomColors(VALUE self,VALUE val)
 	rb_check_frozen(self);
 	VALUE dp = rb_Array(val);
 	wxColourData &data = _self->GetColourData();
-	for(std::size_t i = 0; i < wxColourData::NUM_CUSTOM && i < (std::size_t)RARRAY_LEN(dp); ++i)
+	for(int i = 0; i < wxColourData::NUM_CUSTOM && i < (int)RARRAY_LEN(dp); ++i)
 		data.SetCustomColour(i,unwrap<wxColor>(RARRAY_AREF(dp,i)));
 
 	return val;

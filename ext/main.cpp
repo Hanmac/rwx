@@ -507,7 +507,7 @@ bool check_index(int &cidx,const std::size_t &count)
 		raise = true;
 	}else if(cidx < 0)
 	{
-		int tmp = cidx + count;
+		int tmp = cidx + (int)count;
 		if(tmp > 0 && tmp <= (int)count)
 			cidx = tmp;
 		else
