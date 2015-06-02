@@ -116,13 +116,18 @@ end
 
 $defs.push("-DRUBY_UNTYPED_DATA_WARNING=1")
 
+
+drop_warn = [
+	"-Wdeclaration-after-statement",
+	"-Wimplicit-function-declaration",
+	"-Wextra"  #wxAUI is a bit buggy
+]
+
+drop_warn << "-tokens" #clang dont like it
+#drop_warn << "-Wshorten-64-to-32" #clang dont like it
+
 #drop some of the warn flags because they are not valid for C++
-CONFIG["warnflags"].gsub!(
-	Regexp.union(
-		"-Wdeclaration-after-statement",
-		"-Wimplicit-function-declaration",
-		"-Wextra" #wxAUI is a bit buggy
-	), "")
+CONFIG["warnflags"].gsub!(Regexp.union(*drop_warn), "")
 
 #with_cppflags("-std=c++11") {
   create_header
