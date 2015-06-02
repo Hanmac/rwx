@@ -52,30 +52,48 @@ if(wxversion = pkg_config("wx","version"))
     if wxversion.chomp < "3.0.0"
         abort("wx version outdated, please update to 3.0.0 or newer")
     end
-    
-    ruby_cc = RbConfig::CONFIG["CC"]
-    ruby_cxx = RbConfig::CONFIG["CXX"]
+    # ruby compilers
+    ruby_cc = find_executable CONFIG["CC"]
+    ruby_cxx = find_executable CONFIG["CXX"]
     # An ruby extension does need to be build against
     # the same compiler as ruby was
     unless ruby_cc && find_executable(ruby_cc)
-        abort("C compiler not found!")
+        abort("C compiler %s not found!"%ruby_cc)
     end
     unless ruby_cxx && find_executable(ruby_cxx)
         abort("C++ compiler not found!")
     end
-    
-    cc = pkg_config("wx","cc")
-    cxx = pkg_config("wx","cxx")
-    
-    cxxversion_wx = `#{cxx} -v 2>&1`.split("\n")
-    cxxversion_rb = `#{ruby_cxx} -v 2>&1`.split("\n")
-    ccversion_wx = `#{cc} -v 2>&1`.split("\n")
-    ccversion_rb = `#{ruby_cc} -v 2>&1`.split("\n")
-    unless ccversion_rb.include?(ccversion_wx[0])
-        abort("CC compiler missmatch %s == %s" % [ccversion_wx, ccversion_rb])
+    # wx compilers
+    cc = find_executable Shellwords.shellwords(pkg_config("wx","cc"))[0]
+    cxx = find_executable "clang++" # Shellwords.shellwords(pkg_config("wx","cxx"))[0]
+    # check if cc compilers are matched
+    unless (cc == ruby_cc)
+        unless RbConfig::CONFIG["host_os"].include?("darwin")
+            abort("CC compiler missmatch %s == %s" % [cc, ruby_cc])
+        else # Apple Mac OS X
+            optwx = IO.popen(["#{cc}","--version"],:err=>[:child,:out],&:read)
+            optrwx = IO.popen(["#{ruby_cc}","--version"],:err=>[:child,:out],&:read)
+            unless optrwx.include?(optwx)
+                # good to go
+            else
+                # good to go
+            end
+        end
     end
-    unless cxxversion_rb.include?(cxxversion_wx[0])
-        abort("CXX compiler missmatch %s == %s" % [cxxversion_wx,cxxversion_rb])
+    # check if cxx compilers are matched
+    unless (cxx == ruby_cxx)
+        unless RbConfig::CONFIG["host_os"].include?("darwin")
+            abort("CXX compiler missmatch1 %s == %s" % [cxx, ruby_cxx])
+        else # Apple Mac OS X
+            optwx = IO.popen(["#{cxx}","--version"],:err=>[:child,:out],&:read)
+            optrwx = IO.popen(["#{ruby_cxx}","--version"],:err=>[:child,:out],&:read)
+            unless optrwx.include?(optwx)
+                # need to tell clang to be compatible
+                abort("Apple CXX compiler missmatch %s == %s" % [cxx, ruby_cxx]) # clang needs $CFLAGS += " -std=c++11 -stdlib=libc++ -nostdinc++"
+            else
+                # good to go
+            end
+        end
     end
 
     #earlier versions of ruby does not have that constant
@@ -163,7 +181,7 @@ if(wxversion = pkg_config("wx","version"))
         have_member_func("wxSizerFlags","CenterVertical","wx/sizer.h")
     }
 else
-    abort("wx-config executable not found!")
+    abort("wx-config executable not found!\n for MSWindows see https://sites.google.com/site/wxconfig/")
     
 end
 
