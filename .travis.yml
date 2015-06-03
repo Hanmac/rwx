@@ -15,13 +15,17 @@ rvm:
 #- rbx-head
 #- 2.1.1-clang
 - 2.1.0
+- 2.1.0-clang
 #- 2.1.3-clang
 - 2.1.6
-#- ruby-head-clang
+- 2.1.6-clang
 - 2.2.0
+- 2.2.0-clang
 - 2.2.2
-#currently broken because of data_type parent
+- 2.2.2-clang
+
 - ruby-head
+- ruby-head-clang
 
 before_script:
   - "if [ ${TRAVIS_OS_NAME:-'linux'} = 'linux' ]; then . ./ci/travis/before_script-linux.sh; fi"
@@ -34,5 +38,26 @@ before_install:
 
 
 matrix:
+  exclude:
+    - rvm: 2.1.0
+      os: osx
+    - rvm: 2.1.0-clang
+      os: linux
+    - rvm: 2.1.6
+      os: osx
+    - rvm: 2.1.6-clang
+      os: linux
+    - rvm: 2.2.0
+      os: osx
+    - rvm: 2.2.0-clang
+      os: linux
+    - rvm: 2.2.2
+      os: osx
+    - rvm: 2.2.2-clang
+      os: linux
+    - rvm: ruby-head
+      os: osx
+    - rvm: ruby-head-clang
+      os: linux
   allow_failures:
     - os: osx
