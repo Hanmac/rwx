@@ -65,7 +65,7 @@ if(wxversion = pkg_config("wx","version"))
     end
     # wx compilers
     cc = find_executable Shellwords.shellwords(pkg_config("wx","cc"))[0]
-    cxx = find_executable # Shellwords.shellwords(pkg_config("wx","cxx"))[0]
+    cxx = find_executable  Shellwords.shellwords(pkg_config("wx","cxx"))[0]
     # check if cc compilers are matched
     unless (cc == ruby_cc)
         unless RbConfig::CONFIG["host_os"].include?("darwin")
