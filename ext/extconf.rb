@@ -73,7 +73,15 @@ if(wxversion = pkg_config('wx', 'version'))
 	
 	# TODO add extra check if a lib of wx is missing
 	
-	with_cflags(" -x c++ ") {
+	c11 = ""
+	
+	if CONFIG["CC"] =~ /clang/
+		if find_library("c++", "free")
+			c11 = " -std=c++11 -stdlib=libc++"
+		end
+	end
+
+	with_cflags(" -x c++ #{c11}") {
 		# need c++ for some of the tests
 		RbConfig::CONFIG["CC"] = CONFIG["CXX"]
 		
@@ -123,13 +131,15 @@ drop_warn = [
 	"-Wextra"  #wxAUI is a bit buggy
 ]
 
-drop_warn << "-tokens" #clang dont like it
-#drop_warn << "-Wshorten-64-to-32" #clang dont like it
+if CONFIG["CC"] =~ /clang/
+	drop_warn << "-tokens" #clang dont like it
+	drop_warn << "-Wshorten-64-to-32" #clang dont like it
+end
 
 #drop some of the warn flags because they are not valid for C++
 CONFIG["warnflags"].gsub!(Regexp.union(*drop_warn), "")
 
-#with_cppflags("-std=c++11") {
+with_cppflags(c11) {
   create_header
   create_makefile "rwx"
-#}
+}
