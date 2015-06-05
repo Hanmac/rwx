@@ -60,8 +60,8 @@ if(wxversion = pkg_config('wx', 'version'))
 	}
 	
 	all = " -fvisibility-inlines-hidden"
-	$CFLAGS << all << " -x c++ -g -Wall "
-	$CXXFLAGS << all << " -g -Wall "
+	$CFLAGS << all << " -x c++ -g "
+	$CXXFLAGS << all << " -g "
 	$CPPFLAGS << all << " -g "
 	$LDFLAGS << all << " "
 	
@@ -74,11 +74,21 @@ if(wxversion = pkg_config('wx', 'version'))
 	# TODO add extra check if a lib of wx is missing
 	
 	c11 = ""
-	
-	if CONFIG["CC"] =~ /clang/
-		if find_library("c++", "free")
-			c11 = " -std=c++11 -stdlib=libc++"
-		end
+
+	# wxwidgets is build against c++11 need to do it too if possible
+	if have_macro("HAVE_TYPE_TRAITS","wx/setup.h")
+		c11 = "-std=c++11"
+	end
+
+	# when using clang forceunwind is not defined (forceunwind is only in stdc++)
+	if CONFIG["CC"] =~ /clang/ and !have_macro("HAVE_ABI_FORCEDUNWIND","wx/setup.h")
+		# try to set libc++ as stdlib
+		with_cflags(" -x c++ #{c11} -stdlib=libc++") {
+			# when it does find the version in ciso646 it was successful
+			if have_macro("_LIBCPP_VERSION","ciso646")
+				c11 << " -stdlib=libc++"
+			end
+		}
 	end
 
 	with_cflags(" -x c++ #{c11}") {
@@ -132,12 +142,18 @@ drop_warn = [
 ]
 
 if CONFIG["CC"] =~ /clang/
+	drop_warn << "-Wall"
 	drop_warn << "-tokens" #clang dont like it
-	drop_warn << "-Wshorten-64-to-32" #clang dont like it
+	drop_warn << "-Wshorten-64-to-32" #clang dont like it, and wx have to many
+	drop_warn << "-Winconsistent-missing-override" #currently wx does have to many
+	drop_warn << "-Wpotentially-evaluated-expression" #currently wx does have to many
 end
 
 #drop some of the warn flags because they are not valid for C++
-CONFIG["warnflags"].gsub!(Regexp.union(*drop_warn), "")
+negate_warn = drop_warn.reject {|s| CONFIG["warnflags"].gsub!(s, "") }
+
+#negate some warn flags that i want to removed TODO need to test if that works
+CONFIG["warnflags"] << " " << negate_warn.map {|s| s.gsub("-W", "-Wno-") }.join(" ")
 
 with_cppflags(c11) {
   create_header
