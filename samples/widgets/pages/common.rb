@@ -33,6 +33,10 @@ class CommonPage < WX::Panel
 
       siz.add(create_boxleft, :expand => true)
 
+      if respond_to?(:create_boxmiddle)
+        siz.add(create_boxmiddle, :expand => true)
+      end
+
       siz.add(@ctrl_sizer = create_boxright, :expand => true)
 
       siz.layout
