@@ -551,14 +551,16 @@ DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
 DLL_LOCAL void rb_define_attr_method(VALUE klass,const std::string& name,VALUE(get)(VALUE),VALUE(set)(VALUE,VALUE));
 DLL_LOCAL void rb_define_attr_method_missing(VALUE klass,const std::string& name, bool get = true, bool set = true);
 
-#define singlefunc(func) \
+#define singlefunc_if(func, con) \
 DLL_LOCAL VALUE _##func(VALUE self)\
 {\
 	rb_check_frozen(self);\
-	_self->func();\
+	if(con)\
+		_self->func();\
 	return self;\
 }
 
+#define singlefunc(func) singlefunc_if(func, true)
 
 #define singlereturn(func) \
 DLL_LOCAL VALUE _##func(VALUE self)\
