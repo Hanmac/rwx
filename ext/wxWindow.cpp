@@ -157,7 +157,8 @@ macro_attr(AutoLayout,bool)
 macro_attr(ThemeEnabled,bool)
 
 macro_attr(Sizer,wxSizer*)
-macro_attr(ContainingSizer,wxSizer*)
+
+singlereturn(GetContainingSizer)
 
 singlereturn_frozen(Show)
 singlereturn_frozen(Hide)
@@ -174,7 +175,7 @@ singlefunc(Raise)
 singlefunc(Lower)
 
 singlefunc(Freeze)
-singlefunc(Thaw)
+singlefunc_if(Thaw, _self->IsFrozen())
 
 singlereturn(IsFrozen)
 
@@ -192,7 +193,6 @@ singlefunc(Fit)
 singlefunc(FitInside)
 singlereturn_frozen(Layout)
 
-singlereturn(GetParent)
 singlereturn(GetGrandParent)
 
 macro_attr(BackgroundColour,wxColour)
@@ -210,23 +210,28 @@ singlereturn(IsBeingDeleted)
 
 singlereturn(GetRect)
 
-DLL_LOCAL VALUE _SetParent(VALUE self,VALUE parent)
-{
-	rb_check_frozen(self);
-	_self->Reparent(unwrap<wxWindow*>(parent));
-	return parent;
-}
-
-DLL_LOCAL VALUE _SetRect(VALUE self,VALUE rect)
-{
-	rb_check_frozen(self);
-	_self->SetSize(unwrap<wxRect>(rect));
-	return rect;
-}
-
+macro_attr_func(Parent, GetParent(), Reparent, wrap, unwrap<wxWindow*>, true)
+macro_attr_func(Rect, GetRect(), SetSize, wrap, unwrap<wxRect>, true)
 
 APP_PROTECT(wxWindow)
 
+DLL_LOCAL VALUE _setContainingSizer(VALUE self, VALUE sizer)
+{
+	wxSizer *contain = _self->GetContainingSizer();
+	wxSizer *csizer = unwrap<wxSizer*>(sizer);
+
+	if(contain)
+	{
+		if(csizer != contain) {
+			rb_raise(rb_eArgError, "Adding a window already in a sizer, detach it first!");
+		} else {
+			rb_raise(rb_eArgError, "Adding a window to the same sizer twice?");
+		}
+	}else
+		_self->SetContainingSizer(csizer);
+
+	return sizer;
+}
 
 /*
  * call-seq:
@@ -387,7 +392,7 @@ DLL_LOCAL VALUE _IsDestroyed(VALUE self)
 DLL_LOCAL VALUE _popupmenu(int argc,VALUE *argv,VALUE self)
 {
 	VALUE menu,pos;
-	wxPoint cpoint;
+	wxPoint cpoint(wxDefaultPosition);
 	if(rb_block_given_p())
 	{
 		rb_scan_args(argc, argv, "01",&pos);
@@ -396,11 +401,9 @@ DLL_LOCAL VALUE _popupmenu(int argc,VALUE *argv,VALUE self)
 	}else{
 		rb_scan_args(argc, argv, "11",&menu,&pos);
 	}
-	if(NIL_P(pos))
-		cpoint = wxDefaultPosition;
-	else
-		cpoint = unwrap<wxPoint>(pos);
 
+	if(!NIL_P(pos))
+		cpoint = unwrap<wxPoint>(pos);
 
 	return wrap(_self->PopupMenu(unwrap<wxMenu*>(menu),cpoint));
 }
@@ -712,7 +715,7 @@ DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXWindow, "label",_getLabel,_setLabel);
 	rb_define_attr_method(rb_cWXWindow, "name",_getName,_setName);
-	rb_define_attr_method(rb_cWXWindow, "parent",_GetParent,_SetParent);
+	rb_define_attr_method(rb_cWXWindow, "parent",_getParent,_setParent);
 
 	rb_define_attr_method(rb_cWXWindow, "id",_getId,_setId);
 
@@ -731,10 +734,10 @@ DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXWindow, "virtual_size",_getVirtualSize,_setVirtualSize);
 
 	rb_define_attr_method(rb_cWXWindow, "position",_getPosition,_setPosition);
-	rb_define_attr_method(rb_cWXWindow, "rect",_GetRect,_SetRect);
+	rb_define_attr_method(rb_cWXWindow, "rect",_getRect,_setRect);
 
 	rb_define_attr_method(rb_cWXWindow, "sizer",_getSizer,_setSizer);
-	rb_define_attr_method(rb_cWXWindow, "containing_sizer",_getContainingSizer,_setContainingSizer);
+	rb_define_attr_method(rb_cWXWindow, "containing_sizer",_GetContainingSizer,_setContainingSizer);
 
 	rb_define_attr_method(rb_cWXWindow, "background_color",_getBackgroundColour,_setBackgroundColour);
 	rb_define_attr_method(rb_cWXWindow, "foreground_color",_getForegroundColour,_setForegroundColour);

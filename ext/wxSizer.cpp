@@ -21,14 +21,11 @@ wxSizerFlags unwrap< wxSizerFlags >(const VALUE &hash)
 		return result;
 	VALUE val;
 
-	if(RTEST(rb_hash_aref(hash,ID2SYM(rb_intern("expand")))))
-			result.Expand();
-	if(RTEST(rb_hash_aref(hash,ID2SYM(rb_intern("shaped")))))
-			result.Shaped();
-	if(RTEST(rb_hash_aref(hash,ID2SYM(rb_intern("border")))))
-			result.Border();
-	if(!NIL_P(val=rb_hash_aref(hash,ID2SYM(rb_intern("proportion")))))
-			result.Proportion(NUM2INT(val));
+	set_obj_option(hash, "expand", &wxSizerFlags::Expand, result);
+	set_obj_option(hash, "shaped", &wxSizerFlags::Shaped, result);
+	set_obj_option(hash, "border", &wxSizerFlags::Border, result);
+	set_obj_option(hash, "proportion", &wxSizerFlags::Proportion, result);
+
 	if(!NIL_P(val=rb_hash_aref(hash,ID2SYM(rb_intern("align")))))
 	{
 		if(SYMBOL_P(val))
@@ -90,6 +87,25 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
+bool check_window(wxSizer *sizer, wxWindow *window, VALUE hash)
+{
+	wxSizer *contain = window->GetContainingSizer();
+	if(contain)
+	{
+		VALUE tmp(Qfalse);
+		set_hash_option(hash, "reparent", tmp);
+		if(tmp) {
+			contain->Detach(window);
+		}else if(sizer != contain) {
+			rb_raise(rb_eArgError, "Adding a window already in a sizer, detach it first!");
+		} else {
+			rb_raise(rb_eArgError, "Adding a window to the same sizer twice?");
+		}
+		return false;
+	}
+	return true;
+}
+
 /*
  * call-seq:
  *   add(window, [options])
@@ -111,12 +127,14 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL VALUE _add(int argc,VALUE *argv,VALUE self)
 {
 	VALUE obj,hash;
-	rb_scan_args(argc, argv, "11",&obj,&hash);
+	rb_scan_args(argc, argv, "1:",&obj,&hash);
 
 	wxSizerFlags flags(unwrap<wxSizerFlags>(hash));
 	if(rb_obj_is_kind_of(obj, rb_cWXWindow))
 	{
-		return wrap(_self->Add(unwrap<wxWindow*>(obj),flags));
+		wxWindow *win = unwrap<wxWindow*>(obj);
+		if(check_window(_self, win, hash))
+			return wrap(_self->Add(win,flags));
 	}else if(rb_obj_is_kind_of(obj, rb_cWXSizer))
 	{
 		return wrap(_self->Add(unwrap<wxSizer*>(obj),flags));
@@ -124,6 +142,7 @@ DLL_LOCAL VALUE _add(int argc,VALUE *argv,VALUE self)
 		const wxSize &size = unwrap<wxSize>(obj);
 		return wrap(_self->Add(size.GetWidth(),size.GetHeight(),flags));
 	}
+	return Qnil;
 }
 
 
@@ -183,18 +202,21 @@ DLL_LOCAL VALUE _add_stretch_spacer(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL VALUE _insert(int argc,VALUE *argv,VALUE self)
 {
 	VALUE index,obj,hash;
-	rb_scan_args(argc, argv, "21",&index,&obj,&hash);
+	rb_scan_args(argc, argv, "2:",&index,&obj,&hash);
 
 	wxSizerFlags flags(unwrap<wxSizerFlags>(hash));
 
-	if(rb_obj_is_kind_of(obj, rb_cWXWindow))
-		return wrap(_self->Insert(NUM2INT(index),unwrap<wxWindow*>(obj),flags));
-	else if(rb_obj_is_kind_of(obj, rb_cWXSizer))
+	if(rb_obj_is_kind_of(obj, rb_cWXWindow)) {
+		wxWindow *win = unwrap<wxWindow*>(obj);
+		if(check_window(_self, win, hash))
+			return wrap(_self->Insert(NUM2INT(index), win, flags));
+	} else if(rb_obj_is_kind_of(obj, rb_cWXSizer))
 		return wrap(_self->Insert(NUM2INT(index),unwrap<wxSizer*>(obj),flags));
 	else {
 		const wxSize &size = unwrap<wxSize>(obj);
 		return wrap(_self->Insert(NUM2INT(index),size.GetWidth(),size.GetHeight(),flags));
 	}
+	return Qnil;
 }
 
 /*
@@ -254,18 +276,21 @@ DLL_LOCAL VALUE _insert_stretch_spacer(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL VALUE _prepend(int argc,VALUE *argv,VALUE self)
 {
 	VALUE obj,hash;
-	rb_scan_args(argc, argv, "11",&obj,&hash);
+	rb_scan_args(argc, argv, "1:",&obj,&hash);
 
 	wxSizerFlags flags(unwrap<wxSizerFlags>(hash));
 
-	if(rb_obj_is_kind_of(obj, rb_cWXWindow))
-		return wrap(_self->Prepend(unwrap<wxWindow*>(obj),flags));
-	else if(rb_obj_is_kind_of(obj, rb_cWXSizer))
+	if(rb_obj_is_kind_of(obj, rb_cWXWindow)) {
+		wxWindow *win = unwrap<wxWindow*>(obj);
+		if(check_window(_self, win, hash))
+			return wrap(_self->Prepend(win, flags));
+	} else if(rb_obj_is_kind_of(obj, rb_cWXSizer))
 		return wrap(_self->Prepend(unwrap<wxSizer*>(obj),flags));
 	else {
 		const wxSize &size = unwrap<wxSize>(obj);
 		return wrap(_self->Prepend(size.GetWidth(),size.GetHeight(),flags));
 	}
+	return Qnil;
 }
 
 /*
