@@ -176,7 +176,7 @@ DLL_LOCAL void Init_WXSearchCtrl(VALUE rb_mWX)
 	registerInfo<wxSearchCtrl>(rb_cWXSearchCtrl);
 
 	registerEventType("searchctrl_cancel_btn",wxEVT_SEARCHCTRL_CANCEL_BTN);
-	registerEventType("searchctrl_cancel_btn",wxEVT_SEARCHCTRL_SEARCH_BTN);
+	registerEventType("searchctrl_search_btn",wxEVT_SEARCHCTRL_SEARCH_BTN);
 
 
 #endif
