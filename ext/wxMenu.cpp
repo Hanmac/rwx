@@ -112,8 +112,8 @@ DLL_LOCAL VALUE _append_base(int argc,VALUE *argv,VALUE self,wxItemKind kind)
 
 /*
  * call-seq:
- *   add_normal(id, text, [help]) -> WX::Menu::Item
- *   add_normal(id, text, [help]) {|event| ... } -> WX::Menu::Item
+ *   append_normal(id, text, [help]) -> WX::Menu::Item
+ *   append_normal(id, text, [help]) {|event| ... } -> WX::Menu::Item
  *
  * adds a new normal menu item to the Menu widget.
  * when block is given, bind the block to the event of the menu item.
@@ -135,8 +135,8 @@ DLL_LOCAL VALUE _appendNormalItem(int argc,VALUE *argv,VALUE self)
 
 /*
  * call-seq:
- *   add_check(id, text, [help]) -> WX::Menu::Item
- *   add_check(id, text, [help]) {|event| ... } -> WX::Menu::Item
+ *   append_check(id, text, [help]) -> WX::Menu::Item
+ *   append_check(id, text, [help]) {|event| ... } -> WX::Menu::Item
  *
  * adds a new check menu item to the Menu widget.
  * when block is given, bind the block to the event of the menu item.
@@ -158,8 +158,8 @@ DLL_LOCAL VALUE _appendCheckItem(int argc,VALUE *argv,VALUE self)
 
 /*
  * call-seq:
- *   add_radio(id, text, [help]) -> WX::Menu::Item
- *   add_radio(id, text, [help]) {|event| ... } -> WX::Menu::Item
+ *   append_radio(id, text, [help]) -> WX::Menu::Item
+ *   append_radio(id, text, [help]) {|event| ... } -> WX::Menu::Item
  *
  * adds a new radio menu item to the Menu widget.
  * when block is given, bind the block to the event of the menu item.
@@ -181,8 +181,8 @@ DLL_LOCAL VALUE _appendRadioItem(int argc,VALUE *argv,VALUE self)
 
 /*
  * call-seq:
- *   add_menu(text, [help]) {|menu| ... } -> WX::Menu::Item
- *   add_menu(menu, text, [help]) -> WX::Menu::Item
+ *   append_menu(text, [help]) {|menu| ... } -> WX::Menu::Item
+ *   append_menu(menu, text, [help]) -> WX::Menu::Item
  *
  * adds a new sub menu item to the Menu widget.
  * when block is given, it created a new menu and yields it into the block.
@@ -554,7 +554,7 @@ DLL_LOCAL void Init_WXMenu(VALUE rb_mWX)
 	rb_define_attr(rb_cWXMenu,"parent",1,1);
 #endif
 
-	rb_define_method(rb_cWXMenu,"initialize",RUBY_METHOD_FUNC(_initialize),1);
+	rb_define_method(rb_cWXMenu,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_include_module(rb_cWXMenu,rb_mWXEvtHandler);
 	rb_include_module(rb_cWXMenu,rb_mEnumerable);
