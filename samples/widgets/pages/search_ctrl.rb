@@ -12,14 +12,22 @@ class SearchCtrlPage < CommonPage
           @cancel_button = add_checkbox(box,"Cancel button") {
             @search_ctrl.cancel_button_visible= @cancel_button.value
           }
-          @search_menu = add_checkbox(box,"Search menu")
-
+          @search_menu = add_checkbox(box,"Search menu") {
+            @search_ctrl.menu = @search_menu.value ? create_menu : nil
+          }
         },
         :expand => true
       )
     }
   end
   
+  def create_menu
+    unless @menu
+      @menu = WX::Menu.new
+      1.upto(10) {|i| @menu.append_normal(nil, "item %d" % i, "tip %d" % i) }
+    end
+    @menu
+  end
   
   def create_widget
     @search_ctrl = WX::SearchCtrl.new(self)
