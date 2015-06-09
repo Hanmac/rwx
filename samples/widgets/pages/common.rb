@@ -8,8 +8,8 @@ class CommonPage < WX::Panel
     create_content
   end
 
-  def add_checkbox(sizer,label,id = nil, &block)
-    cb = WX::CheckBox.new(self,:label => label, :id => id)
+  def add_checkbox(sizer,label,id = nil, value: false, &block)
+    cb = WX::CheckBox.new(self,:label => label, :id => id, :value => value)
     sizer.add(cb)
     cb.bind(:checkbox, &block) unless block.nil?
     return cb
