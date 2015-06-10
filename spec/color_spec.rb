@@ -4,6 +4,8 @@ RSpec.describe WX::Color do
   
   include_examples "copyable"
   include_examples "dumpable"
+
+  include_examples "struct_equal", {:red => 255, :green => 0, :blue => 0}
   
   it "overflow on bounderies" do
     c = WX::Color.new(40, 0, 0)
