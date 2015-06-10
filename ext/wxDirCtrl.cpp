@@ -187,7 +187,7 @@ DLL_LOCAL void Init_WXDirCtrl(VALUE rb_mWX)
 	rb_define_const(rb_cWXDirCtrl,"EDIT_LABELS",INT2NUM(wxDIRCTRL_EDIT_LABELS));
 	rb_define_const(rb_cWXDirCtrl,"MULTIPLE",INT2NUM(wxDIRCTRL_MULTIPLE));
 
-	registerInfo<wxFileCtrl>(rb_cWXDirCtrl);
+	registerInfo<wxDirCtrl>(rb_cWXDirCtrl);
 #endif
 
 }
