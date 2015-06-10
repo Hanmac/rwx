@@ -47,10 +47,12 @@ bool rwx_unrefobject(VALUE object)
 void registerInfo(VALUE klass, const wxClassInfo * info)
 {
 	infoholdertype::iterator it = infoklassholder.find(info);
-	if(it != infoklassholder.end() && it->second != klass)
-		rb_warn("already registered wxClass (%s) as %" PRIsVALUE " but want it as %" PRIsVALUE, wxString(info->GetClassName()).c_str().AsChar(), RB_CLASSNAME(it->second), RB_CLASSNAME(klass));
-	else
+	if(it != infoklassholder.end()) {
+		//if(it->second != klass)
+			//rb_warn("already registered wxClass (%s) as %" PRIsVALUE " but want it as %" PRIsVALUE, wxString(info->GetClassName()).c_str().AsChar(), RB_CLASSNAME(it->second), RB_CLASSNAME(klass));
+	} else {
 		infoklassholder[info] = klass;
+	}
 }
 
 void registerDataType(VALUE klass, RUBY_DATA_FUNC freefunc, size_t (*sizefunc)(const void *))
