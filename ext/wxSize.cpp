@@ -35,7 +35,7 @@ bool is_wrapable< wxSize >(const VALUE &vsize)
 template <>
 wxSize unwrap< wxSize >(const VALUE &vsize)
 {
-	if(rb_obj_is_kind_of(vsize, rb_cArray)){
+	if(rb_obj_is_kind_of(vsize, rb_cArray) && RARRAY_LEN(vsize) == 2 ){
 			wxSize size;
 			size.SetWidth(NUM2INT(RARRAY_AREF(vsize,0)));
 			size.SetHeight(NUM2INT(RARRAY_AREF(vsize,1)));
@@ -155,10 +155,48 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
  */
 DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
 {
+    data = rb_Array(data);
     _setWidth(self, RARRAY_AREF(data,0));
     _setHeight(self, RARRAY_AREF(data,1));
     return Qnil;
 }
+
+
+struct equal_obj {
+	wxSize* self;
+	VALUE other;
+};
+
+VALUE _equal_block(equal_obj *obj)
+{
+	return wrap(*obj->self == unwrap<wxSize>(obj->other));
+}
+
+VALUE _equal_rescue(VALUE val)
+{
+	return Qfalse;
+}
+
+/*
+ * call-seq:
+ *   == point -> bool
+ *
+ * compares two sizes.
+ *
+ *
+ */
+DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
+{
+	equal_obj obj;
+	obj.self = _self;
+	obj.other = other;
+
+	return rb_rescue(
+		RUBY_METHOD_FUNC(_equal_block),(VALUE)&obj,
+		RUBY_METHOD_FUNC(_equal_rescue),Qnil
+	);
+}
+
 
 }
 }
@@ -197,8 +235,10 @@ DLL_LOCAL void Init_WXSize(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXSize,"inspect",RUBY_METHOD_FUNC(_inspect),0);
 
+	rb_define_method(rb_cWXSize,"==",RUBY_METHOD_FUNC(_equal),1);
+
 	rb_define_method(rb_cWXSize,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
-	rb_define_method(rb_cWXSize,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),-2);
+	rb_define_method(rb_cWXSize,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
 	registerType<wxSize>(rb_cWXSize, true);
 
