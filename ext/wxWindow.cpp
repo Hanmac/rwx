@@ -382,6 +382,12 @@ DLL_LOCAL VALUE _wxClass(VALUE self)
 	return wrap(wxString(_self->GetClassInfo()->GetClassName()));
 }
 
+DLL_LOCAL VALUE _wxClass_self(VALUE self)
+{
+	return wrap(wxString(unwrapClass(self)->GetClassName()));
+}
+
+
 DLL_LOCAL VALUE _IsDestroyed(VALUE self)
 {
 	return wrap(RTYPEDDATA_DATA(self) == NULL);
@@ -773,6 +779,7 @@ DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 	rb_define_method(rb_cWXWindow,"[]",RUBY_METHOD_FUNC(_getchild),1);
 
 	rb_define_method(rb_cWXWindow,"wx_class",RUBY_METHOD_FUNC(_wxClass),0);
+	rb_define_singleton_method(rb_cWXWindow,"wx_class",RUBY_METHOD_FUNC(_wxClass_self),0);
 
 	rb_define_method(rb_cWXWindow,"each_child",RUBY_METHOD_FUNC(_each),0);
 
