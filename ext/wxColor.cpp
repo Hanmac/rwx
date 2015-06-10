@@ -60,6 +60,17 @@ void set_color_part(char& cv,const VALUE &val, const ID &id)
 		cv = NUM2DBL(tmp) * 256;
 }
 
+void set_color_part_array(char& cv,const VALUE &val, size_t idx)
+{
+	VALUE tmp = RARRAY_AREF(val, idx);
+	if(FIXNUM_P(tmp))
+		cv = NUM2CHR(tmp);
+	else
+		cv = NUM2DBL(tmp) * 256;
+}
+
+
+
 template <>
 wxColor unwrap< wxColor >(const VALUE &vcolor)
 {
@@ -83,7 +94,22 @@ wxColor unwrap< wxColor >(const VALUE &vcolor)
 		return col;
 	}else if(FIXNUM_P(vcolor))
 		return wxColor(FIX2LONG(vcolor));
-	else if(!rb_obj_is_kind_of(vcolor, rb_cWXColor) &&
+	else if(rb_obj_is_kind_of(vcolor, rb_cArray) && RARRAY_LEN(vcolor) >= 3 &&
+		RARRAY_LEN(vcolor) <= 4){
+		char red,green,blue,alpha(wxALPHA_OPAQUE);
+		wxColor color;
+		set_color_part_array(red, vcolor, 0);
+		set_color_part_array(green, vcolor, 1);
+		set_color_part_array(blue, vcolor, 2);
+
+		if(RARRAY_LEN(vcolor) == 4) {
+			set_color_part_array(blue, vcolor, 2);
+			set_color_part(alpha, vcolor, 3);
+		}
+
+		color.Set(red, green, blue, alpha);
+		return color;
+	} if(!rb_obj_is_kind_of(vcolor, rb_cWXColor) &&
 		rb_respond_to(vcolor,rwxID_red) &&
 		rb_respond_to(vcolor,rwxID_green) &&
 		rb_respond_to(vcolor,rwxID_blue)){
