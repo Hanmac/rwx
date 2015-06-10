@@ -45,7 +45,7 @@ bool is_wrapable< wxPoint >(const VALUE &vpoint)
 template <>
 wxRealPoint unwrap< wxRealPoint >(const VALUE &vpoint)
 {
-	if(rb_obj_is_kind_of(vpoint, rb_cArray)){
+	if(rb_obj_is_kind_of(vpoint, rb_cArray) && RARRAY_LEN(vpoint) == 2){
 		wxRealPoint point;
 		point.x = NUM2DBL(RARRAY_AREF(vpoint,0));
 		point.y = NUM2DBL(RARRAY_AREF(vpoint,1));
@@ -67,7 +67,7 @@ wxRealPoint unwrap< wxRealPoint >(const VALUE &vpoint)
 template <>
 wxPoint unwrap< wxPoint >(const VALUE &vpoint)
 {
-	if(rb_obj_is_kind_of(vpoint, rb_cArray)){
+	if(rb_obj_is_kind_of(vpoint, rb_cArray) && RARRAY_LEN(vpoint) == 2){
 		wxPoint point;
 		point.x = NUM2INT(RARRAY_AREF(vpoint,0));
 		point.y = NUM2INT(RARRAY_AREF(vpoint,1));
