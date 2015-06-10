@@ -44,11 +44,21 @@ bool rwx_unrefobject(VALUE object)
 	return false;
 }
 
+void registerInfo(VALUE klass, const wxClassInfo * info)
+{
+	infoholdertype::iterator it = infoklassholder.find(info);
+	if(it != infoklassholder.end() && it->second != klass)
+		rb_warn("already registered wxClass (%s) as %" PRIsVALUE " but want it as %" PRIsVALUE, wxString(info->GetClassName()).c_str().AsChar(), RB_CLASSNAME(it->second), RB_CLASSNAME(klass));
+	else
+		infoklassholder[info] = klass;
+}
+
 void registerDataType(VALUE klass, RUBY_DATA_FUNC freefunc, size_t (*sizefunc)(const void *))
 {
 
 	if(!NIL_P(klass))
 	{
+
 		rb_data_type_t *parent = NULL;
 		if(rb_obj_is_kind_of(klass, rb_cClass)) {
 			parent = unwrapDataType(rb_class_superclass(klass));
@@ -149,6 +159,16 @@ VALUE wrapClass(const wxClassInfo * info)
 	if(const wxClassInfo *base = info->GetBaseClass1())
 		return wrapClass(base);
 	return Qnil;
+}
+
+const wxClassInfo* unwrapClass(VALUE klass)
+{
+	for(infoholdertype::iterator it = infoklassholder.begin(); it != infoklassholder.end(); ++it)
+	{
+		if(it->second == klass)
+			return it->first;
+	}
+	return unwrapClass(rb_class_superclass(klass));
 }
 
 rb_data_type_t* unwrapDataType(const VALUE& klass)

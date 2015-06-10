@@ -193,14 +193,17 @@ DLL_LOCAL void registerType(VALUE klass, bool bfree = false)
 		registerDataType(klass, RUBY_TYPED_NEVER_FREE, type_size_of<T>);
 }
 
+DLL_LOCAL void registerInfo(VALUE klass, const wxClassInfo * info);
+
 template <typename T>
 DLL_LOCAL void registerInfo(VALUE klass, bool bfree = false)
 {
-	infoklassholder[wxCLASSINFO(T)]=klass;
+	registerInfo(klass,wxCLASSINFO(T));
 	registerType<T>(klass, bfree);
 }
 
 DLL_LOCAL VALUE wrapClass(const wxClassInfo * info);
+DLL_LOCAL const wxClassInfo* unwrapClass(VALUE klass);
 
 DLL_LOCAL rb_data_type_t* unwrapDataType(const VALUE& klass);
 
