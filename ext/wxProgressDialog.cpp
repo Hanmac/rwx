@@ -163,7 +163,7 @@ DLL_LOCAL void Init_WXProgressDialog(VALUE rb_mWX)
 	registerInfo<wxProgressDialog>(rb_cWXProgressDialog);
 #else
 	registerInfo<wxGenericProgressDialog>(rb_cWXProgressDialog);
-	registerInfo<wxProgressDialog>(rb_cWXProgressDialog);
+//	registerInfo<wxProgressDialog>(rb_cWXProgressDialog);
 #endif
 
 
