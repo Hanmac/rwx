@@ -164,7 +164,9 @@
 #include "wxDataView.hpp"
 #include "wxDataViewList.hpp"
 
+#include "wxHyperLinkBase.hpp"
 #include "wxHyperLink.hpp"
+#include "wxHyperLinkGeneric.hpp"
 #include "wxCollapsiblePane.hpp"
 
 #include "wxBookCtrl.hpp"
@@ -369,7 +371,9 @@ extern "C" void Init_rwx()
 	Init_WXSpinCtrl(rb_mWX);
 	Init_WXSpinCtrlDouble(rb_mWX);
 
+	Init_WXHyperLinkBase(rb_mWX);
 	Init_WXHyperLink(rb_mWX);
+	Init_WXHyperLinkGeneric(rb_mWX);
 
 	Init_WXCollapsiblePane(rb_mWX);
 
