@@ -16,5 +16,16 @@ void Init_WXHyperLinkBase(VALUE rb_mWX);
 
 #if wxUSE_HYPERLINKCTRL
 #include <wx/hyperlink.h>
+
+
+namespace RubyWX {
+namespace HyperLinkBase {
+
+DLL_LOCAL void _set_options(VALUE hash, wxWindowID &id, wxString &label, wxString &url, int &style);
+DLL_LOCAL void _set_hash_options(VALUE hash, wxHyperlinkCtrlBase *self);
+
+}
+}
+
 #endif
 #endif /* WXHYPERLINKBASE_HPP_ */

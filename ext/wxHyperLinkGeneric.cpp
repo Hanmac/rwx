@@ -62,13 +62,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		wxString url(wxEmptyString);
 		int style(wxHL_DEFAULT_STYLE);
 
-		if(rb_obj_is_kind_of(hash,rb_cHash))
-		{
-			set_hash_option(hash,"id",id,unwrapID);
-			set_hash_option(hash,"label",label);
-			set_hash_option(hash,"url",url);
-			set_hash_option(hash,"style",style);
-		}
+		HyperLinkBase::_set_options(hash, id, label, url, style);
 		if(nil_check(parent))
 			_self->Create(
 				unwrap<wxWindow*>(parent),id,label,url,
@@ -79,14 +73,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	
 	rb_call_super(argc,argv);
 
-	if(rb_obj_is_kind_of(hash,rb_cHash))
-	{
-		set_obj_option(hash, "hover_color", &wxGenericHyperlinkCtrl::SetHoverColour, _self);
-		set_obj_option(hash, "normal_color", &wxGenericHyperlinkCtrl::SetNormalColour, _self);
-		set_obj_option(hash, "visited_color", &wxGenericHyperlinkCtrl::SetVisitedColour, _self);
-
-		set_obj_option(hash, "visited", &wxGenericHyperlinkCtrl::SetVisited, _self);
-	}
+	HyperLinkBase::_set_hash_options(hash, _self);
 
 	return self;
 }

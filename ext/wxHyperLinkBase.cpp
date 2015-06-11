@@ -25,6 +25,27 @@ macro_attr(URL,wxString)
 
 macro_attr(Visited,bool)
 
+DLL_LOCAL void _set_options(VALUE hash, wxWindowID &id, wxString &label, wxString &url, int &style) {
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		set_hash_option(hash,"id",id,unwrapID);
+		set_hash_option(hash,"label",label);
+		set_hash_option(hash,"url",url);
+		set_hash_option(hash,"style",style);
+	}
+}
+
+DLL_LOCAL void _set_hash_options(VALUE hash, wxHyperlinkCtrlBase *self) {
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		set_obj_option(hash, "hover_color", &wxHyperlinkCtrlBase::SetHoverColour, self);
+		set_obj_option(hash, "normal_color", &wxHyperlinkCtrlBase::SetNormalColour, self);
+		set_obj_option(hash, "visited_color", &wxHyperlinkCtrlBase::SetVisitedColour, self);
+
+		set_obj_option(hash, "visited", &wxHyperlinkCtrlBase::SetVisited, self);
+	}
+}
+
 }
 }
 #endif
