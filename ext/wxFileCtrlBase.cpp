@@ -12,13 +12,20 @@ VALUE rb_cWXFileCtrlBase,rb_cWXFileCtrlEvent;
 
 wxString unwrapWildCard(const VALUE &val)
 {
-	wxString wildcard(unwrap<wxString>(val));
+	VALUE tmp = val;
+	if(rb_obj_is_kind_of(tmp, rb_cArray)) {
+		tmp = rb_ary_join(tmp, rb_str_new2("|"));
+	}
+
+	wxString wildcard(unwrap<wxString>(tmp));
+
+
 	wxArrayString wild,desc;
 
 	if(!wxParseCommonDialogsFilter(wildcard,wild,desc)){
 		rb_raise(rb_eArgError,
 			"'%" PRIsVALUE "' is not a valid wildcard",
-			RB_OBJ_STRING(val)
+			RB_OBJ_STRING(tmp)
 		);
 		return wxEmptyString;
 	}
@@ -184,6 +191,9 @@ singlereturn(GetFile)
 /* Document-const: DEFAULT_STYLE
  * default style for this control.
  */
+/* Document-const: DEFAULT_WILDCARD
+ * default wildcard for any files.
+ */
 
 DLL_LOCAL void Init_WXFileCtrlBase(VALUE rb_mWX)
 {
@@ -240,6 +250,7 @@ DLL_LOCAL void Init_WXFileCtrlBase(VALUE rb_mWX)
 	rb_define_const(rb_cWXFileCtrlBase,"NOSHOWHIDDEN",INT2NUM(wxFC_NOSHOWHIDDEN));
 
 	rb_define_const(rb_cWXFileCtrlBase,"DEFAULT_STYLE",INT2NUM(wxFC_DEFAULT_STYLE));
+	rb_define_const(rb_cWXFileCtrlBase,"DEFAULT_WILDCARD",wrap(wxString(wxFileSelectorDefaultWildcardStr)));
 
 	registerEventType("filectrl_selectionchanged",wxEVT_FILECTRL_SELECTIONCHANGED,rb_cWXFileCtrlEvent);
 	registerEventType("filectrl_fileactivated",wxEVT_FILECTRL_FILEACTIVATED,rb_cWXFileCtrlEvent);
