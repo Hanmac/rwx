@@ -22,11 +22,9 @@ class SearchCtrlPage < CommonPage
   end
   
   def create_menu
-    unless @menu
-      @menu = WX::Menu.new
-      1.upto(10) {|i| @menu.append_normal(nil, "item %d" % i, "tip %d" % i) }
-    end
-    @menu
+    menu = WX::Menu.new
+    1.upto(10) {|i| menu.append_normal(nil, "item %d" % i, "tip %d" % i) }
+    menu
   end
   
   def create_widget
