@@ -40,6 +40,11 @@ wxSize unwrap< wxSize >(const VALUE &vsize)
 			size.SetWidth(NUM2INT(RARRAY_AREF(vsize,0)));
 			size.SetHeight(NUM2INT(RARRAY_AREF(vsize,1)));
 			return size;
+	}else if(rb_obj_is_kind_of(vsize, rb_cHash)){
+		wxSize size;
+		size.SetWidth(NUM2INT(rb_hash_aref(vsize,ID2SYM(rwxID_width))));
+		size.SetHeight(NUM2INT(rb_hash_aref(vsize,ID2SYM(rwxID_height))));
+		return size;
 	}else if(rb_obj_is_kind_of(vsize, rb_cWXRect)){
 		return unwrapTypedPtr<wxRect>(vsize, rb_cWXRect)->GetSize();
 	}else if(!rb_obj_is_kind_of(vsize, rb_cWXSize) &&
