@@ -34,29 +34,44 @@ bool is_wrapable< wxRect >(const VALUE &vrect)
 }
 
 template <>
-wxRect* unwrap< wxRect* >(const VALUE &vrect)
+wxRect unwrap< wxRect >(const VALUE &vrect)
 {
-	if(!rb_obj_is_kind_of(vrect, rb_cWXRect) &&
+	if(rb_obj_is_kind_of(vrect, rb_cArray) && RARRAY_LEN(vrect) == 4 ){
+		wxRect rect;
+		rect.SetX(NUM2INT(RARRAY_AREF(vrect,0)));
+		rect.SetY(NUM2INT(RARRAY_AREF(vrect,1)));
+		rect.SetWidth(NUM2INT(RARRAY_AREF(vrect,2)));
+		rect.SetHeight(NUM2INT(RARRAY_AREF(vrect,3)));
+		return rect;
+	}else if(rb_obj_is_kind_of(vrect, rb_cHash)){
+		wxRect rect;
+		rect.SetX(NUM2INT(rb_hash_aref(vrect,ID2SYM(rwxID_x))));
+		rect.SetY(NUM2INT(rb_hash_aref(vrect,ID2SYM(rwxID_y))));
+		rect.SetWidth(NUM2INT(rb_hash_aref(vrect,ID2SYM(rwxID_width))));
+		rect.SetHeight(NUM2INT(rb_hash_aref(vrect,ID2SYM(rwxID_height))));
+		return rect;
+	}else if(!rb_obj_is_kind_of(vrect, rb_cWXRect) &&
 		rb_respond_to(vrect,rwxID_x) &&
 		rb_respond_to(vrect,rwxID_y) &&
 		rb_respond_to(vrect,rwxID_width) &&
 		rb_respond_to(vrect,rwxID_height)){
-		wxRect *size = new wxRect;
-		size->SetX(NUM2INT(rb_funcall(vrect,rwxID_x,0)));
-		size->SetY(NUM2INT(rb_funcall(vrect,rwxID_y,0)));
+		wxRect rect;
+		rect.SetX(NUM2INT(rb_funcall(vrect,rwxID_x,0)));
+		rect.SetY(NUM2INT(rb_funcall(vrect,rwxID_y,0)));
 
-		size->SetWidth(NUM2INT(rb_funcall(vrect,rwxID_width,0)));
-		size->SetHeight(NUM2INT(rb_funcall(vrect,rwxID_height,0)));
-		return size;
+		rect.SetWidth(NUM2INT(rb_funcall(vrect,rwxID_width,0)));
+		rect.SetHeight(NUM2INT(rb_funcall(vrect,rwxID_height,0)));
+		return rect;
 	}else{
-		return unwrapTypedPtr<wxRect>(vrect, rb_cWXRect);
+		return *unwrap<wxRect*>(vrect);
 	}
 }
 
+
 template <>
-wxRect unwrap< wxRect >(const VALUE &vsize)
+wxRect* unwrap< wxRect* >(const VALUE &vrect)
 {
-	return *unwrap<wxRect*>(vsize);
+	return unwrapTypedPtr<wxRect>(vrect, rb_cWXRect);
 }
 
 
@@ -153,11 +168,49 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
  */
 DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
 {
+    data = rb_Array(data);
 	_setX(self, RARRAY_AREF(data,0));
     _setY(self, RARRAY_AREF(data,1));
     _setWidth(self, RARRAY_AREF(data,2));
     _setHeight(self, RARRAY_AREF(data,3));
     return Qnil;
+}
+
+
+
+struct equal_obj {
+	wxRect* self;
+	VALUE other;
+};
+
+VALUE _equal_block(equal_obj *obj)
+{
+	return wrap(*obj->self == unwrap<wxRect>(obj->other));
+}
+
+VALUE _equal_rescue(VALUE val)
+{
+	return Qfalse;
+}
+
+/*
+ * call-seq:
+ *   == rect -> bool
+ *
+ * compares two rects.
+ *
+ *
+ */
+DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
+{
+	equal_obj obj;
+	obj.self = _self;
+	obj.other = other;
+
+	return rb_rescue(
+		RUBY_METHOD_FUNC(_equal_block),(VALUE)&obj,
+		RUBY_METHOD_FUNC(_equal_rescue),Qnil
+	);
 }
 
 
@@ -272,8 +325,10 @@ DLL_LOCAL void Init_WXRect(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXRect,"inspect",RUBY_METHOD_FUNC(_inspect),0);
 
+	rb_define_method(rb_cWXRect,"==",RUBY_METHOD_FUNC(_equal),1);
+
 	rb_define_method(rb_cWXRect,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
-	rb_define_method(rb_cWXRect,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),-2);
+	rb_define_method(rb_cWXRect,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
 	registerType<wxRect>(rb_cWXRect, true);
 }
