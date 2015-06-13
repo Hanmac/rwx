@@ -51,22 +51,29 @@ wxColor* unwrap< wxColor* >(const VALUE &vcolor)
 	return unwrapTypedPtr<wxColor>(vcolor, rb_cWXColor);
 }
 
+char to_col_part(const VALUE &val)
+{
+	if(FIXNUM_P(val))
+		return NUM2CHR(val);
+	else
+		return NUM2DBL(val) * 256;
+}
+
 void set_color_part(char& cv,const VALUE &val, const ID &id)
 {
-	VALUE tmp = rb_funcall(val,id,0);
-	if(FIXNUM_P(tmp))
-		cv = NUM2CHR(tmp);
-	else
-		cv = NUM2DBL(tmp) * 256;
+	cv = to_col_part(rb_funcall(val,id,0));
+}
+
+void set_color_part_hash(char& cv,const VALUE &val, const ID &id)
+{
+	VALUE tmp;
+	if((tmp = rb_hash_aref(val, ID2SYM(id))) != Qnil)
+		cv = to_col_part(tmp);
 }
 
 void set_color_part_array(char& cv,const VALUE &val, size_t idx)
 {
-	VALUE tmp = RARRAY_AREF(val, idx);
-	if(FIXNUM_P(tmp))
-		cv = NUM2CHR(tmp);
-	else
-		cv = NUM2DBL(tmp) * 256;
+	cv = to_col_part(RARRAY_AREF(val, idx));
 }
 
 
@@ -103,13 +110,24 @@ wxColor unwrap< wxColor >(const VALUE &vcolor)
 		set_color_part_array(blue, vcolor, 2);
 
 		if(RARRAY_LEN(vcolor) == 4) {
-			set_color_part_array(blue, vcolor, 2);
-			set_color_part(alpha, vcolor, 3);
+			set_color_part_array(alpha, vcolor, 3);
 		}
 
 		color.Set(red, green, blue, alpha);
 		return color;
-	} if(!rb_obj_is_kind_of(vcolor, rb_cWXColor) &&
+	}else if(rb_obj_is_kind_of(vcolor, rb_cHash)){
+		char red,green,blue,alpha(wxALPHA_OPAQUE);
+		wxColor color;
+
+		set_color_part_hash(red, vcolor, rwxID_red);
+		set_color_part_hash(green, vcolor, rwxID_green);
+		set_color_part_hash(blue, vcolor, rwxID_blue);
+
+		set_color_part_hash(alpha, vcolor, rwxID_alpha);
+
+		color.Set(red, green, blue, alpha);
+		return color;
+	}else if(!rb_obj_is_kind_of(vcolor, rb_cWXColor) &&
 		rb_respond_to(vcolor,rwxID_red) &&
 		rb_respond_to(vcolor,rwxID_green) &&
 		rb_respond_to(vcolor,rwxID_blue)){
