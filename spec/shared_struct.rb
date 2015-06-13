@@ -8,4 +8,7 @@ RSpec.shared_examples "struct_equal" do |data|
     should eq(data.values)
     should_not eq(data.values * 2) #should not work with array of double size
   end
+  it "equal hash version" do
+    should eq(data)
+  end
 end
