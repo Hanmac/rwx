@@ -83,6 +83,18 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_call_super(argc,argv);
 
 	_self->SetAdaptor(new RubyAddRemoveAdaptor(self));
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		wxString add, remove;
+
+		set_hash_option(hash,"add_tooltip",add);
+
+		set_hash_option(hash,"remove_tooltip",remove);
+
+		_self->SetButtonsToolTips(add, remove);
+	}
+
 	return self;
 }
 
