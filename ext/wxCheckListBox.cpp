@@ -34,24 +34,24 @@ APP_PROTECT(wxCheckListBox)
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,name,hash;
-	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
+	rb_scan_args(argc, argv, "11:", &parent, &name, &hash);
 	if(!_created && !rb_obj_is_kind_of(name,rb_cString)) {
 		wxWindowID id(wxID_ANY);
 		wxArrayString choices;
 		int style(0);
 
 		if(rb_obj_is_kind_of(hash,rb_cHash)) {
-			set_hash_option(hash,"id",id,unwrapID);
-			set_hash_option(hash,"choices",choices);
-			set_hash_option(hash,"style",style);
+			set_hash_option(hash, "id", id, unwrapID);
+			set_hash_option(hash, "choices", choices);
+			set_hash_option(hash, "style", style);
 
 			ListBox::set_style_flags(hash,style);
 		}
 		if(nil_check(parent)) {
 			_self->Create(
-				unwrap<wxWindow*>(parent),id,
-				wxDefaultPosition,wxDefaultSize,
-				choices,style
+				unwrap<wxWindow*>(parent), id,
+				wxDefaultPosition, wxDefaultSize,
+				choices, style
 			);
 
 		}
@@ -96,6 +96,15 @@ DLL_LOCAL VALUE _each_checked(VALUE self)
 }
 
 
+/*
+ * call-seq:
+ *   checked_items -> Array
+ *
+ * returns all checked items as array
+ * ===Return value
+ * self
+ *
+*/
 DLL_LOCAL VALUE _getCheckedItems(VALUE self)
 {
 	wxArrayInt data;
@@ -103,9 +112,30 @@ DLL_LOCAL VALUE _getCheckedItems(VALUE self)
 	return wrap(data);
 }
 
-macro_attr_item(ItemChecked,IsChecked, Check, GetCount, bool)
 
+/*
+ * call-seq:
+ *   check_all(val = true) -> self
+ *
+ * check or uncheck all elements
+ * ===Return value
+ * self
+ *
+*/
+DLL_LOCAL VALUE _check_all(int argc,VALUE *argv,VALUE self)
+{
+	VALUE val(Qtrue);
+	rb_scan_args(argc, argv, "01", &val);
 
+	bool cval = RTEST(val);
+
+	for(unsigned int i = 0; i < _self->GetCount(); ++i)
+		_self->Check(i, cval);
+
+	return self;
+}
+
+macro_attr_item(ItemChecked, IsChecked, Check, GetCount, bool)
 
 }
 }
@@ -127,9 +157,9 @@ macro_attr_item(ItemChecked,IsChecked, Check, GetCount, bool)
  *
 */
 
-/* Document-method: set_item_selection
+/* Document-method: set_item_checked
  * call-seq:
- *   set_item_selection(pos,val) -> self
+ *   set_item_checkedpos,val) -> self
  *
  * sets the item at the position as checked if val is true.
  * ===Arguments
@@ -164,8 +194,10 @@ DLL_LOCAL void Init_WXCheckListBox(VALUE rb_mWX)
 	rb_define_method(rb_cWXCheckListBox,"each_checked",RUBY_METHOD_FUNC(_each_checked),0);
 	rb_define_method(rb_cWXCheckListBox,"checked_items",RUBY_METHOD_FUNC(_getCheckedItems),0);
 
-	rb_define_method(rb_cWXListBox,"get_item_checked",RUBY_METHOD_FUNC(_getItemChecked),1);
-	rb_define_method(rb_cWXListBox,"set_item_checked",RUBY_METHOD_FUNC(_setItemChecked),2);
+	rb_define_method(rb_cWXCheckListBox,"get_item_checked",RUBY_METHOD_FUNC(_getItemChecked),1);
+	rb_define_method(rb_cWXCheckListBox,"set_item_checked",RUBY_METHOD_FUNC(_setItemChecked),2);
+
+	rb_define_method(rb_cWXCheckListBox,"check_all",RUBY_METHOD_FUNC(_check_all),-1);
 
 
 	registerEventType("checklistbox", wxEVT_CHECKLISTBOX,rb_cWXCommandEvent);
