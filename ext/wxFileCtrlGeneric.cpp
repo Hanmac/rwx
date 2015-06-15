@@ -18,7 +18,7 @@ VALUE rb_cWXFileCtrlGeneric;
 namespace RubyWX {
 namespace FileCtrlGeneric {
 
-APP_PROTECT(wxFileCtrl)
+APP_PROTECT(wxGenericFileCtrl)
 
 /*
  * call-seq:
