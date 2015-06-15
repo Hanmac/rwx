@@ -18,6 +18,8 @@ namespace CheckListBox {
 
 APP_PROTECT(wxCheckListBox)
 
+singlereturn_array(GetCheckedItems, wxArrayInt)
+
 /*
  * call-seq:
  *   CheckListBox.new(parent, name, [options])
@@ -95,24 +97,6 @@ DLL_LOCAL VALUE _each_checked(VALUE self)
 	return self;
 }
 
-
-/*
- * call-seq:
- *   checked_items -> Array
- *
- * returns all checked items as array
- * ===Return value
- * Array
- *
-*/
-DLL_LOCAL VALUE _getCheckedItems(VALUE self)
-{
-	wxArrayInt data;
-	_self->GetCheckedItems(data);
-	return wrap(data);
-}
-
-
 /*
  * call-seq:
  *   checked_strings -> Array
@@ -133,8 +117,6 @@ DLL_LOCAL VALUE _getCheckedStrings(VALUE self)
 
 	return result;
 }
-
-
 
 /*
  * call-seq:
@@ -196,6 +178,18 @@ macro_attr_item(ItemChecked, IsChecked, Check, GetCount, bool)
  *
 */
 
+
+
+/* Document-method: checked_items
+ * call-seq:
+ *   checked_items -> Array
+ *
+ * returns all checked items as array
+ * ===Return value
+ * Array
+ *
+*/
+
 DLL_LOCAL void Init_WXCheckListBox(VALUE rb_mWX)
 {
 #if 0
@@ -215,7 +209,7 @@ DLL_LOCAL void Init_WXCheckListBox(VALUE rb_mWX)
 
 
 	rb_define_method(rb_cWXCheckListBox,"each_checked",RUBY_METHOD_FUNC(_each_checked),0);
-	rb_define_method(rb_cWXCheckListBox,"checked_items",RUBY_METHOD_FUNC(_getCheckedItems),0);
+	rb_define_method(rb_cWXCheckListBox,"checked_items",RUBY_METHOD_FUNC(_GetCheckedItems),0);
 	rb_define_method(rb_cWXCheckListBox,"checked_strings",RUBY_METHOD_FUNC(_getCheckedStrings),0);
 
 	rb_define_method(rb_cWXCheckListBox,"get_item_checked",RUBY_METHOD_FUNC(_getItemChecked),1);
