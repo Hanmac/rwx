@@ -90,7 +90,7 @@ DLL_LOCAL VALUE _each_checked(VALUE self)
 	_self->GetCheckedItems(data);
 
 	for(wxArrayInt::iterator it = data.begin(); it != data.end();++it)
-		rb_yield_values(2,INT2NUM(*it),wrap(_self->GetString(*it)));
+		rb_yield_values(2,INT2NUM(*it),check_index(*it, _self->GetCount()) ? wrap(_self->GetString(*it)) : Qnil );
 
 	return self;
 }
@@ -102,7 +102,7 @@ DLL_LOCAL VALUE _each_checked(VALUE self)
  *
  * returns all checked items as array
  * ===Return value
- * self
+ * Array
  *
 */
 DLL_LOCAL VALUE _getCheckedItems(VALUE self)
@@ -111,6 +111,29 @@ DLL_LOCAL VALUE _getCheckedItems(VALUE self)
 	_self->GetCheckedItems(data);
 	return wrap(data);
 }
+
+
+/*
+ * call-seq:
+ *   checked_strings -> Array
+ *
+ * returns the strings of all checked items as array
+ * ===Return value
+ * Array
+ *
+*/
+DLL_LOCAL VALUE _getCheckedStrings(VALUE self)
+{
+	wxArrayInt data;
+	size_t size = _self->GetCheckedItems(data);
+
+	VALUE result = rb_ary_new_capa(size);
+	for(wxArrayInt::iterator it = data.begin(); it != data.end();++it)
+		rb_ary_push(result, wrap(_self->GetString(*it)));
+
+	return result;
+}
+
 
 
 /*
@@ -193,6 +216,7 @@ DLL_LOCAL void Init_WXCheckListBox(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXCheckListBox,"each_checked",RUBY_METHOD_FUNC(_each_checked),0);
 	rb_define_method(rb_cWXCheckListBox,"checked_items",RUBY_METHOD_FUNC(_getCheckedItems),0);
+	rb_define_method(rb_cWXCheckListBox,"checked_strings",RUBY_METHOD_FUNC(_getCheckedStrings),0);
 
 	rb_define_method(rb_cWXCheckListBox,"get_item_checked",RUBY_METHOD_FUNC(_getItemChecked),1);
 	rb_define_method(rb_cWXCheckListBox,"set_item_checked",RUBY_METHOD_FUNC(_setItemChecked),2);
