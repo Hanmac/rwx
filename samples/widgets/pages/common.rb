@@ -29,6 +29,20 @@ class CommonPage < WX::Panel
     }
   end
 
+  def add_radiobox(sizer, label, choices, id = nil, &block)
+    rb = WX::RadioBox.new(self, :label => label, :id => id, :choices => choices)
+    sizer.add(rb)
+    rb.bind(:radiobox, &block) unless block.nil?
+    return rb
+  end
+  
+  def add_checklist(sizer, choices, id = nil, &block)
+    cl = WX::CheckListBox.new(self, :id => id, :choices => choices)
+    sizer.add(cl)
+    cl.bind(:checklistbox, &block) unless block.nil?
+    return cl
+  end
+  
   def add_checkbox(sizer,label,id = nil, value: false, &block)
     cb = WX::CheckBox.new(self,:label => label, :id => id, :value => value)
     sizer.add(cb)
@@ -68,8 +82,21 @@ class CommonPage < WX::Panel
   def create_boxright
     WX::BoxSizer.new(:vertical) {|boxright|
       boxright.add_stretch_spacer(5)
-      boxright.add(create_widget,:align => :center)
+      boxright.add(@ctrl = create_widget,:align => :center)
       boxright.add_stretch_spacer(5)
     }
+  end
+  
+
+  def recreate_widget
+
+    @ctrl_sizer.remove(1)
+
+    @ctrl.destroy
+
+    @ctrl_sizer.insert(1,@ctrl = create_widget,:align => :center)
+
+    @ctrl_sizer.layout
+
   end
 end
