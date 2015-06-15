@@ -7,6 +7,14 @@ RSpec.describe WX::Color do
 
   include_examples "struct_equal", {:red => 255, :green => 0, :blue => 0}
   
+  describe "with subclass" do
+    subject { class SubColor < WX::Color; end; SubColor.new(255, 0, 0) }
+    include_examples "copyable"
+    include_examples "dumpable"
+
+    include_examples "struct_equal", {:red => 255, :green => 0, :blue => 0}
+  end
+
   it "overflow on bounderies" do
     c = WX::Color.new(40, 0, 0)
     
@@ -42,11 +50,26 @@ RSpec.describe WX::Color do
     c1 = WX::Color.new(255, 0, 0)
     expect(c1.name).to eq("red")
     expect(c1).to eq("red")
+    expect(c1).to eq(WX::Color::RED)
 
     c2 = WX::Color.new(254, 0, 0)
     expect(c2.name).not_to eq("red")
     expect(c2.name).to be_nil
     expect(c2).not_to eq("red")
+  end
+
+  it "set color name" do
+    c = WX::Color.new(254, 0, 254)
+    expect(c.name).not_to eq("red")
+    expect(c.name).to be_nil
+
+    c.name = "foobar"
+
+    expect(c.name).not_to eq("red")
+    expect(c.name).not_to be_nil
+
+    expect(c.name).to eq("foobar")
+    expect(c).to eq(WX::Color["foobar"])
   end
 
   it "defined color constants after app-init" do
