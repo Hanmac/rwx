@@ -256,7 +256,7 @@ DLL_LOCAL VALUE _tos(VALUE self)
 	return wrap(wxToString(*_self));
 }
 
-DLL_LOCAL VALUE _name(VALUE self)
+DLL_LOCAL VALUE _get_name(VALUE self)
 {
 	if(wxColourDatabase *database = wxTheColourDatabase) {
 		wxString name(database->FindName(*_self).MakeLower());
@@ -267,6 +267,15 @@ DLL_LOCAL VALUE _name(VALUE self)
 	return Qnil;
 }
 
+
+DLL_LOCAL VALUE _set_name(VALUE self, VALUE name)
+{
+	if(wxColourDatabase *database = wxTheColourDatabase) {
+		database->AddColour(unwrap<wxString>(name), unwrap<wxColor>(self));
+	}else
+		return Qnil;
+	return self;
+}
 
 /*
  * call-seq:
@@ -325,12 +334,12 @@ DLL_LOCAL VALUE _inspect(VALUE self)
  */
 DLL_LOCAL VALUE _marshal_dump(VALUE self)
 {
-    VALUE ptr[4];
-    ptr[0] = _getRed(self);
-    ptr[1] = _getGreen(self);
-    ptr[2] = _getBlue(self);
-    ptr[3] = _getAlpha(self);
-    return rb_ary_new4(4, ptr);
+	VALUE ptr[4];
+	ptr[0] = _getRed(self);
+	ptr[1] = _getGreen(self);
+	ptr[2] = _getBlue(self);
+	ptr[3] = _getAlpha(self);
+	return rb_ary_new4(4, ptr);
 }
 
 /*
@@ -344,11 +353,11 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
 DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
 {
 	data = rb_Array(data);
-    _setRed(self, RARRAY_AREF(data,0));
-    _setGreen(self, RARRAY_AREF(data,1));
-    _setBlue(self, RARRAY_AREF(data,2));
-    _setAlpha(self, RARRAY_AREF(data,3));
-    return Qnil;
+	_setRed(self, RARRAY_AREF(data,0));
+	_setGreen(self, RARRAY_AREF(data,1));
+	_setBlue(self, RARRAY_AREF(data,2));
+	_setAlpha(self, RARRAY_AREF(data,3));
+	return Qnil;
 }
 
 struct equal_obj {
@@ -403,13 +412,13 @@ DLL_LOCAL VALUE _class_get(VALUE self, VALUE name)
 
 DLL_LOCAL VALUE _class_set(VALUE self, VALUE name, VALUE color)
 {
-	wxColor col;
 	if(wxColourDatabase *database = wxTheColourDatabase) {
 		database->AddColour(unwrap<wxString>(name), unwrap<wxColor>(color));
 	}else
 		return Qnil;
 	return color;
 }
+
 }
 }
 
@@ -473,7 +482,7 @@ DLL_LOCAL void Init_WXColor(VALUE rb_mWX)
 	rb_define_attr(rb_cWXColor,"green",1,1);
 	rb_define_attr(rb_cWXColor,"blue",1,1);
 	rb_define_attr(rb_cWXColor,"alpha",1,1);
-	rb_define_attr(rb_cWXColor,"name",1,0);
+	rb_define_attr(rb_cWXColor,"name",1,1);
 
 	rb_define_const(rb_cWXColor,"BLACK",wrap(wxBLACK));
 	rb_define_const(rb_cWXColor,"BLUE",wrap(wxBLUE));
@@ -496,7 +505,7 @@ DLL_LOCAL void Init_WXColor(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXColor,"blue",_getBlue,_setBlue);
 	rb_define_attr_method(rb_cWXColor,"alpha",_getAlpha,_setAlpha);
 
-	rb_define_attr_method(rb_cWXColor,"name",_name,NULL);
+	rb_define_attr_method(rb_cWXColor,"name",_get_name,_set_name);
 
 	rb_define_method(rb_cWXColor,"to_s",RUBY_METHOD_FUNC(_tos),0);
 	rb_define_method(rb_cWXColor,"inspect",RUBY_METHOD_FUNC(_inspect),0);
