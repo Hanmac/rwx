@@ -1,5 +1,7 @@
 RSpec.shared_examples "copyable" do
   it "equal copied version" do
-    should eq(subject.dup)
+    copy = subject.dup
+    should eq(copy)
+    expect(subject.class).to eq(copy.class)
   end
 end
