@@ -6,6 +6,7 @@ require_relative "pages/common"
 require_relative "pages/colorpicker"
 require_relative "pages/activityindicator" if WX.const_defined?(:ActivityIndicator)
 require_relative "pages/search_ctrl"
+require_relative "pages/filectrl"
 class Widgets < WX::App
   
   def on_init
@@ -19,21 +20,23 @@ class Widgets < WX::App
     image_list << WX::Image.new("../sample.xpm").scale([16,16]) 
     image_list << "icons/clrpicker.xpm"
     image_list << "icons/text.xpm"
+    image_list << "icons/dirctrl.xpm"
     image_list << "icons/activityindicator.xpm"
     
     book = WX::TreeBookCtrl.new(@frame,:image_list => image_list)
-    book.add_page(nil,"Picker",false,0)
+    book.add_page(nil,"Picker", false, 0)
     
-    book.add_sub_page(ColorPickerPage,"ColorPicker",false,1)
+    book.add_sub_page(ColorPickerPage,"ColorPicker", false, 1)
     
-    book.add_page(nil,"Editable Ctrls",false,0)
+    book.add_page(nil,"Editable Ctrls", false, 0)
     
-    book.add_sub_page(SearchCtrlPage,"SearchCtrl",false,2)
+    book.add_sub_page(SearchCtrlPage,"SearchCtrl", false, 2)
     
-    book.add_page(nil,"Native",false,0)
+    book.add_page(nil,"Native", false, 0)
+    book.add_sub_page(FileCtrlPage,"FileCtrl", false, 3)
     
     if WX.const_defined?(:ActivityIndicator)
-      book.add_sub_page(ActivityIndicatorPage,"ActivityIndicator",false,3)
+      book.add_sub_page(ActivityIndicatorPage,"ActivityIndicator", false, 4)
     end
     @frame.layout
     
