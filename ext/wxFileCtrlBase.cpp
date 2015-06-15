@@ -6,6 +6,10 @@
  */
 
 #include "wxFileCtrlBase.hpp"
+
+#include "wxFileCtrl.hpp"
+#include "wxFileCtrlGeneric.hpp"
+
 #include "wxCommandEvent.hpp"
 
 VALUE rb_cWXFileCtrlBase,rb_cWXFileCtrlEvent;
@@ -42,6 +46,12 @@ bool check_filter_index(int& filter,const wxString& wildcard)
 template <>
 wxFileCtrlBase* unwrap<wxFileCtrlBase*>(const VALUE &arg)
 {
+	if(rb_obj_is_kind_of(arg,rb_cWXFileCtrl))
+		return unwrap<wxFileCtrl*>(arg);
+#if defined(__WXGTK20__) && !defined(__WXUNIVERSAL__)
+	if(rb_obj_is_kind_of(arg,rb_cWXFileCtrlGeneric))
+		return unwrap<wxGenericFileCtrl*>(arg);
+#endif
 	return unwrapTypedPtr<wxFileCtrlBase>(arg,rb_cWXFileCtrlBase);
 }
 
