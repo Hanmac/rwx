@@ -114,7 +114,7 @@ macro_attr_prop(y,double)
 
 DLL_LOCAL VALUE _alloc(VALUE self)
 {
-	return wrap(new wxRealPoint());
+	return wrapTypedPtr(new wxRealPoint,self);
 }
 
 DLL_LOCAL VALUE _initialize(VALUE self,VALUE x,VALUE y)

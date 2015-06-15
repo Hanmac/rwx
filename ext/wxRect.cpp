@@ -98,7 +98,7 @@ macro_attr(BottomRight,wxPoint)
 
 DLL_LOCAL VALUE _alloc(VALUE self)
 {
-	return wrap(new wxRect());
+	return wrapTypedPtr(new wxRect,self);
 }
 
 DLL_LOCAL VALUE _initialize(VALUE self,VALUE x,VALUE y,VALUE width,VALUE height)

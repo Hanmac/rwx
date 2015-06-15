@@ -98,7 +98,7 @@ macro_attr(Height,int)
 
 DLL_LOCAL VALUE _alloc(VALUE self)
 {
-	return wrap(new wxSize());
+	return wrapTypedPtr(new wxSize,self);
 }
 
 DLL_LOCAL VALUE _initialize(VALUE self,VALUE width,VALUE height)
