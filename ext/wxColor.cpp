@@ -360,6 +360,35 @@ DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
 	return Qnil;
 }
 
+
+/*
+ * call-seq:
+ *   hash -> Fixnum
+ *
+ * Generates a Fixnum hash value for this object.
+ *
+ *
+ */
+DLL_LOCAL VALUE _getHash(VALUE self)
+{
+	st_index_t h = rb_hash_start(_self->IsOk());
+//  h = rb_hash_uint(h, (st_index_t)rb_ary_hash);
+	if(_self->IsOk()) {
+		h = rb_hash_uint(h, _self->Red());
+		h = rb_hash_uint(h, _self->Green());
+		h = rb_hash_uint(h, _self->Blue());
+		h = rb_hash_uint(h, _self->Alpha());
+	} else {
+		h = rb_hash_uint(h, 0);
+		h = rb_hash_uint(h, 0);
+		h = rb_hash_uint(h, 0);
+		h = rb_hash_uint(h, 0);
+	}
+
+	h = rb_hash_end(h);
+	return LONG2FIX(h);
+}
+
 struct equal_obj {
 	wxColor* self;
 	VALUE other;
@@ -514,6 +543,9 @@ DLL_LOCAL void Init_WXColor(VALUE rb_mWX)
 	rb_define_method(rb_cWXColor,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
 	rb_define_method(rb_cWXColor,"==",RUBY_METHOD_FUNC(_equal),1);
+	rb_define_alias(rb_cWXColor,"eql?","==");
+
+	rb_define_method(rb_cWXColor,"hash",RUBY_METHOD_FUNC(_getHash),0);
 
 	rb_define_singleton_method(rb_cWXColor,"[]",RUBY_METHOD_FUNC(_class_get),1);
 	rb_define_singleton_method(rb_cWXColor,"[]=",RUBY_METHOD_FUNC(_class_set),2);
