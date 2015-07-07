@@ -76,12 +76,58 @@ singlereturn(CanRedo)
 singlefunc(SelectAll)
 singlefunc(SelectNone)
 singlereturn(HasSelection)
+singlereturn(GetStringSelection)
+singlefunc(RemoveSelection)
 
 macro_attr(Hint,wxString)
+
+macro_attr(InsertionPoint,long)
 
 macro_attr_bool(Editable)
 
 macro_attr(Margins,wxPoint)
+
+
+VALUE _getSelection(VALUE self)
+{
+	if(!_self->HasSelection()) {
+		return Qnil;
+	}
+
+	long begin(0), end(0);
+
+	_self->GetSelection(&begin, &end);
+	return rb_range_new(LONG2NUM(begin), LONG2NUM(end), false);
+}
+
+VALUE _setSelection(VALUE self, VALUE range)
+{
+	rb_check_frozen(self);
+
+	VALUE begin, end;
+	int excl;
+
+	if(rb_range_values(range, &begin, &end, &excl))
+		_self->SetSelection(NUM2LONG(begin), NUM2LONG(end));
+
+	return range;
+}
+
+VALUE _setStringSelection(VALUE self, VALUE val)
+{
+	rb_check_frozen(self);
+	if(_self->HasSelection()) {
+		if(NIL_P(val)) {
+			_self->RemoveSelection();
+		} else {
+			long begin(0), end(0);
+			_self->GetSelection(&begin, &end);
+
+			_self->Replace(begin, end, unwrap<wxString>(val));
+		}
+	}
+	return val;
+}
 
 
 /*
@@ -108,6 +154,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		set_obj_option(hash, "hint", &wxTextEntryBase::SetHint,_self);
 		set_obj_option(hash, "editable", &wxTextEntryBase::SetEditable,_self);
 		set_obj_option(hash, "margins", &wxTextEntryBase::SetMargins,_self);
+		set_obj_option(hash, "auto_complete", &wxTextEntryBase::AutoComplete,_self, unwrap<wxArrayString>);
 	}
 
 	return self;
@@ -225,6 +272,9 @@ DLL_LOCAL void Init_WXTextEntry(VALUE rb_mWX)
 	rb_define_attr(rb_mWXTextEntry,"hint",1,1);
 	rb_define_attr(rb_mWXTextEntry,"editable",1,1);
 	rb_define_attr(rb_mWXTextEntry,"margins",1,1);
+
+	rb_define_attr(rb_mWXTextEntry,"selection",1,1);
+	rb_define_attr(rb_mWXTextEntry,"string_selection",1,1);
 #endif
 
 	rb_define_method(rb_mWXTextEntry,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
@@ -246,6 +296,16 @@ DLL_LOCAL void Init_WXTextEntry(VALUE rb_mWX)
 	rb_define_attr_method(rb_mWXTextEntry,"hint",_getHint,_setHint);
 	rb_define_attr_method(rb_mWXTextEntry,"editable",_getEditable,_setEditable);
 	rb_define_attr_method(rb_mWXTextEntry,"margins",_getMargins,_setMargins);
+
+	rb_define_attr_method(rb_mWXTextEntry,"selection",_getSelection,_setSelection);
+	rb_define_attr_method(rb_mWXTextEntry,"string_selection",_GetStringSelection,_setStringSelection);
+
+	rb_define_method(rb_mWXTextEntry,"selection?",RUBY_METHOD_FUNC(_HasSelection),0);
+
+	rb_define_method(rb_mWXTextEntry,"select_all",RUBY_METHOD_FUNC(_SelectAll),0);
+	rb_define_method(rb_mWXTextEntry,"select_none",RUBY_METHOD_FUNC(_SelectNone),0);
+
+	rb_define_method(rb_mWXTextEntry,"select_none",RUBY_METHOD_FUNC(_SelectNone),0);
 }
 
 
