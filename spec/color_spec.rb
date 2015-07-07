@@ -2,15 +2,15 @@
 RSpec.describe WX::Color do
   subject { ::WX::Color::RED }
   
-  include_examples "copyable"
-  include_examples "dumpable"
+  include_examples "copyable", true
+  include_examples "dumpable", true
 
   include_examples "struct_equal", {:red => 255, :green => 0, :blue => 0}
   
   describe "with subclass" do
     subject { class SubColor < WX::Color; end; SubColor.new(255, 0, 0) }
-    include_examples "copyable"
-    include_examples "dumpable"
+    include_examples "copyable", true
+    include_examples "dumpable", true
 
     include_examples "struct_equal", {:red => 255, :green => 0, :blue => 0}
   end
