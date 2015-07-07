@@ -20,7 +20,12 @@ namespace RubyWX {
 namespace ItemContainer {
 
 DLL_LOCAL VALUE _setItems(VALUE self, VALUE other);
+
+DLL_LOCAL VALUE _getSelection(VALUE self);
 DLL_LOCAL VALUE _setSelection(VALUE self, VALUE other);
+
+DLL_LOCAL VALUE _getStringSelection(VALUE self);
+DLL_LOCAL VALUE _setStringSelection(VALUE self, VALUE other);
 
 }
 }
