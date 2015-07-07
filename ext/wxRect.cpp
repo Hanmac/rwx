@@ -150,12 +150,12 @@ DLL_LOCAL VALUE _inspect(VALUE self)
  */
 DLL_LOCAL VALUE _marshal_dump(VALUE self)
 {
-    VALUE ptr[4];
-    ptr[0] = _getX(self);
-    ptr[1] = _getY(self);
-    ptr[2] = _getWidth(self);
-    ptr[3] = _getHeight(self);
-    return rb_ary_new4( 4, ptr );
+	VALUE ptr[4];
+	ptr[0] = _getX(self);
+	ptr[1] = _getY(self);
+	ptr[2] = _getWidth(self);
+	ptr[3] = _getHeight(self);
+	return rb_ary_new4( 4, ptr );
 }
 
 /*
@@ -168,15 +168,34 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
  */
 DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
 {
-    data = rb_Array(data);
+	data = rb_Array(data);
 	_setX(self, RARRAY_AREF(data,0));
-    _setY(self, RARRAY_AREF(data,1));
-    _setWidth(self, RARRAY_AREF(data,2));
-    _setHeight(self, RARRAY_AREF(data,3));
-    return Qnil;
+	_setY(self, RARRAY_AREF(data,1));
+	_setWidth(self, RARRAY_AREF(data,2));
+	_setHeight(self, RARRAY_AREF(data,3));
+	return Qnil;
 }
 
+/*
+ * call-seq:
+ *   hash -> Fixnum
+ *
+ * Generates a Fixnum hash value for this object.
+ *
+ *
+ */
+DLL_LOCAL VALUE _getHash(VALUE self)
+{
+	st_index_t h = rb_hash_start(0);
 
+	h = rb_hash_uint(h, _self->GetX());
+	h = rb_hash_uint(h, _self->GetY());
+	h = rb_hash_uint(h, _self->GetWidth());
+	h = rb_hash_uint(h, _self->GetHeight());
+
+	h = rb_hash_end(h);
+	return LONG2FIX(h);
+}
 
 struct equal_obj {
 	wxRect* self;
@@ -326,6 +345,9 @@ DLL_LOCAL void Init_WXRect(VALUE rb_mWX)
 	rb_define_method(rb_cWXRect,"inspect",RUBY_METHOD_FUNC(_inspect),0);
 
 	rb_define_method(rb_cWXRect,"==",RUBY_METHOD_FUNC(_equal),1);
+	rb_define_alias(rb_cWXRect,"eql?","==");
+
+	rb_define_method(rb_cWXRect,"hash",RUBY_METHOD_FUNC(_getHash),0);
 
 	rb_define_method(rb_cWXRect,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
 	rb_define_method(rb_cWXRect,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
