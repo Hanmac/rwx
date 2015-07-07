@@ -42,6 +42,8 @@ return NULL;
 namespace RubyWX {
 namespace TextArea {
 
+singlereturn(GetNumberOfLines)
+
 macro_attr_bool(Modified)
 
 macro_attr(DefaultStyle,wxTextAttr)
@@ -75,17 +77,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 
 
-VALUE _each_line_size(VALUE self)
-{
-	return INT2NUM(_self->GetNumberOfLines());
-}
-
 VALUE _each_line(VALUE self)
 {
-	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_each_line_size));
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_GetNumberOfLines));
 
-	int count = _self->GetNumberOfLines();
-	for(int i = 0; i < count; ++i)
+	for(int i = 0; i < _self->GetNumberOfLines(); ++i)
 	{
 		rb_yield(wrap(_self->GetLineText(i)));
 	}
