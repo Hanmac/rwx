@@ -182,9 +182,27 @@ DLL_LOCAL void Init_WXComboBox(VALUE rb_mWX)
 	rb_define_method(rb_cWXComboBox,"dismiss",RUBY_METHOD_FUNC(_Dismiss),0);
 
 	rb_undef_method(rb_cWXComboBox,"empty?");
+	rb_undef_method(rb_cWXComboBox,"selection");
+	rb_undef_method(rb_cWXComboBox,"selection=");
+	rb_undef_method(rb_cWXComboBox,"string_selection");
+	rb_undef_method(rb_cWXComboBox,"string_selection=");
 
 	rb_define_method(rb_cWXComboBox,"list_empty?",RUBY_METHOD_FUNC(_IsListEmpty),0);
 	rb_define_method(rb_cWXComboBox,"text_empty?",RUBY_METHOD_FUNC(_IsTextEmpty),0);
+
+	// import selection methods from ItemContainer
+	{
+		using namespace RubyWX::ItemContainer;
+		rb_define_attr_method(rb_cWXComboBox,"list_selection",_getSelection,_setSelection);
+		rb_define_attr_method(rb_cWXComboBox,"list_string_selection",_getStringSelection,_setStringSelection);
+	}
+
+	// import selection methods from TextEntry
+	{
+		using namespace RubyWX::TextEntry;
+		rb_define_attr_method(rb_cWXComboBox,"text_selection",_getSelection,_setSelection);
+		rb_define_attr_method(rb_cWXComboBox,"text_string_selection",_GetStringSelection,_setStringSelection);
+	}
 
 	//define Choice constants
 	rb_define_const(rb_cWXComboBox,"SORT",INT2NUM(wxCB_SORT));
