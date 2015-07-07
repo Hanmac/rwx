@@ -166,6 +166,24 @@ DLL_LOCAL VALUE _marshal_load(VALUE self, VALUE data)
     return Qnil;
 }
 
+/*
+ * call-seq:
+ *   hash -> Fixnum
+ *
+ * Generates a Fixnum hash value for this object.
+ *
+ *
+ */
+DLL_LOCAL VALUE _getHash(VALUE self)
+{
+	st_index_t h = rb_hash_start(0);
+
+	h = rb_hash_uint(h, _self->GetWidth());
+	h = rb_hash_uint(h, _self->GetHeight());
+
+	h = rb_hash_end(h);
+	return LONG2FIX(h);
+}
 
 struct equal_obj {
 	wxSize* self;
@@ -241,6 +259,9 @@ DLL_LOCAL void Init_WXSize(VALUE rb_mWX)
 	rb_define_method(rb_cWXSize,"inspect",RUBY_METHOD_FUNC(_inspect),0);
 
 	rb_define_method(rb_cWXSize,"==",RUBY_METHOD_FUNC(_equal),1);
+	rb_define_alias(rb_cWXSize,"eql?","==");
+
+	rb_define_method(rb_cWXSize,"hash",RUBY_METHOD_FUNC(_getHash),0);
 
 	rb_define_method(rb_cWXSize,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
 	rb_define_method(rb_cWXSize,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
