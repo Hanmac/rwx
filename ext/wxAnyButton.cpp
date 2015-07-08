@@ -17,14 +17,14 @@ VALUE rb_cWXAnyButton;
 namespace RubyWX {
 namespace AnyButton {
 
-macro_attr(BitmapLabel,wxBitmap)
-macro_attr(BitmapPressed,wxBitmap)
-macro_attr(BitmapDisabled,wxBitmap)
-macro_attr(BitmapCurrent,wxBitmap)
-macro_attr(BitmapFocus,wxBitmap)
+macro_attr_bitmap(BitmapLabel, WRAP_BITMAP_NULL, wxART_BUTTON)
+macro_attr_bitmap(BitmapPressed, WRAP_BITMAP_NULL, wxART_BUTTON)
+macro_attr_bitmap(BitmapDisabled, WRAP_BITMAP_NULL, wxART_BUTTON)
+macro_attr_bitmap(BitmapCurrent, WRAP_BITMAP_NULL, wxART_BUTTON)
+macro_attr_bitmap(BitmapFocus, WRAP_BITMAP_NULL, wxART_BUTTON)
 
-macro_attr(BitmapSelected,wxBitmap)
-macro_attr(BitmapHover,wxBitmap)
+macro_attr_bitmap(BitmapSelected, WRAP_BITMAP_NULL, wxART_BUTTON)
+macro_attr_bitmap(BitmapHover, WRAP_BITMAP_NULL, wxART_BUTTON)
 
 macro_attr(BitmapMargins,wxSize)
 
