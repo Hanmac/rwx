@@ -97,14 +97,7 @@ DLL_LOCAL VALUE _SetDisabledBitmap(VALUE self,VALUE val)
 	return val;
 }
 
-
-DLL_LOCAL VALUE _getControl(VALUE self)
-{
-	if(_self->IsControl())
-		return wrap(_self->GetControl());
-	return Qnil;
-}
-
+singlereturn_if(GetControl, _self->IsControl())
 
 DLL_LOCAL VALUE _alloc(VALUE self)
 {
@@ -193,7 +186,7 @@ DLL_LOCAL void Init_WXToolBarTool(VALUE rb_mWX)
 	rb_undef_method(rb_cWXToolBarTool,"_load");
 	rb_undef_method(rb_cWXToolBarTool,"_dump");
 
-	rb_define_attr_method(rb_cWXToolBarTool,"control",_getControl,0);
+	rb_define_attr_method(rb_cWXToolBarTool,"control",_GetControl,0);
 
 	rb_define_attr_method(rb_cWXToolBarTool,"toolbar",_GetToolBar,0);
 
