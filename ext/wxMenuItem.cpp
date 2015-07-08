@@ -32,14 +32,7 @@ macro_attr(SubMenu,wxMenu*)
 
 macro_attr(Help,wxString)
 
-singlereturn(GetBitmap)
-
-DLL_LOCAL VALUE _SetBitmap(VALUE self,VALUE val)
-{
-	rb_check_frozen(self);
-	_self->SetBitmap(wrapBitmap(val,_self->GetId(),WRAP_BITMAP_RAISE,wxART_MENU));
-	return val;
-}
+macro_attr_bitmap(Bitmap, WRAP_BITMAP_RAISE, wxART_MENU)
 
 /*
 */
@@ -50,7 +43,7 @@ DLL_LOCAL VALUE _initialize_copy(VALUE self,VALUE other)
 	_setKind(self,_getKind(other));
 	_setSubMenu(self,_getSubMenu(other));
 	_setHelp(self,_getHelp(other));
-	_SetBitmap(self,_GetBitmap(other));
+	_setBitmap(self,_getBitmap(other));
 	return self;
 }
 
@@ -72,7 +65,7 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
 //	rb_ary_push(result,_getSubMenu(self));
 	rb_ary_push(result,_getHelp(self));
 #if wxUSE_IMAGE
-	rb_ary_push(result,_GetBitmap(self));
+	rb_ary_push(result,_getBitmap(self));
 #endif
 	return result;
 }
@@ -93,7 +86,7 @@ DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 
 	_setHelp(self,RARRAY_AREF(data,3));
 #if wxUSE_IMAGE
-	_SetBitmap(self,RARRAY_AREF(data,4));
+	_setBitmap(self,RARRAY_AREF(data,4));
 #endif
 	return self;
 }
@@ -164,7 +157,7 @@ DLL_LOCAL void Init_WXMenuItem(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXMenuItem,"help",_getHelp,_setHelp);
 
-	rb_define_attr_method(rb_cWXMenuItem,"bitmap",_GetBitmap,_SetBitmap);
+	rb_define_attr_method(rb_cWXMenuItem,"bitmap",_getBitmap,_setBitmap);
 
 	rb_define_method(rb_cWXMenuItem,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
 	rb_define_method(rb_cWXMenuItem,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),-2);
