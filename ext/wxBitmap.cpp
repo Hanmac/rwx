@@ -26,10 +26,15 @@ WindowArt windowArtHolder;
 typedef std::map<ID,wxArtID> RubyArt;
 RubyArt rubyArtHolder;
 
+void registerWindowArtID(wxWindowID wid, const wxArtID& artid)
+{
+	windowArtHolder.insert(std::make_pair(wid,artid));
+}
+
 void registerArtID(const char * name,const wxArtID& artid,wxWindowID wid = wxID_NONE)
 {
 	if(wid != wxID_NONE)
-		windowArtHolder.insert(std::make_pair(wid,artid));
+		registerWindowArtID(wid, artid);
 	rubyArtHolder.insert(std::make_pair(rb_intern(name),artid));
 }
 
@@ -421,12 +426,11 @@ DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
 
 	registerInfo<wxMask>(rb_cWXMask);
 
-	registerArtID("folder",wxART_FOLDER);
-
 	registerArtID("open",wxART_FILE_OPEN,wxID_OPEN);
 	registerArtID("save",wxART_FILE_SAVE,wxID_SAVE);
 	registerArtID("save_as",wxART_FILE_SAVE_AS,wxID_SAVEAS);
 
+	registerArtID("folder",wxART_FOLDER);
 	registerArtID("folder_open",wxART_FOLDER_OPEN);
 
 
@@ -442,30 +446,26 @@ DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
 	registerArtID("plus",wxART_PLUS);
 	registerArtID("minus",wxART_MINUS);
 
-
 	registerArtID("print",wxART_PRINT,wxID_PRINT);
-
-
 
 	registerArtID("help",wxART_HELP,wxID_HELP);
 	registerArtID("tip",wxART_TIP);
 
 
-	registerArtID("close",wxART_CLOSE,wxID_CLOSE);
-	registerArtID("quit",wxART_QUIT);
+	registerArtID("close",wxART_CLOSE, wxID_CLOSE);
+	registerArtID("quit",wxART_QUIT, wxID_EXIT);
 
 	registerArtID("find",wxART_FIND,wxID_FIND);
 	registerArtID("replace",wxART_FIND_AND_REPLACE,wxID_REPLACE);
 
-
 	registerArtID("floppy",wxART_FLOPPY,wxID_FLOPPY);
 	registerArtID("cdrom",wxART_CDROM,wxID_CDROM);
 
-
+	registerArtID("error",wxART_ERROR);
 	registerArtID("question",wxART_QUESTION);
 	registerArtID("warning",wxART_WARNING);
 	registerArtID("information",wxART_INFORMATION);
-	registerArtID("error",wxART_ERROR);
+	registerArtID("missing_image",wxART_MISSING_IMAGE);
 
 	registerArtID("help_side_panel",wxART_HELP_SIDE_PANEL);
 	registerArtID("help_settings",wxART_HELP_SETTINGS);
@@ -473,14 +473,14 @@ DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
 	registerArtID("help_folder",wxART_HELP_FOLDER);
 	registerArtID("help_page",wxART_HELP_PAGE);
 
-	registerArtID("go_back",wxART_GO_BACK);
-	registerArtID("go_forward",wxART_GO_FORWARD);
-	registerArtID("go_up",wxART_GO_UP);
-	registerArtID("go_down",wxART_GO_DOWN);
+	registerArtID("go_back",wxART_GO_BACK, wxID_BACKWARD);
+	registerArtID("go_forward",wxART_GO_FORWARD, wxID_FORWARD);
+	registerArtID("go_up",wxART_GO_UP, wxID_UP);
+	registerArtID("go_down",wxART_GO_DOWN, wxID_DOWN);
 	registerArtID("go_to_parent",wxART_GO_TO_PARENT);
-	registerArtID("go_home",wxART_GO_HOME);
-	registerArtID("goto_first",wxART_GOTO_FIRST);
-	registerArtID("goto_last",wxART_GOTO_LAST);
+	registerArtID("go_home",wxART_GO_HOME, wxID_HOME);
+	registerArtID("goto_first",wxART_GOTO_FIRST, wxID_FIRST);
+	registerArtID("goto_last",wxART_GOTO_LAST, wxID_LAST);
 
 
 }
