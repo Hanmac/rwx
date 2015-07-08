@@ -550,6 +550,21 @@ DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
 	return other;\
 }
 
+/*
+ * special macro for setting bitmap properties
+ */
+#define macro_attr_bitmap(attr, wraptype, artclient) \
+DLL_LOCAL VALUE _get##attr(VALUE self)\
+{ \
+	return wrap(_self->Get##attr());\
+}\
+\
+DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
+{\
+	rb_check_frozen(self);\
+	_self->Set##attr(wrapBitmap(other, _self->GetId(), wraptype, artclient));\
+	return other;\
+}
 
 DLL_LOCAL void rb_define_attr_method(VALUE klass,const std::string& name,VALUE(get)(VALUE),VALUE(set)(VALUE,VALUE));
 DLL_LOCAL void rb_define_attr_method_missing(VALUE klass,const std::string& name, bool get = true, bool set = true);
@@ -565,11 +580,15 @@ DLL_LOCAL VALUE _##func(VALUE self)\
 
 #define singlefunc(func) singlefunc_if(func, true)
 
-#define singlereturn(func) \
+#define singlereturn_if(func, con) \
 DLL_LOCAL VALUE _##func(VALUE self)\
 {\
-	return wrap(_self->func());\
+	if(con)\
+		return wrap(_self->func());\
+	return Qnil;\
 }
+
+#define singlereturn(func) singlereturn_if(func, true)
 
 #define singlereturn_array(func,T) \
 DLL_LOCAL VALUE _##func(VALUE self)\
