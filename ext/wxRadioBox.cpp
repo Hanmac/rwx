@@ -92,10 +92,10 @@ macro_attr_item(ItemString,GetString, SetString, GetCount, wxString)
 macro_attr_item(ItemShown,IsItemShown, Show, GetCount, bool)
 macro_attr_item(ItemEnabled,IsItemEnabled, Enable, GetCount, bool)
 #if wxUSE_TOOLTIPS
-macro_attr_item(ItemToolTip,GetItemToolTip, SetItemToolTip, GetCount, wxString)
+macro_attr_item_simple(ItemToolTip, GetCount, wxString)
 #endif
 #if wxUSE_HELP
-macro_attr_item(ItemHelpText,GetItemHelpText, SetItemHelpText, GetCount, wxString)
+macro_attr_item_simple(ItemHelpText, GetCount, wxString)
 #endif
 
 }
