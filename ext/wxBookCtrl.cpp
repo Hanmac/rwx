@@ -128,7 +128,7 @@ DLL_LOCAL VALUE _each(VALUE self)
 	return self;
 }
 
-macro_attr_item(PageText,GetPageText, SetPageText, GetPageCount, wxString)
+macro_attr_item_simple(PageText, GetPageCount, wxString)
 
 /*
  * call-seq:
