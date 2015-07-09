@@ -126,7 +126,7 @@ DLL_LOCAL VALUE _each_bitmap(VALUE self)
 	return self;
 }
 
-macro_attr_item(ItemBitmap,GetItemBitmap, SetItemBitmap, GetCount, wxBitmap)
+macro_attr_item_simple(ItemBitmap, GetCount, wxBitmap)
 
 
 }
