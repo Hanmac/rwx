@@ -13,30 +13,29 @@
 #endif
 #include "wxTextEntry.hpp"
 
+#include <wx/tokenzr.h>
+
 VALUE rb_cWXSTC;
 
 #if wxUSE_STC
 #define _self unwrap<wxStyledTextCtrl*>(self)
 
-DLL_LOCAL VALUE wrapLexer(const int& val)
-{
-	return wrapenum(val, "WX::STC::Lex");
+
+#define macro_stc_wrapper(name, type) \
+DLL_LOCAL VALUE wrap##name(const int& val) \
+{\
+	return wrapenum(val, type);\
+}\
+DLL_LOCAL int unwrap##name(const VALUE& val) \
+{\
+	return unwrapenum(val, type);\
 }
 
-DLL_LOCAL int unwrapLexer(const VALUE& val)
-{
-	return unwrapenum(val, "WX::STC::Lex");
-}
-
-DLL_LOCAL VALUE wrapWrapIndent(const int& val)
-{
-	return wrapenum(val, "WX::STC::WrapIndent");
-}
-
-DLL_LOCAL int unwrapWrapIndent(const VALUE& val)
-{
-	return unwrapenum(val, "WX::STC::WrapIndent");
-}
+macro_stc_wrapper(Lexer, "WX::STC::Lex")
+macro_stc_wrapper(WrapIndent, "WX::STC::WrapIndent")
+macro_stc_wrapper(Weight, "WX::STC::Weight")
+macro_stc_wrapper(SelMode, "WX::STC::SelMode")
+macro_stc_wrapper(CaretStyle, "WX::STC::CaretStyle")
 
 #define style_helper(name,T)\
 	T get##name() { return m_ctrl->StyleGet##name(m_style);} \
@@ -54,6 +53,9 @@ public:
 
 	style_helper(Foreground,wxColor)
 	style_helper(Background,wxColor)
+
+	style_helper(Weight,int)
+
 	style_helper(Bold,bool)
 	style_helper(Italic,bool)
 	style_helper(Underline,bool)
@@ -61,9 +63,34 @@ public:
 	style_helper(FaceName,wxString)
 
 	style_helper(Visible,bool)
+	style_helper(EOLFilled,bool)
 private:
 	wxStyledTextCtrl *m_ctrl;
 	int m_style;
+};
+
+#define indic_helper(name,T)\
+	T get##name() { return m_ctrl->IndicatorGet##name(m_indic);} \
+	void set##name(T val) { m_ctrl->IndicatorSet##name(m_indic,val); }
+
+
+class RubyWXSTCIndicator
+{
+public:
+	RubyWXSTCIndicator(wxStyledTextCtrl *ctrl, int indic) :
+		m_ctrl(ctrl), m_indic(indic)
+	{}
+
+	indic_helper(Style, int)
+	indic_helper(Foreground, wxColor)
+	indic_helper(Under, bool)
+	indic_helper(HoverStyle, int)
+	indic_helper(HoverForeground, wxColor)
+
+
+private:
+	wxStyledTextCtrl *m_ctrl;
+	int m_indic;
 };
 
 
@@ -86,7 +113,15 @@ macro_attr(CaretLineVisible,bool)
 macro_attr(CaretForeground,wxColor)
 macro_attr(CaretLineBackground,wxColor)
 
+macro_attr(AdditionalCaretsVisible,bool)
+macro_attr(AdditionalCaretForeground,wxColor)
+
 macro_attr(SelAlpha,int)
+macro_attr(AdditionalSelAlpha,int)
+macro_attr(CaretLineBackAlpha,int)
+
+macro_attr(SelEOLFilled,bool)
+
 macro_attr(CaretPeriod,int)
 macro_attr(WhitespaceSize,int)
 macro_attr(WordChars,wxString)
@@ -97,7 +132,25 @@ macro_attr(UseVerticalScrollBar,bool)
 macro_attr(IndentationGuides,bool)
 macro_attr(HighlightGuide,bool)
 
+macro_attr(ReadOnly, bool)
+
 macro_attr(Overtype,bool)
+
+macro_attr(MultipleSelection,bool)
+macro_attr(AdditionalSelectionTyping,bool)
+
+macro_attr(AdditionalCaretsBlink,bool)
+
+macro_attr_selection(MainSelection, GetSelections)
+
+macro_attr_item_simple(SelectionNCaret, GetSelections, int)
+macro_attr_item_simple(SelectionNAnchor, GetSelections, int)
+macro_attr_item_simple(SelectionNCaretVirtualSpace, GetSelections, int)
+macro_attr_item_simple(SelectionNAnchorVirtualSpace, GetSelections, int)
+macro_attr_item_simple(SelectionNStart, GetSelections, int)
+macro_attr_item_simple(SelectionNEnd, GetSelections, int)
+
+macro_attr(Zoom,int)
 
 macro_attr(SelectionStart,int)
 macro_attr(SelectionEnd,int)
@@ -107,13 +160,38 @@ macro_attr(MarginRight,int)
 
 macro_attr(MouseDwellTime,int)
 
+macro_attr(ExtraAscent, int)
+macro_attr(ExtraDescent, int)
+
 macro_attr(ScrollWidth,int)
 macro_attr(ScrollWidthTracking,bool)
 
 macro_attr(WrapStartIndent,int)
 macro_attr_with_func(WrapIndentMode,wrapWrapIndent,unwrapWrapIndent)
 
+macro_attr_with_func(SelectionMode,wrapSelMode,unwrapSelMode)
 
+macro_attr(CaretLineVisibleAlways, bool)
+
+macro_attr(TargetStart,int)
+macro_attr(TargetEnd,int)
+
+#ifdef HAVE_WXSTYLEDTEXTCTRL_GETTARGETTEXT
+macro_attr_func(TargetText,GetTargetText(), ReplaceTarget, wrap, unwrap<wxString>,true);
+#else
+
+DLL_LOCAL VALUE _getTargetText(VALUE self)
+{
+	return wrap(_self->GetTextRange(_self->GetTargetStart(), _self->GetTargetEnd()));
+}
+
+DLL_LOCAL VALUE _setTargetText(VALUE self,VALUE other)
+{
+	rb_check_frozen(self);
+	_self->ReplaceTarget(unwrap<wxString>(other));
+	return other;
+}
+#endif
 
 APP_PROTECT(wxStyledTextCtrl)
 
@@ -138,22 +216,21 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	rb_call_super(argc,argv);
 
-
-	rb_call_super(argc,argv);
 	return self;
 }
 
 DLL_LOCAL VALUE _test_style(VALUE self)
 {
-	_self->SetLexer(wxSTC_LEX_RUBY);
-	_self->StyleSetBold(wxSTC_RB_STDERR,true);
-	_self->StyleSetForeground(wxSTC_RB_POD,*wxBLUE);
-	_self->StyleSetForeground(wxSTC_RB_MODULE_NAME,*wxGREEN);
-	_self->StyleSetForeground(wxSTC_RB_STDERR,*wxRED);
-	_self->StyleSetForeground(wxSTC_RB_SYMBOL,*wxYELLOW);
+	_self->SetLexer(wxSTC_LEX_CPP);
 
-	_self->StyleSetForeground(wxSTC_RB_COMMENTLINE,"grey");
+	wxArrayString token = wxStringTokenize(_self->PropertyNames());
 
+	for(wxArrayString::const_iterator it = token.begin(); it != token.end(); ++it)
+	{
+		rb_warn("%s: %d : %s", it->c_str().AsChar(), _self->PropertyType(*it), _self->DescribeProperty(*it).c_str().AsChar());
+	}
+
+	rb_warn("%s: %d", "xyz", _self->PropertyType("xyz"));
 
 	return self;
 }
@@ -163,6 +240,14 @@ DLL_LOCAL VALUE _UndoAction(VALUE self)
 	_self->BeginUndoAction();
 	rb_yield(self);
 	_self->EndUndoAction();
+	return self;
+}
+
+DLL_LOCAL VALUE _Record(VALUE self)
+{
+	_self->StartRecord();
+	rb_yield(self);
+	_self->StopRecord();
 	return self;
 }
 
@@ -198,6 +283,16 @@ DLL_LOCAL void Init_WXSTC(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXSTC,"lexer",_getLexer,_setLexer);
 	rb_define_attr_method(rb_cWXSTC,"use_tabs",_getUseTabs,_setUseTabs);
 
+	rb_define_attr_method(rb_cWXSTC,"sel_alpha",_getSelAlpha,_setSelAlpha);
+	rb_define_attr_method(rb_cWXSTC,"additional_sel_alpha",_getAdditionalSelAlpha,_setAdditionalSelAlpha);
+
+	rb_define_attr_method(rb_cWXSTC,"caret_line_visible",_getCaretLineVisible,_setCaretLineVisible);
+	rb_define_attr_method(rb_cWXSTC,"caret_foreground",_getCaretForeground,_setCaretForeground);
+	rb_define_attr_method(rb_cWXSTC,"caret_line_background",_getCaretLineBackground,_setCaretLineBackground);
+
+	rb_define_attr_method(rb_cWXSTC,"target_start",_getTargetStart,_setTargetStart);
+	rb_define_attr_method(rb_cWXSTC,"target_end",_getTargetEnd,_setTargetEnd);
+	rb_define_attr_method(rb_cWXSTC,"target_text",_getTargetText,_setTargetText);
 
 	rb_define_method(rb_cWXSTC,"test_style",RUBY_METHOD_FUNC(_test_style),0);
 
@@ -318,12 +413,35 @@ DLL_LOCAL void Init_WXSTC(VALUE rb_mWX)
 		->add(wxSTC_LEX_RUST,"rust")
 		->add(wxSTC_LEX_DMAP,"dmap")
 #endif
+#if HAVE_CONST_WXSTC_LEX_TEHEX
+		->add(wxSTC_LEX_AS,"as")
+		->add(wxSTC_LEX_DMIS,"dmis")
+		->add(wxSTC_LEX_REGISTRY,"registry")
+		->add(wxSTC_LEX_BIBTEX,"bibtex")
+		->add(wxSTC_LEX_SREC,"srec")
+		->add(wxSTC_LEX_IHEX,"ihex")
+		->add(wxSTC_LEX_TEHEX,"tehex")
+#endif
 		->allow_array = false;
+
 
 	registerEnum("WX::STC::WrapIndent","WX::STC::WrapIndent",wxSTC_WRAPINDENT_FIXED)
 		->add(wxSTC_WRAPINDENT_FIXED,"fixed")
 		->add(wxSTC_WRAPINDENT_SAME,"same")
 		->add(wxSTC_WRAPINDENT_INDENT,"indent")
+		->allow_array = false;
+
+	registerEnum("WX::STC::SelMode","WX::STC::SelMode",wxSTC_SEL_STREAM)
+		->add(wxSTC_SEL_STREAM,"stream")
+		->add(wxSTC_SEL_RECTANGLE,"rectangle")
+		->add(wxSTC_SEL_LINES,"lines")
+		->add(wxSTC_SEL_THIN,"thin")
+		->allow_array = false;
+
+	registerEnum("WX::STC::CaretStyle","WX::STC::CaretStyle",wxSTC_CARETSTYLE_INVISIBLE)
+		->add(wxSTC_CARETSTYLE_INVISIBLE,"invisible")
+		->add(wxSTC_CARETSTYLE_LINE,"line")
+		->add(wxSTC_CARETSTYLE_BLOCK,"block")
 		->allow_array = false;
 
 	registerInfo<wxStyledTextCtrl>(rb_cWXSTC);
