@@ -527,7 +527,7 @@ DLL_LOCAL VALUE _set##attr(VALUE self,VALUE idx,VALUE val)\
 }
 
 #define macro_attr_item(attr,funcget,funcset,funcsize,type) macro_attr_item_func(attr,funcget,funcset,funcsize,wrap,unwrap<type>)
-
+#define macro_attr_item_simple(attr,funcsize,type) macro_attr_item(attr,Get##attr,Set##attr,funcsize,type)
 
 /*
  * special macro for select attributes that manages wxNOT_FOUND
