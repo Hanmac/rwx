@@ -71,8 +71,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-macro_attr_item(PageBitmap,GetPageBitmap, SetPageBitmap, GetPageCount, wxBitmap)
-macro_attr_item(PageToolTip,GetPageToolTip, SetPageToolTip, GetPageCount, wxString)
+macro_attr_item_simple(PageBitmap, GetPageCount, wxBitmap)
+macro_attr_item_simple(PageToolTip, GetPageCount, wxString)
 
 DLL_LOCAL bool check_imagelist(wxAuiNotebook* self, VALUE imageid, int& iid)
 {
