@@ -13,6 +13,14 @@ VALUE rb_cWXTextAttr;
 
 #if wxUSE_TEXTCTRL
 
+namespace RubyWX {
+namespace TextAttr {
+
+void _from_hash(VALUE hash, wxTextAttr *attr);
+
+}
+}
+
 //find better way?
 template <>
 VALUE wrap< wxTextAttr >(wxTextAttr *attr )
@@ -21,9 +29,14 @@ VALUE wrap< wxTextAttr >(wxTextAttr *attr )
 }
 
 template <>
-wxTextAttr unwrap< wxTextAttr >(const VALUE &vcolor)
+wxTextAttr unwrap< wxTextAttr >(const VALUE &vattr)
 {
-	return *unwrapTypedPtr<wxTextAttr>(vcolor,rb_cWXTextAttr);
+	if(rb_obj_is_kind_of(vattr, rb_cHash)) {
+		wxTextAttr result;
+		RubyWX::TextAttr::_from_hash(vattr, &result);
+		return result;
+	}
+	return *unwrapTypedPtr<wxTextAttr>(vattr,rb_cWXTextAttr);
 }
 
 #define _self unwrap<wxTextAttr*>(self)
@@ -38,6 +51,7 @@ DLL_LOCAL VALUE _get##attr(VALUE self)\
 \
 DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
 {\
+	rb_check_frozen(self);\
 	if(NIL_P(other))\
 		_self->RemoveFlag(wxTEXT_ATTR_##flag);\
 	else\
@@ -68,7 +82,7 @@ macro_textattr(FontWeight,wxFontWeight,FONT_WEIGHT,wrapenum)
 macro_textattr(FontFaceName,wxString,FONT_FACE,wrap)
 macro_textattr(FontUnderlined,bool,FONT_UNDERLINE,wrap)
 macro_textattr(FontStrikethrough,bool,FONT_STRIKETHROUGH,wrap)
-macro_textattr(FontEncoding,wxFontEncoding,FONT_ENCODING,wrapenum)
+//macro_textattr(FontEncoding,wxFontEncoding,FONT_ENCODING,wrapenum)
 macro_textattr(FontFamily,wxFontFamily,FONT_FAMILY,wrapenum)
 
 macro_textattr(Font,wxFont,FONT,wrap)
@@ -87,6 +101,26 @@ macro_attr(BulletFont,wxString)
 macro_textattr(BulletName,wxString,BULLET_NAME,wrap)
 
 macro_textattr(URL,wxString,URL,wrap)
+
+void _from_hash(VALUE hash, wxTextAttr *attr)
+{
+	set_obj_option(hash, "text_color", &wxTextAttr::SetTextColour, attr);
+	set_obj_option(hash, "background_color", &wxTextAttr::SetBackgroundColour, attr);
+	set_obj_option(hash, "alignment", &wxTextAttr::SetAlignment, attr, unwrapenum<wxTextAttrAlignment>);
+
+	set_obj_option(hash, "tabs", &wxTextAttr::SetTabs, attr);
+	//set_obj_option(hash, "left_indent", &wxTextAttr::SetLeftIndent, attr);
+	set_obj_option(hash, "right_indent", &wxTextAttr::SetRightIndent, attr);
+
+	set_obj_option(hash, "font_size", &wxTextAttr::SetFontSize, attr);
+	set_obj_option(hash, "font_weight", &wxTextAttr::SetFontWeight, attr, unwrapenum<wxFontWeight>);
+	set_obj_option(hash, "font_underlined", &wxTextAttr::SetFontUnderlined, attr);
+	set_obj_option(hash, "font_strikethrough", &wxTextAttr::SetFontStrikethrough, attr);
+	set_obj_option(hash, "font_family", &wxTextAttr::SetFontFamily, attr, unwrapenum<wxFontFamily>);
+
+
+	//set_obj_option(hash, "font", &wxTextAttr::SetFont, attr, wrap<wxFont>);
+}
 
 
 /*
@@ -258,7 +292,7 @@ DLL_LOCAL void Init_WXTextAttr(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXTextAttr,"font_facename",_getFontFaceName,_setFontFaceName);
 	rb_define_attr_method(rb_cWXTextAttr,"font_underlined",_getFontUnderlined,_setFontUnderlined);
 	rb_define_attr_method(rb_cWXTextAttr,"font_strikethrough",_getFontStrikethrough,_setFontStrikethrough);
-	rb_define_attr_method(rb_cWXTextAttr,"font_encoding",_getFontEncoding,_setFontEncoding);
+//	rb_define_attr_method(rb_cWXTextAttr,"font_encoding",_getFontEncoding,_setFontEncoding);
 	rb_define_attr_method(rb_cWXTextAttr,"font_family",_getFontFamily,_setFontFamily);
 
 	rb_define_attr_method(rb_cWXTextAttr,"font",_getFont,_setFont);
