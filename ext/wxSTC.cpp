@@ -84,9 +84,10 @@ public:
 	indic_helper(Style, int)
 	indic_helper(Foreground, wxColor)
 	indic_helper(Under, bool)
+#ifdef HAVE_WXSTYLEDTEXTCTRL_INDICATORGETHOVERSTYLE
 	indic_helper(HoverStyle, int)
 	indic_helper(HoverForeground, wxColor)
-
+#endif
 
 private:
 	wxStyledTextCtrl *m_ctrl;
@@ -171,7 +172,9 @@ macro_attr_with_func(WrapIndentMode,wrapWrapIndent,unwrapWrapIndent)
 
 macro_attr_with_func(SelectionMode,wrapSelMode,unwrapSelMode)
 
+#ifdef HAVE_WXSTYLEDTEXTCTRL_GETCARETLINEVISIBLEALWAYS
 macro_attr(CaretLineVisibleAlways, bool)
+#endif
 
 macro_attr(TargetStart,int)
 macro_attr(TargetEnd,int)
@@ -264,6 +267,8 @@ DLL_LOCAL void Init_WXSTC(VALUE rb_mWX)
 
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
 
+	rb_define_attr(rb_cWXSTC,"caret_line_visible_always", 1, 1);
+
 #endif
 
 #if wxUSE_STC
@@ -293,6 +298,12 @@ DLL_LOCAL void Init_WXSTC(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXSTC,"target_start",_getTargetStart,_setTargetStart);
 	rb_define_attr_method(rb_cWXSTC,"target_end",_getTargetEnd,_setTargetEnd);
 	rb_define_attr_method(rb_cWXSTC,"target_text",_getTargetText,_setTargetText);
+
+#ifdef HAVE_WXSTYLEDTEXTCTRL_GETCARETLINEVISIBLEALWAYS
+	rb_define_attr_method(rb_cWXSTC,"caret_line_visible_always", _getCaretLineVisibleAlways, _setCaretLineVisibleAlways);
+#else
+	rb_define_attr_method_missing(rb_cWXSTC,"caret_line_visible_always");
+#endif
 
 	rb_define_method(rb_cWXSTC,"test_style",RUBY_METHOD_FUNC(_test_style),0);
 

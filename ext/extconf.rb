@@ -1,8 +1,8 @@
 require "mkmf"
 
 # add check for member function, does need default constructor for class
-def have_member_func(klass,member,header)
-	if have_func("#{klass}().#{member}()",header)
+def have_member_func(klass,member,header, *args)
+	if have_func("#{klass}().#{member}(#{args.join(', ')})",header)
 		$defs[-1] = "-DHAVE_#{klass.tr_cpp}_#{member.tr_cpp}" 
 	end
 end
@@ -108,7 +108,7 @@ if(wxversion = pkg_config('wx', 'version'))
 		have_func("wxPasswordEntryDialog()","wx/textdlg.h")
 		have_func("wxProgressDialog()","wx/progdlg.h")
 		have_func("wxMessageDialog()","wx/msgdlg.h")
-		have_func("wxGenericMessageDialog()","wx/generic/msgdlgg.h")
+		have_func("wxGenericMessageDialog()",["wx/wx.h", "wx/generic/msgdlgg.h"])
 		have_func("wxRichMessageDialog()","wx/richmsgdlg.h")
 		have_func("wxBusyInfoFlags()","wx/busyinfo.h")
 		
@@ -126,6 +126,10 @@ if(wxversion = pkg_config('wx', 'version'))
 		have_const("wxSTC_LEX_TEHEX",["wx/wx.h", "wx/stc/stc.h"])
 
 		have_member_func("wxStyledTextCtrl","GetTargetText",["wx/wx.h", "wx/stc/stc.h"])
+		have_member_func("wxStyledTextCtrl","IndicatorGetHoverStyle",["wx/wx.h", "wx/stc/stc.h"], 0)
+
+		have_member_func("wxStyledTextCtrl","GetCaretLineVisibleAlways",["wx/wx.h", "wx/stc/stc.h"])
+		
 
 		have_const("wxALIGN_CENTER_VERTICAL","wx/sizer.h")
 		have_member_func("wxSizerFlags","CenterVertical","wx/sizer.h")
