@@ -13,19 +13,35 @@
 
 VALUE rb_cWXFont;
 
-typedef std::map<wxFontEncoding,VALUE> encodingholdertype;
-encodingholdertype encodingholder;
-
 typedef std::map<wxFont*,VALUE> fontlisttype;
 fontlisttype fontlistholder;
+
+namespace RubyWX {
+namespace Font {
+
+DLL_LOCAL wxFontInfo to_info(VALUE size,VALUE hash);
+
+}
+}
 
 template <>
 wxFont unwrap< wxFont >(const VALUE &vfont)
 {
-	return NIL_P(vfont) ? wxNullFont : *unwrap< wxFont* >(vfont);
+	if(NIL_P(vfont))
+		return wxNullFont;
+	else if(rb_obj_is_kind_of(vfont,rb_cHash)) {
+		return wxFont(RubyWX::Font::to_info(Qnil, vfont));
+	} else {
+		return *unwrap< wxFont* >(vfont);
+	}
 }
 
+
 #ifdef HAVE_RUBY_ENCODING_H
+
+typedef std::map<wxFontEncoding,VALUE> encodingholdertype;
+encodingholdertype encodingholder;
+
 template <>
 VALUE wrapenum< wxFontEncoding >(const wxFontEncoding &enc )
 {
@@ -87,44 +103,48 @@ void define_const()
 	if(rb_const_defined(rb_cWXFont,rb_intern("ITALIC")))
 		return;
 
-	rb_define_const(rb_cWXFont,"ITALIC",wrap(wxITALIC_FONT));
-	rb_define_const(rb_cWXFont,"NORMAL",wrap(wxNORMAL_FONT));
-	rb_define_const(rb_cWXFont,"SMALL",wrap(wxSMALL_FONT));
-	rb_define_const(rb_cWXFont,"SWISS",wrap(wxSWISS_FONT));
+	if(wxITALIC_FONT->IsOk()) {
+		//otherwise it might crash
+		rb_define_const(rb_cWXFont,"ITALIC",wrap(wxFont(*wxITALIC_FONT)));
+		rb_define_const(rb_cWXFont,"NORMAL",wrap(wxFont(*wxNORMAL_FONT)));
+		rb_define_const(rb_cWXFont,"SMALL",wrap(wxFont(*wxSMALL_FONT)));
+		rb_define_const(rb_cWXFont,"SWISS",wrap(wxFont(*wxSWISS_FONT)));
+	}
 }
-
-#define info_option(func,name,m) \
-	if(!NIL_P(tmp = rb_hash_aref(hash,ID2SYM(rb_intern(#name)))))\
-		val.func(m(tmp));
 
 DLL_LOCAL wxFontInfo to_info(VALUE size,VALUE hash)
 {
 	wxFontInfo val;
 
-	if(is_wrapable< wxSize >(size))
-		val = wxFontInfo(unwrap<wxSize>(size));
-	else
-		val = wxFontInfo(NUM2INT(size));
+	VALUE rsize = size;
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
-		VALUE tmp;
-		info_option(Family,family,unwrapenum<wxFontFamily>)
-		info_option(FaceName,face_name,unwrap<wxString>)
+		set_hash_option(hash, "size", rsize);
+	}
 
-		info_option(Bold,bold,RTEST)
-		info_option(Light,light,RTEST)
 
-		info_option(Italic,italic,RTEST)
-		info_option(Slant,slant,RTEST)
+	if(is_wrapable< wxSize >(rsize))
+		val = wxFontInfo(unwrap<wxSize>(rsize));
+	else
+		val = wxFontInfo(NUM2INT(rsize));
 
-		info_option(AntiAliased,anti_aliased,RTEST)
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		set_obj_option(hash, "family", &wxFontInfo::Family, val, unwrapenum<wxFontFamily>);
+		set_obj_option(hash, "face_name", &wxFontInfo::FaceName, val);
 
-		info_option(Underlined,underlined,RTEST)
-		info_option(Strikethrough,strikethrough,RTEST)
+		set_obj_option(hash, "bold", &wxFontInfo::Bold, val);
+		set_obj_option(hash, "light", &wxFontInfo::Light, val);
+
+		set_obj_option(hash, "italic", &wxFontInfo::Italic, val);
+		set_obj_option(hash, "slant", &wxFontInfo::Slant, val);
+
+		set_obj_option(hash, "underlined", &wxFontInfo::Underlined, val);
+		set_obj_option(hash, "strikethrough", &wxFontInfo::Strikethrough, val);
 
 #ifdef HAVE_RUBY_ENCODING_H
-		info_option(Encoding,encoding,unwrapenum<wxFontEncoding>)
+		set_obj_option(hash, "encoding", &wxFontInfo::Encoding, val, unwrapenum<wxFontEncoding>);
 #endif
 
 	}
@@ -143,6 +163,19 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 //	rb_call_super(argc,argv);
 	return self;
+}
+
+/* Document-method: initialize_copy
+ * call-seq:
+ *   initialize_copy(orig)
+ *
+ * Duplicate an object
+*/
+DLL_LOCAL VALUE _initialize_copy(VALUE self, VALUE other)
+{
+	VALUE result = rb_call_super(1,&other);
+	_self->SetNativeFontInfo(*(unwrap<wxFont>(other).GetNativeFontInfo()));
+	return result;
 }
 
 singlereturn(Smaller)
@@ -221,12 +254,64 @@ DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 	return self;
 }
 
-
-DLL_LOCAL VALUE _compare(VALUE self,VALUE other)
+/*
+ * call-seq:
+ *   hash -> Fixnum
+ *
+ * Generates a Fixnum hash value for this object.
+ *
+ *
+ */
+DLL_LOCAL VALUE _getHash(VALUE self)
 {
-	return wrap((*_self) == unwrap<wxFont>(other));
+	st_index_t h = rb_hash_start(_self->IsOk());
+
+	h = rb_hash_uint(h, _self->GetPointSize());
+	h = rb_hash_uint(h, _self->GetFamily());
+	h = rb_hash_uint(h, _self->GetStyle());
+	h = rb_hash_uint(h, _self->GetWeight());
+	h = rb_hash_uint(h, _self->GetUnderlined());
+	h = rb_hash_uint(h, _self->GetStrikethrough());
+	h = rb_hash_uint(h, rb_str_hash(wrap(_self->GetFaceName())));
+
+	h = rb_hash_end(h);
+	return LONG2FIX(h);
 }
 
+struct equal_obj {
+	wxFont* self;
+	VALUE other;
+};
+
+VALUE _equal_block(equal_obj *obj)
+{
+	return wrap(*obj->self == unwrap<wxFont>(obj->other));
+}
+
+VALUE _equal_rescue(VALUE val)
+{
+	return Qfalse;
+}
+
+/*
+ * call-seq:
+ *   == color -> bool
+ *
+ * compares two fonts.
+ *
+ *
+ */
+DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
+{
+	equal_obj obj;
+	obj.self = _self;
+	obj.other = other;
+
+	return rb_rescue(
+		RUBY_METHOD_FUNC(_equal_block),(VALUE)&obj,
+		RUBY_METHOD_FUNC(_equal_rescue),Qnil
+	);
+}
 DLL_LOCAL VALUE _to_s(VALUE self)
 {
 	return wrap(wxToString(*_self));
@@ -446,6 +531,7 @@ DLL_LOCAL void Init_WXFont(VALUE rb_mWX)
 #endif
 
 	rb_define_method(rb_cWXFont,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
+	rb_define_private_method(rb_cWXFont,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),1);
 
 	rb_define_method(rb_cWXFont,"smaller",RUBY_METHOD_FUNC(_Smaller),0);
 	rb_define_method(rb_cWXFont,"larger",RUBY_METHOD_FUNC(_Larger),0);
@@ -463,8 +549,10 @@ DLL_LOCAL void Init_WXFont(VALUE rb_mWX)
 	rb_define_method(rb_cWXFont,"to_underlined!",RUBY_METHOD_FUNC(_MakeUnderlined),0);
 	rb_define_method(rb_cWXFont,"to_strikethrough!",RUBY_METHOD_FUNC(_MakeStrikethrough),0);
 
+	rb_define_method(rb_cWXFont,"hash",RUBY_METHOD_FUNC(_getHash),0);
 
-	rb_define_method(rb_cWXFont,"==",RUBY_METHOD_FUNC(_compare),1);
+	rb_define_method(rb_cWXFont,"==",RUBY_METHOD_FUNC(_equal),1);
+	rb_define_alias(rb_cWXFont,"eql?","==");
 
 	rb_define_method(rb_cWXFont,"to_s",RUBY_METHOD_FUNC(_to_s),0);
 
@@ -479,7 +567,7 @@ DLL_LOCAL void Init_WXFont(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXFont,"encoding",_getEncoding,_setEncoding);
 #endif
 	rb_define_method(rb_cWXFont,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
-	rb_define_method(rb_cWXFont,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),-1);
+	rb_define_method(rb_cWXFont,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
 	rb_define_singleton_method(rb_cWXFont,"[]",RUBY_METHOD_FUNC(_class_get),-1);
 
