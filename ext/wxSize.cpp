@@ -101,6 +101,12 @@ DLL_LOCAL VALUE _alloc(VALUE self)
 	return wrapTypedPtr(new wxSize,self);
 }
 
+/*
+ * call-seq:
+ *   Size.new(width, height)
+ *
+ * Creates a new Size object.
+*/
 DLL_LOCAL VALUE _initialize(VALUE self,VALUE width,VALUE height)
 {
 	_setWidth(self,width);
@@ -108,7 +114,12 @@ DLL_LOCAL VALUE _initialize(VALUE self,VALUE width,VALUE height)
 	return self;
 }
 
-/*
+
+/* Document-method: initialize_copy
+ * call-seq:
+ *   initialize_copy(orig)
+ *
+ * Duplicate an object
 */
 DLL_LOCAL VALUE _initialize_copy(VALUE self, VALUE other)
 {

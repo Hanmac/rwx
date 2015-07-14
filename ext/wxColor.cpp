@@ -293,7 +293,12 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	_setAlpha(self, alpha);
 	return self;
 }
-/*
+
+/* Document-method: initialize_copy
+ * call-seq:
+ *   initialize_copy(orig)
+ *
+ * Duplicate an object
 */
 DLL_LOCAL VALUE _initialize_copy(VALUE self, VALUE other)
 {

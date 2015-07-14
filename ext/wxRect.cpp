@@ -100,7 +100,12 @@ DLL_LOCAL VALUE _alloc(VALUE self)
 {
 	return wrapTypedPtr(new wxRect,self);
 }
-
+/*
+ * call-seq:
+ *   Rect.new(x, y, width, height)
+ *
+ * Creates a new Rect object.
+*/
 DLL_LOCAL VALUE _initialize(VALUE self,VALUE x,VALUE y,VALUE width,VALUE height)
 {
 	_setX(self,x);
@@ -110,7 +115,12 @@ DLL_LOCAL VALUE _initialize(VALUE self,VALUE x,VALUE y,VALUE width,VALUE height)
 	return self;
 }
 
-/*
+
+/* Document-method: initialize_copy
+ * call-seq:
+ *   initialize_copy(orig)
+ *
+ * Duplicate an object
 */
 DLL_LOCAL VALUE _initialize_copy(VALUE self, VALUE other)
 {

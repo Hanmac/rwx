@@ -117,6 +117,12 @@ DLL_LOCAL VALUE _alloc(VALUE self)
 	return wrapTypedPtr(new wxRealPoint,self);
 }
 
+/*
+ * call-seq:
+ *   Point.new(x, y)
+ *
+ * Creates a new Point object.
+*/
 DLL_LOCAL VALUE _initialize(VALUE self,VALUE x,VALUE y)
 {
 	_set_x(self,x);
@@ -124,7 +130,11 @@ DLL_LOCAL VALUE _initialize(VALUE self,VALUE x,VALUE y)
 	return self;
 }
 
-/*
+/* Document-method: initialize_copy
+ * call-seq:
+ *   initialize_copy(orig)
+ *
+ * Duplicate an object
 */
 DLL_LOCAL VALUE _initialize_copy(VALUE self, VALUE other)
 {
