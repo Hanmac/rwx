@@ -263,6 +263,15 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 /* Document-attr: margins
  * the margins of the TextEntry. WX::Point
  */
+
+/* Document-attr: selection
+ * Range/nil returns the index of the current selected item,
+ * or nil if none is selected.
+ */
+/* Document-attr: string_selection
+ * String returns the string of the current selected item.
+ */
+
 DLL_LOCAL void Init_WXTextEntry(VALUE rb_mWX)
 {
 	using namespace RubyWX::TextEntry;
@@ -305,7 +314,7 @@ DLL_LOCAL void Init_WXTextEntry(VALUE rb_mWX)
 	rb_define_method(rb_mWXTextEntry,"select_all",RUBY_METHOD_FUNC(_SelectAll),0);
 	rb_define_method(rb_mWXTextEntry,"select_none",RUBY_METHOD_FUNC(_SelectNone),0);
 
-	rb_define_method(rb_mWXTextEntry,"select_none",RUBY_METHOD_FUNC(_SelectNone),0);
+	rb_define_method(rb_mWXTextEntry,"remove_selection",RUBY_METHOD_FUNC(_RemoveSelection),0);
 }
 
 
