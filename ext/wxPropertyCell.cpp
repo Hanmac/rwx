@@ -94,7 +94,7 @@ DLL_LOCAL void Init_WXPropertyCell(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXPropertyCell,"bg_col",_getBgCol,_setBgCol);
 
 
-	registerInfo<wxPGCell>(rb_cWXPropertyCell);
+	registerType<wxPGCell>(rb_cWXPropertyCell);
 #endif
 
 }
