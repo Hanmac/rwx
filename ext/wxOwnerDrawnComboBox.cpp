@@ -148,6 +148,21 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
  * true/false
 */
 
+/* Document-attr: list_selection
+ * Integer/nil returns the index of the current selected item, or nil if none is selected.
+ */
+/* Document-attr: list_string_selection
+ * String returns the string of the current selected item.
+ */
+
+/* Document-attr: text_selection
+ * Range/nil returns the index of the current selected item,
+ * or nil if none is selected.
+ */
+/* Document-attr: text_string_selection
+ * String returns the string of the current selected item.
+ */
+
 /* Document-const: SORT
  *   Sorts the entries alphabetically.
  */
@@ -179,6 +194,13 @@ DLL_LOCAL void Init_WXOwnerDrawnComboBox(VALUE rb_mWX)
 	rb_cWXComboCtrl = rb_define_class_under(rb_mWX,"ComboCtrl",rb_cWXControl);
 
 	rb_mWXItemContainer = rb_define_module_under(rb_mWX,"ItemContainer");
+
+	rb_define_attr(rb_cWXOwnerDrawnComboBox,"list_selection",1,1);
+	rb_define_attr(rb_cWXOwnerDrawnComboBox,"list_string_selection",1,1);
+
+	rb_define_attr(rb_cWXOwnerDrawnComboBox,"text_selection",1,1);
+	rb_define_attr(rb_cWXOwnerDrawnComboBox,"text_string_selection",1,1);
+
 #endif
 #if wxUSE_COMBOBOX
 	using namespace RubyWX::OwnerDrawnComboBox;
@@ -192,10 +214,29 @@ DLL_LOCAL void Init_WXOwnerDrawnComboBox(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXOwnerDrawnComboBox,"clear",RUBY_METHOD_FUNC(_Clear),0);
 
+	rb_undef_method(rb_cWXOwnerDrawnComboBox,"empty?");
+
+	rb_undef_method(rb_cWXOwnerDrawnComboBox,"selection");
+	rb_undef_method(rb_cWXOwnerDrawnComboBox,"selection=");
+	rb_undef_method(rb_cWXOwnerDrawnComboBox,"string_selection");
+	rb_undef_method(rb_cWXOwnerDrawnComboBox,"string_selection=");
+
 	rb_define_method(rb_cWXOwnerDrawnComboBox,"list_empty?",RUBY_METHOD_FUNC(_IsListEmpty),0);
 	rb_define_method(rb_cWXOwnerDrawnComboBox,"text_empty?",RUBY_METHOD_FUNC(_IsTextEmpty),0);
 
-	rb_undef_method(rb_cWXOwnerDrawnComboBox,"empty?");
+	// import selection methods from ItemContainer
+	{
+		using namespace RubyWX::ItemContainer;
+		rb_define_attr_method(rb_cWXOwnerDrawnComboBox,"list_selection",_getSelection,_setSelection);
+		rb_define_attr_method(rb_cWXOwnerDrawnComboBox,"list_string_selection",_getStringSelection,_setStringSelection);
+	}
+
+	// import selection methods from TextEntry
+	{
+		using namespace RubyWX::TextEntry;
+		rb_define_attr_method(rb_cWXOwnerDrawnComboBox,"text_selection",_getSelection,_setSelection);
+		rb_define_attr_method(rb_cWXOwnerDrawnComboBox,"text_string_selection",_GetStringSelection,_setStringSelection);
+	}
 
 	//define Choice constants
 	rb_define_const(rb_cWXOwnerDrawnComboBox,"SORT",INT2NUM(wxCB_SORT));

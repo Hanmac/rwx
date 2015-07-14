@@ -135,6 +135,23 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
  * true/false
 */
 
+
+/* Document-attr: list_selection
+ * Integer/nil returns the index of the current selected item, or nil if none is selected.
+ */
+/* Document-attr: list_string_selection
+ * String returns the string of the current selected item.
+ */
+
+/* Document-attr: text_selection
+ * Range/nil returns the index of the current selected item,
+ * or nil if none is selected.
+ */
+/* Document-attr: text_string_selection
+ * String returns the string of the current selected item.
+ */
+
+
 /* Document-const: SORT
  *   Sorts the entries alphabetically.
  */
@@ -166,6 +183,15 @@ DLL_LOCAL void Init_WXComboBox(VALUE rb_mWX)
 	rb_cWXControl = rb_define_class_under(rb_mWX,"Control",rb_cWXWindow);
 	rb_mWXItemContainer = rb_define_module_under(rb_mWX,"ItemContainer");
 	rb_mWXTextEntry = rb_define_module_under(rb_mWX,"TextEntry");
+
+
+	rb_define_attr(rb_cWXComboBox,"list_selection",1,1);
+	rb_define_attr(rb_cWXComboBox,"list_string_selection",1,1);
+
+	rb_define_attr(rb_cWXComboBox,"text_selection",1,1);
+	rb_define_attr(rb_cWXComboBox,"text_string_selection",1,1);
+
+
 #endif
 #if wxUSE_COMBOBOX
 	using namespace RubyWX::ComboBox;
