@@ -486,6 +486,14 @@ DLL_LOCAL VALUE _WindowToClientSize(VALUE self,VALUE point)
 }
 }
 
+
+/*
+ * Document-class: WX::Window
+ *
+ * This class represents an the base window.
+*/
+
+
 /* Document-method: window_freeze
  * call-seq:
  *   window_freeze -> self

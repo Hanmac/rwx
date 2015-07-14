@@ -91,6 +91,13 @@ DLL_LOCAL VALUE _CreateTextSizer(VALUE self,VALUE text)
  * true/false
 */
 
+
+/*
+ * Document-class: WX::Dialog
+ *
+ * This class represents a dialog window.
+*/
+
 /* Document-const: DEFAULT_STYLE
  * default style for this control.
  */
@@ -146,7 +153,7 @@ DLL_LOCAL void Init_WXDialog(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXDialog, "escape_id",_getEscapeId,_setEscapeId);
 	rb_define_attr_method(rb_cWXDialog, "affirmative_id",_getAffirmativeId,_setAffirmativeId);
 
-	rb_define_attr_method(rb_cWXDialog, "content_window",_getEscapeId,NULL);
+	rb_define_attr_method(rb_cWXDialog, "content_window",_GetContentWindow,NULL);
 
 	rb_define_method(rb_cWXDialog,"show_modal",RUBY_METHOD_FUNC(_getModal),0);
 	rb_define_method(rb_cWXDialog,"end_modal",RUBY_METHOD_FUNC(_setModal),1);

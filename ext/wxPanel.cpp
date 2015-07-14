@@ -56,6 +56,12 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 
+/*
+ * Document-class: WX::Panel
+ *
+ * This class represents a container for other controls.
+*/
+
 DLL_LOCAL void Init_WXPanel(VALUE rb_mWX)
 {
 #if 0

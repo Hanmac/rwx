@@ -62,6 +62,12 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 #endif
 
+/*
+ * Document-class: WX::Control
+ *
+ * This class represents an the base control class.
+*/
+
 /* Document-attr: label_text
  * the label_text of the Control. String
  */
