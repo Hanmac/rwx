@@ -57,10 +57,13 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			if(title.empty() && !wxTheApp->GetTopWindow())
 				title = wxTheApp->GetAppName();
 
-			_self->Create(
-				unwrap<wxWindow*>(parent),id,title,
-				wxDefaultPosition,wxDefaultSize,style
-			);
+			if((style & wxFRAME_FLOAT_ON_PARENT == 0) || nil_check(parent))
+			{
+				_self->Create(
+					unwrap<wxWindow*>(parent),id,title,
+					wxDefaultPosition,wxDefaultSize,style
+				);
+			}
 
 		}
 	}
@@ -137,6 +140,11 @@ DLL_LOCAL VALUE _pushStatusText(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "11",&str,&num);
 	rb_check_frozen(self);
 
+	if(!_self->GetStatusBar()) {
+		rb_raise(rb_eArgError, "no statusbar to set text for");
+		return self;
+	}
+
 	int cidx(0);
 
 	if(!NIL_P(num))
@@ -168,6 +176,11 @@ DLL_LOCAL VALUE _popStatusText(int argc,VALUE *argv,VALUE self)
 	VALUE num;
 	rb_scan_args(argc, argv, "01",&num);
 	rb_check_frozen(self);
+
+	if(!_self->GetStatusBar()) {
+		rb_raise(rb_eArgError, "no statusbar to set text for");
+		return self;
+	}
 
 	int cidx(0);
 
@@ -222,6 +235,12 @@ DLL_LOCAL VALUE _CreateToolBar(int argc,VALUE *argv,VALUE self)
 }
 }
 
+/*
+ * Document-class: WX::Frame
+ *
+ * This class represents a framed window.
+*/
+
 /* Document-const: DEFAULT_STYLE
  * default style for this control.
  */
@@ -240,6 +259,15 @@ DLL_LOCAL VALUE _CreateToolBar(int argc,VALUE *argv,VALUE self)
 /* Document-attr: statusbar_pane
  * the status bar pane where the help text are showing. Integer
  */
+
+
+/* Document-const: FRAME_TOOL_WINDOW
+ *   Causes a frame with a small title bar to be created; the frame does not appear in the taskbar under Windows or GTK+.
+ */
+/* Document-const: FRAME_FLOAT_ON_PARENT
+ *   The frame will always be on top of its parent (unlike wxSTAY_ON_TOP). A frame created with this style must have a non-NULL parent.
+ */
+
 DLL_LOCAL void Init_WXFrame(VALUE rb_mWX)
 {
 #if 0
@@ -264,24 +292,32 @@ DLL_LOCAL void Init_WXFrame(VALUE rb_mWX)
 
 #if wxUSE_MENUS
 	rb_define_attr_method(rb_cWXFrame,"menubar",_getMenuBar,_setMenuBar);
+#else
+	rb_define_attr_method_missing(rb_cWXFrame,"menubar");
 #endif // wxUSE_MENUS
 #if wxUSE_STATUSBAR
 	rb_define_attr_method(rb_cWXFrame,"statusbar",_getStatusBar,_setStatusBar);
 	rb_define_attr_method(rb_cWXFrame,"statusbar_pane",_getStatusBarPane,_setStatusBarPane);
-	rb_define_method(rb_cWXFrame,"create_statusbar",RUBY_METHOD_FUNC(_CreateStatusBar),-1);
 
+	rb_define_method(rb_cWXFrame,"create_statusbar",RUBY_METHOD_FUNC(_CreateStatusBar),-1);
 
 	rb_define_method(rb_cWXFrame,"push_status_text",RUBY_METHOD_FUNC(_pushStatusText),-1);
 	rb_define_method(rb_cWXFrame,"pop_status_text",RUBY_METHOD_FUNC(_popStatusText),-1);
-
+#else
+	rb_define_attr_method_missing(rb_cWXFrame,"statusbar");
+	rb_define_attr_method_missing(rb_cWXFrame,"statusbar_pane");
 #endif // wxUSE_STATUSBAR
 #if wxUSE_TOOLBAR
 	rb_define_attr_method(rb_cWXFrame,"toolbar",_getToolBar,_setToolBar);
 	rb_define_method(rb_cWXFrame,"create_toolbar",RUBY_METHOD_FUNC(_CreateToolBar),-1);
+#else
+	rb_define_attr_method_missing(rb_cWXFrame,"toolbar");
 #endif // wxUSE_TOOLBAR
 
 	rb_define_const(rb_cWXFrame,"DEFAULT_STYLE",INT2NUM(wxDEFAULT_FRAME_STYLE));
 
+	rb_define_const(rb_cWXFrame,"FRAME_TOOL_WINDOW",INT2NUM(wxFRAME_TOOL_WINDOW));
+	rb_define_const(rb_cWXFrame,"FRAME_FLOAT_ON_PARENT",INT2NUM(wxFRAME_FLOAT_ON_PARENT));
 
 	registerInfo<wxFrame>(rb_cWXFrame);
 }
