@@ -120,28 +120,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-
-DLL_LOCAL VALUE _getHeight(VALUE self)
-{
-	if(_self->IsOk())
-		return ULONG2NUM(_self->GetHeight());
-	return Qnil;
-}
-
-DLL_LOCAL VALUE _getWidth(VALUE self)
-{
-	if(_self->IsOk())
-		return ULONG2NUM(_self->GetWidth());
-	return Qnil;
-}
-
-
-DLL_LOCAL VALUE _getSize(VALUE self)
-{
-	if(_self->IsOk())
-		return wrap(_self->GetSize());
-	return Qnil;
-}
+singlereturn_if(GetHeight, _self->IsOk())
+singlereturn_if(GetWidth, _self->IsOk())
+singlereturn_if(GetSize, _self->IsOk())
 
 DLL_LOCAL VALUE _getData(VALUE self)
 {
@@ -276,7 +257,7 @@ DLL_LOCAL VALUE _set(int argc,VALUE *argv,VALUE self)
 									_self->SetAlpha(i,j,c.Alpha());
 					}
 				} else {
-					VALUE rsize = _getSize(self);
+					VALUE rsize = _GetSize(self);
 					rb_raise(rb_eArgError,
 						"%" PRIsVALUE " does not fit into image of %" PRIsVALUE,
 						RB_OBJ_STRING(vx), RB_OBJ_STRING(rsize)
@@ -573,8 +554,7 @@ DLL_LOCAL VALUE _rotate_hue(VALUE self, VALUE angle)
 		wxImage result(*_self);
 		result.RotateHue(val);
 		wrap(result);
-	}else
-		rb_raise(rb_eRangeError,"%f is out of range (-1..1)", val);
+	}
 	return Qnil;
 }
 
@@ -742,6 +722,70 @@ DLL_LOCAL VALUE _to_bitmap(VALUE self)
 	return wrap(unwrap<wxBitmap*>(self));
 }
 
+/* Document-method: initialize_copy
+ * call-seq:
+ *   initialize_copy(orig)
+ *
+ * Duplicate an object
+*/
+DLL_LOCAL VALUE _initialize_copy(VALUE self, VALUE other)
+{
+	VALUE result = rb_call_super(1,&other);
+	wxImage* cother = unwrap<wxImage*>(other);
+
+	_self->SetData(cother->GetData(),cother->GetWidth(),cother->GetHeight());
+	if(cother->HasAlpha())
+		_self->SetAlpha(cother->GetAlpha());
+
+	_setMask(self,_getMask(other));
+
+#if wxUSE_PALETTE
+	_setPalette(self,_getPalette(other));
+#endif
+	return result;
+}
+
+/*
+ * call-seq:
+ *   hash -> Fixnum
+ *
+ * Generates a Fixnum hash value for this object.
+ *
+ *
+ */
+DLL_LOCAL VALUE _getHash(VALUE self)
+{
+	st_index_t h = rb_hash_start(0);
+
+	h = rb_hash_uint(h, _self->GetWidth());
+	h = rb_hash_uint(h, _self->GetHeight());
+
+	if(_self->IsOk())
+	{
+		//if(_self->GetType() == wxBITMAP_TYPE_INVALID)
+		//	return Qnil;
+		char* data = (char*)_self->GetData();
+		if(data)
+			h = rb_hash_uint(h, rb_str_hash(rb_str_new(data,_self->GetHeight() * _self->GetWidth() * 3)));
+
+		if(_self->HasAlpha())
+		{
+			h = rb_hash_uint(h, rb_str_hash(rb_str_new((char*) _self->GetAlpha(),_self->GetHeight() * _self->GetWidth())));
+		}
+
+		unsigned char r,g,b;
+		if(_self->GetOrFindMaskColour(&r,&g,&b))
+		{
+			h = rb_hash_uint(h, r);
+			h = rb_hash_uint(h, g);
+			h = rb_hash_uint(h, b);
+		}
+	}
+
+	h = rb_hash_end(h);
+	return LONG2FIX(h);
+}
+
 bool check_equal(const wxImage &self, const wxImage &cother)
 {
 	if(self.GetHeight() != cother.GetHeight()){
@@ -764,24 +808,6 @@ bool check_equal(const wxImage &self, const wxImage &cother)
 	}
 
 	return true;
-}
-
-
-/*
-*/
-DLL_LOCAL VALUE _initialize_copy(VALUE self, VALUE other)
-{
-	VALUE result = rb_call_super(1,&other);
-	wxImage* cother = unwrap<wxImage*>(other);
-
-	_self->SetData(cother->GetData(),cother->GetWidth(),cother->GetHeight());
-	_self->SetAlpha(cother->GetAlpha());
-	_setMask(self,_getMask(other));
-
-#if wxUSE_PALETTE
-	_setPalette(self,_getPalette(other));
-#endif
-	return result;
 }
 
 struct equal_obj {
@@ -831,8 +857,8 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
 {
 	VALUE result = rb_ary_new();
 
-	rb_ary_push(result,_getWidth(self));
-	rb_ary_push(result,_getHeight(self));
+	rb_ary_push(result,_GetWidth(self));
+	rb_ary_push(result,_GetHeight(self));
 	rb_ary_push(result,_getData(self));
 	rb_ary_push(result,_getAlpha(self));
 	rb_ary_push(result,_getMask(self));
@@ -929,9 +955,9 @@ DLL_LOCAL void Init_WXImage(VALUE rb_mWX)
 	rb_define_method(rb_cWXImage,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 	rb_define_private_method(rb_cWXImage,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),1);
 
-	rb_define_attr_method(rb_cWXImage,"height",_getHeight,NULL);
-	rb_define_attr_method(rb_cWXImage,"width",_getWidth,NULL);
-	rb_define_attr_method(rb_cWXImage,"size",_getSize,NULL);
+	rb_define_attr_method(rb_cWXImage,"height",_GetHeight,NULL);
+	rb_define_attr_method(rb_cWXImage,"width",_GetWidth,NULL);
+	rb_define_attr_method(rb_cWXImage,"size",_GetSize,NULL);
 	rb_define_attr_method(rb_cWXImage,"data",_getData,NULL);
 	rb_define_attr_method(rb_cWXImage,"alpha",_getAlpha,NULL);
 
@@ -943,7 +969,10 @@ DLL_LOCAL void Init_WXImage(VALUE rb_mWX)
 	rb_define_method(rb_cWXImage,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
 	rb_define_method(rb_cWXImage,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
+	rb_define_method(rb_cWXImage,"hash",RUBY_METHOD_FUNC(_getHash),0);
+
 	rb_define_method(rb_cWXImage,"==",RUBY_METHOD_FUNC(_equal),1);
+	rb_define_alias(rb_cWXImage,"eql?","==");
 
 	rb_define_attr_method(rb_cWXImage,"mask",_getMask,_setMask);
 #if wxUSE_PALETTE
