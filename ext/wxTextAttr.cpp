@@ -43,10 +43,10 @@ wxTextAttr unwrap< wxTextAttr >(const VALUE &vattr)
 
 
 //use this macro to automatically check the Has Methods
-#define macro_textattr2(attr,attr2,type,flag,w) \
+#define macro_textattr3(attr, attr2, attr3, type, flag, w) \
 DLL_LOCAL VALUE _get##attr(VALUE self)\
 { \
-	return _self->Has##attr2() ? w<type>(_self->Get##attr()) : Qnil;\
+	return _self->Has##attr2() ? w<type>(_self->Get##attr3()) : Qnil;\
 }\
 \
 DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
@@ -58,6 +58,9 @@ DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
 		_self->Set##attr(un##w<type>(other));\
 	return other;\
 }
+
+#define macro_textattr2(attr,attr2,type,flag,w) macro_textattr3(attr,attr2,attr,type,flag,w)
+#define macro_textattr2a(attr,attr2,type,flag,w) macro_textattr3(attr,attr,attr2,type,flag,w)
 #define macro_textattr(attr,type,flag,w) macro_textattr2(attr,attr,type,flag,w)
 
 
@@ -75,8 +78,8 @@ macro_textattr(LeftIndent,int,LEFT_INDENT,wrap)
 macro_textattr(RightIndent,int,RIGHT_INDENT,wrap)
 
 macro_textattr(FontSize,int,FONT_SIZE,wrap)
-//macro_textattr(FontPointSize,int,wrap)
-//macro_textattr(FontPixelSize,int,wrap)
+macro_textattr2a(FontPointSize, FontSize, int,FONT_POINT_SIZE, wrap)
+macro_textattr2a(FontPixelSize, FontSize, int,FONT_PIXEL_SIZE, wrap)
 macro_textattr2(FontStyle,Font,wxFontStyle,FONT_ITALIC,wrapenum)
 macro_textattr(FontWeight,wxFontWeight,FONT_WEIGHT,wrapenum)
 macro_textattr(FontFaceName,wxString,FONT_FACE,wrap)
@@ -102,34 +105,178 @@ macro_textattr(BulletName,wxString,BULLET_NAME,wrap)
 
 macro_textattr(URL,wxString,URL,wrap)
 
+singlereturn(IsCharacterStyle)
+singlereturn(IsParagraphStyle)
+
+
 void _from_hash(VALUE hash, wxTextAttr *attr)
 {
+	int left_indent;
+	wxFont font;
+	wxTextAttrBulletStyle bullet_style;
+	wxTextAttrLineSpacing line_spacing;
+
 	set_obj_option(hash, "text_color", &wxTextAttr::SetTextColour, attr);
 	set_obj_option(hash, "background_color", &wxTextAttr::SetBackgroundColour, attr);
 	set_obj_option(hash, "alignment", &wxTextAttr::SetAlignment, attr, unwrapenum<wxTextAttrAlignment>);
 
 	set_obj_option(hash, "tabs", &wxTextAttr::SetTabs, attr);
-	//set_obj_option(hash, "left_indent", &wxTextAttr::SetLeftIndent, attr);
+
+	if(set_hash_option(hash, "left_indent", left_indent))
+		attr->SetLeftIndent(left_indent);
+
 	set_obj_option(hash, "right_indent", &wxTextAttr::SetRightIndent, attr);
 
 	set_obj_option(hash, "font_size", &wxTextAttr::SetFontSize, attr);
 	set_obj_option(hash, "font_weight", &wxTextAttr::SetFontWeight, attr, unwrapenum<wxFontWeight>);
+	set_obj_option(hash, "font_face_name", &wxTextAttr::SetFontFaceName, attr);
 	set_obj_option(hash, "font_underlined", &wxTextAttr::SetFontUnderlined, attr);
 	set_obj_option(hash, "font_strikethrough", &wxTextAttr::SetFontStrikethrough, attr);
 	set_obj_option(hash, "font_family", &wxTextAttr::SetFontFamily, attr, unwrapenum<wxFontFamily>);
 
+	if(set_hash_option(hash, "font", font))
+		attr->SetFont(font);
 
-	//set_obj_option(hash, "font", &wxTextAttr::SetFont, attr, wrap<wxFont>);
+	set_obj_option(hash, "character_style_name", &wxTextAttr::SetCharacterStyleName, attr);
+	set_obj_option(hash, "paragraph_style_name", &wxTextAttr::SetParagraphStyleName, attr);
+	set_obj_option(hash, "list_style_name", &wxTextAttr::SetListStyleName, attr);
+
+	set_obj_option(hash, "paragraph_spacing_after", &wxTextAttr::SetParagraphSpacingAfter, attr);
+	set_obj_option(hash, "paragraph_Spacing_before", &wxTextAttr::SetParagraphSpacingBefore, attr);
+
+	if(set_hash_option(hash, "line_spacing", line_spacing, unwrapenum<wxTextAttrLineSpacing>))
+		attr->SetLineSpacing(line_spacing);
+	
+	if(set_hash_option(hash, "bullet_style", bullet_style, unwrapenum<wxTextAttrBulletStyle>))
+		attr->SetBulletStyle(bullet_style);
+
+	set_obj_option(hash, "bullet_number", &wxTextAttr::SetBulletNumber, attr);
+
+	set_obj_option(hash, "bullet_text", &wxTextAttr::SetBulletText, attr);
+
+	set_obj_option(hash, "bullet_font", &wxTextAttr::SetBulletFont, attr);
+	set_obj_option(hash, "bullet_name", &wxTextAttr::SetBulletName, attr);
+
+	set_obj_option(hash, "url", &wxTextAttr::SetURL, attr);
+
 }
 
-
 /*
+ * call-seq:
+ *   TextAttr.new(hash)
+ *
+ * Creates a new TextAttr object.
+*/
+DLL_LOCAL VALUE _initialize(VALUE self,VALUE hash)
+{
+	_from_hash(hash, _self);
+	return self;
+}
+
+/* Document-method: initialize_copy
+ * call-seq:
+ *   initialize_copy(orig)
+ *
+ * Duplicate an object
 */
 DLL_LOCAL VALUE _initialize_copy(VALUE self, VALUE other)
 {
 	VALUE result = rb_call_super(1,&other);
 	_self->Copy(unwrap<wxTextAttr>(other));
 	return result;
+}
+
+
+/*
+ * call-seq:
+ *   hash -> Fixnum
+ *
+ * Generates a Fixnum hash value for this object.
+ *
+ *
+ */
+DLL_LOCAL VALUE _getHash(VALUE self)
+{
+	st_index_t h = rb_hash_start(0);
+
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getTextColour(self))));
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getBackgroundColour(self))));
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getAlignment(self))));
+
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getTabs(self))));
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getLeftIndent(self))));
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getRightIndent(self))));
+
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getFontSize(self))));
+
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getFontPointSize(self))));
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getFontPixelSize(self))));
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getFontStyle(self))));
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getFontWeight(self))));
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getFontFaceName(self))));
+
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getFontUnderlined(self))));
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getFontStrikethrough(self))));
+
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getFontFamily(self))));
+
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getFont(self))));
+
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getCharacterStyleName(self))));
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getParagraphStyleName(self))));
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getListStyleName(self))));
+
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getParagraphSpacingAfter(self))));
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getParagraphSpacingBefore(self))));
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getLineSpacing(self))));
+
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getBulletStyle(self))));
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getBulletNumber(self))));
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getBulletText(self))));
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getBulletFont(self))));
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getBulletName(self))));
+
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getURL(self))));
+
+	h = rb_hash_end(h);
+	return LONG2FIX(h);
+}
+
+
+
+struct equal_obj {
+	wxTextAttr* self;
+	VALUE other;
+};
+
+VALUE _equal_block(equal_obj *obj)
+{
+	return wrap(*obj->self == unwrap<wxTextAttr>(obj->other));
+}
+
+VALUE _equal_rescue(VALUE val)
+{
+	return Qfalse;
+}
+
+/*
+ * call-seq:
+ *   == attr -> bool
+ *
+ * compares two TextAttr.
+ *
+ *
+ */
+DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
+{
+	equal_obj obj;
+	obj.self = _self;
+	obj.other = other;
+
+	return rb_rescue(
+		RUBY_METHOD_FUNC(_equal_block),(VALUE)&obj,
+		RUBY_METHOD_FUNC(_equal_rescue),Qnil
+	);
 }
 
 
@@ -273,6 +420,7 @@ DLL_LOCAL void Init_WXTextAttr(VALUE rb_mWX)
 	rb_cWXTextAttr = rb_define_class_under(rb_mWX,"TextAttr",rb_cObject);
 	rb_define_alloc_func(rb_cWXTextAttr,_alloc);
 
+	rb_define_method(rb_cWXTextAttr,"initialize",RUBY_METHOD_FUNC(_initialize),1);
 	rb_define_private_method(rb_cWXTextAttr,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),1);
 
 	rb_define_attr_method(rb_cWXTextAttr,"text_color",_getTextColour,_setTextColour);
@@ -287,6 +435,9 @@ DLL_LOCAL void Init_WXTextAttr(VALUE rb_mWX)
 
 
 	rb_define_attr_method(rb_cWXTextAttr,"font_size",_getFontSize,_setFontSize);
+	rb_define_attr_method(rb_cWXTextAttr,"font_point_size",_getFontPointSize,_setFontPointSize);
+	rb_define_attr_method(rb_cWXTextAttr,"font_pixel_size",_getFontPixelSize,_setFontPixelSize);
+
 	rb_define_attr_method(rb_cWXTextAttr,"font_style",_getFontStyle,_setFontStyle);
 	rb_define_attr_method(rb_cWXTextAttr,"font_weight",_getFontWeight,_setFontWeight);
 	rb_define_attr_method(rb_cWXTextAttr,"font_facename",_getFontFaceName,_setFontFaceName);
@@ -311,6 +462,11 @@ DLL_LOCAL void Init_WXTextAttr(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXTextAttr,"bullet_name",_getBulletName,_setBulletName);
 
 	rb_define_attr_method(rb_cWXTextAttr,"url",_getURL,_setURL);
+
+	rb_define_method(rb_cWXTextAttr,"hash",RUBY_METHOD_FUNC(_getHash),0);
+
+	rb_define_method(rb_cWXTextAttr,"==",RUBY_METHOD_FUNC(_equal),1);
+	rb_define_alias(rb_cWXTextAttr,"eql?","==");
 
 	registerType<wxTextAttr>(rb_cWXTextAttr);
 
