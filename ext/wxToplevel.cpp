@@ -20,6 +20,16 @@ macro_attr(Icon,wxIcon)
 macro_attr(DefaultItem,wxWindow*)
 macro_attr(TmpDefaultItem,wxWindow*)
 
+macro_attr_bool2(Maximized, Maximize)
+macro_attr_bool2(Iconized, Iconize)
+macro_attr_bool2(FullScreen, ShowFullScreen)
+
+singlereturn(IsAlwaysMaximized)
+
+singlereturn(IsActive)
+
+singlefunc(Restore)
+
 void set_style_flags(VALUE hash,int& flags)
 {
 
@@ -72,6 +82,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 }
 
+/*
+ * Document-class: WX::TopLevel
+ *
+ * This class represents an the base class of all top level widgets.
+*/
 
 /* Document-attr: title
  * returns the title of the TopLevel window. Type is String
@@ -81,6 +96,46 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
  * returns the icon of the TopLevel window. Type is WX::Bitmap
  */
 
+/* Document-attr: maximized
+ * returns true if the top level window is maximized. true/false
+ */
+/* Document-attr: iconized
+ * returns true if the top level window is iconized. true/false
+ */
+/* Document-attr: fullscreen
+ * returns true if the top level window is shown in fullscreen mode. true/false
+ */
+
+/* Document-const: CAPTION
+ *   Puts a caption on the frame. Notice that this flag is required by MINIMIZE_BOX, MAXIMIZE_BOX and CLOSE_BOX on most systems as the corresponding buttons cannot be shown if the window has no title bar at all. I.e. if CAPTION is not specified those styles would be simply ignored.
+ */
+/* Document-const: STAY_ON_TOP
+ *   Stay on top of all other windows, see also FRAME_FLOAT_ON_PARENT.
+ */
+/* Document-const: ICONIZE
+ *   Display the frame iconized (minimized). Windows only.
+ */
+/* Document-const: MINIMIZE
+ *   Identical to ICONIZE. Windows only.
+ */
+/* Document-const: MAXIMIZE
+ *   Displays the frame maximized. Windows and GTK+ only.
+ */
+/* Document-const: SYSTEM_MENU
+ *   Displays a system menu containing the list of various windows commands in the window title bar. Unlike MINIMIZE_BOX, MAXIMIZE_BOX and CLOSE_BOX styles this style can be used without CAPTION, at least under Windows, and makes the system menu available without showing it on screen in this case. However it is recommended to only use it together with CAPTION for consistent behaviour under all platforms.
+ */
+/* Document-const: CLOSE_BOX
+ *   Displays a close box on the frame.
+ */
+/* Document-const: MINIMIZE_BOX
+ *   Displays a minimize box on the frame.
+ */
+/* Document-const: MAXIMIZE_BOX
+ *   Displays a maximize box on the frame. Notice that under wxGTK RESIZE_BORDER must be used as well or this style is ignored.
+ */
+/* Document-const: RESIZE_BORDER
+ *   Displays a resizable border around the window.
+ */
 
 DLL_LOCAL void Init_WXTopLevel(VALUE rb_mWX)
 {
@@ -102,6 +157,9 @@ DLL_LOCAL void Init_WXTopLevel(VALUE rb_mWX)
 	rb_define_attr(rb_cWXTopLevel, "default_item",1,1);
 	rb_define_attr(rb_cWXTopLevel, "tmp_default_item",1,1);
 
+	rb_define_attr(rb_cWXTopLevel, "maximized",1,1);
+	rb_define_attr(rb_cWXTopLevel, "iconized",1,1);
+	rb_define_attr(rb_cWXTopLevel, "fullscreen",1,1);
 #endif
 
 	rb_define_attr_method(rb_cWXTopLevel, "title",_getTitle,_setTitle);
@@ -110,6 +168,11 @@ DLL_LOCAL void Init_WXTopLevel(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXTopLevel, "default_item",_getDefaultItem,_setDefaultItem);
 	rb_define_attr_method(rb_cWXTopLevel, "tmp_default_item",_getTmpDefaultItem,_setTmpDefaultItem);
 
+	rb_define_attr_method(rb_cWXTopLevel, "maximized",_getMaximized,_setMaximized);
+	rb_define_attr_method(rb_cWXTopLevel, "iconized",_getIconized,_setIconized);
+	rb_define_attr_method(rb_cWXTopLevel, "fullscreen",_getFullScreen,_setFullScreen);
+
+	rb_define_const(rb_cWXTopLevel,"CAPTION",INT2NUM(wxCAPTION));
 
 	rb_define_const(rb_cWXTopLevel,"STAY_ON_TOP",INT2NUM(wxSTAY_ON_TOP));
 	rb_define_const(rb_cWXTopLevel,"ICONIZE",INT2NUM(wxICONIZE));
