@@ -118,6 +118,90 @@ DLL_LOCAL VALUE _each(VALUE self)
 	return self;
 }
 
+
+/*
+ * call-seq:
+ *   hash -> Fixnum
+ *
+ * Generates a Fixnum hash value for this object.
+ *
+ *
+ */
+DLL_LOCAL VALUE _getHash(VALUE self)
+{
+	std::size_t count = _self->GetColoursCount();
+	st_index_t h = rb_hash_start(count);
+
+	for(std::size_t i = 0; i < count; ++i)
+	{
+		unsigned char red,green,blue;
+		_self->GetRGB(i,&red,&green,&blue);
+		h = rb_hash_uint(h, red);
+		h = rb_hash_uint(h, green);
+		h = rb_hash_uint(h, blue);
+	}
+
+	h = rb_hash_end(h);
+	return LONG2FIX(h);
+}
+
+bool check_equal(const wxPalette &self, const wxPalette &cother)
+{
+	if(self.GetColoursCount() != cother.GetColoursCount()){
+		return false;
+	}
+
+	std::size_t count = self.GetColoursCount();
+	for(std::size_t i = 0; i < count; ++i)
+	{
+
+		unsigned char red, green, blue;
+		unsigned char cred, cgreen, cblue;
+		self.GetRGB(i,&red,&green,&blue);
+
+		cother.GetRGB(i,&cred,&cgreen,&cblue);
+		
+		if(red != cred || green != cgreen || blue != cblue)
+			return false;
+	}
+	return true;
+}
+
+struct equal_obj {
+	wxPalette* self;
+	VALUE other;
+};
+
+VALUE _equal_block(equal_obj *obj)
+{
+	return wrap(check_equal(*obj->self, unwrap<wxPalette>(obj->other)));
+}
+
+VALUE _equal_rescue(VALUE val)
+{
+	return Qfalse;
+}
+
+/*
+ * call-seq:
+ *   == palette -> bool
+ *
+ * compares two palettes.
+ *
+ *
+ */
+DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
+{
+	equal_obj obj;
+	obj.self = _self;
+	obj.other = other;
+
+	return rb_rescue(
+		RUBY_METHOD_FUNC(_equal_block),(VALUE)&obj,
+		RUBY_METHOD_FUNC(_equal_rescue),Qnil
+	);
+}
+
 /*
  * call-seq:
  *   marshal_dump -> Array
@@ -151,6 +235,7 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
  */
 DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 {
+	data = rb_Array(data);
 	std::size_t count = RARRAY_LEN(data) / 3;
 
 	unsigned char red[count];
@@ -200,11 +285,16 @@ DLL_LOCAL void Init_WXPalette(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXPalette,"[]",RUBY_METHOD_FUNC(_get),1);
 
+	rb_define_method(rb_cWXPalette,"hash",RUBY_METHOD_FUNC(_getHash),0);
+
+	rb_define_method(rb_cWXPalette,"==",RUBY_METHOD_FUNC(_equal),1);
+	rb_define_alias(rb_cWXPalette,"eql?","==");
+
 	rb_define_method(rb_cWXPalette,"size",RUBY_METHOD_FUNC(_GetColoursCount),0);
 	rb_define_method(rb_cWXPalette,"each",RUBY_METHOD_FUNC(_each),0);
 
 	rb_define_method(rb_cWXPalette,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
-	rb_define_method(rb_cWXPalette,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),-2);
+	rb_define_method(rb_cWXPalette,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
 	registerInfo<wxPalette>(rb_cWXPalette);
 #endif
