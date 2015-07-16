@@ -13,6 +13,10 @@
 #include <map>
 #include <wx/artprov.h>
 
+#include <wx/colour.h>
+
+#undef wxUSE_IMAGE
+
 #if !wxUSE_IMAGE
 #include <wx/rawbmp.h>
 #endif
@@ -126,6 +130,8 @@ macro_attr(Depth,int)
 
 singlereturn(GetMask)
 
+singlereturn(HasAlpha)
+
 #if wxUSE_PALETTE
 macro_attr(Palette,wxPalette)
 #endif
@@ -169,8 +175,8 @@ DLL_LOCAL VALUE _draw(VALUE self)
 
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE x,y;
-	rb_scan_args(argc, argv, "11",&x,&y);
+	VALUE x,y, depth;
+	rb_scan_args(argc, argv, "12",&x,&y, &depth);
 
 	if(NIL_P(x)){
 		_self->LoadFile(unwrap<wxString>(x),wxBITMAP_TYPE_ANY);
@@ -178,25 +184,44 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 #if wxUSE_IMAGE
 		(*_self) = wxBitmap(wxImage(NUM2INT(x),NUM2INT(y)));
 #else
-		_self->Create(NUM2INT(x),NUM2INT(y));
+		_self->Create(NUM2INT(x),NUM2INT(y), NIL_P(depth) ? wxBITMAP_SCREEN_DEPTH : NUM2INT(depth));
 
-		typedef wxPixelData<wxBitmap, wxNativePixelFormat> PixelData;
+		if(_self->HasAlpha()) {
 
-		PixelData data(*_self);
+			wxAlphaPixelData data(*_self);
 
-		PixelData::Iterator p(data);
+			wxAlphaPixelData::Iterator p(data);
 
-		for ( int cy = 0; cy < data.GetHeight(); ++cy )
-		{
-			PixelData::Iterator rowStart = p;
-
-			for ( int cx = 0; cx < data.GetWidth(); ++cx, ++p )
+			for ( int cy = 0; cy < data.GetHeight(); ++cy )
 			{
-				p.Red() = p.Green() = p.Blue() = 0;
+				wxAlphaPixelData::Iterator rowStart = p;
+
+				for ( int cx = 0; cx < data.GetWidth(); ++cx, ++p )
+				{
+					p.Red() = p.Green() = p.Blue() = p.Alpha() = 0;
+				}
+
+				p = rowStart;
+				p.OffsetY(data, 1);
+			}
+		}else {
+			wxNativePixelData data(*_self);
+
+			wxNativePixelData::Iterator p(data);
+
+			for ( int cy = 0; cy < data.GetHeight(); ++cy )
+			{
+				wxNativePixelData::Iterator rowStart = p;
+
+				for ( int cx = 0; cx < data.GetWidth(); ++cx, ++p )
+				{
+					p.Red() = p.Green() = p.Blue() = 0;
+				}
+
+				p = rowStart;
+				p.OffsetY(data, 1);
 			}
 
-			p = rowStart;
-			p.OffsetY(data, 1);
 		}
 #endif
 	}
@@ -206,7 +231,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL VALUE _initialize_copy(VALUE self,VALUE other)
 {
-	(*_self) = unwrap<wxBitmap>(other);
+	wxBitmap cbitmap = unwrap<wxBitmap>(other);
+	(*_self) = cbitmap.GetSubBitmap(wxRect(0, 0, cbitmap.GetWidth(), cbitmap.GetHeight()));
 	return self;
 }
 
@@ -216,7 +242,69 @@ DLL_LOCAL VALUE _to_image(VALUE self)
 {
 	return wrap(_self->ConvertToImage());
 }
+#endif
 
+
+/*
+ * call-seq:
+ *   hash -> Fixnum
+ *
+ * Generates a Fixnum hash value for this object.
+ *
+ *
+ */
+DLL_LOCAL VALUE _getHash(VALUE self)
+{
+	st_index_t h = rb_hash_start(0);
+
+#if wxUSE_IMAGE
+	h = rb_hash_uint(h, NUM2LONG(rb_hash(_to_image(self))));
+#else
+	h = rb_hash_uint(h, _self->GetWidth());
+	h = rb_hash_uint(h, _self->GetHeight());
+	h = rb_hash_uint(h, _self->GetDepth());
+
+	if(_self->HasAlpha()) {
+		wxAlphaPixelData data(*_self);
+
+		wxAlphaPixelData::Iterator p(data);
+
+		for ( int cy = 0; cy < data.GetHeight(); ++cy )
+		{
+			wxAlphaPixelData::Iterator rowStart = p;
+
+			for ( int cx = 0; cx < data.GetWidth(); ++cx, ++p )
+			{
+				h = rb_hash_uint32(h, p.Red() | (p.Green() << 8) | (p.Blue() << 16) | (p.Alpha() << 24) );
+			}
+
+			p = rowStart;
+			p.OffsetY(data, 1);
+		}
+	} else {
+		wxNativePixelData data(*_self);
+
+		wxNativePixelData::Iterator p(data);
+
+		for ( int cy = 0; cy < data.GetHeight(); ++cy )
+		{
+			wxNativePixelData::Iterator rowStart = p;
+
+			for ( int cx = 0; cx < data.GetWidth(); ++cx, ++p )
+			{
+				h = rb_hash_uint32(h, p.Red() | (p.Green() << 8) | (p.Blue() << 16) );
+			}
+
+			p = rowStart;
+			p.OffsetY(data, 1);
+		}
+
+	}
+#endif
+
+	h = rb_hash_end(h);
+	return LONG2FIX(h);
+}
 
 /*
  * call-seq:
@@ -231,7 +319,68 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
 	//TODO: turn the result into something that is compatible when image is missing
 
 	VALUE result = rb_ary_new();
+#if wxUSE_IMAGE
 	rb_ary_push(result,wrap(_self->ConvertToImage()));
+#else
+	rb_ary_push(result, _getWidth(self));
+	rb_ary_push(result, _getHeight(self));
+	rb_ary_push(result, _getDepth(self));
+
+	if(_self->HasAlpha()) {
+		wxColourBase::ChannelType color_data[_self->GetHeight() * _self->GetWidth() * 3];
+		wxColourBase::ChannelType alpha_data[_self->GetHeight() * _self->GetWidth()];
+
+		wxAlphaPixelData data(*_self);
+
+		wxAlphaPixelData::Iterator p(data);
+
+		for ( int cy = 0; cy < data.GetHeight(); ++cy )
+		{
+			wxAlphaPixelData::Iterator rowStart = p;
+
+			for ( int cx = 0; cx < data.GetWidth(); ++cx, ++p )
+			{
+				color_data[(cy * data.GetWidth() + cx) * 3] = p.Red();
+				color_data[(cy * data.GetWidth() + cx) * 3 + 1] = p.Green();
+				color_data[(cy * data.GetWidth() + cx) * 3 + 2] = p.Blue();
+
+				alpha_data[cy * data.GetWidth() + cx] = p.Alpha();
+
+			}
+
+			p = rowStart;
+			p.OffsetY(data, 1);
+		}
+		rb_ary_push(result, rb_str_new((const char*)color_data, _self->GetHeight() * _self->GetWidth() * 3));
+		rb_ary_push(result, rb_str_new((const char*)alpha_data, _self->GetHeight() * _self->GetWidth()));
+
+	} else {
+		wxColourBase::ChannelType color_data[_self->GetHeight() * _self->GetWidth() * 3];
+
+		wxNativePixelData data(*_self);
+
+		wxNativePixelData::Iterator p(data);
+
+		for ( int cy = 0; cy < data.GetHeight(); ++cy )
+		{
+			wxNativePixelData::Iterator rowStart = p;
+
+			for ( int cx = 0; cx < data.GetWidth(); ++cx, ++p )
+			{
+				color_data[(cy * data.GetWidth() + cx) * 3] = p.Red();
+				color_data[(cy * data.GetWidth() + cx) * 3 + 1] = p.Green();
+				color_data[(cy * data.GetWidth() + cx) * 3 + 2] = p.Blue();
+			}
+
+			p = rowStart;
+			p.OffsetY(data, 1);
+		}
+		rb_ary_push(result, rb_str_new((const char*)color_data, _self->GetHeight() * _self->GetWidth() * 3));
+		rb_ary_push(result, Qnil);
+
+	}
+#endif
+
 	return result;
 }
 
@@ -247,11 +396,71 @@ DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 {
 	data = rb_Array(data);
 	//TODO delete old data?
+#if wxUSE_IMAGE
 	(*_self) = wxBitmap(unwrap<wxImage>(RARRAY_AREF(data,0)));
+#else
+	_self->Create(
+		NUM2INT(RARRAY_AREF(data,0)),
+		NUM2INT(RARRAY_AREF(data,1)),
+		NUM2INT(RARRAY_AREF(data,2))
+	);
+
+
+	if(_self->HasAlpha()) {
+		VALUE val = RARRAY_AREF(data,3);
+		wxColourBase::ChannelType *color_data = (wxColourBase::ChannelType*)StringValuePtr(val);
+
+		val = RARRAY_AREF(data,4);
+		wxColourBase::ChannelType *alpha_data = (wxColourBase::ChannelType*)StringValuePtr(val);
+
+		wxAlphaPixelData data(*_self);
+
+		wxAlphaPixelData::Iterator p(data);
+
+		for ( int cy = 0; cy < data.GetHeight(); ++cy )
+		{
+			wxAlphaPixelData::Iterator rowStart = p;
+
+			for ( int cx = 0; cx < data.GetWidth(); ++cx, ++p )
+			{
+				p.Red() = color_data[(cy * data.GetWidth() + cx) * 3];
+				p.Green() = color_data[(cy * data.GetWidth() + cx) * 3 + 1];
+				p.Blue() = color_data[(cy * data.GetWidth() + cx) * 3 + 2];
+
+				p.Alpha() = alpha_data[cy * data.GetWidth() + cx];
+
+			}
+
+			p = rowStart;
+			p.OffsetY(data, 1);
+		}
+
+	} else {
+		VALUE val = RARRAY_AREF(data,3);
+		wxColourBase::ChannelType *color_data = (wxColourBase::ChannelType*)StringValuePtr(val);
+
+		wxNativePixelData data(*_self);
+
+		wxNativePixelData::Iterator p(data);
+
+		for ( int cy = 0; cy < data.GetHeight(); ++cy )
+		{
+			wxNativePixelData::Iterator rowStart = p;
+
+			for ( int cx = 0; cx < data.GetWidth(); ++cx, ++p )
+			{
+				p.Red() = color_data[(cy * data.GetWidth() + cx) * 3];
+				p.Green() = color_data[(cy * data.GetWidth() + cx) * 3 + 1];
+				p.Blue() = color_data[(cy * data.GetWidth() + cx) * 3 + 2];
+			}
+
+			p = rowStart;
+			p.OffsetY(data, 1);
+		}
+	}
+#endif
 	return self;
 }
-
-#endif
 
 DLL_LOCAL VALUE _to_bitmap(VALUE self)
 {
@@ -281,6 +490,83 @@ VALUE _equal_block(equal_obj *obj)
 		obj->self->ConvertToImage(), cbitmap.ConvertToImage()
 	))
 		return Qtrue;
+#else
+	//compare using PixelData
+
+	if(obj->self->GetWidth() != cbitmap.GetWidth())
+		return Qfalse;
+	if(obj->self->GetHeight() != cbitmap.GetHeight())
+		return Qfalse;
+	if(obj->self->GetDepth() != cbitmap.GetDepth())
+		return Qfalse;
+
+	if(obj->self->HasAlpha()) {
+		wxAlphaPixelData data(*obj->self);
+		wxAlphaPixelData cdata(cbitmap);
+
+		wxAlphaPixelData::Iterator p(data);
+		wxAlphaPixelData::Iterator cp(cdata);
+
+		for ( int cy = 0; cy < data.GetHeight(); ++cy )
+		{
+			wxAlphaPixelData::Iterator rowStart = p;
+			wxAlphaPixelData::Iterator crowStart = cp;
+
+			for ( int cx = 0; cx < data.GetWidth(); ++cx, ++p, ++cp )
+			{
+				if(p.Red() != cp.Red()) {
+					return Qfalse;
+				}
+				if(p.Green() != cp.Green()) {
+					return Qfalse;
+				}
+				if(p.Blue() != cp.Blue()) {
+					return Qfalse;
+				}
+				if(p.Alpha() != cp.Alpha()) {
+					return Qfalse;
+				}
+			}
+
+			p = rowStart;
+			cp = crowStart;
+			p.OffsetY(data, 1);
+			cp.OffsetY(cdata, 1);
+		}
+
+	} else {
+		wxNativePixelData data(*obj->self);
+		wxNativePixelData cdata(cbitmap);
+
+		wxNativePixelData::Iterator p(data);
+		wxNativePixelData::Iterator cp(cdata);
+
+		for ( int cy = 0; cy < data.GetHeight(); ++cy )
+		{
+			wxNativePixelData::Iterator rowStart = p;
+			wxNativePixelData::Iterator crowStart = cp;
+
+			for ( int cx = 0; cx < data.GetWidth(); ++cx, ++p, ++cp )
+			{
+				if(p.Red() != cp.Red()) {
+					return Qfalse;
+				}
+				if(p.Green() != cp.Green()) {
+					return Qfalse;
+				}
+				if(p.Blue() != cp.Blue()) {
+					return Qfalse;
+				}
+			}
+
+			p = rowStart;
+			cp = crowStart;
+			p.OffsetY(data, 1);
+			cp.OffsetY(cdata, 1);
+		}
+
+	}
+	return Qtrue;
 #endif
 	//TODO: add check with wxPIxelData if Image is not awailable
 
@@ -394,15 +680,17 @@ DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
 
 #if wxUSE_IMAGE
 	rb_define_method(rb_cWXBitmap,"to_image",RUBY_METHOD_FUNC(_to_image),0);
+#endif
+
+	rb_define_method(rb_cWXBitmap,"alpha?",RUBY_METHOD_FUNC(_HasAlpha),0);
 
 	rb_define_method(rb_cWXBitmap,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
 	rb_define_method(rb_cWXBitmap,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
-#else
-	rb_undef_method(rb_cWXBitmap,"_load");
-	rb_undef_method(rb_cWXBitmap,"_dump");
-#endif
+
+	rb_define_method(rb_cWXBitmap,"hash",RUBY_METHOD_FUNC(_getHash),0);
 
 	rb_define_method(rb_cWXBitmap,"==",RUBY_METHOD_FUNC(_equal),1);
+	rb_define_alias(rb_cWXBitmap,"eql?","==");
 
 #if wxUSE_PALETTE
 	rb_define_attr_method(rb_cWXBitmap,"palette",_getPalette,_setPalette);
