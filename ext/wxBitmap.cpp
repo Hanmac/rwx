@@ -15,8 +15,6 @@
 
 #include <wx/colour.h>
 
-#undef wxUSE_IMAGE
-
 #if !wxUSE_IMAGE
 #include <wx/rawbmp.h>
 #endif
