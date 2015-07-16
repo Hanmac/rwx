@@ -80,7 +80,7 @@ macro_textattr(RightIndent,int,RIGHT_INDENT,wrap)
 macro_textattr(FontSize,int,FONT_SIZE,wrap)
 macro_textattr2a(FontPointSize, FontSize, int,FONT_POINT_SIZE, wrap)
 macro_textattr2a(FontPixelSize, FontSize, int,FONT_PIXEL_SIZE, wrap)
-macro_textattr2(FontStyle,Font,wxFontStyle,FONT_ITALIC,wrapenum)
+macro_textattr2(FontStyle,FontItalic,wxFontStyle,FONT_ITALIC,wrapenum)
 macro_textattr(FontWeight,wxFontWeight,FONT_WEIGHT,wrapenum)
 macro_textattr(FontFaceName,wxString,FONT_FACE,wrap)
 macro_textattr(FontUnderlined,bool,FONT_UNDERLINE,wrap)
@@ -100,7 +100,7 @@ macro_textattr(LineSpacing,wxTextAttrLineSpacing,LINE_SPACING,wrapenum)
 macro_textattr(BulletStyle,wxTextAttrBulletStyle,BULLET_STYLE,wrapenum)
 macro_textattr(BulletNumber,int,BULLET_NUMBER,wrap)
 macro_textattr(BulletText,wxString,BULLET_TEXT,wrap)
-macro_attr(BulletFont,wxString)
+macro_textattr2(BulletFont,BulletText, wxString, BULLET_TEXT, wrap)
 macro_textattr(BulletName,wxString,BULLET_NAME,wrap)
 
 macro_textattr(URL,wxString,URL,wrap)
@@ -128,6 +128,10 @@ void _from_hash(VALUE hash, wxTextAttr *attr)
 	set_obj_option(hash, "right_indent", &wxTextAttr::SetRightIndent, attr);
 
 	set_obj_option(hash, "font_size", &wxTextAttr::SetFontSize, attr);
+
+	set_obj_option(hash, "font_point_size", &wxTextAttr::SetFontPointSize, attr);
+	set_obj_option(hash, "font_pixel_size", &wxTextAttr::SetFontPixelSize, attr);
+
 	set_obj_option(hash, "font_weight", &wxTextAttr::SetFontWeight, attr, unwrapenum<wxFontWeight>);
 	set_obj_option(hash, "font_face_name", &wxTextAttr::SetFontFaceName, attr);
 	set_obj_option(hash, "font_underlined", &wxTextAttr::SetFontUnderlined, attr);
@@ -279,6 +283,120 @@ DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
 	);
 }
 
+
+
+/*
+ * call-seq:
+ *   marshal_dump -> Array
+ *
+ * Provides marshalling support for use by the Marshal library.
+ * ===Return value
+ * Array
+ */
+DLL_LOCAL VALUE _marshal_dump(VALUE self)
+{
+	VALUE ary = rb_ary_new();
+
+	rb_ary_push(ary, _getTextColour(self));
+	rb_ary_push(ary, _getBackgroundColour(self));
+	rb_ary_push(ary, _getAlignment(self));
+
+	rb_ary_push(ary, _getTabs(self));
+	rb_ary_push(ary, _getLeftIndent(self));
+	rb_ary_push(ary, _getRightIndent(self));
+
+	//rb_ary_push(ary, _getFontSize(self));
+
+	rb_ary_push(ary, _getFontPointSize(self));
+	rb_ary_push(ary, _getFontPixelSize(self));
+	rb_ary_push(ary, _getFontStyle(self));
+	rb_ary_push(ary, _getFontWeight(self));
+	rb_ary_push(ary, _getFontFaceName(self));
+
+	rb_ary_push(ary, _getFontUnderlined(self));
+	rb_ary_push(ary, _getFontStrikethrough(self));
+
+	rb_ary_push(ary, _getFontFamily(self));
+
+	//rb_ary_push(ary, _getFont(self));
+
+	rb_ary_push(ary, _getCharacterStyleName(self));
+	rb_ary_push(ary, _getParagraphStyleName(self));
+	rb_ary_push(ary, _getListStyleName(self));
+
+	rb_ary_push(ary, _getParagraphSpacingAfter(self));
+	rb_ary_push(ary, _getParagraphSpacingBefore(self));
+	rb_ary_push(ary, _getLineSpacing(self));
+
+	rb_ary_push(ary, _getBulletStyle(self));
+	rb_ary_push(ary, _getBulletNumber(self));
+	rb_ary_push(ary, _getBulletText(self));
+	rb_ary_push(ary, _getBulletFont(self));
+	rb_ary_push(ary, _getBulletName(self));
+
+	rb_ary_push(ary, _getURL(self));
+
+	return ary;
+}
+
+#define __marshal_load_helper(m) 	if(!NIL_P(val = rb_ary_shift(data))) {\
+		_set##m(self, val);\
+	}
+
+/*
+ * call-seq:
+ *   marshal_load(array) -> nil
+ *
+ * Provides marshalling support for use by the Marshal library.
+ *
+ *
+ */
+DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
+{
+	data = rb_Array(data);
+	VALUE val;
+
+	__marshal_load_helper(TextColour)
+	__marshal_load_helper(BackgroundColour)
+	__marshal_load_helper(Alignment)
+
+	__marshal_load_helper(Tabs)
+	__marshal_load_helper(LeftIndent)
+	__marshal_load_helper(RightIndent)
+
+	//__marshal_load_helper(FontSize)
+
+	__marshal_load_helper(FontPointSize)
+	__marshal_load_helper(FontPixelSize)
+	__marshal_load_helper(FontStyle)
+	__marshal_load_helper(FontWeight)
+	__marshal_load_helper(FontFaceName)
+
+	__marshal_load_helper(FontUnderlined)
+	__marshal_load_helper(FontStrikethrough)
+
+	__marshal_load_helper(FontFamily)
+
+	//__marshal_load_helper(Font)
+
+	__marshal_load_helper(CharacterStyleName)
+	__marshal_load_helper(ParagraphStyleName)
+	__marshal_load_helper(ListStyleName)
+
+	__marshal_load_helper(ParagraphSpacingAfter)
+	__marshal_load_helper(ParagraphSpacingBefore)
+	__marshal_load_helper(LineSpacing)
+
+	__marshal_load_helper(BulletStyle)
+	__marshal_load_helper(BulletNumber)
+	__marshal_load_helper(BulletText)
+	__marshal_load_helper(BulletFont)
+	__marshal_load_helper(BulletName)
+
+	__marshal_load_helper(URL)
+
+	return self;
+}
 
 }
 }
@@ -467,6 +585,9 @@ DLL_LOCAL void Init_WXTextAttr(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXTextAttr,"==",RUBY_METHOD_FUNC(_equal),1);
 	rb_define_alias(rb_cWXTextAttr,"eql?","==");
+
+	rb_define_method(rb_cWXTextAttr,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
+	rb_define_method(rb_cWXTextAttr,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
 	registerType<wxTextAttr>(rb_cWXTextAttr);
 
