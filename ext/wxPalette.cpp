@@ -136,9 +136,7 @@ DLL_LOCAL VALUE _getHash(VALUE self)
 	{
 		unsigned char red,green,blue;
 		_self->GetRGB(i,&red,&green,&blue);
-		h = rb_hash_uint(h, red);
-		h = rb_hash_uint(h, green);
-		h = rb_hash_uint(h, blue);
+		h = rb_hash_uint32(h, red | (green << 8) | (blue << 16));
 	}
 
 	h = rb_hash_end(h);
@@ -218,9 +216,7 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
 	{
 		unsigned char red,green,blue;
 		_self->GetRGB(i,&red,&green,&blue);
-		rb_ary_store(ary,i*3,UINT2NUM(red));
-		rb_ary_store(ary,i*3+1,UINT2NUM(green));
-		rb_ary_store(ary,i*3+2,UINT2NUM(blue));
+		rb_ary_push(ary, UINT2NUM(red | (green << 8) | (blue << 16)));
 	}
 	return ary;
 }
@@ -236,7 +232,7 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
 DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 {
 	data = rb_Array(data);
-	std::size_t count = RARRAY_LEN(data) / 3;
+	std::size_t count = RARRAY_LEN(data);
 
 	unsigned char red[count];
 	unsigned char green[count];
@@ -244,9 +240,10 @@ DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 
 	for(std::size_t i = 0; i < count; ++i)
 	{
-		red[i]   = NUM2UINT(RARRAY_AREF(data,i*3));
-		green[i] = NUM2UINT(RARRAY_AREF(data,i*3+1));
-		blue[i]  = NUM2UINT(RARRAY_AREF(data,i*3+2));
+		unsigned int colRGB = NUM2UINT(RARRAY_AREF(data,i));
+		red[i]   = 0xFF & colRGB;
+		green[i] = 0xFF & (colRGB >> 8);
+		blue[i]  = 0xFF & (colRGB >> 16);
 	}
 
 	_self->Create(count,red,green,blue);
