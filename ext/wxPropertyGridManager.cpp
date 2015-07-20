@@ -24,6 +24,8 @@ singlereturn(GetCurrentPage)
 singlereturn(GetGrid)
 singlereturn(GetToolBar)
 
+singlereturn(GetPageCount)
+
 /*
  * call-seq:
  *   PropertyGridManager.new(parent, name, [options])
@@ -184,17 +186,20 @@ DLL_LOCAL VALUE _prepend_page(int argc,VALUE *argv,VALUE self)
 	return wrap(_self->InsertPage(0,unwrap<wxString>(label),unwrap<wxBitmap>(bitmap),cpage));
 }
 
-
-DLL_LOCAL VALUE _each_size(VALUE self)
-{
-	return UINT2NUM(_self->GetPageCount());
-}
-
+/*
+ * call-seq:
+ *   each_page -> Enumerator
+ *   each_page { | page| } -> self
+ *
+ * iterates the pages of this control.
+ * ===Return value
+ * self
+ *
+*/
 DLL_LOCAL VALUE _each(VALUE self)
 {
-	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_each_size));
-	std::size_t count = _self->GetPageCount();
-	for(std::size_t i = 0; i < count; ++i)
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_GetPageCount));
+	for(std::size_t i = 0; i < _self->GetPageCount(); ++i)
 	{
 		rb_yield(wrap(_self->GetPage(i)));
 	}
@@ -206,27 +211,33 @@ DLL_LOCAL VALUE _each(VALUE self)
 }
 #endif
 
+/*
+ * Document-class: WX::PropertyGridManager
+ *
+ * This class represents a PropertyGridManager with multiple pages.
+*/
+
 /* Document-const: DEFAULT_STYLE
  * default style for this control.
  */
-
-/* Document-method: tool_bar
- * call-seq:
- *   tool_bar -> WX::ToolBar
- *
- * returns the tool bar of this WX::PropertyGridManager when available.
- * ===Return value
- * WX::ToolBar
+/* Document-const: TOOLBAR
+ * Show toolbar for mode and page selection.
+ */
+/* Document-const: DESCRIPTION
+ * Show adjustable text box showing description.
  */
 
-/* Document-method: grid
- * call-seq:
- *   grid -> WX::PropertyGrid
- *
- * returns the grid of this WX::PropertyGridManager.
- * ===Return value
- * WX::PropertyGrid
+/* Document-attr: tool_bar
+ * the WX::ToolBar of this WX::PropertyGridManager when available.
  */
+/* Document-attr: grid
+ * the WX::PropertyGrid of this WX::PropertyGridManager.
+ */
+/* Document-attr: current_page
+ * the current WX::PropertyGridPage of this WX::PropertyGridManager.
+ */
+
+
 DLL_LOCAL void Init_WXPropertyGridManager(VALUE rb_mWX)
 {
 #if 0
