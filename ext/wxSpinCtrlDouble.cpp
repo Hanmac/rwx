@@ -7,6 +7,7 @@
 
 
 #include "wxSpinCtrlDouble.hpp"
+#include "wxSpinButton.hpp"
 #include "wxNotifyEvent.hpp"
 
 VALUE rb_cWXSpinCtrlDouble, rb_cWXSpinDoubleEvent;
@@ -20,6 +21,8 @@ namespace SpinCtrlDouble {
 macro_attr(Value,double)
 macro_attr(Increment,double)
 macro_attr(Digits,int)
+macro_attr(SnapToTicks, bool)
+
 
 singlereturn(GetMax)
 singlereturn(GetMin)
@@ -54,6 +57,8 @@ APP_PROTECT(wxSpinCtrlDouble)
  *   * min Float
  *   * max Float
  *   * value Float
+ *   * increment Float
+ *   * digits Integer
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
@@ -65,7 +70,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		wxWindowID id(wxID_ANY);
 		double value(0), min(0), max(100), inc(1);
 
-		long style(wxSP_ARROW_KEYS | wxALIGN_RIGHT);
+		int style(wxSP_ARROW_KEYS | wxALIGN_RIGHT);
 
 		if(rb_obj_is_kind_of(hash,rb_cHash))
 		{
@@ -75,6 +80,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"max",max);
 			set_hash_option(hash,"increment",inc);
 			set_hash_option(hash,"style",style);
+
+			SpinButton::set_style_flags(hash, style);
 		}
 
 		if(nil_check(parent)) {
@@ -86,6 +93,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	}
 
 	rb_call_super(argc,argv);
+
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		set_obj_option(hash,"digits",&wxSpinCtrlDouble::SetDigits,_self);
+	}
 
 	return self;
 }
@@ -103,14 +115,36 @@ macro_attr(Value,double)
 }
 #endif
 
+/*
+ * Document-class: WX::SpinCtrlDouble
+ *
+ * This class represents a SpinCtrl for Float.
+*/
+
 /* Document-attr: value
- * the value of the SpinCtrlDouble. Integer
+ * the value of the SpinCtrlDouble. Float
  */
 /* Document-attr: min
- * the minimum value of the SpinCtrlDouble. Integer
+ * the minimum value of the SpinCtrlDouble. Float
  */
 /* Document-attr: max
- * the maximum value of the SpinCtrlDouble. Integer
+ * the maximum value of the SpinCtrlDouble. Float
+ */
+
+
+/* Document-attr: increment
+ * the increment value of the SpinCtrlDouble. Float
+ */
+/* Document-attr: digits
+ * the digits value of the SpinCtrlDouble. Integer
+ */
+
+
+/* Document-const: ARROW_KEYS
+ *   The user can use arrow keys to change the value.
+ */
+/* Document-const: WRAP
+ *   The value wraps at the minimum and maximum.
  */
 
 DLL_LOCAL void Init_WXSpinCtrlDouble(VALUE rb_mWX)
@@ -148,6 +182,10 @@ DLL_LOCAL void Init_WXSpinCtrlDouble(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXSpinCtrlDouble,"digits",_getDigits,_setDigits);
 	rb_define_attr_method(rb_cWXSpinCtrlDouble,"min",_GetMin,_setMin);
 	rb_define_attr_method(rb_cWXSpinCtrlDouble,"max",_GetMax,_setMax);
+
+	//from SpinButton
+	rb_define_const(rb_cWXSpinCtrlDouble,"ARROW_KEYS",INT2NUM(wxSP_ARROW_KEYS));
+	rb_define_const(rb_cWXSpinCtrlDouble,"WRAP",INT2NUM(wxSP_WRAP));
 
 	rb_define_attr_method(rb_cWXSpinDoubleEvent,"value",Event::_getValue,Event::_setValue);
 

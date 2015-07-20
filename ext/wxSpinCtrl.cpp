@@ -19,6 +19,10 @@ namespace RubyWX {
 namespace SpinCtrl {
 
 macro_attr(Value,int)
+macro_attr(Increment,int)
+macro_attr(SnapToTicks, bool)
+macro_attr(Base,int)
+
 singlereturn(GetMax)
 singlereturn(GetMin)
 
@@ -63,7 +67,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		wxWindowID id(wxID_ANY);
 		int value(0), min(0), max(100);
 
-		long style(wxSP_ARROW_KEYS | wxALIGN_RIGHT);
+		int style(wxSP_ARROW_KEYS | wxALIGN_RIGHT);
 
 		if(rb_obj_is_kind_of(hash,rb_cHash))
 		{
@@ -71,7 +75,10 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"value",value);
 			set_hash_option(hash,"min",min);
 			set_hash_option(hash,"max",max);
+
 			set_hash_option(hash,"style",style);
+
+			SpinButton::set_style_flags(hash, style);
 		}
 
 		if(nil_check(parent)) {
@@ -84,12 +91,23 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	rb_call_super(argc,argv);
 
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		set_obj_option(hash,"increment",&wxSpinCtrl::SetIncrement,_self);
+	}
+
 	return self;
 }
 
 }
 }
 #endif
+
+/*
+ * Document-class: WX::SpinCtrl
+ *
+ * This class represents a SpinCtrl for Integer.
+*/
 
 /* Document-attr: value
  * the value of the SpinCtrl. Integer
@@ -99,6 +117,16 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
  */
 /* Document-attr: max
  * the maximum value of the SpinCtrl. Integer
+ */
+/* Document-attr: increment
+ * the increment value of the SpinCtrl. Integer
+ */
+
+/* Document-const: ARROW_KEYS
+ *   The user can use arrow keys to change the value.
+ */
+/* Document-const: WRAP
+ *   The value wraps at the minimum and maximum.
  */
 
 DLL_LOCAL void Init_WXSpinCtrl(VALUE rb_mWX)
@@ -117,6 +145,7 @@ DLL_LOCAL void Init_WXSpinCtrl(VALUE rb_mWX)
 
 #if 0
 	rb_define_attr(rb_cWXSpinCtrl,"value",1,1);
+	rb_define_attr(rb_cWXSpinCtrl,"increment",1,1);
 	rb_define_attr(rb_cWXSpinCtrl,"min",1,1);
 	rb_define_attr(rb_cWXSpinCtrl,"max",1,1);
 #endif
@@ -124,8 +153,13 @@ DLL_LOCAL void Init_WXSpinCtrl(VALUE rb_mWX)
 	rb_define_method(rb_cWXSpinCtrl,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
 	rb_define_attr_method(rb_cWXSpinCtrl,"value",_getValue,_setValue);
+	rb_define_attr_method(rb_cWXSpinCtrl,"increment",_getIncrement,_setIncrement);
 	rb_define_attr_method(rb_cWXSpinCtrl,"min",_GetMin,_setMin);
 	rb_define_attr_method(rb_cWXSpinCtrl,"max",_GetMax,_setMax);
+
+	//from SpinButton
+	rb_define_const(rb_cWXSpinCtrl,"ARROW_KEYS",INT2NUM(wxSP_ARROW_KEYS));
+	rb_define_const(rb_cWXSpinCtrl,"WRAP",INT2NUM(wxSP_WRAP));
 
 	registerInfo<wxSpinCtrl>(rb_cWXSpinCtrl);
 
