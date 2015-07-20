@@ -77,10 +77,20 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 #endif
 
+/*
+ * Document-class: WX::RadioButton
+ *
+ * This class represents a RadioButton.
+*/
 
 /* Document-attr: value
  * the value of the RadioButton. bool
  */
+
+/* Document-const: GROUP
+ * says to start a new Radio group
+ */
+
 DLL_LOCAL void Init_WXRadioButton(VALUE rb_mWX)
 {
 #if 0
