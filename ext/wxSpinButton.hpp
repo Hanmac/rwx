@@ -17,4 +17,12 @@ void Init_WXSpinButton(VALUE rb_mWX);
 #include <wx/spinbutt.h>
 #endif
 
+namespace RubyWX {
+namespace SpinButton {
+
+void set_style_flags(VALUE hash,int& flags);
+
+}
+}
+
 #endif /* WXSPINBUTTON_HPP_ */

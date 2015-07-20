@@ -12,11 +12,19 @@
 VALUE rb_cWXSpinButton;
 VALUE rb_cWXSpinEvent;
 
-#if wxUSE_SPINBTN
-#define _self unwrap<wxSpinButton*>(self)
 
 namespace RubyWX {
 namespace SpinButton {
+
+// that style flags can be used for SpinCtrl even if SpinButton is not defined
+void set_style_flags(VALUE hash,int& flags)
+{
+	set_hash_flag_option(hash,"arrow_keys",wxSP_ARROW_KEYS,flags);
+	set_hash_flag_option(hash,"wrap",wxSP_WRAP,flags);
+}
+
+#if wxUSE_SPINBTN
+#define _self unwrap<wxSpinButton*>(self)
 
 APP_PROTECT(wxSpinButton)
 
@@ -25,6 +33,7 @@ macro_attr(Max,int)
 macro_attr(Min,int)
 
 singlereturn(IsVertical)
+
 
 /*
  * call-seq:
@@ -57,6 +66,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(hash,"style",style);
 
 			set_hash_flag_option(hash,"vertical",wxSP_VERTICAL,style);
+
+			set_style_flags(hash, style);
 		}
 
 		if(nil_check(parent)) {
@@ -86,9 +97,10 @@ namespace Event
 macro_attr(Value,int)
 }
 
-}
-}
 #endif
+
+}
+}
 
 
 
@@ -112,7 +124,13 @@ macro_attr(Value,int)
 */
 
 /* Document-const: VERTICAL
- *   Creates a vertical static line.
+ *   Specifies a vertical spin button. 
+ */
+/* Document-const: ARROW_KEYS
+ *   The user can use arrow keys to change the value.
+ */
+/* Document-const: WRAP
+ *   The value wraps at the minimum and maximum.
  */
 
 DLL_LOCAL void Init_WXSpinButton(VALUE rb_mWX)
@@ -146,7 +164,10 @@ DLL_LOCAL void Init_WXSpinButton(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXSpinButton,"max",_getMax,_setMax);
 
 	rb_define_method(rb_cWXSpinButton,"vertical?",RUBY_METHOD_FUNC(_IsVertical),0);
+
 	rb_define_const(rb_cWXSpinButton,"VERTICAL",INT2NUM(wxSP_VERTICAL));
+	rb_define_const(rb_cWXSpinButton,"ARROW_KEYS",INT2NUM(wxSP_ARROW_KEYS));
+	rb_define_const(rb_cWXSpinButton,"WRAP",INT2NUM(wxSP_WRAP));
 
 	rb_define_attr_method(rb_cWXSpinEvent,"value",Event::_getValue,Event::_setValue);
 
