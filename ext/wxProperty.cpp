@@ -549,6 +549,13 @@ VALUE find_prop_class(VALUE self,VALUE name)
 
 #endif
 
+
+/*
+ * Document-class: WX::Property
+ *
+ * This class represents a Property for a PropertyGrid.
+*/
+
 /* Document-attr: label
  * the label of the Property. String
  */
