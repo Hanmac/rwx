@@ -249,6 +249,18 @@ void rb_define_attr_method_missing(VALUE klass,const std::string& name, bool get
 
 
 
+/* Document-const: WXVERSION
+ *   String version of wxwidgets
+ */
+
+/* Document-const: WXVERSION_MAYOR
+ *   Integer of mayor of version of wxwidgets
+ */
+
+/* Document-const: WXVERSION_MINOR
+ *   Integer of minor of version of wxwidgets
+ */
+
 extern "C" void Init_rwx()
 {
 	//wxInitialize();
