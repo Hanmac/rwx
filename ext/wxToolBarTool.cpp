@@ -23,7 +23,7 @@ namespace RubyWX {
 namespace ToolBarTool {
 
 
-#define macro_tool_attr_func(name, type, get, set, settool) \
+#define macro_tool_attr_func(name, type, get, set, settool, con) \
 DLL_LOCAL VALUE _get##name(VALUE self)\
 { \
 	return wrap(_self->get());\
@@ -32,31 +32,36 @@ DLL_LOCAL VALUE _get##name(VALUE self)\
 DLL_LOCAL VALUE _set##name(VALUE self,VALUE other)\
 {\
 	rb_check_frozen(self);\
-	wxToolBarBase *toolbar = _self->GetToolBar();\
-	if(toolbar) {\
-		int id = _self->GetId();\
-		if(toolbar->FindById(id)) {\
-			toolbar->settool(id, unwrap<type>(other));\
-			return other;\
+	if(con) { \
+		wxToolBarBase *toolbar = _self->GetToolBar();\
+		if(toolbar) {\
+			int id = _self->GetId();\
+			if(toolbar->FindById(id)) {\
+				toolbar->settool(id, unwrap<type>(other));\
+				return other;\
+			}\
 		}\
+		_self->set(unwrap<type>(other));\
 	}\
-	_self->set(unwrap<type>(other));\
 	return other;\
 }
 
-#define macro_tool_attr(name, type) macro_tool_attr_func(name, type, Get##name, Set##name, SetTool##name)
-#define macro_tool_attr_bool(name, set) macro_tool_attr_func(name, bool, Is##name, set, set##Tool)
+#define macro_tool_attr(name, type) macro_tool_attr_func(name, type, Get##name, Set##name, SetTool##name, true)
+#define macro_tool_attr_bool(name, set) macro_tool_attr_func(name, bool, Is##name, set, set##Tool, true)
+#define macro_tool_attr_bool_con(name, set, con) macro_tool_attr_func(name, bool, Is##name, set, set##Tool, _self->con())
 
 macro_attr(Label, wxString)
 macro_tool_attr(ShortHelp, wxString)
 macro_tool_attr(LongHelp, wxString)
 
 #if wxUSE_MENUS
-macro_tool_attr_func(DropdownMenu,wxMenu*, GetDropdownMenu, SetDropdownMenu, SetDropdownMenu)
+macro_tool_attr_func(DropdownMenu,wxMenu*, GetDropdownMenu, SetDropdownMenu, SetDropdownMenu, true)
 #endif
 
 macro_tool_attr_bool(Enabled,Enable)
-macro_tool_attr_bool(Toggled,Toggle)
+macro_tool_attr_bool_con(Toggled, Toggle, CanBeToggled)
+
+macro_tool_attr_func(Toggleable, bool, CanBeToggled, SetToggle, SetToggle, true)
 
 singlereturn(GetToolBar)
 singlereturn(GetBitmap)
@@ -83,7 +88,7 @@ DLL_LOCAL VALUE _SetNormalBitmap(VALUE self,VALUE val)
 DLL_LOCAL VALUE _SetDisabledBitmap(VALUE self,VALUE val)
 {
 	rb_check_frozen(self);
-	wxBitmap bitmap = wrapBitmap(val,_self->GetId(),WRAP_BITMAP_RAISE,wxART_TOOLBAR);
+	wxBitmap bitmap = wrapBitmap(val,_self->GetId(),WRAP_BITMAP_NULL,wxART_TOOLBAR);
 
 	wxToolBarBase *toolbar = _self->GetToolBar();
 	if(toolbar) {

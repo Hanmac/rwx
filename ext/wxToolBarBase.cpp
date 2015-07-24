@@ -25,6 +25,96 @@ macro_attr(Margins,wxSize)
 macro_attr(ToolPacking,int)
 macro_attr(ToolSeparation,int)
 
+singlereturn(GetToolsCount)
+
+#define macro_attr_tool_item_get_func(attr, funcget)
+
+#define macro_attr_tool_item_func(attr,funcget,funcset,wrapset, con) \
+\
+DLL_LOCAL VALUE _get##attr(VALUE self,VALUE idx)\
+{\
+	wxToolBarToolBase* item = _getItemBase(_self, idx); \
+	if(item && con)\
+		return wrap(_self->funcget(item->GetId()));\
+	return Qnil;\
+}\
+DLL_LOCAL VALUE _set##attr(VALUE self,VALUE idx,VALUE val)\
+{\
+	rb_check_frozen(self);\
+	wxToolBarToolBase* item = _getItemBase(_self, idx); \
+	if(item && con)\
+		_self->funcset(item->GetId(),wrapset(val));\
+\
+	return self;\
+}
+
+#define macro_attr_tool_item(attr,type) macro_attr_tool_item_func(attr, Get##attr, Set##attr, unwrap<type>, true)
+#define macro_attr_tool_item_bool(attr, attr2, con) macro_attr_tool_item_func(attr, Get##attr, attr2, unwrap<bool>, con)
+
+DLL_LOCAL wxToolBarToolBase* _getItemBase(wxToolBarBase *toolbar, VALUE val)
+{
+	wxWindowID id = unwrapID(val);
+	wxToolBarToolBase* item = toolbar->FindById(id);
+
+	if(!item) {
+		int cidx = NUM2INT(val);
+		if(check_index(cidx,toolbar->GetToolsCount()))
+			item = const_cast<wxToolBarToolBase*>(toolbar->GetToolByPos(cidx));
+	}
+	
+	return item;
+}
+
+macro_attr_tool_item_bool(ToolState, ToggleTool, item->CanBeToggled())
+macro_attr_tool_item_bool(ToolEnabled, EnableTool, true)
+
+macro_attr_tool_item(ToolShortHelp, wxString)
+macro_attr_tool_item(ToolLongHelp, wxString)
+
+DLL_LOCAL VALUE _getToolNormalBitmap(VALUE self, VALUE idx)
+{
+	wxToolBarToolBase* item = _getItemBase(_self, idx);
+	if(item)
+		return wrap(item->GetNormalBitmap());
+	return Qnil;
+}
+
+DLL_LOCAL VALUE _getToolDisabledBitmap(VALUE self, VALUE idx)
+{
+	wxToolBarToolBase* item = _getItemBase(_self, idx);
+	if(item)
+		return wrap(item->GetDisabledBitmap());
+	return Qnil;
+}
+
+DLL_LOCAL VALUE _SetNormalBitmap(VALUE self, VALUE idx,VALUE val)
+{
+	rb_check_frozen(self);
+
+	wxToolBarToolBase* item = _getItemBase(_self, idx);
+	if(item) {
+		int id = item->GetId();
+		wxBitmap bitmap = wrapBitmap(val,id,WRAP_BITMAP_RAISE,wxART_TOOLBAR);
+		_self->SetToolNormalBitmap(id, bitmap);
+	}
+
+	return val;
+}
+
+DLL_LOCAL VALUE _SetDisabledBitmap(VALUE self, VALUE idx,VALUE val)
+{
+	rb_check_frozen(self);
+
+	wxToolBarToolBase* item = _getItemBase(_self, idx);
+	if(item) {
+		int id = item->GetId();
+		wxBitmap bitmap = wrapBitmap(val,id,WRAP_BITMAP_NULL,wxART_TOOLBAR);
+		_self->SetToolDisabledBitmap(id, bitmap);
+	}
+
+	return val;
+}
+
 void bind_callback(wxToolBarBase* toolbar,wxWindowID id)
 {
 	if(rb_block_given_p()){
@@ -500,16 +590,10 @@ DLL_LOCAL VALUE _prepend_stretchable_space(VALUE self)
 }
 
 
-DLL_LOCAL VALUE _each_size(VALUE self)
-{
-	return UINT2NUM(_self->GetToolsCount());
-}
-
 DLL_LOCAL VALUE _each(VALUE self)
 {
-	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_each_size));
-	std::size_t count = _self->GetToolsCount();
-	for(std::size_t i = 0; i < count; ++i)
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_GetToolsCount));
+	for(std::size_t i = 0; i < _self->GetToolsCount(); ++i)
 	{
 		rb_yield(wrap(const_cast<wxToolBarToolBase*>(_self->GetToolByPos(i))));
 	}
