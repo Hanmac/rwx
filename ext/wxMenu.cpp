@@ -27,7 +27,9 @@ macro_attr(EventHandler,wxEvtHandler*)
 
 singlereturn(AppendSeparator)
 singlereturn(PrependSeparator)
+singlereturn(IsAttached)
 
+singlefunc(Detach)
 
 APP_PROTECT(wxMenu)
 
@@ -51,11 +53,71 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 singlereturn(GetMenuBar)
 singlereturn(GetMenuItemCount)
 
+DLL_LOCAL VALUE _setMenuBar(VALUE self,VALUE frame)
+{
+	rb_check_frozen(self);
+
+	if(_self->IsAttached())
+		_self->Detach();
+
+	if(!NIL_P(frame)) {
+		_self->Attach(unwrap<wxMenuBar*>(frame));
+	}
+
+	return frame;
+}
+
+#define macro_attr_menu_item_func(attr,funcget,funcset,wrapget,wrapset) \
+\
+DLL_LOCAL VALUE _get##attr(VALUE self,VALUE idx)\
+{\
+	wxMenuItem* item = _getItemBase(_self, idx); \
+	if(item)\
+		return wrapget(_self->funcget(item->GetId()));\
+	return Qnil;\
+}\
+DLL_LOCAL VALUE _set##attr(VALUE self,VALUE idx,VALUE val)\
+{\
+	rb_check_frozen(self);\
+	wxMenuItem* item = _getItemBase(_self, idx); \
+	if(item)\
+		_self->funcset(item->GetId(),wrapset(val));\
+\
+	return self;\
+}
+
+#define macro_attr_menu_item(attr,type) macro_attr_menu_item_func(attr, Get##attr, Set##attr, wrap, unwrap<type>)
+#define macro_attr_menu_item_bool(attr, attr2) macro_attr_menu_item_func(attr, Is##attr, attr2, wrap, unwrap<bool>)
+
+DLL_LOCAL wxMenuItem* _getItemBase(wxMenu *menu, VALUE val)
+{
+	wxWindowID id = unwrapID(val);
+	wxMenuItem* item = menu->FindItem(id);
+
+	if(!item) {
+		int cidx = NUM2INT(val);
+		if(check_index(cidx,menu->GetMenuItemCount()))
+			item = menu->FindItemByPosition(cidx);
+	}
+
+	return item;
+}
+
+macro_attr_menu_item(Label, wxString)
+macro_attr_menu_item(HelpString, wxString)
+
+macro_attr_menu_item_bool(Enabled, Enable)
+macro_attr_menu_item_bool(Checked, Check)
+
+DLL_LOCAL VALUE _getItem(VALUE self,VALUE val)
+{
+	return wrap(_getItemBase(_self, val));
+}
+
 DLL_LOCAL VALUE _each(VALUE self)
 {
 	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_GetMenuItemCount));
-	std::size_t count = _self->GetMenuItemCount();
-	for(std::size_t i = 0;i < count;++i)
+	for(std::size_t i = 0;i < _self->GetMenuItemCount();++i)
 		rb_yield(wrap(_self->FindItemByPosition(i)));
 	return self;
 }
@@ -70,9 +132,9 @@ void bind_callback(wxMenu* menu,wxWindowID id)
 
 DLL_LOCAL bool check_title(wxWindowID wid, VALUE id, VALUE text)
 {
-	if(!wxIsStockID(wid) && (NIL_P(text) || RSTRING_LEN(text) == 0))
+	if(!wxIsStockID(wid) && (NIL_P(text) || RSTRING_LEN(rb_String(text)) == 0))
 	{
-		rb_raise(rb_eArgError,"id %" PRIsVALUE "s (%d) needs an text", RB_OBJ_STRING(id), wid);
+		rb_raise(rb_eArgError,"id '%" PRIsVALUE "' (%d) needs an text", RB_OBJ_STRING(id), wid);
 		return false;
 	}
 	return true;
@@ -229,6 +291,8 @@ DLL_LOCAL VALUE _appendShift(VALUE self,VALUE val)
 {
 	if(rb_obj_is_kind_of(val,rb_cWXMenuItem)) {
 		_self->Append(unwrap<wxMenuItem*>(val));
+	} else if(NIL_P(val)){
+		_self->AppendSeparator();
 	} else {
 		wxWindowID id = unwrapID(val);
 		if(!wxIsStockID(id))
@@ -396,6 +460,19 @@ DLL_LOCAL VALUE _insert_menu(int argc,VALUE *argv,VALUE self)
 }
 
 
+DLL_LOCAL VALUE _InsertSeparator(VALUE self,VALUE idx)
+{
+	int cidx = NUM2INT(idx);
+	if(check_index(cidx,_self->GetMenuItemCount()+1))
+	{
+		return wrap(_self->InsertSeparator(idx));
+	}
+	return Qnil;
+}
+
+
+
+
 DLL_LOCAL VALUE _prepend_base(int argc,VALUE *argv,VALUE self,wxItemKind kind)
 {
 	VALUE id,text,help;
@@ -552,6 +629,7 @@ DLL_LOCAL void Init_WXMenu(VALUE rb_mWX)
 #if 0
 	rb_define_attr(rb_cWXMenu,"title",1,1);
 	rb_define_attr(rb_cWXMenu,"parent",1,1);
+	rb_define_attr(rb_cWXMenu,"menubar",1,1);
 #endif
 
 	rb_define_method(rb_cWXMenu,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
@@ -561,6 +639,8 @@ DLL_LOCAL void Init_WXMenu(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXMenu,"title",_getTitle,_setTitle);
 	rb_define_attr_method(rb_cWXMenu,"parent",_getParent,_setParent);
+
+	rb_define_attr_method(rb_cWXMenu,"menubar",_GetMenuBar,_setMenuBar);
 
 	rb_define_method(rb_cWXMenu,"each",RUBY_METHOD_FUNC(_each),0);
 
@@ -576,6 +656,8 @@ DLL_LOCAL void Init_WXMenu(VALUE rb_mWX)
 	rb_define_method(rb_cWXMenu,"insert_radio",RUBY_METHOD_FUNC(_insertRadioItem),-1);
 	rb_define_method(rb_cWXMenu,"insert_menu",RUBY_METHOD_FUNC(_insert_menu),-1);
 
+	rb_define_method(rb_cWXMenu,"insert_separator",RUBY_METHOD_FUNC(_InsertSeparator),1);
+
 	rb_define_method(rb_cWXMenu,"prepend_normal",RUBY_METHOD_FUNC(_prependNormalItem),-1);
 	rb_define_method(rb_cWXMenu,"prepend_check",RUBY_METHOD_FUNC(_prependCheckItem),-1);
 	rb_define_method(rb_cWXMenu,"prepend_radio",RUBY_METHOD_FUNC(_prependRadioItem),-1);
@@ -583,10 +665,22 @@ DLL_LOCAL void Init_WXMenu(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXMenu,"prepend_separator",RUBY_METHOD_FUNC(_PrependSeparator),0);
 
+	rb_define_method(rb_cWXMenu,"get_item_label",RUBY_METHOD_FUNC(_getLabel),1);
+	rb_define_method(rb_cWXMenu,"set_item_label",RUBY_METHOD_FUNC(_setLabel),2);
+
+	rb_define_method(rb_cWXMenu,"get_item_help_string",RUBY_METHOD_FUNC(_getHelpString),1);
+	rb_define_method(rb_cWXMenu,"set_item_help_string",RUBY_METHOD_FUNC(_setHelpString),2);
+
+	rb_define_method(rb_cWXMenu,"get_item_checked",RUBY_METHOD_FUNC(_getChecked),1);
+	rb_define_method(rb_cWXMenu,"set_item_checked",RUBY_METHOD_FUNC(_setChecked),2);
+
+	rb_define_method(rb_cWXMenu,"get_item_enabled",RUBY_METHOD_FUNC(_getEnabled),1);
+	rb_define_method(rb_cWXMenu,"set_item_enabled",RUBY_METHOD_FUNC(_setEnabled),2);
+
+
+	rb_define_method(rb_cWXMenu,"[]",RUBY_METHOD_FUNC(_getItem),1);
 
 	rb_define_method(rb_cWXMenu,"<<",RUBY_METHOD_FUNC(_appendShift),1);
-
-	rb_define_method(rb_cWXMenu,"menubar",RUBY_METHOD_FUNC(_GetMenuBar),0);
 
 #if wxUSE_XRC
 	rb_define_singleton_method(rb_cWXMenu,"load_xrc",RUBY_METHOD_FUNC(_load_xrc),1);
