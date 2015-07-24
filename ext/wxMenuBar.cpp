@@ -20,25 +20,49 @@ namespace MenuBar {
 
 APP_PROTECT(wxMenuBar)
 
+singlereturn(GetMenuCount)
+singlereturn(IsAttached)
+
+singlereturn(GetFrame)
+
+singlefunc(Detach)
+
+
+DLL_LOCAL VALUE _SetFrame(VALUE self,VALUE frame)
+{
+	rb_check_frozen(self);
+
+	if(_self->IsAttached())
+		_self->Detach();
+
+	if(!NIL_P(frame)) {
+		_self->Attach(unwrap<wxFrame*>(frame));
+	}
+
+	return frame;
+}
+
+
+macro_attr_item_simple(MenuLabel, GetMenuCount, wxString)
+macro_attr_item(EnableTop, IsEnabledTop, EnableTop, GetMenuCount, bool)
+
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	rb_call_super(argc,argv);
 	return self;
 }
 
-DLL_LOCAL VALUE _each_size(VALUE self)
-{
-	return UINT2NUM(_self->GetMenuCount());
-}
-
-
 DLL_LOCAL VALUE _each(VALUE self)
 {
-	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_each_size));
-	std::size_t count = _self->GetMenuCount();
-	for(std::size_t i = 0;i < count;++i)
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_GetMenuCount));
+	for(std::size_t i = 0;i < _self->GetMenuCount();++i)
 		rb_yield(wrap(_self->GetMenu(i)));
 	return self;
+}
+
+DLL_LOCAL wxMenuItem* _getItemBase(wxMenuBar *menu, VALUE val)
+{
+	return menu->FindItem(unwrapID(val));
 }
 
 
@@ -124,6 +148,28 @@ DLL_LOCAL VALUE _insert(VALUE self,VALUE idx,VALUE menu)
 	return Qnil;
 }
 
+/*
+ * call-seq:
+ *   replace(idx, menu) -> WX::Menu
+ *   replace(idx, title) {|menu| } -> WX::Menu
+ * ===Arguments
+ * * idx Integer
+ * * menu WX::Menu
+ * * title String
+ *
+ * ===Return value
+ * WX::Menu
+ */
+DLL_LOCAL VALUE _replace(VALUE self,VALUE idx,VALUE menu)
+{
+	wxString name(wxEmptyString);
+	int cidx = NUM2INT(idx);
+
+	if(check_index(cidx,_self->GetMenuCount()))
+		return wrap(_self->Replace(cidx,add_base(menu,name),name));
+
+	return Qnil;
+}
 
 /*
  * call-seq:
@@ -142,7 +188,27 @@ DLL_LOCAL VALUE _prepend(VALUE self,VALUE menu)
 
 	return wrap(_self->Insert(0,add_base(menu,name),name));
 }
-singlereturn(GetFrame);
+
+/*
+ * call-seq:
+ *   remove(idx) -> WX::Menu
+ * ===Arguments
+ * * idx Integer
+ * * menu WX::Menu
+ * * title String
+ *
+ * ===Return value
+ * true/false
+ */
+DLL_LOCAL VALUE _remove(VALUE self,VALUE idx)
+{
+	int cidx = NUM2INT(idx);
+
+	if(check_index(cidx,_self->GetMenuCount()))
+		return wrap(_self->Remove(cidx));
+
+	return Qnil;
+}
 
 }
 }
@@ -170,6 +236,9 @@ DLL_LOCAL void Init_WXMenuBar(VALUE rb_mWX)
 	rb_define_method(rb_cWXMenuBar,"append",RUBY_METHOD_FUNC(_append),1);
 	rb_define_method(rb_cWXMenuBar,"insert",RUBY_METHOD_FUNC(_insert),2);
 	rb_define_method(rb_cWXMenuBar,"prepend",RUBY_METHOD_FUNC(_prepend),1);
+
+	rb_define_method(rb_cWXMenuBar,"replace",RUBY_METHOD_FUNC(_replace),2);
+	rb_define_method(rb_cWXMenuBar,"remove",RUBY_METHOD_FUNC(_remove),1);
 
 	rb_define_method(rb_cWXMenuBar,"frame",RUBY_METHOD_FUNC(_GetFrame),0);
 
