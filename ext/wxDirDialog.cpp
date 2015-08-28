@@ -47,6 +47,9 @@ DLL_LOCAL void set_default_values(VALUE hash, wxString &message, wxString &path,
  *   * path String default path
  *   * message String
  *
+ *   * must_exist Style Flag does set MUST_EXIST
+ *   * change_dir Style Flag does set CHANGE_DIR
+ *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -85,11 +88,29 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 macro_attr(Path,wxString)
 macro_attr(Message,wxString)
 
+/*
+ * call-seq:
+ *   dir_dialog([parent], [options]) -> String
+ *
+ * shows an DirDialog.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ *   * path String default path
+ *   * message String
+ *   * style Integer
+ *   * pos WX::Point
 
+ *   * must_exist Style Flag does set MUST_EXIST
+ *   * change_dir Style Flag does set CHANGE_DIR
+ * ===Return value
+ * selected path
+*/
 DLL_LOCAL VALUE _getUserDir(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,hash;
-	rb_scan_args(argc, argv, "02",&parent,&hash);
+	rb_scan_args(argc, argv, "01:",&parent,&hash);
 
 	app_protected();
 
@@ -118,6 +139,13 @@ DLL_LOCAL VALUE _getUserDir(int argc,VALUE *argv,VALUE self)
 
 #endif
 
+/* Document-attr: message
+ * the message of the DirDialog. String
+ */
+/* Document-attr: path
+ * the selected path of the DirDialog. String
+ */
+
 /* Document-const: DEFAULT_STYLE
  * default style for this control.
  */
@@ -129,6 +157,17 @@ DLL_LOCAL VALUE _getUserDir(int argc,VALUE *argv,VALUE self)
 /* Document-const: CHANGE_DIR
  *  Change the current working directory to the directory chosen by the user.
  */
+
+/* Document-const: DEFAULT_NAME
+ *  default name of this widget
+ */
+/* Document-const: DEFAULT_FOLDER
+ *  default folder for the dir dialog
+ */
+/* Document-const: DEFAULT_PROMPT
+ *  default prompt for the dir dialog
+ */
+
 DLL_LOCAL void Init_WXDirDialog(VALUE rb_mWX)
 {
 #if 0
@@ -145,6 +184,11 @@ DLL_LOCAL void Init_WXDirDialog(VALUE rb_mWX)
 	rb_define_alloc_func(rb_cWXDirDialog,_alloc);
 	rb_define_method(rb_cWXDirDialog,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
+#if 0
+	rb_define_attr(rb_cWXDirDialog,"message",1,1);
+	rb_define_attr(rb_cWXDirDialog,"path",1,1);
+#endif
+
 	rb_define_attr_method(rb_cWXDirDialog,"message",_getMessage,_setMessage);
 	rb_define_attr_method(rb_cWXDirDialog,"path",_getPath,_setPath);
 
@@ -153,6 +197,10 @@ DLL_LOCAL void Init_WXDirDialog(VALUE rb_mWX)
 	rb_define_const(rb_cWXDirDialog,"DEFAULT_STYLE",INT2NUM(wxDD_DEFAULT_STYLE));
 	rb_define_const(rb_cWXDirDialog,"MUST_EXIST",INT2NUM(wxDD_DIR_MUST_EXIST));
 	rb_define_const(rb_cWXDirDialog,"CHANGE_DIR",INT2NUM(wxDD_CHANGE_DIR));
+
+	rb_define_const(rb_cWXDirDialog,"DEFAULT_NAME",wrap(wxString(wxDirDialogNameStr)));
+	rb_define_const(rb_cWXDirDialog,"DEFAULT_FOLDER",wrap(wxString(wxDirDialogDefaultFolderStr)));
+	rb_define_const(rb_cWXDirDialog,"DEFAULT_PROMPT",wrap(wxString(wxDirSelectorPromptStr)));
 
 	registerInfo<wxDirDialog>(rb_cWXDirDialog);
 #endif
