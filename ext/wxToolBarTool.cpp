@@ -71,11 +71,11 @@ singlereturn(GetDisabledBitmap)
 DLL_LOCAL VALUE _SetNormalBitmap(VALUE self,VALUE val)
 {
 	rb_check_frozen(self);
-	wxBitmap bitmap = wrapBitmap(val,_self->GetId(),WRAP_BITMAP_RAISE,wxART_TOOLBAR);
+	int id = _self->GetId();
+	wxBitmap bitmap = wrapBitmap(val,id,WRAP_BITMAP_RAISE,wxART_TOOLBAR);
 
 	wxToolBarBase *toolbar = _self->GetToolBar();
 	if(toolbar) {
-		int id = _self->GetId();
 		if(toolbar->FindById(id)) {
 			toolbar->SetToolNormalBitmap(id, bitmap);
 			return val;
@@ -88,11 +88,11 @@ DLL_LOCAL VALUE _SetNormalBitmap(VALUE self,VALUE val)
 DLL_LOCAL VALUE _SetDisabledBitmap(VALUE self,VALUE val)
 {
 	rb_check_frozen(self);
-	wxBitmap bitmap = wrapBitmap(val,_self->GetId(),WRAP_BITMAP_NULL,wxART_TOOLBAR);
+	int id = _self->GetId();
+	wxBitmap bitmap = wrapBitmap(val,id,WRAP_BITMAP_NULL,wxART_TOOLBAR);
 
 	wxToolBarBase *toolbar = _self->GetToolBar();
 	if(toolbar) {
-		int id = _self->GetId();
 		if(toolbar->FindById(id)) {
 			toolbar->SetToolDisabledBitmap(id, bitmap);
 			return val;
