@@ -36,6 +36,15 @@ APP_PROTECT(wxFileDialog)
  *   * filename String default filename
  *   * path String default path
  *   * message String
+
+ *   * open Style flag, does set OPEN
+ *   * save Style flag, does set SAVE
+ *   * overwrite_prompt Style flag, does set OVERWRITE_PROMPT
+ *   * no_follow Style flag, does set NO_FOLLOW
+ *   * must_exist Style flag, does set MUST_EXIST
+ *   * multiple Style flag, does set MULTIPLE
+ *   * change_dir Style flag, does set CHANGE_DIR
+ *   * preview Style flag, does set PREVIEW
  *
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
