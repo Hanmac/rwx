@@ -19,6 +19,19 @@ namespace ColourDialog {
 
 APP_PROTECT(wxColourDialog)
 
+/*
+ * call-seq:
+ *   ColorDialog.new(parent, name, [options])
+ *   ColorDialog.new(parent, [options])
+ *
+ * creates a new ColorDialog widget.
+ * ===Arguments
+ * * parent of this window or nil
+ * * name is a String describing a resource in a loaded xrc
+ *
+ * * options: Hash with possible options to set
+ *
+*/
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE parent,name,hash;
@@ -42,6 +55,7 @@ DLL_LOCAL VALUE _getCustomColors(VALUE self)
 		rb_ary_push(result,wrap(data.GetCustomColour(i)));
 	return result;
 }
+
 DLL_LOCAL VALUE _setCustomColors(VALUE self,VALUE val)
 {
 	rb_check_frozen(self);
@@ -54,21 +68,95 @@ DLL_LOCAL VALUE _setCustomColors(VALUE self,VALUE val)
 }
 
 
+/*
+ * call-seq:
+ *   get_custom_color(pos) -> WX::Color or nil
+ *
+ * gets a custom color
+ * ===Arguments
+ * * pos position of the custom color. Integer
+ * ===Return value
+ * WX::Color or nil
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the possible count of custom colors.
+*/
+DLL_LOCAL VALUE _getCustomColor(VALUE self, VALUE idx)
+{
+	int i = NUM2INT(idx);
+
+	wxColourData &data = _self->GetColourData();
+	if(check_index(i, wxColourData::NUM_CUSTOM))
+		return wrap(data.GetCustomColour(i));
+
+	return Qnil;
+}
+
+/*
+ * call-seq:
+ *   set_custom_color(pos, color) -> self
+ *
+ * sets a custom color
+ * ===Arguments
+ * * pos position of the custom color. Integer
+ * * color WX::Color
+ * ===Return value
+ * self
+ * === Exceptions
+ * [IndexError]
+ * * pos is greater than the possible count of custom colors.
+*/
+DLL_LOCAL VALUE _setCustomColor(VALUE self, VALUE idx, VALUE col)
+{
+	int i = NUM2INT(idx);
+
+	wxColourData &data = _self->GetColourData();
+	if(check_index(i, wxColourData::NUM_CUSTOM))
+		data.SetCustomColour(i,unwrap<wxColor>(col));
+
+	return self;
+}
+
+
+/*
+ * call-seq:
+ *   color_dialog(parent, [caption], [color]) -> color
+ *
+ * shows a color dialog
+ * ===Arguments
+ * * parent of this window or nil
+ * * caption String
+ * * color WX::Color
+ * ===Return value
+ * color WX::Color
+*/
 DLL_LOCAL VALUE _getUserColor(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,caption;
-	rb_scan_args(argc, argv, "11",&parent,&caption);
+	VALUE parent,caption, col;
+	rb_scan_args(argc, argv, "12",&parent,&caption, &col);
 
 	app_protected();
 
-	wxColor col = wxGetColourFromUser(unwrap<wxWindow*>(parent),*wxBLACK,unwrap<wxString>(caption));
-	return col.IsOk() ? wrap(col) : Qnil;
+	wxColor def = *wxBLACK;
+
+	if(!NIL_P(col))
+		def = unwrap<wxColor>(col);
+
+	return wrap(wxGetColourFromUser(unwrap<wxWindow*>(parent),def,unwrap<wxString>(caption)));
+
 }
 
 }
 }
 
 #endif
+
+/* Document-attr: color
+ * the selected color of the ColorDialog. WX::Color
+ */
+/* Document-attr: custom_colors
+ * the custom colors of the ColorDialog. [WX::Color]
+ */
 
 DLL_LOCAL void Init_WXColorDialog(VALUE rb_mWX)
 {
@@ -87,8 +175,16 @@ DLL_LOCAL void Init_WXColorDialog(VALUE rb_mWX)
 	rb_define_alloc_func(rb_cWXColorDialog,_alloc);
 	rb_define_method(rb_cWXColorDialog,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
+#if 0
+	rb_define_attr(rb_cWXColorDialog,"color",1,1);
+	rb_define_attr(rb_cWXColorDialog,"custom_colors",1,1);
+#endif
+
 	rb_define_attr_method(rb_cWXColorDialog,"color",_getColour,_setColour);
 	rb_define_attr_method(rb_cWXColorDialog,"custom_colors",_getCustomColors,_setCustomColors);
+
+	rb_define_method(rb_cWXColorDialog,"get_custom_color",RUBY_METHOD_FUNC(_getCustomColor),1);
+	rb_define_method(rb_cWXColorDialog,"set_custom_color",RUBY_METHOD_FUNC(_setCustomColor),2);
 
 	rb_define_module_function(rb_mWX,"color_dialog",RUBY_METHOD_FUNC(_getUserColor),-1);
 
