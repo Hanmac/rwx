@@ -68,8 +68,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 #endif
 
-/* Document-attr: font
- * the font of the ColorPickerWidget. WX::Color
+/* Document-attr: color
+ * the color of the ColorPickerWidget. WX::Color
  */
 
 /* Document-const: DEFAULT_STYLE
