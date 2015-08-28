@@ -40,7 +40,7 @@ namespace AboutDlg {
 APP_PROTECT(RubyAboutDlg)
 
 
-wxAboutDialogInfo toInto(VALUE hash)
+DLL_LOCAL wxAboutDialogInfo toInto(VALUE hash)
 {
 	wxAboutDialogInfo info;
 	if(NIL_P(hash))
@@ -63,6 +63,27 @@ wxAboutDialogInfo toInto(VALUE hash)
 	return info;
 }
 
+/*
+ * call-seq:
+ *   about_box(parent, [options])
+ *
+ * shows an about box.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ *   * name String
+ *   * version String
+ *   * description String
+ *   * copyright String
+ *   * licence String
+ *   * web_site [url, desc]
+ *   * icon String, or WX::Bitmap
+ *   * developers [String]
+ *   * doc_writers [String]
+ *   * artists [String]
+ *   * translators [String]
+*/
 DLL_LOCAL VALUE _aboutBox(int argc,VALUE *argv,VALUE self)
 {
 	VALUE hash,parent;
@@ -79,6 +100,28 @@ DLL_LOCAL VALUE _aboutBox(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
+
+/*
+ * call-seq:
+ *   generic_about_box(parent, [options])
+ *
+ * shows a generic about box.
+ * ===Arguments
+ * * parent of this window or nil
+ *
+ * *options: Hash with possible options to set:
+ *   * name String
+ *   * version String
+ *   * description String
+ *   * copyright String
+ *   * licence String
+ *   * web_site [url, desc]
+ *   * icon String, or WX::Bitmap
+ *   * developers [String]
+ *   * doc_writers [String]
+ *   * artists [String]
+ *   * translators [String]
+*/
 DLL_LOCAL VALUE _genericaboutBox(int argc,VALUE *argv,VALUE self)
 {
 	VALUE hash,parent;
@@ -97,31 +140,56 @@ DLL_LOCAL VALUE _genericaboutBox(int argc,VALUE *argv,VALUE self)
 
 /*
  * call-seq:
- *   SingleChoiceDialog.new(parent, [options])
+ *   AboutDialog.new(parent, [options])
  *
- * creates a new SingleChoiceDialog widget.
+ * creates a new AboutDialog widget.
  * ===Arguments
  * * parent of this window or nil
  *
  * *options: Hash with possible options to set
- *
+ *   * name String
+ *   * version String
+ *   * description String
+ *   * copyright String
+ *   * licence String
+ *   * web_site [url, desc]
+ *   * icon String, or WX::Bitmap
+ *   * developers [String]
+ *   * doc_writers [String]
+ *   * artists [String]
+ *   * translators [String]
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,info;
-	rb_scan_args(argc, argv, "11",&parent,&info);
+	VALUE parent, name, hash;
 
+	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
 
-	if(!_created){
-
-		_self->Create(toInto(info),unwrap<wxWindow*>(parent));
-		
+	if(!_created && !rb_obj_is_kind_of(name,rb_cString)) {
+		_self->Create(toInto(hash),unwrap<wxWindow*>(parent));
 	}
+
 	rb_call_super(argc,argv);
 	return self;
 
 }
 
+
+/*
+ * call-seq:
+ *   add_control(control, [sizerflags]) -> self
+ *   add_control(klass, [sizerflags], [options]) -> self
+ *
+ * add a control to the about dialog.
+ * ===Arguments
+ * * control. WX::Control
+ * * klass Class
+ * * options Hash to create the control
+ * * sizerflags Hash
+ * ===Return value
+ * self
+ *
+*/
 VALUE _addControl(int argc,VALUE *argv,VALUE self)
 {
 	VALUE control,sizer,arg;
@@ -139,6 +207,17 @@ VALUE _addControl(int argc,VALUE *argv,VALUE self)
 }
 
 
+/*
+ * call-seq:
+ *   add_text(text) -> self
+ *
+ * add a text to the about dialog.
+ * ===Arguments
+ * * text. String
+ * ===Return value
+ * self
+ *
+*/
 VALUE _addText(VALUE self,VALUE text)
 {
 	_self->AddText(unwrap<wxString>(text));
@@ -146,6 +225,18 @@ VALUE _addText(VALUE self,VALUE text)
 }
 
 #if wxUSE_COLLPANE
+/*
+ * call-seq:
+ *   add_collapsible_pane(label, text) -> self
+ *
+ * add a collapsible pane into the about dialog.
+ * ===Arguments
+ * * label. String
+ * * text. String
+ * ===Return value
+ * self
+ *
+*/
 VALUE _addCollapsiblePane(VALUE self,VALUE title,VALUE text)
 {
 	_self->AddCollapsiblePane(unwrap<wxString>(title),unwrap<wxString>(text));
