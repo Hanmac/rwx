@@ -57,7 +57,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			if(title.empty() && !wxTheApp->GetTopWindow())
 				title = wxTheApp->GetAppName();
 
-			if((style & wxFRAME_FLOAT_ON_PARENT == 0) || nil_check(parent))
+			if(((style & wxFRAME_FLOAT_ON_PARENT) == 0) || nil_check(parent))
 			{
 				_self->Create(
 					unwrap<wxWindow*>(parent),id,title,
