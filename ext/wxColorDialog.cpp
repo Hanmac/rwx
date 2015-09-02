@@ -158,6 +158,11 @@ DLL_LOCAL VALUE _getUserColor(int argc,VALUE *argv,VALUE self)
  * the custom colors of the ColorDialog. [WX::Color]
  */
 
+
+/* Document-const: NUM_CUSTOM
+ *   shows how many custom colors are allowed.
+ */
+
 DLL_LOCAL void Init_WXColorDialog(VALUE rb_mWX)
 {
 #if 0
@@ -187,6 +192,8 @@ DLL_LOCAL void Init_WXColorDialog(VALUE rb_mWX)
 	rb_define_method(rb_cWXColorDialog,"set_custom_color",RUBY_METHOD_FUNC(_setCustomColor),2);
 
 	rb_define_module_function(rb_mWX,"color_dialog",RUBY_METHOD_FUNC(_getUserColor),-1);
+
+	rb_define_const(rb_cWXColorDialog,"NUM_CUSTOM",INT2NUM(wxColourData::NUM_CUSTOM));
 
 	registerInfo<wxColourDialog>(rb_cWXColorDialog);
 #endif
