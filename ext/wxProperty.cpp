@@ -72,6 +72,7 @@ singlereturn(IsRoot)
 singlereturn(IsCategory)
 
 singlereturn(HasVisibleChildren)
+singlereturn(GetChildCount)
 
 singlereturn(GetValue)
 singlereturn(GetDefaultValue)
@@ -186,15 +187,6 @@ DLL_LOCAL VALUE _hide(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-
-
-DLL_LOCAL VALUE _each_child_size(VALUE self)
-{
-	return UINT2NUM(_self->GetChildCount());
-}
-
-
-
 /*
  * call-seq:
  *   each_child -> Enumerator
@@ -207,7 +199,7 @@ DLL_LOCAL VALUE _each_child_size(VALUE self)
 */
 DLL_LOCAL VALUE _each_child(VALUE self)
 {
-	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_each_child_size));
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_GetChildCount));
 	std::size_t count = _self->GetChildCount();
 	for(std::size_t i = 0; i < count; ++i)
 		rb_yield(wrap(_self->Item(i)));
