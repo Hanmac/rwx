@@ -106,6 +106,21 @@
 #define Check_TypedStruct(v,t) rb_check_typeddata((VALUE)(v),(t))
 #endif
 
+/** 
+ * macros are now prefixed, use newer ones but define them if they are missing
+ */
+
+#ifndef RB_NUM2INT
+#define RB_NUM2INT NUM2INT
+#define RB_INT2NUM INT2NUM
+#define RB_NUM2UINT NUM2UINT
+#define RB_UINT2NUM UINT2NUM
+#define RB_NUM2LONG NUM2LONG
+#define RB_LONG2NUM LONG2NUM
+#define RB_NUM2ULONG NUM2ULONG
+#define RB_ULONG2NUM ULONG2NUM
+#endif
+
 template< class T > struct remove_pointer                    {typedef T type;};
 template< class T > struct remove_pointer<T*>                {typedef T type;};
 template< class T > struct remove_pointer<T* const>          {typedef T type;};

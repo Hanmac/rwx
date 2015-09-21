@@ -264,11 +264,11 @@ VALUE wrap< bool >(const bool &st )
 	return st ? Qtrue : Qfalse;
 }
 
-type_wrap(int,NUM2INT,INT2NUM)
+type_wrap(int,RB_NUM2INT,RB_INT2NUM)
 type_wrap(double,NUM2DBL,DBL2NUM)
-type_wrap(unsigned int,NUM2UINT,UINT2NUM)
-type_wrap(long,NUM2LONG,LONG2NUM)
-type_wrap(unsigned long,NUM2ULONG,ULONG2NUM)
+type_wrap(unsigned int,RB_NUM2UINT,RB_UINT2NUM)
+type_wrap(long,RB_NUM2LONG,RB_LONG2NUM)
+type_wrap(unsigned long,RB_NUM2ULONG,RB_ULONG2NUM)
 
 template <>
 VALUE wrap< wxString >(const wxString &st )
@@ -398,7 +398,7 @@ int unwrapenum(const VALUE &arg, const std::string& name)
 			for(size_t i = 0; i < count; ++i)
 				result = result | unwrapenum(RARRAY_AREF(arg,i),name);
 		}else
-			return NUM2INT(arg);
+			return RB_NUM2INT(arg);
 	}
 	return 0;
 }
