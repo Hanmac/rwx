@@ -4,9 +4,8 @@
 class FileCtrlPage < CommonPage
 
   def create_left_radioboxes(boxleft)
-    if WX::FileCtrl != WX::FileCtrlGeneric
-      @klass = add_radiobox(boxleft, "wxFileCtrl implementation", ["Native", "Generic"]) {recreate_widget}
-    end
+    @klass = add_radiobox(boxleft, "wxFileCtrl implementation", ["Native", "Generic"]) {recreate_widget}
+    @klass.set_item_enabled(0, false) if WX::FileCtrl == WX::FileCtrlGeneric
     @mode = add_radiobox(boxleft, "wxFileCtrl mode", ["Open", "Save"]) {recreate_widget}
   end
 
