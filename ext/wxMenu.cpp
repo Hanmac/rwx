@@ -67,12 +67,12 @@ DLL_LOCAL VALUE _setMenuBar(VALUE self,VALUE frame)
 	return frame;
 }
 
-#define macro_attr_menu_item_func(attr,funcget,funcset,wrapget,wrapset) \
+#define macro_attr_menu_item_func(attr,funcget,funcset,wrapget,wrapset, con) \
 \
 DLL_LOCAL VALUE _get##attr(VALUE self,VALUE idx)\
 {\
 	wxMenuItem* item = _getItemBase(_self, idx); \
-	if(item)\
+	if(item && con)\
 		return wrapget(_self->funcget(item->GetId()));\
 	return Qnil;\
 }\
@@ -80,20 +80,25 @@ DLL_LOCAL VALUE _set##attr(VALUE self,VALUE idx,VALUE val)\
 {\
 	rb_check_frozen(self);\
 	wxMenuItem* item = _getItemBase(_self, idx); \
-	if(item)\
+	if(item && con)\
 		_self->funcset(item->GetId(),wrapset(val));\
 \
 	return self;\
 }
 
-#define macro_attr_menu_item(attr,type) macro_attr_menu_item_func(attr, Get##attr, Set##attr, wrap, unwrap<type>)
-#define macro_attr_menu_item_bool(attr, attr2) macro_attr_menu_item_func(attr, Is##attr, attr2, wrap, unwrap<bool>)
+#define macro_attr_menu_item(attr,type) macro_attr_menu_item_func(attr, Get##attr, Set##attr, wrap, unwrap<type>, true)
+#define macro_attr_menu_item_bool(attr, attr2, con) macro_attr_menu_item_func(attr, Is##attr, attr2, wrap, unwrap<bool>, con)
 
 DLL_LOCAL wxMenuItem* _getItemBase(wxMenu *menu, VALUE val)
 {
-	wxWindowID id = unwrapID(val);
-	wxMenuItem* item = menu->FindItem(id);
+	wxMenuItem* item = NULL;
 
+	if(rb_obj_is_kind_of(val, rb_cString)) {
+		item = menu->FindItem(menu->FindItem(unwrap<wxString>(val)));
+	} else {
+		wxWindowID id = unwrapID(val);
+		item = menu->FindItem(id);
+	}
 	if(!item) {
 		int cidx = NUM2INT(val);
 		if(check_index(cidx,menu->GetMenuItemCount()))
@@ -106,8 +111,8 @@ DLL_LOCAL wxMenuItem* _getItemBase(wxMenu *menu, VALUE val)
 macro_attr_menu_item(Label, wxString)
 macro_attr_menu_item(HelpString, wxString)
 
-macro_attr_menu_item_bool(Enabled, Enable)
-macro_attr_menu_item_bool(Checked, Check)
+macro_attr_menu_item_bool(Enabled, Enable, true)
+macro_attr_menu_item_bool(Checked, Check, item->IsCheckable())
 
 DLL_LOCAL VALUE _getItem(VALUE self,VALUE val)
 {

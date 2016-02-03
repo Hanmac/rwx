@@ -29,23 +29,101 @@ macro_attr_with_func(Id,wrapID,unwrapID)
 macro_attr_enum(Kind,wxItemKind)
 macro_attr(SubMenu,wxMenu*)
 
-macro_attr(Help,wxString)
-
 macro_attr_bitmap_func(Bitmap, WRAP_BITMAP_NULL, wxART_MENU, _self->GetKind() == wxITEM_NORMAL)
 
-singlereturn(GetItemLabel)
+#define macro_menuitem_attr_get(name, get, gettool, con) \
+DLL_LOCAL VALUE _get##name(VALUE self)\
+{ \
+	if(con) { \
+		wxMenu *menu = _self->GetMenu();\
+		int id = _self->GetId();\
+		if(menu && menu->FindItem(id)) {\
+			return wrap(menu->gettool(id));\
+		}\
+		return wrap(_self->get());\
+	}else {\
+		return Qnil;\
+	}\
+}\
+
+
+
+#define macro_menuitem_attr_func(name, type, get, set, gettool, settool, con) \
+macro_menuitem_attr_get(name, get, gettool, con) \
+DLL_LOCAL VALUE _set##name(VALUE self,VALUE other)\
+{\
+	rb_check_frozen(self);\
+	if(con) { \
+		wxMenu *menu = _self->GetMenu();\
+		if(menu) {\
+			int id = _self->GetId();\
+			if(menu->FindItem(id)) {\
+				menu->settool(id, unwrap<type>(other));\
+				return other;\
+			}\
+		}\
+		_self->set(unwrap<type>(other));\
+	}\
+	return other;\
+}
+
+macro_menuitem_attr_func(Help, wxString, GetHelp, SetHelp, GetHelpString, SetHelpString, true)
+macro_menuitem_attr_func(Enabled, bool, IsEnabled, Enable, IsEnabled, Enable, true)
+macro_menuitem_attr_func(Checked, bool, IsChecked, Check, IsChecked, Check, _self->GetMenu() && _self->IsCheckable())
+
+macro_menuitem_attr_get(ItemLabel, GetItemLabel, GetLabel, true)
 
 DLL_LOCAL VALUE _setItemLabel(VALUE self,VALUE val)
 {
 	rb_check_frozen(self);
 	wxString cval(unwrap<wxString>(val));
 
-	if((!_self->IsSeparator() || !wxIsStockID(_self->GetId())) && cval.empty()){
-		rb_raise(rb_eArgError,"id '%" PRIsVALUE "' (%d) needs an text", RB_OBJ_STRING(_getId(self)), _self->GetId());
+	wxWindowID id = _self->GetId();
+
+	if((!_self->IsSeparator() || !wxIsStockID(id)) && cval.empty()){
+		rb_raise(rb_eArgError,"id '%" PRIsVALUE "' (%d) needs an text", RB_OBJ_STRING(_getId(self)), id);
 	}
-	_self->SetItemLabel(cval);
+
+	wxMenu *menu = _self->GetMenu();
+
+	if(menu && menu->FindItem(id)) {
+		menu->SetLabel(id, cval);
+
+	} else {
+		_self->SetItemLabel(cval);
+	}
 
 	return val;
+}
+
+DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
+{
+	VALUE hash;
+	rb_scan_args(argc, argv, "00:",&hash);
+
+	wxMenu *parentMenu = NULL;
+	int id = wxID_SEPARATOR;
+	wxString text = wxEmptyString;
+	wxString help = wxEmptyString;
+	wxItemKind kind = wxITEM_NORMAL;
+	wxMenu *subMenu = NULL;
+
+	if(!NIL_P(hash))
+	{
+			set_hash_option(hash,"id",id,unwrapID);
+			set_hash_option(hash,"text",text);
+			set_hash_option(hash,"help",help);
+
+			set_hash_option(hash,"kind",kind,unwrapenum<wxItemKind>);
+
+			set_hash_option(hash,"help",help);
+			set_hash_option(hash,"parent",parentMenu);
+			set_hash_option(hash,"sub",subMenu);
+	}
+
+	RTYPEDDATA_DATA(self) = wxMenuItemBase::New(parentMenu,id, text, help, kind, subMenu);
+
+	return self;
 }
 
 /* Document-method: initialize_copy
@@ -56,9 +134,14 @@ DLL_LOCAL VALUE _setItemLabel(VALUE self,VALUE val)
 */
 DLL_LOCAL VALUE _initialize_copy(VALUE self,VALUE other)
 {
-	_setId(self,_getId(other));
-	_setItemLabel(self,_GetItemLabel(other));
 	_self->SetKind( unwrap<wxMenuItem*>(other)->GetKind() );
+
+	_setId(self,_getId(other));
+	VALUE val = _getItemLabel(other);
+
+	if(RSTRING_LEN(rb_String(val)) != 0)
+		_setItemLabel(self,val);
+
 	_setSubMenu(self,_getSubMenu(other));
 	_setHelp(self,_getHelp(other));
 	if(_self->GetKind() == wxITEM_NORMAL)
@@ -79,9 +162,9 @@ DLL_LOCAL VALUE _getHash(VALUE self)
 {
 	st_index_t h = rb_hash_start(0);
 
-	h = rb_hash_uint32(h, rb_str_hash(_GetItemLabel(self)));
 	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getId(self))));
 	h = rb_hash_uint(h, _self->GetKind());
+	h = rb_hash_uint32(h, rb_str_hash(_getItemLabel(self)));
 	h = rb_hash_uint(h, rb_str_hash(_getHelp(self)));
 	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getBitmap(self))));
 
@@ -112,12 +195,13 @@ VALUE _equal_block(equal_obj *obj)
 
 	if(obj->self->IsEnabled() != cother->IsEnabled())
 		return Qfalse;
-	
-	if(obj->self->IsCheckable())
+	/*
+	if(obj->self->IsCheckable() && cother->IsCheckable())
 	{
 		if(obj->self->IsChecked() != cother->IsChecked())
 			return Qfalse;
 	}
+	//*/
 
 	return Qtrue;
 }
@@ -159,9 +243,9 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
 {
 	VALUE result = rb_ary_new();
 
-	rb_ary_push(result,_getId(self));
-	rb_ary_push(result,_GetItemLabel(self));
 	rb_ary_push(result,INT2NUM(_self->GetKind()));
+	rb_ary_push(result,_getId(self));
+	rb_ary_push(result,_getItemLabel(self));
 //	rb_ary_push(result,_getSubMenu(self));
 	rb_ary_push(result,_getHelp(self));
 	rb_ary_push(result,_getBitmap(self));
@@ -180,9 +264,14 @@ DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 {
 	data = rb_Array(data);
 
-	_setId(self,RARRAY_AREF(data,0));
-	_setItemLabel(self,RARRAY_AREF(data,1));
-	_setKind(self,RARRAY_AREF(data,2));
+	_setKind(self,RARRAY_AREF(data,0));
+
+	_setId(self,RARRAY_AREF(data,1));
+	VALUE val = RARRAY_AREF(data,2);
+
+	if(RSTRING_LEN(rb_String(val)) != 0)
+		_setItemLabel(self,val);
+
 
 	_setHelp(self,RARRAY_AREF(data,3));
 
@@ -236,6 +325,9 @@ DLL_LOCAL void Init_WXMenuItem(VALUE rb_mWX)
 	rb_define_alloc_func(rb_cWXMenuItem,_alloc);
 
 #if 0
+
+	rb_define_attr(rb_cWXMenuItem,"kind",1,1);
+
 	rb_define_attr(rb_cWXMenuItem,"menu",1,1);
 	rb_define_attr(rb_cWXMenuItem,"label",1,1);
 	rb_define_attr(rb_cWXMenuItem,"id",1,1);
@@ -243,20 +335,28 @@ DLL_LOCAL void Init_WXMenuItem(VALUE rb_mWX)
 	rb_define_attr(rb_cWXMenuItem,"sub_menu",1,1);
 
 	rb_define_attr(rb_cWXMenuItem,"help",1,1);
+	rb_define_attr(rb_cWXMenuItem,"enabled",1,1);
+	rb_define_attr(rb_cWXMenuItem,"checked",1,1);
 
 	rb_define_attr(rb_cWXMenuItem,"bitmap",1,1);
 
 #endif
 
+	rb_define_method(rb_cWXMenuItem,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
+
 	rb_define_private_method(rb_cWXMenuItem,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),1);
 
+	rb_define_attr_method(rb_cWXMenuItem,"kind",_getKind,_setKind);
+
 	rb_define_attr_method(rb_cWXMenuItem,"menu",_getMenu,_setMenu);
-	rb_define_attr_method(rb_cWXMenuItem,"label",_GetItemLabel,_setItemLabel);
+	rb_define_attr_method(rb_cWXMenuItem,"label",_getItemLabel,_setItemLabel);
 	rb_define_attr_method(rb_cWXMenuItem,"id",_getId,_setId);
 
 	rb_define_attr_method(rb_cWXMenuItem,"sub_menu",_getSubMenu,_setSubMenu);
 
 	rb_define_attr_method(rb_cWXMenuItem,"help",_getHelp,_setHelp);
+	rb_define_attr_method(rb_cWXMenuItem,"enabled",_getEnabled,_setEnabled);
+	rb_define_attr_method(rb_cWXMenuItem,"checked",_getChecked,_setChecked);
 
 	rb_define_attr_method(rb_cWXMenuItem,"bitmap",_getBitmap,_setBitmap);
 
