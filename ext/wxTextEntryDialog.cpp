@@ -62,7 +62,15 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 				message,caption,value,style);
 		
 	}
+
 	rb_call_super(argc,argv);
+
+#ifdef HAVE_WXTEXTENTRYDIALOG_FORCEUPPER
+		if(rb_obj_is_kind_of(hash,rb_cHash))
+		{
+			set_obj_option(hash, "force_upper", &wxTextEntryDialog::ForceUpper,_self);
+		}
+#endif
 
 	return self;
 }

@@ -155,6 +155,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		set_obj_option(hash, "editable", &wxTextEntryBase::SetEditable,_self);
 		set_obj_option(hash, "margins", &wxTextEntryBase::SetMargins,_self);
 		set_obj_option(hash, "auto_complete", &wxTextEntryBase::AutoComplete,_self, unwrap<wxArrayString>);
+#ifdef HAVE_WXTEXTCTRL_FORCEUPPER
+		set_obj_option(hash, "force_upper", &wxTextEntryBase::ForceUpper,_self);
+#endif
 	}
 
 	return self;
