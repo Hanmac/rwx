@@ -483,6 +483,34 @@ DLL_LOCAL VALUE _WindowToClientSize(VALUE self,VALUE point)
 	return wrap(_self->WindowToClientSize(unwrap<wxSize>(point)));
 }
 
+#ifdef HAVE_WXWINDOW_FROMDIP
+
+DLL_LOCAL VALUE _FromDIP(VALUE self,VALUE value)
+{
+	if(is_wrapable<wxSize>(value)) {
+		return wrap(_self->FromDIP(unwrap<wxSize>(value)));
+	} else if(is_wrapable<wxPoint>(value)) {
+		return wrap(_self->FromDIP(unwrap<wxPoint>(value)));
+	} else {
+		return INT2NUM(wrap(_self->FromDIP(NUM2INT(value))));
+	}
+}
+#endif
+
+#ifdef HAVE_WXWINDOW_TODIP
+
+DLL_LOCAL VALUE _ToDIP(VALUE self,VALUE value)
+{
+	if(is_wrapable<wxSize>(value)) {
+		return wrap(_self->ToDIP(unwrap<wxSize>(value)));
+	} else if(is_wrapable<wxPoint>(value)) {
+		return wrap(_self->ToDIP(unwrap<wxPoint>(value)));
+	} else {
+		return INT2NUM(wrap(_self->ToDIP(NUM2INT(value))));
+	}
+}
+#endif
+
 }
 }
 
@@ -760,9 +788,13 @@ DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXWindow, "cursor",_getCursor,_setCursor);
 #if wxUSE_HELP
 	rb_define_attr_method(rb_cWXWindow, "help_text",_getHelpText,_setHelpText);
+#else
+	rb_define_attr_method_missing(rb_cWXWindow,"help_text");
 #endif // wxUSE_HELP
 #if wxUSE_TOOLTIPS
 	rb_define_attr_method(rb_cWXWindow, "tool_tip",_getToolTip,_setToolTip);
+#else
+	rb_define_attr_method_missing(rb_cWXWindow,"tool_tip");
 #endif // wxUSE_TOOLTIPS
 
 	rb_define_method(rb_cWXWindow,"show",RUBY_METHOD_FUNC(_Show),0);
@@ -834,6 +866,14 @@ DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXWindow,"client_to_window_size",RUBY_METHOD_FUNC(_ClientToWindowSize),1);
 	rb_define_method(rb_cWXWindow,"window_to_client_size",RUBY_METHOD_FUNC(_WindowToClientSize),1);
+
+#ifdef HAVE_WXWINDOW_FROMDIP
+	rb_define_method(rb_cWXWindow,"from_dip",RUBY_METHOD_FUNC(_FromDIP),1);
+#endif
+
+#ifdef HAVE_WXWINDOW_TODIP
+	rb_define_method(rb_cWXWindow,"to_dip",RUBY_METHOD_FUNC(_ToDIP),1);
+#endif
 
 
 	registerInfo<wxWindow>(rb_cWXWindow);
