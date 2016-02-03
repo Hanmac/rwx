@@ -1,8 +1,15 @@
 RSpec.describe WX::Menu::Item do
 
-  subject { i = WX::Menu::Item.new; i.id = :open; i.label = nil; i }
+	[:separator, :normal, :check, :radio].each do |k|
+		describe "with #{k}" do
+			subject do
+				item = WX::Menu::Item.new
+				item.kind = k
+				item
+			end
 
-  include_examples "copyable", true
-  include_examples "dumpable", true
-
+			include_examples "copyable", true
+			include_examples "dumpable", true
+		end
+	end
 end
