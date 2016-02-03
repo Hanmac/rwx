@@ -9,6 +9,7 @@
 #include "wxBitmap.hpp"
 #include "wxColor.hpp"
 #include "wxPalette.hpp"
+#include "wxWindow.hpp"
 #include "wxDC.hpp"
 #include <map>
 #include <wx/artprov.h>
@@ -314,7 +315,6 @@ DLL_LOCAL VALUE _getHash(VALUE self)
  */
 DLL_LOCAL VALUE _marshal_dump(VALUE self)
 {
-	//TODO: turn the result into something that is compatible when image is missing
 
 	VALUE result = rb_ary_new();
 #if wxUSE_IMAGE
@@ -566,7 +566,6 @@ VALUE _equal_block(equal_obj *obj)
 	}
 	return Qtrue;
 #endif
-	//TODO: add check with wxPIxelData if Image is not awailable
 
 	return Qfalse;
 
@@ -600,34 +599,129 @@ DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
 }
 }
 
+DLL_LOCAL wxArtID get_art_from_id(wxWindowID id)
+{
+	wxString result;
+	WindowArt::iterator it = windowArtHolder.find(id);
+
+	if(it == windowArtHolder.end())
+	{
+	#ifdef __WXGTK20__
+		if(wxIsStockID(id)) {
+			const char *bitmap = wxGetStockGtkID(id);
+			if(bitmap) {
+				result = wxString(bitmap);
+			}
+		}
+	#endif
+	}	else {
+		result = it->second;
+	}
+	return result;
+}
+
+DLL_LOCAL wxArtID get_art_from_sym(ID id)
+{
+	wxString artid;
+	RubyArt::iterator it = rubyArtHolder.find(id);
+	if(it != rubyArtHolder.end())
+		artid = it->second;
+
+	return artid;
+}
+
+DLL_LOCAL wxArtClient get_client_from_sym(ID id)
+{
+	if(id == rb_intern("toolbar"))
+		return wxART_TOOLBAR;
+	else if(id == rb_intern("menu"))
+		return wxART_MENU;
+	else if(id == rb_intern("frame_icon"))
+		return wxART_FRAME_ICON;
+	else if(id == rb_intern("cmn_dialog"))
+		return wxART_CMN_DIALOG;
+	else if(id == rb_intern("help_browser"))
+		return wxART_HELP_BROWSER;
+	else if(id == rb_intern("message_box"))
+		return wxART_MESSAGE_BOX;
+	else if(id == rb_intern("button"))
+		return wxART_BUTTON;
+	else if(id == rb_intern("list"))
+		return wxART_LIST;
+	else
+		return wxART_OTHER;
+}
+
+DLL_LOCAL VALUE _getArtFromID(VALUE self, VALUE id)
+{
+	wxArtID result = get_art_from_id(unwrapID(id));
+	return result != wxEmptyString ? wrap(result) : Qnil;
+}
+
+DLL_LOCAL VALUE _getBitmapFromID(int argc,VALUE *argv,VALUE self)
+{
+	VALUE id, client, size;
+	rb_scan_args(argc, argv, "12",&id, &client, &size);
+
+	wxArtClient artclient = wxART_OTHER;
+
+	wxArtID artid = get_art_from_id(unwrapID(id));
+
+	if(SYMBOL_P(client))
+		 artclient = get_client_from_sym(SYM2ID(client));
+
+	wxSize csize = NIL_P(size) ? wxDefaultSize : unwrap<wxSize>(size);
+	if(artid == wxEmptyString)
+		return Qnil;
+	return wrap(wxArtProvider::GetBitmap(artid,artclient,csize));
+}
+
+DLL_LOCAL VALUE _getBitmapProvider(int argc,VALUE *argv,VALUE self)
+{
+	VALUE id, client, size;
+	rb_scan_args(argc, argv, "12",&id, &client, &size);
+
+	wxArtClient artclient = wxART_OTHER;
+
+	wxArtID artid =	SYMBOL_P(client) ? get_art_from_sym(SYM2ID(client)) : unwrap<wxString>(id);
+
+	if(SYMBOL_P(client))
+		 artclient = get_client_from_sym(SYM2ID(client));
+
+	wxSize csize = NIL_P(size) ? wxDefaultSize : unwrap<wxSize>(size);
+	if(artid == wxEmptyString)
+		return Qnil;
+	return wrap(wxArtProvider::GetBitmap(artid,artclient,csize));
+}
+
+
 wxBitmap wrapBitmap(const VALUE &vbitmap,wxWindowID id,wrapBitmapType type,const wxArtClient &client)
 {
+	wxArtID artid;
+	bool useid = false;
 	if(NIL_P(vbitmap))
 	{
 		if(type == WRAP_BITMAP_NULL)
 			return wxNullBitmap;
 		else
 		{
-			WindowArt::iterator it = windowArtHolder.find(id);
-			if(it == windowArtHolder.end())
-			{
-				if(type == WRAP_BITMAP_RAISE)
-					rb_raise(rb_eArgError,"need an valid bitmap");
-				return wxNullBitmap;
-			}
-			return wxArtProvider::GetBitmap(it->second,client);
+			artid = get_art_from_id(id);
+			useid = true;
 		}
 	}else if(SYMBOL_P(vbitmap))
 	{
-		RubyArt::iterator it = rubyArtHolder.find(SYM2ID(vbitmap));
-		if(it == rubyArtHolder.end())
-		{
-			if(type == WRAP_BITMAP_RAISE)
-				rb_raise(rb_eArgError,"need an valid bitmap");
-			return wxNullBitmap;
-		}
-		return wxArtProvider::GetBitmap(it->second,client);
+		artid = get_art_from_sym(SYM2ID(vbitmap));
+		useid = true;
 	}
+
+	if(useid) {
+		if(artid != wxEmptyString) {
+			return wxArtProvider::GetBitmap(artid, client);
+		} else if(type == WRAP_BITMAP_RAISE)
+			rb_raise(rb_eArgError,"need an valid bitmap");
+		return wxNullBitmap;
+	}
+
 	wxBitmap temp = wxArtProvider::GetBitmap(unwrap<wxString>(vbitmap),client);
 	if(temp.IsOk())
 		return temp;
@@ -702,6 +796,9 @@ DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXBitmap,"save_file",RUBY_METHOD_FUNC(_save_file),-1);
 
+	rb_define_singleton_method(rb_cWXBitmap,"from_id",RUBY_METHOD_FUNC(_getBitmapFromID),-1);
+	rb_define_singleton_method(rb_cWXBitmap,"from_provider",RUBY_METHOD_FUNC(_getBitmapProvider),-1);
+
 	registerInfo<wxBitmap>(rb_cWXBitmap);
 
 	rb_cWXMask = rb_define_class_under(rb_mWX,"Mask",rb_cObject);
@@ -721,6 +818,9 @@ DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
 
 
 	registerArtID("copy",wxART_COPY,wxID_COPY);
+#ifdef wxART_EDIT
+	registerArtID("edit",wxART_EDIT,wxID_EDIT);
+#endif
 	registerArtID("cut",wxART_CUT,wxID_CUT);
 	registerArtID("paste",wxART_PASTE,wxID_PASTE);
 	registerArtID("delete",wxART_DELETE,wxID_DELETE);
