@@ -101,7 +101,7 @@ if(wxversion = pkg_config('wx', 'version'))
 		unless have_macro("wxHAS_EVENT_BIND","wx/wx.h")
 			abort("need wxHAS_EVENT_BIND, update your compiler!")
 		end
-		
+
 		#check for Default-Constructors
 		have_func("wxContextHelpButton()","wx/cshelp.h")
 		have_func("wxNumberEntryDialog()","wx/numdlg.h")
@@ -111,13 +111,14 @@ if(wxversion = pkg_config('wx', 'version'))
 		have_func("wxGenericMessageDialog()",["wx/wx.h", "wx/generic/msgdlgg.h"])
 		have_func("wxRichMessageDialog()","wx/richmsgdlg.h")
 		have_func("wxBusyInfoFlags()","wx/busyinfo.h")
-		
+		have_func("wxCollapsibleHeaderCtrl()",["wx/wx.h", "wx/collheaderctrl.h"])
+
 		#check for instance methods, that classes need to have default constuctor
 		have_member_func("wxFontPickerCtrl","GetSelectedColour","wx/fontpicker.h")
 		have_member_func("wxInfoBar","GetButtonCount","wx/infobar.h")
-		
+
 		have_member_func("wxOwnerDrawnComboBox","IsListEmpty","wx/odcombo.h")
-		
+
 		#check for enum flags
 		have_const("wxFD_NO_FOLLOW","wx/filedlg.h")
 		have_const("wxDIRCTRL_DEFAULT_STYLE",["wx/wx.h", "wx/dirctrl.h"])
@@ -129,10 +130,15 @@ if(wxversion = pkg_config('wx', 'version'))
 		have_member_func("wxStyledTextCtrl","IndicatorGetHoverStyle",["wx/wx.h", "wx/stc/stc.h"], 0)
 
 		have_member_func("wxStyledTextCtrl","GetCaretLineVisibleAlways",["wx/wx.h", "wx/stc/stc.h"])
-		
+
 
 		have_const("wxALIGN_CENTER_VERTICAL","wx/sizer.h")
 		have_member_func("wxSizerFlags","CenterVertical","wx/sizer.h")
+		have_member_func("wxWindow","FromDIP","wx/wx.h", 1)
+		have_member_func("wxWindow","ToDIP","wx/wx.h", 1)
+
+		have_member_func("wxTextCtrl","ForceUpper","wx/wx.h")
+		have_member_func("wxTextEntryDialog","ForceUpper","wx/wx.h")
 	}
 else
 		abort("wx-config executable not found!")
@@ -145,7 +151,12 @@ $defs.push("-DRUBY_UNTYPED_DATA_WARNING=1")
 drop_warn = [
 	"-Wdeclaration-after-statement",
 	"-Wimplicit-function-declaration",
-	"-Wextra"  #wxAUI is a bit buggy
+	"-Wextra",  #wxAUI is a bit buggy
+
+	'-Wno-self-assign',
+	'-Wno-constant-logical-operand',
+	'-Wno-parentheses-equality',
+	'-Wno-tautological-compare'
 ]
 
 if CONFIG["CC"] =~ /clang/
@@ -156,13 +167,16 @@ if CONFIG["CC"] =~ /clang/
 	drop_warn << "-Wpotentially-evaluated-expression" #currently wx does have to many
 end
 
+
 #drop some of the warn flags because they are not valid for C++
 negate_warn = drop_warn.reject {|s| CONFIG["warnflags"].gsub!(s, "") }
+
+negate_warn.reject! {|s| s["-Wno-"] }
 
 #negate some warn flags that i want to removed TODO need to test if that works
 CONFIG["warnflags"] << " " << negate_warn.map {|s| s.gsub("-W", "-Wno-") }.join(" ")
 
 with_cppflags(c11) {
-  create_header
-  create_makefile "rwx"
+	create_header
+	create_makefile "rwx"
 }
