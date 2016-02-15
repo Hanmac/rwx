@@ -157,6 +157,10 @@ VALUE wrapTypedPtr(wxGridCellAttr *sizer,VALUE klass);
 #endif
 
 
+namespace RubyWX {
+	VALUE _equal_rescue(VALUE val);
+};
+
 struct enumtype
 {
 	std::string name;

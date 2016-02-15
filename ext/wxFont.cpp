@@ -288,11 +288,6 @@ VALUE _equal_block(equal_obj *obj)
 	return wrap(*obj->self == unwrap<wxFont>(obj->other));
 }
 
-VALUE _equal_rescue(VALUE val)
-{
-	return Qfalse;
-}
-
 /*
  * call-seq:
  *   == color -> bool

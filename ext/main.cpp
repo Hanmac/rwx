@@ -540,3 +540,9 @@ bool check_index(int &cidx,const std::size_t &count)
 		rb_raise(rb_eIndexError,"%d out of index",cidx);
 	return !raise;
 }
+
+namespace RubyWX {
+	VALUE _equal_rescue(VALUE val) {
+		return Qnil;
+	}
+};

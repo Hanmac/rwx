@@ -820,11 +820,6 @@ VALUE _equal_block(equal_obj *obj)
 	return wrap(check_equal(*obj->self, unwrap<wxImage>(obj->other)));
 }
 
-VALUE _equal_rescue(VALUE val)
-{
-	return Qfalse;
-}
-
 /*
  * call-seq:
  *   == image -> bool

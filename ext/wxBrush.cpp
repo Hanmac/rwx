@@ -215,11 +215,6 @@ VALUE _equal_block(equal_obj *obj)
 
 }
 
-VALUE _equal_rescue(VALUE val)
-{
-	return Qfalse;
-}
-
 /*
  * call-seq:
  *   == brush -> bool

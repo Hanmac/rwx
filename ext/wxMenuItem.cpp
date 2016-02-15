@@ -206,11 +206,6 @@ VALUE _equal_block(equal_obj *obj)
 	return Qtrue;
 }
 
-VALUE _equal_rescue(VALUE val)
-{
-	return Qfalse;
-}
-
 /*
  * call-seq:
  *   == item -> bool
