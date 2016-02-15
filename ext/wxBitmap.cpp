@@ -209,7 +209,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	}else {
 
 		int cdepth(wxBITMAP_SCREEN_DEPTH);
-		set_hash_option(opts, "depth", cdepth);
+		if(rb_obj_is_kind_of(opts, rb_cHash)) {
+			set_hash_option(opts, "depth", cdepth);
+		}
 
 #if wxUSE_IMAGE
 		(*_self) = wxBitmap(wxImage(NUM2INT(x),NUM2INT(y)), cdepth);
@@ -218,7 +220,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		int height = NUM2UINT(x);
 		int width = NUM2UINT(y);
 		int cscale(1.0);
-		if(set_hash_option(opts, "scale", cscale)) {
+		if(rb_obj_is_kind_of(opts, rb_cHash) && set_hash_option(opts, "scale", cscale)) {
 			_self->CreateScaled(height, width, cdepth, cscale);
 		} else {
 			_self->Create(height, width, cdepth);

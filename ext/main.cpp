@@ -543,6 +543,6 @@ bool check_index(int &cidx,const std::size_t &count)
 
 namespace RubyWX {
 	VALUE _equal_rescue(VALUE val) {
-		return Qnil;
+		return Qfalse;
 	}
 };
