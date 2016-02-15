@@ -129,6 +129,11 @@ macro_attr(Depth,int)
 
 singlereturn(GetMask)
 
+singlereturn(GetScaleFactor)
+singlereturn(GetScaledWidth)
+singlereturn(GetScaledHeight)
+singlereturn(GetScaledSize)
+
 singlereturn(HasAlpha)
 
 #if wxUSE_PALETTE
@@ -153,6 +158,14 @@ DLL_LOCAL VALUE _alloc(VALUE self) {
 	return wrapTypedPtr(new wxBitmap, self);
 }
 
+/*
+ * call-seq:
+ *   draw { | dc | } -> self
+ *
+ * create a DC for drawing in the bitmap.
+ *
+ *
+ */
 DLL_LOCAL VALUE _draw(VALUE self)
 {
 	app_protected();
@@ -172,19 +185,47 @@ DLL_LOCAL VALUE _draw(VALUE self)
 	return self;
 }
 
+/*
+ * call-seq:
+ *   Bitmap.new(path)
+ *   Bitmap.new(height. width. opts)
+ *
+ * creates a new bitmap object.
+ * ===Arguments
+ * * path String path to file
+ * * height unsigned Integer
+ * * width unsigned Integer
+ * * opts: Hash with possible options to set:
+ *   * depth Integer
+ *   * scale Float
+ */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
-	VALUE x,y, depth;
-	rb_scan_args(argc, argv, "12",&x,&y, &depth);
+	VALUE x, y, opts;
+	rb_scan_args(argc, argv, "11:",&x,&y, &opts);
 
 	if(NIL_P(x)){
 		_self->LoadFile(unwrap<wxString>(x),wxBITMAP_TYPE_ANY);
 	}else {
-#if wxUSE_IMAGE
-		(*_self) = wxBitmap(wxImage(NUM2INT(x),NUM2INT(y)));
-#else
-		_self->Create(NUM2INT(x),NUM2INT(y), NIL_P(depth) ? wxBITMAP_SCREEN_DEPTH : NUM2INT(depth));
 
+		int cdepth(wxBITMAP_SCREEN_DEPTH);
+		set_hash_option(opts, "depth", cdepth);
+
+#if wxUSE_IMAGE
+		(*_self) = wxBitmap(wxImage(NUM2INT(x),NUM2INT(y)), cdepth);
+#else
+
+		int height = NUM2UINT(x);
+		int width = NUM2UINT(y);
+		int cscale(1.0);
+		if(set_hash_option(opts, "scale", cscale)) {
+			_self->CreateScaled(height, width, cdepth, cscale);
+		} else {
+			_self->Create(height, width, cdepth);
+		}
+
+
+		// TODO need better way to init the Data
 		if(_self->HasAlpha()) {
 
 			wxAlphaPixelData data(*_self);
@@ -227,7 +268,12 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-
+/* Document-method: initialize_copy
+ * call-seq:
+ *   initialize_copy(orig)
+ *
+ * Duplicate an object
+*/
 DLL_LOCAL VALUE _initialize_copy(VALUE self,VALUE other)
 {
 	wxBitmap cbitmap = unwrap<wxBitmap>(other);
@@ -323,10 +369,14 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
 	rb_ary_push(result, _getWidth(self));
 	rb_ary_push(result, _getHeight(self));
 	rb_ary_push(result, _getDepth(self));
+	rb_ary_push(result, _getScaleFactor(self));
+
+	int cheight = _self->GetHeight();
+	int cwidth = _self->GetWidth();
 
 	if(_self->HasAlpha()) {
-		wxColourBase::ChannelType color_data[_self->GetHeight() * _self->GetWidth() * 3];
-		wxColourBase::ChannelType alpha_data[_self->GetHeight() * _self->GetWidth()];
+		wxColourBase::ChannelType color_data[cheight * cwidth * 3];
+		wxColourBase::ChannelType alpha_data[cheight * cwidth];
 
 		wxAlphaPixelData data(*_self);
 
@@ -349,11 +399,11 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
 			p = rowStart;
 			p.OffsetY(data, 1);
 		}
-		rb_ary_push(result, rb_str_new((const char*)color_data, _self->GetHeight() * _self->GetWidth() * 3));
-		rb_ary_push(result, rb_str_new((const char*)alpha_data, _self->GetHeight() * _self->GetWidth()));
+		rb_ary_push(result, rb_str_new((const char*)color_data, cheight * cwidth * 3));
+		rb_ary_push(result, rb_str_new((const char*)alpha_data, cheight * cwidth));
 
 	} else {
-		wxColourBase::ChannelType color_data[_self->GetHeight() * _self->GetWidth() * 3];
+		wxColourBase::ChannelType color_data[cheight * cwidth * 3];
 
 		wxNativePixelData data(*_self);
 
@@ -373,7 +423,7 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
 			p = rowStart;
 			p.OffsetY(data, 1);
 		}
-		rb_ary_push(result, rb_str_new((const char*)color_data, _self->GetHeight() * _self->GetWidth() * 3));
+		rb_ary_push(result, rb_str_new((const char*)color_data, cheight * cwidth * 3));
 		rb_ary_push(result, Qnil);
 
 	}
@@ -397,10 +447,11 @@ DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 #if wxUSE_IMAGE
 	(*_self) = wxBitmap(unwrap<wxImage>(RARRAY_AREF(data,0)));
 #else
-	_self->Create(
-		NUM2INT(RARRAY_AREF(data,0)),
-		NUM2INT(RARRAY_AREF(data,1)),
-		NUM2INT(RARRAY_AREF(data,2))
+	_self->CreateScaled(
+		NUM2UINT(RARRAY_AREF(data,0)),
+		NUM2UINT(RARRAY_AREF(data,1)),
+		NUM2INT(RARRAY_AREF(data,2)),
+		NUM2DBL(RARRAY_AREF(data,3))
 	);
 
 
@@ -571,11 +622,6 @@ VALUE _equal_block(equal_obj *obj)
 
 }
 
-VALUE _equal_rescue(VALUE val)
-{
-	return Qfalse;
-}
-
 /*
  * call-seq:
  *   == brush -> bool
@@ -652,12 +698,32 @@ DLL_LOCAL wxArtClient get_client_from_sym(ID id)
 		return wxART_OTHER;
 }
 
+/*
+ * call-seq:
+ *   art_from_id(id) -> String
+ *
+ * returns the Art String for a given ID
+ * ===Arguments
+ * * path String path to file
+ *
+ */
 DLL_LOCAL VALUE _getArtFromID(VALUE self, VALUE id)
 {
 	wxArtID result = get_art_from_id(unwrapID(id));
 	return result != wxEmptyString ? wrap(result) : Qnil;
 }
 
+/*
+ * call-seq:
+ *   from_id(id, [client], [size]) -> WX::Bitmap
+ *
+ * returns the bitmap for a given ID
+ * ===Arguments
+ * * id Symbol of bitmap
+ * * client Symbol
+ * * size WX::Size
+ *
+ */
 DLL_LOCAL VALUE _getBitmapFromID(int argc,VALUE *argv,VALUE self)
 {
 	VALUE id, client, size;
@@ -676,6 +742,17 @@ DLL_LOCAL VALUE _getBitmapFromID(int argc,VALUE *argv,VALUE self)
 	return wrap(wxArtProvider::GetBitmap(artid,artclient,csize));
 }
 
+/*
+ * call-seq:
+ *   from_provider(name, [client], [size]) -> WX::Bitmap
+ *
+ * returns the bitmap for a given name
+ * ===Arguments
+ * * name Symbol
+ * * client Symbol
+ * * size WX::Size
+ *
+ */
 DLL_LOCAL VALUE _getBitmapProvider(int argc,VALUE *argv,VALUE self)
 {
 	VALUE id, client, size;
@@ -752,7 +829,7 @@ DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
 	using namespace RubyWX::Bitmap;
 	rb_cWXBitmap = rb_define_class_under(rb_mWX,"Bitmap",rb_cObject);
 	rb_define_alloc_func(rb_cWXBitmap,_alloc);
-	
+
 #if 0
 	rb_define_attr(rb_cWXBitmap,"width",1,1);
 	rb_define_attr(rb_cWXBitmap,"height",1,1);
@@ -769,6 +846,12 @@ DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXBitmap,"depth",_getDepth,_setDepth);
 
 	rb_define_attr_method(rb_cWXBitmap,"mask",_GetMask,_setMask);
+
+
+	rb_define_method(rb_cWXBitmap,"scale_factor",RUBY_METHOD_FUNC(_GetScaleFactor),0);
+	rb_define_method(rb_cWXBitmap,"scaled_height",RUBY_METHOD_FUNC(_GetScaledHeight),0);
+	rb_define_method(rb_cWXBitmap,"scaled_width",RUBY_METHOD_FUNC(_GetScaledWidth),0);
+	rb_define_method(rb_cWXBitmap,"scaled_size",RUBY_METHOD_FUNC(_GetScaledSize),0);
 
 #if wxUSE_IMAGE
 	rb_define_method(rb_cWXBitmap,"to_image",RUBY_METHOD_FUNC(_to_image),0);
@@ -796,6 +879,7 @@ DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXBitmap,"save_file",RUBY_METHOD_FUNC(_save_file),-1);
 
+	rb_define_singleton_method(rb_cWXBitmap,"art_from_id", RUBY_METHOD_FUNC(_getArtFromID), 1);
 	rb_define_singleton_method(rb_cWXBitmap,"from_id",RUBY_METHOD_FUNC(_getBitmapFromID),-1);
 	rb_define_singleton_method(rb_cWXBitmap,"from_provider",RUBY_METHOD_FUNC(_getBitmapProvider),-1);
 
@@ -868,5 +952,7 @@ DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
 	registerArtID("goto_first",wxART_GOTO_FIRST, wxID_FIRST);
 	registerArtID("goto_last",wxART_GOTO_LAST, wxID_LAST);
 
-
+#ifdef wxART_FULL_SCREEN
+	registerArtID("full_screen",wxART_FULL_SCREEN);
+#endif
 }
