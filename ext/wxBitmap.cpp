@@ -16,9 +16,7 @@
 
 #include <wx/colour.h>
 
-#if !wxUSE_IMAGE
 #include <wx/rawbmp.h>
-#endif
 
 #define _self unwrap<wxBitmap*>(self)
 
@@ -213,14 +211,16 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(opts, "depth", cdepth);
 		}
 
-#if wxUSE_IMAGE
-		(*_self) = wxBitmap(wxImage(NUM2INT(x),NUM2INT(y)), cdepth);
-#else
 
 		int height = NUM2UINT(x);
 		int width = NUM2UINT(y);
-		int cscale(1.0);
+
+		double cscale(1.0);
 		if(rb_obj_is_kind_of(opts, rb_cHash) && set_hash_option(opts, "scale", cscale)) {
+			if(cscale == 0.0) {
+				rb_raise(rb_eArgError, "scale cant be zero");
+				return self;
+			}
 			_self->CreateScaled(height, width, cdepth, cscale);
 		} else {
 			_self->Create(height, width, cdepth);
@@ -265,7 +265,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			}
 
 		}
-#endif
+
 	}
 	return self;
 }
@@ -279,7 +279,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL VALUE _initialize_copy(VALUE self,VALUE other)
 {
 	wxBitmap cbitmap = unwrap<wxBitmap>(other);
+	
 	(*_self) = cbitmap.GetSubBitmap(wxRect(0, 0, cbitmap.GetWidth(), cbitmap.GetHeight()));
+	
 	return self;
 }
 
@@ -304,9 +306,6 @@ DLL_LOCAL VALUE _getHash(VALUE self)
 {
 	st_index_t h = rb_hash_start(0);
 
-#if wxUSE_IMAGE
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_to_image(self))));
-#else
 	h = rb_hash_uint(h, _self->GetWidth());
 	h = rb_hash_uint(h, _self->GetHeight());
 	h = rb_hash_uint(h, _self->GetDepth());
@@ -347,7 +346,6 @@ DLL_LOCAL VALUE _getHash(VALUE self)
 		}
 
 	}
-#endif
 
 	h = rb_hash_end(h);
 	return LONG2FIX(h);
@@ -365,13 +363,11 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
 {
 
 	VALUE result = rb_ary_new();
-#if wxUSE_IMAGE
-	rb_ary_push(result,wrap(_self->ConvertToImage()));
-#else
+
 	rb_ary_push(result, _getWidth(self));
 	rb_ary_push(result, _getHeight(self));
 	rb_ary_push(result, _getDepth(self));
-	rb_ary_push(result, _getScaleFactor(self));
+	rb_ary_push(result, _GetScaleFactor(self));
 
 	int cheight = _self->GetHeight();
 	int cwidth = _self->GetWidth();
@@ -429,7 +425,6 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
 		rb_ary_push(result, Qnil);
 
 	}
-#endif
 
 	return result;
 }
@@ -445,10 +440,7 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
 DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 {
 	data = rb_Array(data);
-	//TODO delete old data?
-#if wxUSE_IMAGE
-	(*_self) = wxBitmap(unwrap<wxImage>(RARRAY_AREF(data,0)));
-#else
+
 	_self->CreateScaled(
 		NUM2UINT(RARRAY_AREF(data,0)),
 		NUM2UINT(RARRAY_AREF(data,1)),
@@ -458,10 +450,10 @@ DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 
 
 	if(_self->HasAlpha()) {
-		VALUE val = RARRAY_AREF(data,3);
+		VALUE val = RARRAY_AREF(data,4);
 		wxColourBase::ChannelType *color_data = (wxColourBase::ChannelType*)StringValuePtr(val);
 
-		val = RARRAY_AREF(data,4);
+		val = RARRAY_AREF(data,5);
 		wxColourBase::ChannelType *alpha_data = (wxColourBase::ChannelType*)StringValuePtr(val);
 
 		wxAlphaPixelData data(*_self);
@@ -487,7 +479,7 @@ DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 		}
 
 	} else {
-		VALUE val = RARRAY_AREF(data,3);
+		VALUE val = RARRAY_AREF(data,4);
 		wxColourBase::ChannelType *color_data = (wxColourBase::ChannelType*)StringValuePtr(val);
 
 		wxNativePixelData data(*_self);
@@ -509,7 +501,6 @@ DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 			p.OffsetY(data, 1);
 		}
 	}
-#endif
 	return self;
 }
 
@@ -536,13 +527,6 @@ VALUE _equal_block(equal_obj *obj)
 	wxBitmap cbitmap = unwrap<wxBitmap>(obj->other);
 	if(obj->self->IsSameAs(cbitmap))
 		return Qtrue;
-#if wxUSE_IMAGE
-	if(RubyWX::Image::check_equal(
-		obj->self->ConvertToImage(), cbitmap.ConvertToImage()
-	))
-		return Qtrue;
-#else
-	//compare using PixelData
 
 	if(obj->self->GetWidth() != cbitmap.GetWidth())
 		return Qfalse;
@@ -618,9 +602,6 @@ VALUE _equal_block(equal_obj *obj)
 
 	}
 	return Qtrue;
-#endif
-
-	return Qfalse;
 
 }
 
