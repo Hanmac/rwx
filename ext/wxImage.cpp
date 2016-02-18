@@ -114,8 +114,14 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		_self->Create(unwrap<wxSize>(width));
 	} else if(! rb_obj_is_kind_of(width, rb_cNumeric) || NIL_P(height) || !NIL_P(arg1))
 		_load(argc,argv,self);
-	else
-		_self->Create(NUM2INT(width),NUM2INT(height));
+	else {
+		int cwidth = NUM2INT(width);
+		int cheight = NUM2INT(height);
+
+		if(check_negative_size(height, width)) {
+			_self->Create(cwidth, cheight);
+		}
+	}
 	//_self->InitAlpha();
 	return self;
 }
@@ -244,8 +250,6 @@ DLL_LOCAL VALUE _set(int argc,VALUE *argv,VALUE self)
 				wxColor c(unwrap<wxColor>(vy));
 				wxSize size(_self->GetSize());
 				wxRect vrect(unwrap<wxRect>(vx));
-
-
 
 				if(wxRect(size).Contains(vrect))
 				{
