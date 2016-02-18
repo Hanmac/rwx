@@ -211,19 +211,21 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(opts, "depth", cdepth);
 		}
 
-
-		int height = NUM2UINT(x);
-		int width = NUM2UINT(y);
+		int width = NUM2INT(x);
+		int height = NUM2INT(y);
 
 		double cscale(1.0);
-		if(rb_obj_is_kind_of(opts, rb_cHash) && set_hash_option(opts, "scale", cscale)) {
-			if(cscale == 0.0) {
-				rb_raise(rb_eArgError, "scale cant be zero");
-				return self;
+
+		if(check_negative_size(width, height)) {
+			if(rb_obj_is_kind_of(opts, rb_cHash) && set_hash_option(opts, "scale", cscale)) {
+				if(cscale <= 0.0) {
+					rb_raise(rb_eArgError, "scale cant be negative or zero");
+					return self;
+				}
+				_self->CreateScaled(width, height, cdepth, cscale);
+			} else {
+				_self->Create(width, height, cdepth);
 			}
-			_self->CreateScaled(height, width, cdepth, cscale);
-		} else {
-			_self->Create(height, width, cdepth);
 		}
 
 
@@ -279,9 +281,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL VALUE _initialize_copy(VALUE self,VALUE other)
 {
 	wxBitmap cbitmap = unwrap<wxBitmap>(other);
-	
+
 	(*_self) = cbitmap.GetSubBitmap(wxRect(0, 0, cbitmap.GetWidth(), cbitmap.GetHeight()));
-	
+
 	return self;
 }
 
@@ -364,8 +366,8 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
 
 	VALUE result = rb_ary_new();
 
-	rb_ary_push(result, _getWidth(self));
-	rb_ary_push(result, _getHeight(self));
+	rb_ary_push(result, _GetScaledWidth(self));
+	rb_ary_push(result, _GetScaledHeight(self));
 	rb_ary_push(result, _getDepth(self));
 	rb_ary_push(result, _GetScaleFactor(self));
 
