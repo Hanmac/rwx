@@ -64,7 +64,7 @@ bool check_negative_size(VALUE val, wxSize &size)
 	size = unwrap<wxSize>(val);
 	if(size.GetHeight() <= 0 || size.GetWidth() <= 0)
 	{
-		rb_raise(rb_eArgError,"%" PRIsVALUE " does have invalid size.", RB_OBJ_STRING(val));
+		rb_raise(rb_eArgError,"%" PRIsVALUE " does have invalid size.", RB_OBJ_STRING(rb_inspect(val)));
 		return false;
 	}
 	return true;
