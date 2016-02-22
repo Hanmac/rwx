@@ -29,6 +29,8 @@ bool is_wrapable< wxRect >(const VALUE &vrect)
 		rb_respond_to(vrect,rwxID_width) &&
 		rb_respond_to(vrect,rwxID_height)){
 		return true;
+	}else if(rb_obj_is_kind_of(vrect, rb_cArray) && RARRAY_LEN(vrect) == 4) {
+		return true;
 	}else
 		return false;
 }
@@ -74,9 +76,24 @@ wxRect* unwrap< wxRect* >(const VALUE &vrect)
 	return unwrapTypedPtr<wxRect>(vrect, rb_cWXRect);
 }
 
+bool check_contain_rect(VALUE self, const wxRect &rect, VALUE other, wxRect &other_rect)
+{
+	other_rect = unwrap<wxRect>(other);
+	
+	if(!rect.Contains(other_rect)) {
+		rb_raise(
+			rb_eArgError, "%" PRIsVALUE " does not contain %" PRIsVALUE ".",
+			RB_OBJ_STRING(rb_inspect(self)), RB_OBJ_STRING(rb_inspect(other))
+		);
+		return false;
+	}
+	return true;
+}
 
 namespace RubyWX {
 namespace Rect {
+
+singlereturn(IsEmpty)
 
 macro_attr(X,int)
 macro_attr(Y,int)
@@ -105,6 +122,8 @@ DLL_LOCAL VALUE _alloc(VALUE self)
  *   Rect.new(x, y, width, height)
  *
  * Creates a new Rect object.
+ * ===Arguments
+ * * x, y, width and height are Integer
 */
 DLL_LOCAL VALUE _initialize(VALUE self,VALUE x,VALUE y,VALUE width,VALUE height)
 {
@@ -222,7 +241,10 @@ VALUE _equal_block(equal_obj *obj)
  *   == rect -> bool
  *
  * compares two rects.
- *
+ * ===Arguments
+ * * rect is a WX::Rect
+ * ===Return value
+ * bool
  *
  */
 DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
@@ -235,6 +257,247 @@ DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
 		RUBY_METHOD_FUNC(_equal_block),(VALUE)&obj,
 		RUBY_METHOD_FUNC(_equal_rescue),Qnil
 	);
+}
+
+/*
+ * call-seq:
+ *   contains?(x, y) -> bool
+ *   contains?(point) -> bool
+ *   contains?(rect) -> bool
+ *
+ * return true if the point or the rect is (not strictly) inside this rect
+ * ===Arguments
+ * * x and y are Integer
+ * * pos is a WX::Point
+ * * rect is a WX::Rect
+ * ===Return value
+ * bool
+ *
+ */
+DLL_LOCAL VALUE _contains(int argc,VALUE *argv,VALUE self)
+{
+	VALUE x, y;
+	rb_scan_args(argc, argv, "11", &x, &y);
+
+	if(NIL_P(y)) {
+		if(is_wrapable<wxRect>(x)) {
+			return wrap(_self->Contains(unwrap<wxRect>(x)));
+		} else {
+			return wrap(_self->Contains(unwrap<wxPoint>(x)));
+		}
+	} else {
+		return wrap(_self->Contains(NUM2INT(x), NUM2INT(y)));
+	}
+}
+
+
+/*
+ * call-seq:
+ *   intersects?(rect) -> bool
+ *
+ * return true if the rectangles have a non empty intersection
+ * ===Arguments
+ * * rect is a WX::Rect
+ * ===Return value
+ * bool
+ *
+ */
+DLL_LOCAL VALUE _intersects(VALUE self, VALUE other)
+{
+	return wrap(_self->Intersects(unwrap<wxRect>(other)));
+}
+
+/*
+ * call-seq:
+ *   inflate(x, y) -> WX::Rect
+ *   inflate(i) -> WX::Rect
+ *   inflate(size) -> WX::Rect
+ *
+ * inflate this rect and return new rect.
+ * ===Arguments
+ * * x, y and i are Integer
+ * * size is a WX::Size
+ * ===Return value
+ * WX::Rect
+ */
+DLL_LOCAL VALUE _inflate(int argc,VALUE *argv,VALUE self)
+{
+	VALUE x, y;
+	rb_scan_args(argc, argv, "11", &x, &y);
+
+	wxRect* result = new wxRect(*_self);
+	if(NIL_P(y)) {
+		if(is_wrapable<wxSize>(x)) {
+			result->Inflate(unwrap<wxSize>(x));
+		} else {
+			result->Inflate(NUM2INT(x));
+		}
+	} else {
+		result->Inflate(NUM2INT(x), NUM2INT(y));
+	}
+	return wrapTypedPtr(result, rb_class_of(self));
+}
+
+/*
+ * call-seq:
+ *   inflate!(x, y) -> self
+ *   inflate!(i) -> self
+ *   inflate!(size) -> self
+ *
+ * inflate this rect and return self.
+ * ===Arguments
+ * * x, y and i are Integer
+ * * rect is a WX::Size
+ * ===Return value
+ * self
+ */
+DLL_LOCAL VALUE _inflate_self(int argc,VALUE *argv,VALUE self)
+{
+	VALUE x, y;
+	rb_scan_args(argc, argv, "11", &x, &y);
+
+	if(NIL_P(y)) {
+		if(is_wrapable<wxSize>(x)) {
+			_self->Inflate(unwrap<wxSize>(x));
+		} else {
+			_self->Inflate(NUM2INT(x));
+		}
+	} else {
+		_self->Inflate(NUM2INT(x), NUM2INT(y));
+	}
+	return self;
+}
+
+
+/*
+ * call-seq:
+ *   deflate(x, y) -> WX::Rect
+ *   deflate(i) -> WX::Rect
+ *   deflate(size) -> WX::Rect
+ *
+ * deflate this rect and return new rect.
+ * ===Arguments
+ * * x, y and i are Integer
+ * * rect is a WX::Size
+ * ===Return value
+ * WX::Rect
+ */
+DLL_LOCAL VALUE _deflate(int argc,VALUE *argv,VALUE self)
+{
+	VALUE x, y;
+	rb_scan_args(argc, argv, "11", &x, &y);
+
+	wxRect* result = new wxRect(*_self);
+	if(NIL_P(y)) {
+		if(is_wrapable<wxSize>(x)) {
+			result->Deflate(unwrap<wxSize>(x));
+		} else {
+			result->Deflate(NUM2INT(x));
+		}
+	} else {
+		result->Deflate(NUM2INT(x), NUM2INT(y));
+	}
+	return wrapTypedPtr(result, rb_class_of(self));
+}
+
+/*
+ * call-seq:
+ *   deflate!(x, y) -> self
+ *   deflate!(i) -> self
+ *   deflate!(size) -> self
+ *
+ * deflate this rect and return self.
+ * ===Arguments
+ * * x, y and i are Integer
+ * * rect is a WX::Size
+ * ===Return value
+ * self
+ */
+DLL_LOCAL VALUE _deflate_self(int argc,VALUE *argv,VALUE self)
+{
+	VALUE x, y;
+	rb_scan_args(argc, argv, "11", &x, &y);
+
+	if(NIL_P(y)) {
+		if(is_wrapable<wxSize>(x)) {
+			_self->Deflate(unwrap<wxSize>(x));
+		} else {
+			_self->Deflate(NUM2INT(x));
+		}
+	} else {
+		_self->Deflate(NUM2INT(x), NUM2INT(y));
+	}
+	return self;
+}
+
+/*
+ * call-seq:
+ *   intersect(rect) -> WX::Rect
+ *
+ * intersect with rect and return new rect.
+ * ===Arguments
+ * * rect is a WX::Rect
+ * ===Return value
+ * WX::Rect
+ */
+DLL_LOCAL VALUE _intersect(VALUE self, VALUE other)
+{
+	const wxRect* ptr = _self;
+	return wrapTypedPtr(new wxRect(ptr->Intersect(unwrap<wxRect>(other))), rb_class_of(self));
+}
+
+/*
+ * call-seq:
+ *   intersect!(rect) -> self
+ *
+ * intersect with rect and modify itself.
+ * ===Arguments
+ * * rect is a WX::Rect
+ * ===Return value
+ * self
+ *
+ */
+DLL_LOCAL VALUE _intersect_self(VALUE self, VALUE other)
+{
+	rb_check_frozen(self);
+
+	_self->Intersect(unwrap<wxRect>(other));
+	return self;
+}
+
+
+/*
+ * call-seq:
+ *   union(rect) -> WX::Rect
+ *
+ * union with rect and return new rect.
+ * ===Arguments
+ * * rect is a WX::Rect
+ * ===Return value
+ * WX::Rect
+ */
+DLL_LOCAL VALUE _union(VALUE self, VALUE other)
+{
+	const wxRect* ptr = _self;
+	return wrapTypedPtr(new wxRect(ptr->Union(unwrap<wxRect>(other))), rb_class_of(self));
+}
+
+/*
+ * call-seq:
+ *   union!(rect) -> self
+ *
+ * union with rect and modify itself.
+ * ===Arguments
+ * * rect is a WX::Rect
+ * ===Return value
+ * self
+ */
+DLL_LOCAL VALUE _union_self(VALUE self, VALUE other)
+{
+	rb_check_frozen(self);
+
+	_self->Union(unwrap<wxRect>(other));
+	return self;
 }
 
 
@@ -293,6 +556,17 @@ DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
  * returns the bottom right of Rect. WX::Point
  */
 
+
+/* Document-method: empty?
+ * call-seq:
+ *   empty? -> bool
+ *
+ * return true the this rect is empty.
+ * ===Return value
+ * bool
+ *
+ */
+
 DLL_LOCAL void Init_WXRect(VALUE rb_mWX)
 {
 
@@ -347,7 +621,24 @@ DLL_LOCAL void Init_WXRect(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXRect,"bottom_left",_getBottomLeft,_setBottomLeft);
 	rb_define_attr_method(rb_cWXRect,"bottom_right",_getBottomRight,_setBottomRight);
 
+	rb_define_method(rb_cWXRect,"contains?",RUBY_METHOD_FUNC(_contains),-1);
+	rb_define_method(rb_cWXRect,"intersects?",RUBY_METHOD_FUNC(_intersects),1);
+
+
+	rb_define_method(rb_cWXRect,"inflate",RUBY_METHOD_FUNC(_inflate),-1);
+	rb_define_method(rb_cWXRect,"inflate!",RUBY_METHOD_FUNC(_inflate_self),-1);
+	rb_define_method(rb_cWXRect,"deflate",RUBY_METHOD_FUNC(_inflate),-1);
+	rb_define_method(rb_cWXRect,"deflate!",RUBY_METHOD_FUNC(_inflate_self),-1);
+	
+	rb_define_method(rb_cWXRect,"intersect",RUBY_METHOD_FUNC(_intersect),1);
+	rb_define_method(rb_cWXRect,"intersect!",RUBY_METHOD_FUNC(_intersect_self),1);
+
+	rb_define_method(rb_cWXRect,"union",RUBY_METHOD_FUNC(_union),1);
+	rb_define_method(rb_cWXRect,"union!",RUBY_METHOD_FUNC(_union_self),1);
+	
 	rb_define_method(rb_cWXRect,"inspect",RUBY_METHOD_FUNC(_inspect),0);
+
+	rb_define_method(rb_cWXRect,"empty?",RUBY_METHOD_FUNC(_IsEmpty),0);
 
 	rb_define_method(rb_cWXRect,"==",RUBY_METHOD_FUNC(_equal),1);
 	rb_define_alias(rb_cWXRect,"eql?","==");

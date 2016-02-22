@@ -26,4 +26,6 @@ wxRect* unwrap< wxRect* >(const VALUE &vsize);
 template <>
 wxRect unwrap< wxRect >(const VALUE &vsize);
 
+bool check_contain_rect(VALUE self, const wxRect &rect, VALUE other, wxRect &other_rect);
+
 #endif /* WXRECT_HPP_ */
