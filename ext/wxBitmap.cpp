@@ -282,7 +282,7 @@ DLL_LOCAL VALUE _initialize_copy(VALUE self,VALUE other)
 {
 	wxBitmap cbitmap = unwrap<wxBitmap>(other);
 
-	(*_self) = cbitmap.GetSubBitmap(wxRect(0, 0, cbitmap.GetWidth(), cbitmap.GetHeight()));
+	(*_self) = cbitmap.GetSubBitmap(cbitmap.GetSize());
 
 	return self;
 }
