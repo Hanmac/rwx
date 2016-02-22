@@ -208,10 +208,13 @@ VALUE _equal_block(equal_obj *obj)
 
 /*
  * call-seq:
- *   == point -> bool
+ *   == size -> bool
  *
  * compares two sizes.
- *
+ * ===Arguments
+ * * size is a WX::Size
+ * ===Return value
+ * bool
  *
  */
 DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
@@ -224,6 +227,176 @@ DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
 		RUBY_METHOD_FUNC(_equal_block),(VALUE)&obj,
 		RUBY_METHOD_FUNC(_equal_rescue),Qnil
 	);
+}
+
+
+/*
+ * call-seq:
+ *   scale(x, y) -> WX::Size
+ *   scale(i) -> WX::Size
+ *
+ * scale this size and return new size.
+ * ===Arguments
+ * * x, y and i are Integer
+ * ===Return value
+ * WX::Size
+ */
+DLL_LOCAL VALUE _scale(int argc,VALUE *argv,VALUE self)
+{
+	VALUE x, y;
+	rb_scan_args(argc, argv, "11", &x, &y);
+
+	wxSize* result = new wxSize(*_self);
+
+	result->Scale(NUM2DBL(x), NUM2DBL(NIL_P(y) ? x : y));
+	return wrapTypedPtr(result, rb_class_of(self));
+}
+
+/*
+ * call-seq:
+ *   scale!(x, y) -> WX::Size
+ *   scale!(i) -> WX::Size
+ *
+ * scale this size and return new size.
+ * ===Arguments
+ * * x, y and i are Integer
+ * ===Return value
+ * WX::Size
+ */
+DLL_LOCAL VALUE _scale_self(int argc,VALUE *argv,VALUE self)
+{
+	VALUE x, y;
+	rb_scan_args(argc, argv, "11", &x, &y);
+
+	rb_check_frozen(self);
+	_self->Scale(NUM2DBL(x), NUM2DBL(NIL_P(y) ? x : y));
+	return self;
+}
+
+/*
+ * call-seq:
+ *   inc_by(x, y) -> WX::Size
+ *   inc_by(i) -> WX::Size
+ *   inc_by(size) -> WX::Size
+ *
+ * increase this size and return new size.
+ * ===Arguments
+ * * x, y and i are Integer
+ * * size is a WX::Size
+ * ===Return value
+ * WX::Size
+ */
+DLL_LOCAL VALUE _incBy(int argc,VALUE *argv,VALUE self)
+{
+	VALUE x, y;
+	rb_scan_args(argc, argv, "11", &x, &y);
+
+	wxSize* result = new wxSize(*_self);
+	if(NIL_P(y)) {
+		if(is_wrapable<wxSize>(x)) {
+			result->IncBy(unwrap<wxSize>(x));
+		} else {
+			result->IncBy(NUM2INT(x));
+		}
+	} else {
+		result->IncBy(NUM2INT(x), NUM2INT(y));
+	}
+	return wrapTypedPtr(result, rb_class_of(self));
+}
+
+/*
+ * call-seq:
+ *   inc_by!(x, y) -> self
+ *   inc_by!(i) -> self
+ *   inc_by!(size) -> self
+ *
+ * increase this size and return new size.
+ * ===Arguments
+ * * x, y and i are Integer
+ * * size is a WX::Size
+ * ===Return value
+ * self
+ */
+DLL_LOCAL VALUE _incBy_self(int argc,VALUE *argv,VALUE self)
+{
+	VALUE x, y;
+	rb_scan_args(argc, argv, "11", &x, &y);
+
+	rb_check_frozen(self);
+
+	if(NIL_P(y)) {
+		if(is_wrapable<wxSize>(x)) {
+			_self->IncBy(unwrap<wxSize>(x));
+		} else {
+			_self->IncBy(NUM2INT(x));
+		}
+	} else {
+		_self->IncBy(NUM2INT(x), NUM2INT(y));
+	}
+	return self;
+}
+
+/*
+ * call-seq:
+ *   dec_by(x, y) -> WX::Size
+ *   dec_by(i) -> WX::Size
+ *   dec_by(size) -> WX::Size
+ *
+ * decrease this size and return new size.
+ * ===Arguments
+ * * x, y and i are Integer
+ * * size is a WX::Size
+ * ===Return value
+ * WX::Size
+ */
+DLL_LOCAL VALUE _decBy(int argc,VALUE *argv,VALUE self)
+{
+	VALUE x, y;
+	rb_scan_args(argc, argv, "11", &x, &y);
+
+	wxSize* result = new wxSize(*_self);
+	if(NIL_P(y)) {
+		if(is_wrapable<wxSize>(x)) {
+			result->DecBy(unwrap<wxSize>(x));
+		} else {
+			result->DecBy(NUM2INT(x));
+		}
+	} else {
+		result->DecBy(NUM2INT(x), NUM2INT(y));
+	}
+	return wrapTypedPtr(result, rb_class_of(self));
+}
+
+/*
+ * call-seq:
+ *   dec_by!(x, y) -> self
+ *   dec_by!(i) -> self
+ *   dec_by!(size) -> self
+ *
+ * decrease this size and return new size.
+ * ===Arguments
+ * * x, y and i are Integer
+ * * size is a WX::Size
+ * ===Return value
+ * self
+ */
+DLL_LOCAL VALUE _decBy_self(int argc,VALUE *argv,VALUE self)
+{
+	VALUE x, y;
+	rb_scan_args(argc, argv, "11", &x, &y);
+
+	rb_check_frozen(self);
+
+	if(NIL_P(y)) {
+		if(is_wrapable<wxSize>(x)) {
+			_self->DecBy(unwrap<wxSize>(x));
+		} else {
+			_self->DecBy(NUM2INT(x));
+		}
+	} else {
+		_self->DecBy(NUM2INT(x), NUM2INT(y));
+	}
+	return self;
 }
 
 
@@ -271,6 +444,15 @@ DLL_LOCAL void Init_WXSize(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXSize,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
 	rb_define_method(rb_cWXSize,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
+
+	rb_define_method(rb_cWXSize,"inc_by",RUBY_METHOD_FUNC(_incBy),-1);
+	rb_define_method(rb_cWXSize,"inc_by!",RUBY_METHOD_FUNC(_incBy_self),-1);
+
+	rb_define_method(rb_cWXSize,"dec_by",RUBY_METHOD_FUNC(_decBy),-1);
+	rb_define_method(rb_cWXSize,"dec_by!",RUBY_METHOD_FUNC(_decBy_self),-1);
+
+	rb_define_method(rb_cWXSize,"scale",RUBY_METHOD_FUNC(_scale),-1);
+	rb_define_method(rb_cWXSize,"scale!",RUBY_METHOD_FUNC(_scale_self),-1);
 
 	registerType<wxSize>(rb_cWXSize, true);
 
