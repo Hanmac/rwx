@@ -118,7 +118,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		int cwidth = NUM2INT(width);
 		int cheight = NUM2INT(height);
 
-		if(check_negative_size(height, width)) {
+		if(check_negative_size(cwidth, cheight)) {
 			_self->Create(cwidth, cheight);
 		}
 	}
@@ -179,7 +179,16 @@ DLL_LOCAL VALUE _get(int argc,VALUE *argv,VALUE self)
 	{
 		if(NIL_P(vy))
 		{
-			return wrap(_self->GetSubImage(unwrap<wxRect>(vx)));
+			wxRect rect;
+			wxSize size;
+
+			if(!check_negative_size(vx, size))
+				return Qnil;
+
+			if(!check_contain_rect(_GetSize(self), _self->GetSize(), vx, rect))
+				return Qnil;
+
+			return wrap(_self->GetSubImage(rect));
 		}
 
 		int x,y;
@@ -249,23 +258,17 @@ DLL_LOCAL VALUE _set(int argc,VALUE *argv,VALUE self)
 			if(is_wrapable<wxRect>(vx)) {
 				wxColor c(unwrap<wxColor>(vy));
 				wxSize size(_self->GetSize());
-				wxRect vrect(unwrap<wxRect>(vx));
+				wxRect vrect;
 
-				if(wxRect(size).Contains(vrect))
+				if(check_contain_rect(_GetSize(self), size, vx, vrect))
 				{
 					_self->SetRGB(vrect,c.Red(),c.Green(),c.Blue());
 					if(_self->HasAlpha()) {
-						for(int i = vrect.x; i < vrect.width; ++i)
-							for(int j = vrect.y; j < vrect.height; ++j)
+						for(int i = vrect.x; i <= vrect.GetRight(); ++i)
+							for(int j = vrect.y; j <= vrect.GetBottom(); ++j)
 								if(check_inside(i, j, size))
 									_self->SetAlpha(i,j,c.Alpha());
 					}
-				} else {
-					VALUE rsize = _GetSize(self);
-					rb_raise(rb_eArgError,
-						"%" PRIsVALUE " does not fit into image of %" PRIsVALUE,
-						RB_OBJ_STRING(vx), RB_OBJ_STRING(rsize)
-					);
 				}
 			} else {
 				wxPoint vpoint(unwrap<wxPoint>(vx));
