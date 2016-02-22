@@ -347,7 +347,7 @@ DLL_LOCAL VALUE _inflate(int argc,VALUE *argv,VALUE self)
  * inflate this rect and return self.
  * ===Arguments
  * * x, y and i are Integer
- * * rect is a WX::Size
+ * * size is a WX::Size
  * ===Return value
  * self
  */
@@ -378,7 +378,7 @@ DLL_LOCAL VALUE _inflate_self(int argc,VALUE *argv,VALUE self)
  * deflate this rect and return new rect.
  * ===Arguments
  * * x, y and i are Integer
- * * rect is a WX::Size
+ * * size is a WX::Size
  * ===Return value
  * WX::Rect
  */
@@ -409,7 +409,7 @@ DLL_LOCAL VALUE _deflate(int argc,VALUE *argv,VALUE self)
  * deflate this rect and return self.
  * ===Arguments
  * * x, y and i are Integer
- * * rect is a WX::Size
+ * * size is a WX::Size
  * ===Return value
  * self
  */
