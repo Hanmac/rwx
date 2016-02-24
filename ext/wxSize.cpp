@@ -234,10 +234,11 @@ DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
  * call-seq:
  *   scale(x, y) -> WX::Size
  *   scale(i) -> WX::Size
+ *   * i -> WX::Size
  *
  * scale this size and return new size.
  * ===Arguments
- * * x, y and i are Integer
+ * * x, y and i are Float
  * ===Return value
  * WX::Size
  */
@@ -254,14 +255,14 @@ DLL_LOCAL VALUE _scale(int argc,VALUE *argv,VALUE self)
 
 /*
  * call-seq:
- *   scale!(x, y) -> WX::Size
- *   scale!(i) -> WX::Size
+ *   scale!(x, y) -> self
+ *   scale!(i) -> self
  *
  * scale this size and return new size.
  * ===Arguments
- * * x, y and i are Integer
+ * * x, y and i are Float
  * ===Return value
- * WX::Size
+ * self
  */
 DLL_LOCAL VALUE _scale_self(int argc,VALUE *argv,VALUE self)
 {
@@ -272,12 +273,39 @@ DLL_LOCAL VALUE _scale_self(int argc,VALUE *argv,VALUE self)
 	_self->Scale(NUM2DBL(x), NUM2DBL(NIL_P(y) ? x : y));
 	return self;
 }
+/*
+ * call-seq:
+ *   / n -> WX::Size
+ *
+ * devide this size and return new size.
+ * ===Arguments
+ * * n are Float
+ * ===Return value
+ * WX::Size
+ * === Exceptions
+ * [ZeroDivisionError]
+ * * if n is zero
+ */
+DLL_LOCAL VALUE _devide(VALUE self, VALUE n)
+{
 
+	float d = NUM2DBL(n);
+	if(d == 0)
+		rb_raise(rb_eZeroDivError, "divided by 0");
+
+	d = 1.0 / d;
+
+	wxSize* result = new wxSize(*_self);
+	result->Scale(d, d);
+	return wrapTypedPtr(result, rb_class_of(self));
+}
 /*
  * call-seq:
  *   inc_by(x, y) -> WX::Size
  *   inc_by(i) -> WX::Size
  *   inc_by(size) -> WX::Size
+ *   + i -> WX::Size
+ *   + size -> WX::Size
  *
  * increase this size and return new size.
  * ===Arguments
@@ -341,6 +369,8 @@ DLL_LOCAL VALUE _incBy_self(int argc,VALUE *argv,VALUE self)
  *   dec_by(x, y) -> WX::Size
  *   dec_by(i) -> WX::Size
  *   dec_by(size) -> WX::Size
+ *   - i -> WX::Size
+ *   - size -> WX::Size
  *
  * decrease this size and return new size.
  * ===Arguments
@@ -447,12 +477,17 @@ DLL_LOCAL void Init_WXSize(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXSize,"inc_by",RUBY_METHOD_FUNC(_incBy),-1);
 	rb_define_method(rb_cWXSize,"inc_by!",RUBY_METHOD_FUNC(_incBy_self),-1);
+	rb_define_alias(rb_cWXSize,"+","inc_by");
 
 	rb_define_method(rb_cWXSize,"dec_by",RUBY_METHOD_FUNC(_decBy),-1);
 	rb_define_method(rb_cWXSize,"dec_by!",RUBY_METHOD_FUNC(_decBy_self),-1);
+	rb_define_alias(rb_cWXSize,"-","dec_by");
 
 	rb_define_method(rb_cWXSize,"scale",RUBY_METHOD_FUNC(_scale),-1);
 	rb_define_method(rb_cWXSize,"scale!",RUBY_METHOD_FUNC(_scale_self),-1);
+	rb_define_alias(rb_cWXSize,"*","scale");
+
+	rb_define_method(rb_cWXSize,"/",RUBY_METHOD_FUNC(_devide),1);
 
 	registerType<wxSize>(rb_cWXSize, true);
 
