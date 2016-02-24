@@ -126,6 +126,7 @@ macro_attr(Width,int)
 macro_attr(Depth,int)
 
 singlereturn(GetMask)
+singlereturn(GetSize)
 
 singlereturn(GetScaleFactor)
 singlereturn(GetScaledWidth)
@@ -138,7 +139,16 @@ singlereturn(HasAlpha)
 macro_attr(Palette,wxPalette)
 #endif
 
+DLL_LOCAL VALUE _setSize(VALUE self, VALUE val) {
+	rb_check_frozen(self);
+	wxSize size(unwrap<wxSize>(val));
+	_self->SetWidth(size.GetWidth());
+	_self->SetHeight(size.GetHeight());
+	return val;
+}
+
 DLL_LOCAL VALUE _setMask(VALUE self, VALUE val) {
+	rb_check_frozen(self);
 	if(rb_obj_is_kind_of(val, rb_cWXMask))
 		_self->SetMask(unwrap<wxMask*>(val));
 	else if(is_wrapable<wxColor>(val))
@@ -161,7 +171,6 @@ DLL_LOCAL VALUE _alloc(VALUE self) {
  *   draw { | dc | } -> self
  *
  * create a DC for drawing in the bitmap.
- *
  *
  */
 DLL_LOCAL VALUE _draw(VALUE self)
@@ -196,6 +205,9 @@ DLL_LOCAL VALUE _draw(VALUE self)
  * * opts: Hash with possible options to set:
  *   * depth Integer
  *   * scale Float
+ * === Exceptions
+ * [ArgumentError]
+ * * if height, width or scale are negative or zero
  */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -289,6 +301,13 @@ DLL_LOCAL VALUE _initialize_copy(VALUE self,VALUE other)
 
 
 #if wxUSE_IMAGE
+/*
+ * call-seq:
+ *   to_image -> WX::Image
+ *
+ * convert to WX::Image
+ *
+ */
 DLL_LOCAL VALUE _to_image(VALUE self)
 {
 	return wrap(_self->ConvertToImage());
@@ -301,7 +320,6 @@ DLL_LOCAL VALUE _to_image(VALUE self)
  *   hash -> Fixnum
  *
  * Generates a Fixnum hash value for this object.
- *
  *
  */
 DLL_LOCAL VALUE _getHash(VALUE self)
@@ -506,6 +524,13 @@ DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 	return self;
 }
 
+/*
+ * call-seq:
+ *   to_bitmap -> WX::Bitmap
+ *
+ * return self
+ *
+ */
 DLL_LOCAL VALUE _to_bitmap(VALUE self)
 {
 	return self;
@@ -800,11 +825,27 @@ wxBitmap wrapBitmap(const VALUE &vbitmap,wxWindowID id,wrapBitmapType type,const
 /* Document-attr: depth
 * returns the depth of the Bitmap. Integer
 */
+/* Document-attr: size
+* returns the size of the Bitmap. WX::Size
+*/
 /* Document-attr: mask
 * returns the mask color of the Bitmap. WX::Mask
 */
 /* Document-attr: palette
 * returns the color palette of the Bitmap. WX::Palette
+*/
+
+/* Document-attr: scale_factor
+* returns the scale factor of the Bitmap. Float
+*/
+/* Document-attr: scaled_width
+* returns the scaled width of the Bitmap. Integer
+*/
+/* Document-attr: scaled_height
+* returns the scaled height of the Bitmap. Integer
+*/
+/* Document-attr: sscaled_ize
+* returns the scaled size of the Bitmap. WX::Size
 */
 
 DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
@@ -829,6 +870,7 @@ DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXBitmap,"height",_getHeight,_setHeight);
 	rb_define_attr_method(rb_cWXBitmap,"width",_getWidth,_setWidth);
 	rb_define_attr_method(rb_cWXBitmap,"depth",_getDepth,_setDepth);
+	rb_define_attr_method(rb_cWXBitmap,"size",_GetSize,_setSize);
 
 	rb_define_attr_method(rb_cWXBitmap,"mask",_GetMask,_setMask);
 
