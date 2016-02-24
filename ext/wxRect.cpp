@@ -356,6 +356,7 @@ DLL_LOCAL VALUE _inflate_self(int argc,VALUE *argv,VALUE self)
 	VALUE x, y;
 	rb_scan_args(argc, argv, "11", &x, &y);
 
+	rb_check_frozen(self);
 	if(NIL_P(y)) {
 		if(is_wrapable<wxSize>(x)) {
 			_self->Inflate(unwrap<wxSize>(x));
@@ -418,6 +419,7 @@ DLL_LOCAL VALUE _deflate_self(int argc,VALUE *argv,VALUE self)
 	VALUE x, y;
 	rb_scan_args(argc, argv, "11", &x, &y);
 
+	rb_check_frozen(self);
 	if(NIL_P(y)) {
 		if(is_wrapable<wxSize>(x)) {
 			_self->Deflate(unwrap<wxSize>(x));
@@ -432,7 +434,61 @@ DLL_LOCAL VALUE _deflate_self(int argc,VALUE *argv,VALUE self)
 
 /*
  * call-seq:
+ *   offset(x, y) -> WX::Rect
+ *   offset(point) -> WX::Rect
+ *
+ * offset this rect and return new rect.
+ * ===Arguments
+ * * x and y are Integer
+ * * point is a WX::Point
+ * ===Return value
+ * WX::Rect
+ */
+DLL_LOCAL VALUE _offset(int argc,VALUE *argv,VALUE self)
+{
+	VALUE x, y;
+	rb_scan_args(argc, argv, "11", &x, &y);
+
+	wxRect* result = new wxRect(*_self);
+	if(NIL_P(y)) {
+		result->Offset(unwrap<wxPoint>(x));
+	} else {
+		result->Offset(NUM2INT(x), NUM2INT(y));
+	}
+	return wrapTypedPtr(result, rb_class_of(self));
+}
+
+/*
+ * call-seq:
+ *   offset!(x, y) -> self
+ *   offset!(point) -> self
+ *
+ * offset this rect and return self.
+ * ===Arguments
+ * * x and y are Integer
+ * * point is a WX::Point
+ * ===Return value
+ * self
+ */
+DLL_LOCAL VALUE _offset_self(int argc,VALUE *argv,VALUE self)
+{
+	VALUE x, y;
+	rb_scan_args(argc, argv, "11", &x, &y);
+
+	rb_check_frozen(self);
+	if(NIL_P(y)) {
+		_self->Offset(unwrap<wxPoint>(x));
+	} else {
+		_self->Offset(NUM2INT(x), NUM2INT(y));
+	}
+	return self;
+}
+
+
+/*
+ * call-seq:
  *   intersect(rect) -> WX::Rect
+ *   * rect -> WX::Rect
  *
  * intersect with rect and return new rect.
  * ===Arguments
@@ -469,6 +525,7 @@ DLL_LOCAL VALUE _intersect_self(VALUE self, VALUE other)
 /*
  * call-seq:
  *   union(rect) -> WX::Rect
+ *   + rect -> WX::Rect
  *
  * union with rect and return new rect.
  * ===Arguments
@@ -624,18 +681,22 @@ DLL_LOCAL void Init_WXRect(VALUE rb_mWX)
 	rb_define_method(rb_cWXRect,"contains?",RUBY_METHOD_FUNC(_contains),-1);
 	rb_define_method(rb_cWXRect,"intersects?",RUBY_METHOD_FUNC(_intersects),1);
 
-
 	rb_define_method(rb_cWXRect,"inflate",RUBY_METHOD_FUNC(_inflate),-1);
 	rb_define_method(rb_cWXRect,"inflate!",RUBY_METHOD_FUNC(_inflate_self),-1);
-	rb_define_method(rb_cWXRect,"deflate",RUBY_METHOD_FUNC(_inflate),-1);
-	rb_define_method(rb_cWXRect,"deflate!",RUBY_METHOD_FUNC(_inflate_self),-1);
-	
+	rb_define_method(rb_cWXRect,"deflate",RUBY_METHOD_FUNC(_deflate),-1);
+	rb_define_method(rb_cWXRect,"deflate!",RUBY_METHOD_FUNC(_deflate_self),-1);
+
+	rb_define_method(rb_cWXRect,"offset",RUBY_METHOD_FUNC(_offset),-1);
+	rb_define_method(rb_cWXRect,"offset!",RUBY_METHOD_FUNC(_offset_self),-1);
+
 	rb_define_method(rb_cWXRect,"intersect",RUBY_METHOD_FUNC(_intersect),1);
 	rb_define_method(rb_cWXRect,"intersect!",RUBY_METHOD_FUNC(_intersect_self),1);
+	rb_define_alias(rb_cWXRect,"*","intersect");
 
 	rb_define_method(rb_cWXRect,"union",RUBY_METHOD_FUNC(_union),1);
 	rb_define_method(rb_cWXRect,"union!",RUBY_METHOD_FUNC(_union_self),1);
-	
+	rb_define_alias(rb_cWXRect,"+","union");
+
 	rb_define_method(rb_cWXRect,"inspect",RUBY_METHOD_FUNC(_inspect),0);
 
 	rb_define_method(rb_cWXRect,"empty?",RUBY_METHOD_FUNC(_IsEmpty),0);
