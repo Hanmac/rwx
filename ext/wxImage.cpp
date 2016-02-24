@@ -104,6 +104,9 @@ DLL_LOCAL VALUE _alloc(VALUE self) {
  *   Image.new(width,height)
  *
  * creates a new Image Object.
+ * === Exceptions
+ * [ArgumentError]
+ * * if height or width are negative or zero
 */
 DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -170,6 +173,10 @@ bool check_inside(int x, int y, const wxSize& size)
  * * rect is a WX::Rect
  * ===Return value
  * WX::Image, WX::Color or nil
+ * === Exceptions
+ * [ArgumentError]
+ * * rect does have negative size
+ * * rect does not fit into the Size of the Image
 */
 DLL_LOCAL VALUE _get(int argc,VALUE *argv,VALUE self)
 {
@@ -695,6 +702,13 @@ DLL_LOCAL VALUE _save(int argc,VALUE *argv,VALUE self)
 
 
 
+/*
+ * call-seq:
+ *   draw { | dc | } -> self
+ *
+ * create a DC for drawing in the image.
+ *
+ */
 DLL_LOCAL VALUE _draw(VALUE self)
 {
 	app_protected();
@@ -720,10 +734,25 @@ DLL_LOCAL VALUE _draw(VALUE self)
 }
 
 
+/*
+ * call-seq:
+ *   to_image -> WX::Image
+ *
+ * return self
+ *
+ */
 DLL_LOCAL VALUE _to_image(VALUE self)
 {
 	return self;
 }
+
+/*
+ * call-seq:
+ *   to_bitmap -> WX::Bitmap
+ *
+ * convert to WX::Bitmap
+ *
+ */
 DLL_LOCAL VALUE _to_bitmap(VALUE self)
 {
 	return wrap(unwrap<wxBitmap*>(self));
