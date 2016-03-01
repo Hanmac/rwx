@@ -21,6 +21,7 @@ void wxrubyAssert(const wxString& file,
 		);
 }
 
+#if wxUSE_LOG
 class RubyExceptionLog : public wxLogInterposer
 {
 public:
@@ -29,7 +30,7 @@ public:
 protected:
 	void DoLogRecord(wxLogLevel level,
 	                             const wxString& msg,
-	                             const wxLogRecordInfo& info)
+	                             const wxLogRecordInfo& info) wxOVERRIDE
 	{
 
 		const char * c = msg.GetData().AsChar();
@@ -51,17 +52,16 @@ protected:
 		}
 
 		wxLogInterposer::DoLogRecord(level, msg, info);
-
-
 	}
 
 };
-
-
+#endif
 
 DLL_LOCAL void Init_WXError(VALUE rb_mWX)
 {
 	rb_eWXError = rb_define_class_under(rb_mWX,"Error",rb_eException);
+#if wxUSE_LOG
 	wxLog::SetActiveTarget(new RubyExceptionLog());
+#endif
 	wxSetAssertHandler(wxrubyAssert);
 }
