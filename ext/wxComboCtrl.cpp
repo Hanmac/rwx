@@ -151,6 +151,30 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
  * ===Return value
  * self
 */
+
+/* Document-attr: popup_window
+* the popup window containing the popup control WX::Window
+*/
+/* Document-attr: text_ctrl
+* the text control which is part of the combobox WX::TextCtrl
+*/
+/* Document-attr: button
+* he dropdown button which is part of the combobox WX::Window
+*/
+
+/* Document-attr: bitmap_normal
+* the bitmap for the normal state WX::Bitmap
+*/
+/* Document-attr: bitmap_pressed
+* the bitmap for the pressed state WX::Bitmap
+*/
+/* Document-attr: bitmap_hover
+* the bitmap for the hover state WX::Bitmap
+*/
+/* Document-attr: bitmap_disabled
+* the bitmap for the disabled state WX::Bitmap
+*/
+
 /* Document-const: MULTILINE
  *   The text control allows multiple lines. If this style is not specified, line break characters should not be used in the controls value.
  */
