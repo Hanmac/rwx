@@ -8,6 +8,10 @@
 #include "wxEvtHandler.hpp"
 #include "wxEvent.hpp"
 
+#if wxUSE_TEXTCTRL
+#include "wxTextCtrl.hpp"
+#endif
+
 #include <map>
 
 #define _self unwrap<wxEvtHandler*>(self)
@@ -206,19 +210,61 @@ void RubyFunctor::operator()( wxTimerEvent & event )
 namespace RubyWX {
 namespace EvtHandler {
 
+/*
+ * call-seq:
+ *   bind(type[, id[, last]]) {|evt| } -> self
+ *
+ * bind the block to the given event type. id and id-range are optional.
+ * ===Arguments
+ * * type Symbol/Integer
+ * * id Symbol/Integer
+ * * last Symbol/Integer
+ * ===Return value
+ * self
+ * === Exceptions
+ * [ArgumentError]
+ * * when the evthander prevent the binding of the given type.
+*/
 DLL_LOCAL VALUE _bind(int argc,VALUE *argv,VALUE self)
 {
 	VALUE type,id,last,proc;
 	rb_scan_args(argc, argv, "12&",&type,&id,&last,&proc);
 
+	wxEventType ctype = unwrapEventType(type);
+
+#if wxUSE_TEXTCTRL
+	if(ctype == wxEVT_TEXT_ENTER && rb_obj_is_kind_of(self, rb_cWXTextCtrl))
+	{
+		wxTextCtrl* textctrl = unwrap<wxTextCtrl*>(self);
+		if(!textctrl->HasFlag(wxTE_PROCESS_ENTER)) {
+			rb_raise(rb_eArgError,
+				"'%" PRIsVALUE "' for '%" PRIsVALUE "' needs 'process_enter' option.",
+				RB_OBJ_STRING(type), RB_OBJ_STRING(self)
+			);
+		}
+	}
+#endif
+
 	if(NIL_P(proc))
 		proc = rb_block_proc();
 
-	_self->Bind(wxEventTypeTag<wxEvent>(unwrapEventType(type)),RubyFunctor(proc),unwrapID(id),unwrapID(last));
+	_self->Bind(wxEventTypeTag<wxEvent>(ctype),RubyFunctor(proc),unwrapID(id),unwrapID(last));
 
 	return self;
 }
 
+
+/*
+ * call-seq:
+ *   call(type[, id]) {|evt| } -> bool
+ *
+ * create an event for the given event type.
+ * ===Arguments
+ * * type Symbol/Integer
+ * * id Symbol/Integer
+ * ===Return value
+ * bool
+*/
 DLL_LOCAL VALUE _call(int argc,VALUE *argv,VALUE self)
 {
 	VALUE type,id;
