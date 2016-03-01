@@ -147,7 +147,7 @@ wxColor unwrap< wxColor >(const VALUE &vcolor)
 		return color;
 	}else{
 		wxColor *col = unwrap<wxColor*>(vcolor);
-		if(!col->IsOk())
+		if(!col || !col->IsOk())
 			not_valid(vcolor,rb_cWXColor);
 		return *col;
 	}
