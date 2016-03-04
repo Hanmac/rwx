@@ -56,6 +56,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 			FileCtrlBase::set_style_flags(hash,style);
 		}
+
+		FileCtrlBase::check_style_flags(style);
+
 		if(nil_check(parent))
 			_self->Create(unwrap<wxWindow*>(parent), id,
 				defaultDirectory, defaultFilename,

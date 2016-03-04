@@ -34,6 +34,7 @@ void _set_options(VALUE hash,
 );
 
 void set_style_flags(VALUE hash,int& flags);
+void check_style_flags(const int& style);
 
 }
 }
