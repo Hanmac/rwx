@@ -100,7 +100,13 @@ void set_style_flags(VALUE hash,int& flags)
 
 void check_style_flags(const int& style)
 {
-	if((style & wxFC_SAVE) && (style & wxFC_MULTIPLE))
+	if(!(style & wxFC_SAVE))
+		return;
+		
+	if(style & wxFC_OPEN)
+		rb_raise(rb_eArgError,"style can't have both OPEN and SAVE flags");
+
+	if(style & wxFC_MULTIPLE)
 		rb_raise(rb_eArgError,"style can't have both MULTIPLE and SAVE flags");
 }
 
