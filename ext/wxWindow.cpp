@@ -340,21 +340,10 @@ DLL_LOCAL VALUE _GetHandle(VALUE self)
 
 
 
-DLL_LOCAL VALUE _draw(int argc,VALUE *argv,VALUE self)
+DLL_LOCAL VALUE _draw(VALUE self)
 {
-	VALUE paint;
-	rb_scan_args(argc, argv, "01",&paint);
 	wxDC *dc;
-if(NIL_P(paint) || RTEST(paint)) {
-	wxPaintDC *mdc = new wxPaintDC(_self);
-	_self->PrepareDC(*mdc);
-#if wxUSE_GRAPHICS_CONTEXT
-	 dc = new wxGCDC(*mdc);
-	_self->PrepareDC(*dc);
-#else
-	dc = mdc;
-#endif
-} else {
+
 	wxClientDC *cdc = new wxClientDC(_self);
 	_self->PrepareDC(*cdc);
 #if wxUSE_GRAPHICS_CONTEXT
@@ -363,7 +352,6 @@ if(NIL_P(paint) || RTEST(paint)) {
 #else
 	dc = cdc;
 #endif
-}
 
 	dc->Clear();
 	rb_yield(wrap(dc));
@@ -843,7 +831,7 @@ DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXWindow,"handle",RUBY_METHOD_FUNC(_GetHandle),0);
 
-	rb_define_method(rb_cWXWindow,"draw",RUBY_METHOD_FUNC(_draw),-1);
+	rb_define_method(rb_cWXWindow,"draw",RUBY_METHOD_FUNC(_draw),0);
 	rb_define_method(rb_cWXWindow,"close",RUBY_METHOD_FUNC(_Close),-1);
 	rb_define_method(rb_cWXWindow,"destroy",RUBY_METHOD_FUNC(_Destroy),0);
 	rb_define_method(rb_cWXWindow,"destroy_children",RUBY_METHOD_FUNC(_DestroyChildren),0);
@@ -1007,7 +995,6 @@ DLL_LOCAL void Init_WXWindow(VALUE rb_mWX)
 	registerID("iconize_frame",wxID_ICONIZE_FRAME);
 	registerID("restore_frame",wxID_RESTORE_FRAME);
 
-	registerEventType("paint",wxEVT_PAINT);
 	registerEventType("erase_background",wxEVT_ERASE_BACKGROUND);
 
 
