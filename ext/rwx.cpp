@@ -28,7 +28,7 @@
 #include "wxScrollEvent.hpp"
 #include "wxKeyEvent.hpp"
 #include "wxMouseEvent.hpp"
-
+#include "wxPaintEvent.hpp"
 
 #include "wxEvtHandler.hpp"
 
@@ -298,6 +298,8 @@ extern "C" void Init_rwx()
 
 	Init_WXKeyEvent(rb_mWX);
 	Init_WXMouseEvent(rb_mWX);
+
+	Init_WXPaintEvent(rb_mWX);
 
 	Init_WXTimer(rb_mWX);
 	Init_WXTaskBar(rb_mWX);
