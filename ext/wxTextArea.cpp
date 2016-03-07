@@ -67,6 +67,11 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	rb_call_super(argc,argv);
 
+#if	wxUSE_STC
+	if(rb_obj_is_kind_of(self,rb_cWXSTC))
+		return self;
+#endif
+
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		set_obj_option(hash, "modified", &wxTextAreaBase::SetModified,_self);
