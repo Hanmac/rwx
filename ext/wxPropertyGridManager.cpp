@@ -22,7 +22,10 @@ APP_PROTECT(wxPropertyGridManager)
 
 singlereturn(GetCurrentPage)
 singlereturn(GetGrid)
+
+#if wxUSE_TOOLBAR
 singlereturn(GetToolBar)
+#endif
 
 singlereturn(GetPageCount)
 
@@ -260,8 +263,11 @@ DLL_LOCAL void Init_WXPropertyGridManager(VALUE rb_mWX)
 	rb_include_module(rb_cWXPropertyGridManager,rb_mWXPropertyGridInterface);
 
 	rb_define_method(rb_cWXPropertyGridManager,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
-
+#if wxUSE_TOOLBAR
 	rb_define_attr_method(rb_cWXPropertyGridManager,"tool_bar",_GetToolBar,0);
+#else
+	rb_define_attr_method_missing(rb_cWXPropertyGridManager,"tool_bar", true, false);
+#endif
 	rb_define_attr_method(rb_cWXPropertyGridManager,"grid",_GetGrid,0);
 	rb_define_attr_method(rb_cWXPropertyGridManager,"current_page",_GetCurrentPage,0);
 
