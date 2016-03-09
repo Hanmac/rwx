@@ -254,7 +254,7 @@ T* unwrapTypedPtr(const VALUE &obj,const VALUE &klass, rb_data_type_t* rbdata = 
 	if(NIL_P(obj))
 		return NULL;
 
-	if(rb_obj_is_instance_of(obj,rb_cClass) && rb_class_inherited(obj,klass)) {
+	if(rb_obj_is_instance_of(obj,rb_cClass) && RTEST(rb_class_inherited_p(obj,klass))) {
 		return unwrapTypedPtr<T>(rb_class_new_instance(0,NULL,obj), klass, rbdata);
 	}else if (check_class(obj, klass)){
 		return (T*)unwrapTypedPtr(obj, rbdata ? rbdata : unwrapDataType(klass));

@@ -41,7 +41,7 @@ DLL_LOCAL VALUE _addPane(int argc,VALUE *argv,VALUE self)
 	VALUE window,hash;
 	wxWindow* w = NULL;
 	rb_scan_args(argc, argv, "11",&window,&hash);
-	if(rb_obj_is_kind_of(window,rb_cClass) && rb_class_inherited(window,rb_cWXWindow))
+	if(rb_obj_is_kind_of(window,rb_cClass) && RTEST(rb_class_inherited_p(window,rb_cWXWindow)))
 	{
 		VALUE argv2[] = {wrap(_self->GetManagedWindow()) };
 		w = unwrap<wxWindow*>(rb_class_new_instance(1,argv2,window));

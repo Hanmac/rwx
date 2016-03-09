@@ -127,7 +127,7 @@ void bind_callback(wxToolBarBase* toolbar,wxWindowID id)
 wxControl* create_control(VALUE self,VALUE ctrl,VALUE hash)
 {
 	wxControl *c = NULL;
-	if(rb_obj_is_kind_of(ctrl,rb_cClass) && rb_class_inherited(ctrl,rb_cWXControl)) {
+	if(rb_obj_is_kind_of(ctrl,rb_cClass) && RTEST(rb_class_inherited_p(ctrl,rb_cWXControl))) {
 		VALUE argv2[] = {self, hash };
 		c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,ctrl));
 	}else if(nil_check(ctrl)) {

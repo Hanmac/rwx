@@ -195,7 +195,7 @@ VALUE _addControl(int argc,VALUE *argv,VALUE self)
 	VALUE control,sizer,arg;
 	rb_scan_args(argc, argv, "11:",&control,&sizer,&arg);
 	wxControl *c = NULL;
-	if(rb_obj_is_kind_of(control,rb_cClass) && rb_class_inherited(control,rb_cWXControl)) {
+	if(rb_obj_is_kind_of(control,rb_cClass) && RTEST(rb_class_inherited_p(control,rb_cWXControl))) {
 		VALUE argv2[] = {self, arg };
 		c = unwrap<wxControl*>(rb_class_new_instance(2,argv2,control));
 	} else if(nil_check(control)) {
