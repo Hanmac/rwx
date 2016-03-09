@@ -86,7 +86,7 @@ wxPropertyGridPage* create_page(VALUE self,VALUE page,VALUE hash)
 	if(NIL_P(page))
 		return NULL;
 
-	if(rb_obj_is_kind_of(page,rb_cClass) && rb_class_inherited(page,rb_cWXPropertyGridPage)) {
+	if(rb_obj_is_kind_of(page,rb_cClass) && RTEST(rb_class_inherited_p(page,rb_cWXPropertyGridPage))) {
 		VALUE argv2[] = {self, hash };
 		page = rb_class_new_instance(2,argv2,page);
 	}
