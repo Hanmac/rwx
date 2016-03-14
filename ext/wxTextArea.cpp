@@ -82,7 +82,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 
 
-VALUE _each_line(VALUE self)
+DLL_LOCAL VALUE _each_line(VALUE self)
 {
 	RETURN_SIZED_ENUMERATOR(self,0,NULL,RUBY_METHOD_FUNC(_GetNumberOfLines));
 
@@ -94,14 +94,14 @@ VALUE _each_line(VALUE self)
 	return self;
 }
 
-VALUE _load_file(VALUE self,VALUE file)
+DLL_LOCAL VALUE _load_file(VALUE self,VALUE file)
 {
 	if(!check_file_loadable(unwrap<wxString>(file)))
 		return Qfalse;
 	return wrap(_self->LoadFile(unwrap<wxString>(file)));
 }
 
-VALUE _save_file(VALUE self,VALUE file)
+DLL_LOCAL VALUE _save_file(VALUE self,VALUE file)
 {
 	if(!check_file_saveable(unwrap<wxString>(file)))
 		return Qfalse;
