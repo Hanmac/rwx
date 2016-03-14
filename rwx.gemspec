@@ -20,7 +20,7 @@ newest Binding for wxWidgets 3.0+, it was made after wxRuby died.
   spec.required_ruby_version = ">= 2.0.0"
 
   spec.add_development_dependency "rdoc", '~> 4.0'
-  spec.add_development_dependency "rake", '~> 10.0'
+  spec.add_development_dependency "rake", '~> 11.0'
   spec.add_development_dependency "test-unit", '~> 3.0'
   spec.add_development_dependency "rspec", '~> 3.0'
   
