@@ -7,6 +7,8 @@
 
 #include "wxApp.hpp"
 #include "wxBitmap.hpp"
+#include "wxSize.hpp"
+#include "wxRect.hpp"
 #include "wxColor.hpp"
 #include "wxPalette.hpp"
 #include "wxWindow.hpp"
@@ -313,6 +315,156 @@ DLL_LOCAL VALUE _to_image(VALUE self)
 	return wrap(_self->ConvertToImage());
 }
 #endif
+
+
+/*
+ * call-seq:
+ *   bitmap.scale(size) -> WX::Bitmap
+ *   bitmap.scale(x_ratio, y_ratio) -> WX::Bitmap
+ *
+ * returns a new scaled bitmap
+ * ===Arguments
+ * * size WX::Size
+ * * x_ratio and y_ratio are Float
+ * ===Return value
+ * WX::Bitmap
+ * === Exceptions
+ * [ArgumentError]
+ * * size is invalid or x_ratio or y_ratio are negative or zero
+*/
+DLL_LOCAL VALUE _scale(int argc,VALUE *argv,VALUE self)
+{
+	VALUE x_scale, y_scale;
+	rb_scan_args(argc, argv, "11",&x_scale,&y_scale);
+
+	int width, height;
+	if(NIL_P(y_scale))
+	{
+		wxSize size;
+		if(!check_negative_size(x_scale,size))
+			return Qnil;
+		width = size.GetWidth();
+		height = size.GetHeight();
+	} else {
+		width = NUM2DBL(x_scale) * _self->GetWidth();
+		height = NUM2DBL(y_scale) * _self->GetHeight();
+		if(!check_negative_size(width,height))
+			return Qnil;
+	}
+
+#if wxUSE_IMAGE
+	wxImage img = _self->ConvertToImage();
+	img.Rescale(width, height);
+	return wrapTypedPtr(new wxBitmap(img, _self->GetDepth()), rb_class_of(self));
+#else // !wxUSE_IMAGE
+	// Fallback method of scaling the bitmap
+	wxBitmap newBmp(width, height, _self->GetDepth());
+#if defined(__WXMSW__) || defined(__WXOSX__)
+	// wxBitmap::UseAlpha() is used only on wxMSW and wxOSX.
+	newBmp.UseAlpha(_self->HasAlpha());
+#endif // __WXMSW__ || __WXOSX__
+	{
+		wxMemoryDC dc(newBmp);
+		double scX = (double)width / _self->GetWidth();
+		double scY = (double)height / _self->GetHeight();
+		dc.SetUserScale(scX, scY);
+		dc.DrawBitmap(*_self, 0, 0);
+	}
+	return wrapTypedPtr(new wxBitmap(newBmp), rb_class_of(self));
+#endif // !wxUSE_IMAGE
+}
+
+/*
+ * call-seq:
+ *   bitmap.scale!(size) -> self
+ *   bitmap.scale!(x_ratio, y_ratio) -> self
+ *
+ * scaled this bitmap, return self
+ * ===Arguments
+ * * size WX::Size
+ * * x_ratio and y_ratio are Float
+ * ===Return value
+ * self
+ * === Exceptions
+ * [ArgumentError]
+ * * size is invalid or x_ratio or y_ratio are negative or zero
+*/
+DLL_LOCAL VALUE _scale_self(int argc,VALUE *argv,VALUE self)
+{
+	VALUE x_scale, y_scale;
+	rb_scan_args(argc, argv, "11",&x_scale,&y_scale);
+
+	rb_check_frozen(self);
+
+	int width, height;
+	if(NIL_P(y_scale))
+	{
+		wxSize size;
+		if(!check_negative_size(x_scale,size))
+			return self;
+		width = size.GetWidth();
+		height = size.GetHeight();
+	} else {
+		width = NUM2DBL(x_scale) * _self->GetWidth();
+		height = NUM2DBL(y_scale) * _self->GetHeight();
+		if(!check_negative_size(width,height))
+			return self;
+	}
+
+#if wxUSE_IMAGE
+	wxImage img = _self->ConvertToImage();
+	img.Rescale(width, height);
+	(*_self) = wxBitmap(img, _self->GetDepth());
+#else // !wxUSE_IMAGE
+	// Fallback method of scaling the bitmap
+	wxBitmap newBmp(width, height, _self->GetDepth());
+#if defined(__WXMSW__) || defined(__WXOSX__)
+	// wxBitmap::UseAlpha() is used only on wxMSW and wxOSX.
+	newBmp.UseAlpha(_self->HasAlpha());
+#endif // __WXMSW__ || __WXOSX__
+	{
+		wxMemoryDC dc(newBmp);
+		double scX = (double)width / _self->GetWidth();
+		double scY = (double)height / _self->GetHeight();
+		dc.SetUserScale(scX, scY);
+		dc.DrawBitmap(*_self, 0, 0);
+	}
+	(*_self) = newBmp;
+#endif // !wxUSE_IMAGE
+	return self;
+}
+
+/*
+ * call-seq:
+ *   bitmap.sub_image(rect) -> WX::Bitmap or nil
+ *
+ * return a sub bitmap of the given place
+ * ===Arguments
+ * * rect is a WX::Rect
+ * ===Return value
+ * WX::Bitmap or nil
+ * === Exceptions
+ * [ArgumentError]
+ * * rect does have negative size
+ * * rect does not fit into the Size of the Image
+*/
+DLL_LOCAL VALUE _getSubBitmap(VALUE self, VALUE vrect)
+{
+	if(_self->IsOk())
+	{
+		wxRect rect;
+		wxSize size;
+
+		if(!check_negative_size(vrect, size))
+			return Qnil;
+
+		if(!check_contain_rect(_GetSize(self), _self->GetSize(), vrect, rect))
+			return Qnil;
+
+		return wrap(_self->GetSubBitmap(rect));
+	}
+	return Qnil;
+}
 
 
 /*
@@ -900,9 +1052,14 @@ DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
 	rb_define_attr_method_missing(rb_cWXBitmap,"palette");
 #endif
 
+	rb_define_method(rb_cWXBitmap,"scale",RUBY_METHOD_FUNC(_scale),-1);
+	rb_define_method(rb_cWXBitmap,"scale!",RUBY_METHOD_FUNC(_scale_self),-1);
+
 	rb_define_method(rb_cWXBitmap,"draw",RUBY_METHOD_FUNC(_draw),0);
 
 	rb_define_method(rb_cWXBitmap,"to_bitmap",RUBY_METHOD_FUNC(_to_bitmap),0);
+
+	rb_define_method(rb_cWXBitmap,"sub_bitmap",RUBY_METHOD_FUNC(_getSubBitmap),1);
 
 	rb_define_method(rb_cWXBitmap,"save_file",RUBY_METHOD_FUNC(_save_file),-1);
 
