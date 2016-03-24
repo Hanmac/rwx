@@ -34,7 +34,13 @@ singlefunc(Clear)
 
 singlereturn(GetSize)
 
+singlereturn(GetAsBitmap)
+
 singlereturn(CanDrawBitmap)
+singlereturn(CanGetTextExtent)
+
+singlereturn_if(GetCharHeight, _self->GetFont().IsOk())
+singlereturn_if(GetCharWidth, _self->GetFont().IsOk())
 
 singlereturn(GetLogicalOrigin)
 singlereturn(GetDeviceOrigin)
@@ -84,6 +90,48 @@ DLL_LOCAL VALUE _setLogicalScale(VALUE self,VALUE val)
 	wxRealPoint p(unwrap<wxRealPoint>(val));
 	_self->SetLogicalScale(p.x,p.y);
 	return val;
+}
+
+/*
+ * call-seq:
+ *   text_extent(text) -> WX::Size
+ *
+ * returns the size of the text
+ * ===Arguments
+ * * text String
+ * ===Return value
+ * WX::Size
+ */
+DLL_LOCAL VALUE _GetTextExtent(VALUE self,VALUE text)
+{
+	if(!_self->CanGetTextExtent())
+		rb_raise(rb_eArgError, "DC can't get TextExtent");
+
+	if(!_self->GetFont().IsOk())
+		rb_raise(rb_eRuntimeError, "need valid WX::Font");
+
+	return wrap(_self->GetTextExtent(unwrap<wxString>(text)));
+}
+
+/*
+ * call-seq:
+ *   mulit_line_text_extent(text) -> WX::Size
+ *
+ * returns the size of the multi line text
+ * ===Arguments
+ * * text String
+ * ===Return value
+ * WX::Size
+ */
+DLL_LOCAL VALUE _GetMultiLineTextExtent(VALUE self,VALUE text)
+{
+	if(!_self->CanGetTextExtent())
+		rb_raise(rb_eArgError, "DC can't get TextExtent");
+
+	if(!_self->GetFont().IsOk())
+		rb_raise(rb_eRuntimeError, "need valid WX::Font");
+
+	return wrap(_self->GetMultiLineTextExtent(unwrap<wxString>(text)));
 }
 
 /*
@@ -251,13 +299,19 @@ DLL_LOCAL VALUE _DrawBitmap(int argc,VALUE *argv,VALUE self)
 
 	if(!_self->CanDrawBitmap())
 		rb_raise(rb_eArgError, "DC can't draw bitmaps");
+
+	wxBitmap bit(unwrap<wxBitmap>(bitmap));
+
+	if(bit.IsOk())
+		rb_raise(rb_eArgError, "can't draw invalid bitmap");
+
 	rb_check_frozen(self);
 
 	if(NIL_P(y)) {
 		wxPoint point(unwrap<wxPoint>(x));
-		_self->DrawBitmap(unwrap<wxBitmap>(bitmap), point.x, point.y);
+		_self->DrawBitmap(bit, point.x, point.y);
 	} else {
-		_self->DrawBitmap(unwrap<wxBitmap>(bitmap), NUM2INT(x), NUM2INT(y));
+		_self->DrawBitmap(bit, NUM2INT(x), NUM2INT(y));
 	}
 
 	return self;
@@ -280,6 +334,9 @@ DLL_LOCAL VALUE _DrawText(int argc, VALUE *argv, VALUE self)
 	rb_scan_args(argc, argv, "21", &text, &x, &y);
 
 	rb_check_frozen(self);
+
+	if(!_self->GetFont().IsOk())
+		rb_raise(rb_eRuntimeError, "need valid WX::Font");
 
 	if(NIL_P(y)) {
 		wxPoint point(unwrap<wxPoint>(x));
@@ -309,6 +366,9 @@ DLL_LOCAL VALUE _DrawRotatedText(int argc, VALUE *argv, VALUE self)
 	rb_scan_args(argc, argv, "31", &text, &angle, &x, &y);
 
 	rb_check_frozen(self);
+
+	if(!_self->GetFont().IsOk())
+		rb_raise(rb_eRuntimeError, "need valid WX::Font");
 
 	if(NIL_P(y)) {
 		wxPoint point(unwrap<wxPoint>(x));
@@ -340,7 +400,7 @@ DLL_LOCAL VALUE _DrawLines(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-
+#if wxUSE_SPLINES
 /*
  * call-seq:
  *   draw_spline(*points) -> self
@@ -359,6 +419,7 @@ DLL_LOCAL VALUE _DrawSpline(int argc,VALUE *argv,VALUE self)
 	_self->DrawSpline(unwrap<wxPointList*>(points));
 	return self;
 }
+#endif // wxUSE_SPLINES
 
 /*
  * call-seq:
@@ -436,7 +497,7 @@ DLL_LOCAL VALUE _with_text_color(VALUE self,VALUE color)
 
 /*
  * call-seq:
- *   with_brush(brush) {|self| } -> self
+ *   with_font(brush) {|self| } -> self
  *
  * uses block with font
  * ===Arguments
@@ -535,12 +596,24 @@ DLL_LOCAL void Init_WXDC(VALUE rb_mWX)
 	rb_define_method(rb_cWXDC,"draw_rotated_text",RUBY_METHOD_FUNC(_DrawRotatedText),-1);
 
 	rb_define_method(rb_cWXDC,"draw_lines",RUBY_METHOD_FUNC(_DrawLines),-1);
+#if wxUSE_SPLINES
 	rb_define_method(rb_cWXDC,"draw_spline",RUBY_METHOD_FUNC(_DrawSpline),-1);
+#endif // wxUSE_SPLINES
 	rb_define_method(rb_cWXDC,"draw_polygon",RUBY_METHOD_FUNC(_DrawPolygon),-1);
 
 	rb_define_method(rb_cWXDC,"clear",RUBY_METHOD_FUNC(_Clear),0);
 	rb_define_method(rb_cWXDC,"size",RUBY_METHOD_FUNC(_GetSize),0);
+
+	rb_define_method(rb_cWXDC,"as_bitmap",RUBY_METHOD_FUNC(_GetAsBitmap),0);
+
 	rb_define_method(rb_cWXDC,"draw_bitmap?",RUBY_METHOD_FUNC(_CanDrawBitmap),0);
+	rb_define_method(rb_cWXDC,"text_extent?",RUBY_METHOD_FUNC(_CanGetTextExtent),0);
+
+	rb_define_method(rb_cWXDC,"text_extent",RUBY_METHOD_FUNC(_GetTextExtent),1);
+	rb_define_method(rb_cWXDC,"multi_line_text_extent",RUBY_METHOD_FUNC(_GetMultiLineTextExtent),1);
+
+	rb_define_method(rb_cWXDC,"char_height",RUBY_METHOD_FUNC(_GetCharHeight),0);
+	rb_define_method(rb_cWXDC,"char_width",RUBY_METHOD_FUNC(_GetCharWidth),0);
 
 	rb_define_method(rb_cWXDC,"doc",RUBY_METHOD_FUNC(_doc),1);
 	rb_define_method(rb_cWXDC,"page",RUBY_METHOD_FUNC(_page),0);
