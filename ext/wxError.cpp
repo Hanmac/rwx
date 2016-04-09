@@ -6,6 +6,10 @@
  */
 #include "wxError.hpp"
 
+#ifndef wxOVERRIDE
+#define wxOVERRIDE
+#endif
+
 VALUE rb_eWXError;
 
 void wxrubyAssert(const wxString& file,
