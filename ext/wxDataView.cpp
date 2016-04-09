@@ -159,16 +159,11 @@ DLL_LOCAL VALUE _setValue(VALUE self,VALUE val)
 	return val;
 }
 
-macro_attr(Column,int)
+singlereturn(GetColumn)
 
 DLL_LOCAL VALUE _getItem(VALUE self)
 {
 	return wrap(_self->GetModel(),_self->GetItem());
-}
-
-DLL_LOCAL VALUE _setItem(VALUE self,VALUE item)
-{
-	return item;
 }
 
 }
@@ -208,11 +203,8 @@ DLL_LOCAL void Init_WXDataView(VALUE rb_mWX)
 
 	using namespace Event;
 	rb_define_attr_method(rb_cWXDataViewEvent,"value",_getValue,_setValue);
-	rb_define_attr_method(rb_cWXDataViewEvent,"column",_getColumn,_setColumn);
-	rb_define_attr_method(rb_cWXDataViewEvent,"item",_getItem,_setItem);
-
-//	rb_define_attr_method(rb_cWXFileDataViewEvent,"path",
-//			Event::_getPath,Event::_setPath);
+	rb_define_attr_method(rb_cWXDataViewEvent,"column",_GetColumn, NULL);
+	rb_define_attr_method(rb_cWXDataViewEvent,"item",_getItem, NULL);
 
 	rb_cWXDataViewItem = rb_define_class_under(rb_cWXDataView,"Item",rb_cObject);
 	rb_undef_alloc_func(rb_cWXDataViewItem);
