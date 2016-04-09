@@ -99,6 +99,10 @@ private:
 namespace RubyWX {
 namespace STC {
 
+#ifdef HAVE_WXSTYLEDTEXTCTRL_GETLEXERLANGUAGE
+singlereturn(GetLexerLanguage)
+#endif
+
 macro_attr(Text,wxString)
 macro_attr(UseTabs,bool)
 
@@ -123,6 +127,7 @@ macro_attr(CaretLineBackAlpha,int)
 
 macro_attr(SelEOLFilled,bool)
 
+macro_attr(CaretWidth,int)
 macro_attr(CaretPeriod,int)
 macro_attr(WhitespaceSize,int)
 macro_attr(WordChars,wxString)
@@ -178,6 +183,25 @@ macro_attr(CaretLineVisibleAlways, bool)
 
 macro_attr(TargetStart,int)
 macro_attr(TargetEnd,int)
+
+
+VALUE _getTargetRange(VALUE self)
+{
+	return rb_range_new(_getTargetStart(self), _getTargetEnd(self), false);
+}
+
+VALUE _setTargetRange(VALUE self, VALUE range)
+{
+	rb_check_frozen(self);
+
+	VALUE begin, end;
+	int excl;
+
+	if(rb_range_values(range, &begin, &end, &excl))
+		_self->SetTargetRange(NUM2INT(begin), NUM2INT(end));
+
+	return range;
+}
 
 #ifdef HAVE_WXSTYLEDTEXTCTRL_GETTARGETTEXT
 macro_attr_func(TargetText,GetTargetText(), ReplaceTarget, wrap, unwrap<wxString>,true);
@@ -240,6 +264,7 @@ DLL_LOCAL VALUE _test_style(VALUE self)
 
 DLL_LOCAL VALUE _UndoAction(VALUE self)
 {
+	rb_check_frozen(self);
 	_self->BeginUndoAction();
 	rb_yield(self);
 	_self->EndUndoAction();
@@ -248,13 +273,29 @@ DLL_LOCAL VALUE _UndoAction(VALUE self)
 
 DLL_LOCAL VALUE _Record(VALUE self)
 {
+	rb_check_frozen(self);
 	_self->StartRecord();
 	rb_yield(self);
 	_self->StopRecord();
 	return self;
 }
 
+#if !wxUSE_TEXTCTRL
+DLL_LOCAL VALUE _load_file(VALUE self,VALUE file)
+{
+	if(!check_file_loadable(unwrap<wxString>(file)))
+		return Qfalse;
+	return wrap(_self->LoadFile(unwrap<wxString>(file)));
+}
 
+DLL_LOCAL VALUE _save_file(VALUE self,VALUE file)
+{
+	if(!check_file_saveable(unwrap<wxString>(file)))
+		return Qfalse;
+
+	return wrap(_self->SaveFile(unwrap<wxString>(file)));
+}
+#endif
 
 }
 }
@@ -280,6 +321,13 @@ DLL_LOCAL void Init_WXSTC(VALUE rb_mWX)
 
 #if wxUSE_TEXTCTRL
 	rb_include_module(rb_cWXSTC,rb_mWXTextArea);
+
+	rb_undef_method(rb_cWXSTC, "modified=");
+
+	rb_define_attr_method_missing(rb_cWXSTC,"default_style");
+#else
+	rb_define_method(rb_cWXSTC,"load_file",RUBY_METHOD_FUNC(_load_file),1);
+	rb_define_method(rb_cWXSTC,"save_file",RUBY_METHOD_FUNC(_save_file),1);
 #endif
 	rb_include_module(rb_cWXSTC,rb_mWXTextEntry);
 
@@ -297,12 +345,19 @@ DLL_LOCAL void Init_WXSTC(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXSTC,"target_start",_getTargetStart,_setTargetStart);
 	rb_define_attr_method(rb_cWXSTC,"target_end",_getTargetEnd,_setTargetEnd);
+	rb_define_attr_method(rb_cWXSTC,"target_range",_getTargetRange,_setTargetRange);
 	rb_define_attr_method(rb_cWXSTC,"target_text",_getTargetText,_setTargetText);
 
 #ifdef HAVE_WXSTYLEDTEXTCTRL_GETCARETLINEVISIBLEALWAYS
 	rb_define_attr_method(rb_cWXSTC,"caret_line_visible_always", _getCaretLineVisibleAlways, _setCaretLineVisibleAlways);
 #else
 	rb_define_attr_method_missing(rb_cWXSTC,"caret_line_visible_always");
+#endif
+
+#ifdef HAVE_WXSTYLEDTEXTCTRL_GETLEXERLANGUAGE
+	rb_define_attr_method(rb_cWXSTC,"lexer_language", _GetLexerLanguage, NULL);
+#else
+	rb_define_attr_method_missing(rb_cWXSTC,"lexer_language", true, false);
 #endif
 
 	rb_define_method(rb_cWXSTC,"test_style",RUBY_METHOD_FUNC(_test_style),0);
