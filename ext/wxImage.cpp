@@ -94,7 +94,7 @@ DLL_LOCAL VALUE _load(int argc,VALUE *argv,VALUE self)
 }
 
 DLL_LOCAL VALUE _alloc(VALUE self) {
-	return wrap(new wxImage);
+	return wrapTypedPtr(new wxImage, self);
 }
 
 
@@ -163,6 +163,38 @@ bool check_inside(int x, int y, const wxSize& size)
 
 /*
  * call-seq:
+ *   image.sub_image(rect) -> WX::Image or nil
+ *
+ * return a sub image of the given place
+ * ===Arguments
+ * * rect is a WX::Rect
+ * ===Return value
+ * WX::Image or nil
+ * === Exceptions
+ * [ArgumentError]
+ * * rect does have negative size
+ * * rect does not fit into the Size of the Image
+*/
+DLL_LOCAL VALUE _getSubImage(VALUE self, VALUE vrect)
+{
+	if(_self->IsOk())
+	{
+		wxRect rect;
+		wxSize size;
+
+		if(!check_negative_size(vrect, size))
+			return Qnil;
+
+		if(!check_contain_rect(_GetSize(self), _self->GetSize(), vrect, rect))
+			return Qnil;
+
+		return wrap(_self->GetSubImage(rect));
+	}
+	return Qnil;
+}
+
+/*
+ * call-seq:
  *   image[rect] -> WX::Image or nil
  *   image[x,y] -> WX::Color or nil
  *
@@ -185,18 +217,7 @@ DLL_LOCAL VALUE _get(int argc,VALUE *argv,VALUE self)
 	if(_self->IsOk())
 	{
 		if(NIL_P(vy))
-		{
-			wxRect rect;
-			wxSize size;
-
-			if(!check_negative_size(vx, size))
-				return Qnil;
-
-			if(!check_contain_rect(_GetSize(self), _self->GetSize(), vx, rect))
-				return Qnil;
-
-			return wrap(_self->GetSubImage(rect));
-		}
+			return _getSubImage(self, vy);
 
 		int x,y;
 		x = NUM2UINT(vx);
@@ -700,8 +721,173 @@ DLL_LOCAL VALUE _save(int argc,VALUE *argv,VALUE self)
 	return wrap(result);
 }
 
+/*
+ * call-seq:
+ *   image.blur(radius) -> WX::Image
+ *
+ * blur the image according to the specified pixel radius
+ * ===Arguments
+ * * radius Integer
+ * ===Return value
+ * WX::Image
+*/
+DLL_LOCAL VALUE _Blur(VALUE self, VALUE radius)
+{
+	return wrap(_self->Blur(NUM2INT(radius)));
+}
 
+/*
+ * call-seq:
+ *   image.blur!(radius) -> self
+ *
+ * blur the image according to the specified pixel radius
+ * ===Arguments
+ * * radius Integer
+ * ===Return value
+ * self
+*/
+DLL_LOCAL VALUE _Blur_self(VALUE self, VALUE radius)
+{
+	rb_check_frozen(self);
+	_self->Paste(_self->Blur(NUM2INT(radius)), 0, 0);
+	return self;
+}
 
+/*
+ * call-seq:
+ *   image.blur_horizontal(radius) -> WX::Image
+ *
+ * blur the image according to the specified pixel radius
+ * ===Arguments
+ * * radius Integer
+ * ===Return value
+ * WX::Image
+*/
+DLL_LOCAL VALUE _BlurHorizontal(VALUE self, VALUE radius)
+{
+	return wrap(_self->BlurHorizontal(NUM2INT(radius)));
+}
+
+/*
+ * call-seq:
+ *   image.blur_horizontal!(radius) -> self
+ *
+ * blur the image according to the specified pixel radius
+ * ===Arguments
+ * * radius Integer
+ * ===Return value
+ * self
+*/
+DLL_LOCAL VALUE _BlurHorizontal_self(VALUE self, VALUE radius)
+{
+	rb_check_frozen(self);
+	_self->Paste(_self->BlurHorizontal(NUM2INT(radius)), 0, 0);
+	return self;
+}
+
+/*
+ * call-seq:
+ *   image.blur_vertical(radius) -> WX::Image
+ *
+ * blur the image according to the specified pixel radius
+ * ===Arguments
+ * * radius Integer
+ * ===Return value
+ * WX::Image
+*/
+DLL_LOCAL VALUE _BlurVertical(VALUE self, VALUE radius)
+{
+	return wrap(_self->BlurVertical(NUM2INT(radius)));
+}
+
+/*
+ * call-seq:
+ *   image.blur_vertical(radius) -> WX::Image
+ *
+ * blur the image according to the specified pixel radius
+ * ===Arguments
+ * * radius Integer
+ * ===Return value
+ * WX::Image
+*/
+DLL_LOCAL VALUE _BlurVertical_self(VALUE self, VALUE radius)
+{
+	rb_check_frozen(self);
+	_self->Paste(_self->BlurVertical(NUM2INT(radius)), 0, 0);
+	return self;
+}
+
+/*
+ * call-seq:
+ *   image.convert_to_disabled([brightness = 255]) -> WX::Image
+ *
+ * Convert to disabled (dimmed) image.
+ * ===Arguments
+ * * brightness Fixnum
+ * ===Return value
+ * WX::Image
+*/
+DLL_LOCAL VALUE _ConvertToDisabled(int argc,VALUE *argv,VALUE self)
+{
+	VALUE brightness;
+	rb_scan_args(argc, argv, "01",&brightness);
+	return wrap(_self->ConvertToDisabled(NUM2CHR(brightness)));
+}
+
+/*
+ * call-seq:
+ *   image.convert_to_disabled([brightness = 255]) -> WX::Image
+ *
+ * Convert to disabled (dimmed) image.
+ * ===Arguments
+ * * brightness Fixnum
+ * ===Return value
+ * WX::Image
+*/
+DLL_LOCAL VALUE _ConvertToDisabled_self(int argc,VALUE *argv,VALUE self)
+{
+	VALUE brightness;
+	rb_scan_args(argc, argv, "01",&brightness);
+	rb_check_frozen(self);
+	_self->Paste(_self->ConvertToDisabled(NUM2CHR(brightness)), 0, 0);
+	return self;
+}
+
+/*
+ * call-seq:
+ *   image.convert_to_mono(color) -> WX::Image
+ *
+ * returns a new image where color is turned white
+ * and all other colors are turned black.
+ * ===Arguments
+ * * color WX::Color
+ * ===Return value
+ * WX::Image
+*/
+DLL_LOCAL VALUE _ConvertToMono(VALUE self, VALUE color)
+{
+	wxColor c(unwrap<wxColor>(color));
+	return wrap(_self->ConvertToMono(c.Red(), c.Green(), c.Blue()));
+}
+
+/*
+ * call-seq:
+ *   image.convert_to_mono!(color) -> self
+ *
+ * returns a new image where color is turned white
+ * and all other colors are turned black.
+ * ===Arguments
+ * * color WX::Color
+ * ===Return value
+ * self
+*/
+DLL_LOCAL VALUE _ConvertToMono_self(VALUE self, VALUE color)
+{
+	rb_check_frozen(self);
+	wxColor c(unwrap<wxColor>(color));
+	_self->Paste(_self->ConvertToMono(c.Red(), c.Green(), c.Blue()), 0, 0);
+	return self;
+}
 /*
  * call-seq:
  *   draw { | dc | } -> self
@@ -752,10 +938,33 @@ DLL_LOCAL VALUE _to_image(VALUE self)
  *
  * convert to WX::Bitmap
  *
+ * ===Arguments
+ * * opts: Hash with possible options to set:
+ *   * depth Integer
+ *   * scale Float
+ * === Exceptions
+ * [ArgumentError]
+ * * if scale is negative or zero
  */
-DLL_LOCAL VALUE _to_bitmap(VALUE self)
+DLL_LOCAL VALUE _to_bitmap(int argc,VALUE *argv,VALUE self)
 {
-	return wrap(unwrap<wxBitmap*>(self));
+	VALUE opts;
+	rb_scan_args(argc, argv, "0:",&opts);
+
+	int cdepth(wxBITMAP_SCREEN_DEPTH);
+	double cscale(1.0);
+
+	if(rb_obj_is_kind_of(opts, rb_cHash)) {
+		set_hash_option(opts, "depth", cdepth);
+		if(set_hash_option(opts, "scale", cscale)) {
+			if(cscale <= 0.0) {
+				rb_raise(rb_eArgError, "scale cant be negative or zero");
+				return Qnil;
+			}
+		}
+	}
+
+	return wrap(new wxBitmap(*_self, cdepth, cscale));
 }
 
 /* Document-method: initialize_copy
@@ -995,7 +1204,8 @@ DLL_LOCAL void Init_WXImage(VALUE rb_mWX)
 	rb_define_method(rb_cWXImage,"draw",RUBY_METHOD_FUNC(_draw),0);
 
 	rb_define_method(rb_cWXImage,"to_image",RUBY_METHOD_FUNC(_to_image),0);
-	rb_define_method(rb_cWXImage,"to_bitmap",RUBY_METHOD_FUNC(_to_bitmap),0);
+	rb_define_method(rb_cWXImage,"sub_image",RUBY_METHOD_FUNC(_getSubImage),1);
+	rb_define_method(rb_cWXImage,"to_bitmap",RUBY_METHOD_FUNC(_to_bitmap),-1);
 
 	rb_define_method(rb_cWXImage,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
 	rb_define_method(rb_cWXImage,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
@@ -1023,6 +1233,20 @@ DLL_LOCAL void Init_WXImage(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXImage,"rotate_hue",RUBY_METHOD_FUNC(_rotate_hue),1);
 	rb_define_method(rb_cWXImage,"rotate_hue!",RUBY_METHOD_FUNC(_rotate_hue_self),1);
+
+	rb_define_method(rb_cWXImage,"blur",RUBY_METHOD_FUNC(_Blur),1);
+	rb_define_method(rb_cWXImage,"blur_horizontal",RUBY_METHOD_FUNC(_BlurHorizontal),1);
+	rb_define_method(rb_cWXImage,"blur_vertical",RUBY_METHOD_FUNC(_BlurVertical),1);
+
+	rb_define_method(rb_cWXImage,"blur!",RUBY_METHOD_FUNC(_Blur_self),1);
+	rb_define_method(rb_cWXImage,"blur_horizontal!",RUBY_METHOD_FUNC(_BlurHorizontal_self),1);
+	rb_define_method(rb_cWXImage,"blur_vertical!",RUBY_METHOD_FUNC(_BlurVertical_self),1);
+
+	rb_define_method(rb_cWXImage,"convert_to_disabled",RUBY_METHOD_FUNC(_ConvertToDisabled),-1);
+	rb_define_method(rb_cWXImage,"convert_to_mono",RUBY_METHOD_FUNC(_ConvertToMono),1);
+
+	rb_define_method(rb_cWXImage,"convert_to_disabled!",RUBY_METHOD_FUNC(_ConvertToDisabled_self),-1);
+	rb_define_method(rb_cWXImage,"convert_to_mono!",RUBY_METHOD_FUNC(_ConvertToMono_self),1);
 
 	rb_define_method(rb_cWXImage,"[]",RUBY_METHOD_FUNC(_get),-1);
 	rb_define_method(rb_cWXImage,"[]=",RUBY_METHOD_FUNC(_set),-1);
