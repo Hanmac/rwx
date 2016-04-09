@@ -127,6 +127,8 @@ if(wxversion = pkg_config('wx', 'version'))
 		have_const("wxSTC_LEX_DMAP",["wx/wx.h", "wx/stc/stc.h"])
 		have_const("wxSTC_LEX_TEHEX",["wx/wx.h", "wx/stc/stc.h"])
 
+		have_func("wxBitmap(wxImage(10, 20), 32, 1.0)",["wx/wx.h", "wx/bitmap.h"])
+
 		have_member_func("wxStyledTextCtrl","GetTargetText",["wx/wx.h", "wx/stc/stc.h"])
 		have_member_func("wxStyledTextCtrl","IndicatorGetHoverStyle",["wx/wx.h", "wx/stc/stc.h"], 0)
 

@@ -963,8 +963,12 @@ DLL_LOCAL VALUE _to_bitmap(int argc,VALUE *argv,VALUE self)
 			}
 		}
 	}
-
-	return wrap(new wxBitmap(*_self, cdepth, cscale));
+	return wrap(new wxBitmap(
+		*_self, cdepth
+#if HAVE_WXBITMAP
+		, cscale
+#endif
+		));
 }
 
 /* Document-method: initialize_copy
