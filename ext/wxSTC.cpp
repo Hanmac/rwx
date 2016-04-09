@@ -197,9 +197,14 @@ VALUE _setTargetRange(VALUE self, VALUE range)
 	VALUE begin, end;
 	int excl;
 
-	if(rb_range_values(range, &begin, &end, &excl))
+	if(rb_range_values(range, &begin, &end, &excl)) {
+#if HAVE_WXSTYLEDTEXTCTRL_SETTARGETRANGE
 		_self->SetTargetRange(NUM2INT(begin), NUM2INT(end));
-
+#else
+		_self->SetTargetStart(NUM2INT(begin));
+		_self->SetTargetEnd(NUM2INT(end));
+#endif
+	}
 	return range;
 }
 

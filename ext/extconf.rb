@@ -132,6 +132,8 @@ if(wxversion = pkg_config('wx', 'version'))
 		have_member_func("wxStyledTextCtrl","GetTargetText",["wx/wx.h", "wx/stc/stc.h"])
 		have_member_func("wxStyledTextCtrl","IndicatorGetHoverStyle",["wx/wx.h", "wx/stc/stc.h"], 0)
 
+		have_member_func("wxStyledTextCtrl","SetTargetRange",["wx/wx.h", "wx/stc/stc.h"], 0, 0)
+
 		have_member_func("wxStyledTextCtrl","GetCaretLineVisibleAlways",["wx/wx.h", "wx/stc/stc.h"])
 
 		have_member_func("wxStyledTextCtrl","GetLexerLanguage",["wx/wx.h", "wx/stc/stc.h"])
