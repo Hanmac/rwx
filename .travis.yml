@@ -7,6 +7,9 @@ cache:
 os:
 - linux
 
+sudo: required
+dist: trusty
+
 rvm:
 #rbx doesnt work anymore with rwx
 #- rbx-2.2.7
