@@ -7,4 +7,4 @@ else
 sudo add-apt-repository 'deb http://repos.codelite.org/wx3.0/ubuntu/ precise universe'
 fi
 sudo apt-get update
-sudo apt-get install -y libwxbase3.0-dev libwxgtk3.0-dev
+sudo apt-get install -y libwxbase3.0-dev libwxgtk3.0-dev libgtk2.0-dev
