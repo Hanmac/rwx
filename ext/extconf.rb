@@ -3,9 +3,17 @@ require "mkmf"
 # add check for member function, does need default constructor for class
 def have_member_func(klass,member,header, *args)
 	if have_func("#{klass}().#{member}(#{args.join(', ')})",header)
-		$defs[-1] = "-DHAVE_#{klass.tr_cpp}_#{member.tr_cpp}" 
+		$defs[-1] = "-DHAVE_#{klass.tr_cpp}_#{member.tr_cpp}"
 	end
 end
+
+def have_constructor(klass, header, *args)
+	if have_func("#{klass}(#{args.join(', ')})",header)
+		vargs = args.grep(String).flat_map {|s| s.scan(/\A\w+/) }.join
+		$defs[-1] = "-DHAVE_#{klass.tr_cpp}_#{vargs.tr_cpp}"
+	end
+end
+
 
 unless have_macro("HAVE_RB_DATA_TYPE_T_PARENT")
 	abort("rb_data_type_t needs parent attribute!")
@@ -127,7 +135,7 @@ if(wxversion = pkg_config('wx', 'version'))
 		have_const("wxSTC_LEX_DMAP",["wx/wx.h", "wx/stc/stc.h"])
 		have_const("wxSTC_LEX_TEHEX",["wx/wx.h", "wx/stc/stc.h"])
 
-		have_func("wxBitmap(wxImage(10, 20), 32, 1.0)",["wx/wx.h", "wx/bitmap.h"])
+		have_constructor("wxBitmap",["wx/wx.h", "wx/bitmap.h"], "wxImage(10, 20)", 32, 1.0)
 
 		have_member_func("wxStyledTextCtrl","GetTargetText",["wx/wx.h", "wx/stc/stc.h"])
 		have_member_func("wxStyledTextCtrl","IndicatorGetHoverStyle",["wx/wx.h", "wx/stc/stc.h"], 0)
@@ -139,6 +147,8 @@ if(wxversion = pkg_config('wx', 'version'))
 		have_member_func("wxStyledTextCtrl","GetLexerLanguage",["wx/wx.h", "wx/stc/stc.h"])
 
 		have_member_func("wxListCtrl","HasCheckboxes", ["wx/wx.h", "wx/listctrl.h"])
+
+		have_member_func("wxScrollBar","SetThumbSize",["wx/wx.h", "wx/scrolbar.h"], 10)
 
 		have_const("wxALIGN_CENTER_VERTICAL","wx/sizer.h")
 		have_member_func("wxSizerFlags","CenterVertical","wx/sizer.h")

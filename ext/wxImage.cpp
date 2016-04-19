@@ -965,7 +965,7 @@ DLL_LOCAL VALUE _to_bitmap(int argc,VALUE *argv,VALUE self)
 	}
 	return wrap(new wxBitmap(
 		*_self, cdepth
-#if HAVE_WXBITMAP
+#if HAVE_WXBITMAP_WXIMAGE
 		, cscale
 #endif
 		));
