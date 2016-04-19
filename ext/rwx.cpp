@@ -117,6 +117,7 @@
 #include "wxOwnerDrawnComboBox.hpp"
 #include "wxBitmapComboBox.hpp"
 
+#include "wxScrollBar.hpp"
 #include "wxSlider.hpp"
 
 #include "wxSpinButton.hpp"
@@ -381,6 +382,7 @@ extern "C" void Init_rwx()
 	Init_WXDataView(rb_mWX);
 	Init_WXDataViewList(rb_mWX);
 
+	Init_WXScrollBar(rb_mWX);
 	Init_WXSlider(rb_mWX);
 	Init_WXSpinButton(rb_mWX);
 	Init_WXSpinCtrl(rb_mWX);
