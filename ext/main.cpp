@@ -312,12 +312,18 @@ type_wrap_array(wxArrayInt)
 template <>
 VALUE wrap< wxDateTime >(const wxDateTime &st )
 {
+	if(!st.IsValid())
+		return Qnil;
 	return rb_time_new(st.GetTicks(),st.GetMillisecond() * 10);
 }
 
 template <>
 wxDateTime unwrap< wxDateTime >(const VALUE &val )
 {
+// need extra check
+//	if(NIL_P(val))
+//		return wxDefaultDateTime;
+
 	wxDateTime result;
 	result.SetToCurrent();
 	result.MakeTimezone(
