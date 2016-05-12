@@ -38,7 +38,21 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "11:",&parent,&name,&hash);
 
 	if(!_created && !rb_obj_is_kind_of(name,rb_cString)){
-		_self->Create(unwrap<wxWindow*>(parent));
+		wxColourData *data = NULL;
+
+		if(rb_obj_is_kind_of(hash,rb_cHash))
+		{
+			data = new wxColourData;
+			bool full, alpha;
+
+			if(set_hash_option(hash,"full",full))
+				data->SetChooseFull(full);
+
+			if(set_hash_option(hash,"alpha",alpha))
+				data->SetChooseAlpha(alpha);
+		}
+
+		_self->Create(unwrap<wxWindow*>(parent), data);
 	}
 	
 	rb_call_super(argc,argv);
@@ -46,6 +60,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 
 macro_attr_pre(Colour,wxColor,GetColourData)
+macro_attr_pre(ChooseFull,bool,GetColourData)
+macro_attr_pre(ChooseAlpha,bool,GetColourData)
 
 DLL_LOCAL VALUE _getCustomColors(VALUE self)
 {
@@ -120,30 +136,47 @@ DLL_LOCAL VALUE _setCustomColor(VALUE self, VALUE idx, VALUE col)
 
 /*
  * call-seq:
- *   color_dialog(parent, [caption], [color]) -> color
+ *   color_dialog(parent, **opts) -> color
  *
  * shows a color dialog
  * ===Arguments
  * * parent of this window or nil
- * * caption String
- * * color WX::Color
+ * *options: Hash with possible options to set:
+ *   * color WX::Color default color
+ *   * caption String
+ *   * full true/false
+ *   * alpha true/false
  * ===Return value
  * color WX::Color
 */
 DLL_LOCAL VALUE _getUserColor(int argc,VALUE *argv,VALUE self)
 {
-	VALUE parent,caption, col;
-	rb_scan_args(argc, argv, "12",&parent,&caption, &col);
+	VALUE parent,hash;
+	rb_scan_args(argc, argv, "1:",&parent,&hash);
 
 	app_protected();
 
-	wxColor def = *wxBLACK;
+	wxColor color = *wxBLACK;
+	wxString caption;
 
-	if(!NIL_P(col))
-		def = unwrap<wxColor>(col);
+	wxColourData *data = NULL;
 
-	return wrap(wxGetColourFromUser(unwrap<wxWindow*>(parent),def,unwrap<wxString>(caption)));
+	if(rb_obj_is_kind_of(hash,rb_cHash))
+	{
+		data = new wxColourData;
+		bool full, alpha;
 
+		set_hash_option(hash,"color",caption);
+		set_hash_option(hash,"caption",caption);
+
+		if(set_hash_option(hash,"full",full))
+			data->SetChooseFull(full);
+
+		if(set_hash_option(hash,"alpha",alpha))
+			data->SetChooseAlpha(alpha);
+	}
+
+	return wrap(wxGetColourFromUser(unwrap<wxWindow*>(parent), color, caption, data));
 }
 
 }
@@ -158,6 +191,13 @@ DLL_LOCAL VALUE _getUserColor(int argc,VALUE *argv,VALUE self)
  * the custom colors of the ColorDialog. [WX::Color]
  */
 
+/* Document-attr: choose_full
+ * Under Windows, determines whether the Windows colour dialog will
+ * display the full dialog with custom colour selection controls.  Boolean
+ */
+/* Document-attr: choose_alpha
+ * the ColorDialog does use alpha. Boolean
+ */
 
 /* Document-const: NUM_CUSTOM
  *   shows how many custom colors are allowed.
@@ -187,6 +227,8 @@ DLL_LOCAL void Init_WXColorDialog(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXColorDialog,"color",_getColour,_setColour);
 	rb_define_attr_method(rb_cWXColorDialog,"custom_colors",_getCustomColors,_setCustomColors);
+	rb_define_attr_method(rb_cWXColorDialog,"choose_full",_getChooseFull,_setChooseFull);
+	rb_define_attr_method(rb_cWXColorDialog,"choose_alpha",_getChooseAlpha,_setChooseAlpha);
 
 	rb_define_method(rb_cWXColorDialog,"get_custom_color",RUBY_METHOD_FUNC(_getCustomColor),1);
 	rb_define_method(rb_cWXColorDialog,"set_custom_color",RUBY_METHOD_FUNC(_setCustomColor),2);

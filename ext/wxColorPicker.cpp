@@ -55,7 +55,9 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			PickerBase::set_style_flags(hash,style);
 
 			set_hash_flag_option(hash,"show_label",wxCLRP_SHOW_LABEL,style);
-
+#ifdef wxCLRP_SHOW_ALPHA
+			set_hash_flag_option(hash,"show_alpha",wxCLRP_SHOW_ALPHA,style);
+#endif
 		}
 
 		if(nil_check(parent)) {
@@ -125,6 +127,9 @@ DLL_LOCAL void Init_WXColorPicker(VALUE rb_mWX)
 
 	rb_define_const(rb_cWXColorPicker,"DEFAULT_STYLE",INT2NUM(wxCLRP_DEFAULT_STYLE));
 	rb_define_const(rb_cWXColorPicker,"SHOW_LABEL",INT2NUM(wxCLRP_SHOW_LABEL));
+#ifdef wxCLRP_SHOW_ALPHA
+	rb_define_const(rb_cWXColorPicker,"SHOW_ALPHA",INT2NUM(wxCLRP_SHOW_ALPHA));
+#endif
 
 	registerEventType("colorpicker_changed",wxEVT_COLOURPICKER_CHANGED,rb_cWXColorPickerEvent);
 
