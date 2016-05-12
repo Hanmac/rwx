@@ -6,13 +6,13 @@ class SearchCtrlPage < CommonPage
     WX::BoxSizer.new(:vertical) {|boxleft|
       boxleft.add(
         add_statbox("&Options", :vertical) {|box|
-          @search_button = add_checkbox(box,"Search button", value: true ) {
-            @search_ctrl.search_button_visible= @search_button.value
+          @search_button = add_checkbox(box, "Search button", value: true ) {
+            @search_ctrl.search_button_visible = @search_button.value
           }
-          @cancel_button = add_checkbox(box,"Cancel button") {
-            @search_ctrl.cancel_button_visible= @cancel_button.value
+          @cancel_button = add_checkbox(box, "Cancel button") {
+            @search_ctrl.cancel_button_visible = @cancel_button.value
           }
-          @search_menu = add_checkbox(box,"Search menu") {
+          @search_menu = add_checkbox(box, "Search menu") {
             @search_ctrl.menu = @search_menu.value ? create_menu : nil
           }
         },

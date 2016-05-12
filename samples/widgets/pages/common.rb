@@ -44,14 +44,14 @@ class CommonPage < WX::Panel
   end
   
   def add_checkbox(sizer,label,id = nil, value: false, &block)
-    cb = WX::CheckBox.new(self,:label => label, :id => id, :value => value)
+    cb = WX::CheckBox.new(self, :label => label, :id => id, :value => value)
     sizer.add(cb)
     cb.bind(:checkbox, &block) unless block.nil?
     return cb
   end
 
   def add_button(sizer, label, id = nil, **opt, &block)
-    cb = WX::Button.new(self,:label => label, :id => id)
+    cb = WX::Button.new(self, :label => label, :id => id)
     sizer.add(cb, **opt)
     cb.bind(:button, &block) unless block.nil?
     return cb

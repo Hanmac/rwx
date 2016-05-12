@@ -48,8 +48,7 @@ class FileCtrlPage < CommonPage
   def get_style
     style = [WX::FileCtrl::OPEN, WX::FileCtrl::SAVE][@mode.selection]
     data = [WX::FileCtrl::MULTIPLE, WX::FileCtrl::NOSHOWHIDDEN]
-    @flags.each_checked {|f| style |= data[f] }
-    return style
+    return data.values_at(*@flags.checked_items).inject(style, :|)
   end
 
   def reset_boxes
@@ -64,7 +63,7 @@ class FileCtrlPage < CommonPage
 
   def create_widget
     klass = [WX::FileCtrl,WX::FileCtrlGeneric][@klass.selection]
-    ctrl = klass.new(self,:style => get_style, :default_wildcard => wildcard, :default_directory => ".")
+    ctrl = klass.new(self, :style => get_style, :default_wildcard => wildcard, :default_directory => ".")
     return ctrl
   end
 end

@@ -8,6 +8,9 @@ class ColorPickerPage < CommonPage
         add_statbox("&ColourPicker style", :vertical) {|box|
           @textctrl = add_checkbox(box,"With textctrl")
           @withLabel = add_checkbox(box,"With label")
+          if WX::ColorPicker::const_defined?(:SHOW_ALPHA)
+            @withAlpha = add_checkbox(box,"With alpha")
+          end
 
           reset_boxes
         },
@@ -19,9 +22,9 @@ class ColorPickerPage < CommonPage
         reset_boxes
         recreate_widget
       }
-      
+
       bind(:checkbox) {recreate_widget}
-      
+
     }
   end
   
@@ -29,6 +32,9 @@ class ColorPickerPage < CommonPage
     style = 0
     style |= WX::ColorPicker::USE_TEXTCTRL if @textctrl.value
     style |= WX::ColorPicker::SHOW_LABEL if @withLabel.value
+    if WX::ColorPicker::const_defined?(:SHOW_ALPHA)
+      style |= WX::ColorPicker::SHOW_ALPHA if @withAlpha.value
+    end
 
     return style
   end
@@ -37,6 +43,9 @@ class ColorPickerPage < CommonPage
     default = WX::ColorPicker::DEFAULT_STYLE
     @textctrl.value = (default & WX::ColorPicker::USE_TEXTCTRL) != 0
     @withLabel.value = (default & WX::ColorPicker::SHOW_LABEL) != 0
+    if WX::ColorPicker::const_defined?(:SHOW_ALPHA)
+      @withAlpha.value = (default & WX::ColorPicker::SHOW_ALPHA) != 0
+    end
   end
   
   def create_widget
