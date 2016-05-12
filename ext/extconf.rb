@@ -146,7 +146,7 @@ if(wxversion = pkg_config('wx', 'version'))
 
 		have_member_func("wxStyledTextCtrl","GetLexerLanguage",["wx/wx.h", "wx/stc/stc.h"])
 
-		have_member_func("wxListCtrl","HasCheckboxes", ["wx/wx.h", "wx/listctrl.h"])
+		have_member_func("wxListCtrl","HasCheckBoxes", ["wx/wx.h", "wx/listctrl.h"])
 
 		have_member_func("wxScrollBar","SetThumbSize",["wx/wx.h", "wx/scrolbar.h"], 10)
 
@@ -165,10 +165,13 @@ end
 
 $defs.push("-DRUBY_UNTYPED_DATA_WARNING=1")
 
+# sorry, unimplemented!
+CONFIG["optflags"].gsub!("-fexcess-precision=standard", "")
 
 drop_warn = [
 	"-Wdeclaration-after-statement",
 	"-Wimplicit-function-declaration",
+	"-Wimplicit-int",
 	"-Wextra",  #wxAUI is a bit buggy
 
 	'-Wno-self-assign',

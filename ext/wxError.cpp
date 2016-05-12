@@ -12,7 +12,7 @@
 
 VALUE rb_eWXError;
 
-void wxrubyAssert(const wxString& file,
+NORETURN(void wxrubyAssert(const wxString& file,
                                   int line,
                                   const wxString& func,
                                   const wxString& cond,
@@ -23,7 +23,7 @@ void wxrubyAssert(const wxString& file,
 		func.GetData().AsChar(),
 		msg.GetData().AsChar()
 		);
-}
+})
 
 #if wxUSE_LOG
 class RubyExceptionLog : public wxLogInterposer
