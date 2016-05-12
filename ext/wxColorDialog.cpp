@@ -47,9 +47,10 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 			if(set_hash_option(hash,"full",full))
 				data->SetChooseFull(full);
-
+#ifdef HAVE_WXCOLOURDATA_GETCHOOSEALPHA
 			if(set_hash_option(hash,"alpha",alpha))
 				data->SetChooseAlpha(alpha);
+#endif
 		}
 
 		_self->Create(unwrap<wxWindow*>(parent), data);
@@ -61,7 +62,10 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 macro_attr_pre(Colour,wxColor,GetColourData)
 macro_attr_pre(ChooseFull,bool,GetColourData)
+
+#ifdef HAVE_WXCOLOURDATA_GETCHOOSEALPHA
 macro_attr_pre(ChooseAlpha,bool,GetColourData)
+#endif
 
 DLL_LOCAL VALUE _getCustomColors(VALUE self)
 {
@@ -172,8 +176,10 @@ DLL_LOCAL VALUE _getUserColor(int argc,VALUE *argv,VALUE self)
 		if(set_hash_option(hash,"full",full))
 			data->SetChooseFull(full);
 
+#ifdef HAVE_WXCOLOURDATA_GETCHOOSEALPHA
 		if(set_hash_option(hash,"alpha",alpha))
 			data->SetChooseAlpha(alpha);
+#endif
 	}
 
 	return wrap(wxGetColourFromUser(unwrap<wxWindow*>(parent), color, caption, data));
@@ -228,7 +234,9 @@ DLL_LOCAL void Init_WXColorDialog(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXColorDialog,"color",_getColour,_setColour);
 	rb_define_attr_method(rb_cWXColorDialog,"custom_colors",_getCustomColors,_setCustomColors);
 	rb_define_attr_method(rb_cWXColorDialog,"choose_full",_getChooseFull,_setChooseFull);
+#ifdef HAVE_WXCOLOURDATA_GETCHOOSEALPHA
 	rb_define_attr_method(rb_cWXColorDialog,"choose_alpha",_getChooseAlpha,_setChooseAlpha);
+#endif
 
 	rb_define_method(rb_cWXColorDialog,"get_custom_color",RUBY_METHOD_FUNC(_getCustomColor),1);
 	rb_define_method(rb_cWXColorDialog,"set_custom_color",RUBY_METHOD_FUNC(_setCustomColor),2);

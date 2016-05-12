@@ -137,6 +137,8 @@ if(wxversion = pkg_config('wx', 'version'))
 
 		have_constructor("wxBitmap",["wx/wx.h", "wx/bitmap.h"], "wxImage(10, 20)", 32, 1.0)
 
+		have_member_func("wxColourData","GetChooseAlpha",["wx/wx.h", "wx/colourdata.h"])
+
 		have_member_func("wxStyledTextCtrl","GetTargetText",["wx/wx.h", "wx/stc/stc.h"])
 		have_member_func("wxStyledTextCtrl","IndicatorGetHoverStyle",["wx/wx.h", "wx/stc/stc.h"], 0)
 
