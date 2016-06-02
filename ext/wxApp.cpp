@@ -57,6 +57,11 @@ void app_protected()
 }
 
 
+void rwx_sigint(int)
+{
+	wxExit();
+}
+
 RubyApp::RubyApp(VALUE klass)
 {
 	mRuby = wrapTypedPtr(this,klass);
@@ -73,6 +78,7 @@ bool RubyApp::OnInit()
      CPSEnableForegroundOperation( &psn );
      SetFrontProcess( &psn );
 #endif
+
 
 	RubyWX::Color::define_const();
 	RubyWX::Font::define_const();
@@ -94,6 +100,10 @@ bool RubyApp::OnInit()
 	this->Bind(wxEVT_ASYNC_METHOD_CALL,AppAfter());
 
 	ruby_app_inited = true;
+	// binds SIGINT to wxExit to close the application
+#if defined(__UNIX__) && !defined(__WINDOWS__)
+	SetSignalHandler(wxSIGINT, rwx_sigint);
+#endif
 
 	bool result = RTEST(rb_funcall(mRuby, rb_intern("on_init"), 0));
 	if(rb_block_given_p())
