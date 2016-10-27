@@ -126,6 +126,8 @@
 #endif
 #ifndef RB_FIX2INT
 #define RB_FIX2INT FIX2INT
+#endif
+#ifndef RB_INT2FIX
 #define RB_INT2FIX INT2FIX
 #endif
 
