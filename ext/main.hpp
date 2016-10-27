@@ -124,11 +124,17 @@
 #ifndef RB_LONG2FIX
 #define RB_LONG2FIX LONG2FIX
 #endif
+#ifndef RB_FIX2LONG
+#define RB_FIX2LONG FIX2LONG
+#endif
 #ifndef RB_FIX2INT
 #define RB_FIX2INT FIX2INT
 #endif
 #ifndef RB_INT2FIX
 #define RB_INT2FIX INT2FIX
+#endif
+#ifndef RB_NUM2CHR
+#define RB_NUM2CHR NUM2CHR
 #endif
 
 #ifndef RB_SYMBOL_P
