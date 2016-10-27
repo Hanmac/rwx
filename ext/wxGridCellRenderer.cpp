@@ -28,12 +28,12 @@ public :
 	void Draw(wxGrid& grid, wxGridCellAttr& attr, wxDC& dc, const wxRect& rect, int row, int col, bool isSelected)
 	{
 		wxGridCellRenderer::Draw(grid,attr,dc,rect,row,col,isSelected);
-		rb_funcall(mRuby,rb_intern("draw"),7,wrap(&grid),wrap(&attr),wrap(&dc),wrap(rect),INT2NUM(row),INT2NUM(col),wrap(isSelected));
+		rb_funcall(mRuby,rb_intern("draw"),7,wrap(&grid),wrap(&attr),wrap(&dc),wrap(rect),RB_INT2NUM(row),RB_INT2NUM(col),wrap(isSelected));
 	}
 
 	wxSize GetBestSize(wxGrid& grid, wxGridCellAttr& attr, wxDC& dc, int row, int col)
 	{
-		return unwrap<wxSize>(rb_funcall(mRuby,rb_intern("best_size"),5,wrap(&grid),wrap(&attr),wrap(&dc),INT2NUM(row),INT2NUM(col)));
+		return unwrap<wxSize>(rb_funcall(mRuby,rb_intern("best_size"),5,wrap(&grid),wrap(&attr),wrap(&dc),RB_INT2NUM(row),RB_INT2NUM(col)));
 	}
 	wxGridCellRenderer *Clone() const
 	{
@@ -60,7 +60,7 @@ public :\
 		if(!rubycall)\
 		{\
 			rubycall = true;\
-			rb_funcall(self,rb_intern("draw"),7,wrap(&grid),wrap(&attr),wrap(&dc),wrap(rect),INT2NUM(row),INT2NUM(col),wrap(isSelected));\
+			rb_funcall(self,rb_intern("draw"),7,wrap(&grid),wrap(&attr),wrap(&dc),wrap(rect),RB_INT2NUM(row),RB_INT2NUM(col),wrap(isSelected));\
 			rubycall = false;\
 		}else\
 			wxGridCell##type##Renderer::Draw(grid,attr,dc,rect,row,col,isSelected);\
@@ -72,7 +72,7 @@ public :\
 		if(!rubycall)\
 		{\
 			rubycall = true;\
-			wxSize size(unwrap<wxSize>(rb_funcall(self,rb_intern("best_size"),7,wrap(&grid),wrap(&attr),wrap(&dc),INT2NUM(row),INT2NUM(col))));\
+			wxSize size(unwrap<wxSize>(rb_funcall(self,rb_intern("best_size"),7,wrap(&grid),wrap(&attr),wrap(&dc),RB_INT2NUM(row),RB_INT2NUM(col))));\
 			rubycall = false;\
 			return size;\
 		}else\

@@ -125,10 +125,10 @@ DLL_LOCAL void Init_WXColorPicker(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXColorPicker,"color",_getColour,_setColour);
 
-	rb_define_const(rb_cWXColorPicker,"DEFAULT_STYLE",INT2NUM(wxCLRP_DEFAULT_STYLE));
-	rb_define_const(rb_cWXColorPicker,"SHOW_LABEL",INT2NUM(wxCLRP_SHOW_LABEL));
+	rb_define_const(rb_cWXColorPicker,"DEFAULT_STYLE",RB_INT2NUM(wxCLRP_DEFAULT_STYLE));
+	rb_define_const(rb_cWXColorPicker,"SHOW_LABEL",RB_INT2NUM(wxCLRP_SHOW_LABEL));
 #ifdef wxCLRP_SHOW_ALPHA
-	rb_define_const(rb_cWXColorPicker,"SHOW_ALPHA",INT2NUM(wxCLRP_SHOW_ALPHA));
+	rb_define_const(rb_cWXColorPicker,"SHOW_ALPHA",RB_INT2NUM(wxCLRP_SHOW_ALPHA));
 #endif
 
 	registerEventType("colorpicker_changed",wxEVT_COLOURPICKER_CHANGED,rb_cWXColorPickerEvent);

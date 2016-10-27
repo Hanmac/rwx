@@ -27,7 +27,7 @@ namespace Event {
 
 macro_attr_with_func(EventType,wrapEventType,unwrapEventType)
 macro_attr_with_func(Id,wrapID,unwrapID)
-macro_attr_with_func(Timestamp,LONG2NUM,NUM2LONG)
+macro_attr_with_func(Timestamp,RB_LONG2NUM,RB_NUM2LONG)
 
 macro_attr(EventObject,wxObject*)
 

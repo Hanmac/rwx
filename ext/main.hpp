@@ -121,6 +121,16 @@
 #define RB_ULONG2NUM ULONG2NUM
 #endif
 
+#ifndef RB_SYMBOL_P
+#define RB_SYMBOL_P SYMBOL_P
+#define RB_ID2SYM ID2SYM
+#define RB_SYM2ID SYM2ID
+#endif
+
+#ifndef RB_FIXNUM_P
+#define RB_FIXNUM_P FIXNUM_P
+#endif
+
 template< class T > struct remove_pointer                    {typedef T type;};
 template< class T > struct remove_pointer<T*>                {typedef T type;};
 template< class T > struct remove_pointer<T* const>          {typedef T type;};
@@ -529,7 +539,7 @@ DLL_LOCAL bool set_hash_flag_option(VALUE hash,const char* name,const int& flag,
 \
 DLL_LOCAL VALUE _get##attr(VALUE self,VALUE idx)\
 {\
-	int cidx = NUM2INT(idx);\
+	int cidx = RB_NUM2INT(idx);\
 	if(check_index(cidx,_self->funcsize()))\
 		return wrapget(_self->funcget(cidx));\
 	return Qnil;\
@@ -538,7 +548,7 @@ DLL_LOCAL VALUE _set##attr(VALUE self,VALUE idx,VALUE val)\
 {\
 	rb_check_frozen(self);\
 \
-	int cidx = NUM2INT(idx);\
+	int cidx = RB_NUM2INT(idx);\
 	if(check_index(cidx,_self->funcsize()))\
 		_self->funcset(cidx,wrapset(val));\
 \
@@ -555,7 +565,7 @@ DLL_LOCAL VALUE _set##attr(VALUE self,VALUE idx,VALUE val)\
 DLL_LOCAL VALUE _get##attr(VALUE self)\
 { \
 	int val = _self->Get##attr();\
-	return val == wxNOT_FOUND ? Qnil : UINT2NUM(val);\
+	return val == wxNOT_FOUND ? Qnil : RB_UINT2NUM(val);\
 }\
 \
 DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
@@ -563,7 +573,7 @@ DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
 	rb_check_frozen(self);\
 	if(NIL_P(other))\
 		_self->Set##attr(wxNOT_FOUND);\
-	int cother = NUM2INT(other);\
+	int cother = RB_NUM2INT(other);\
 	if(check_index(cother,_self->count()))\
 		_self->Set##attr(cother);\
 	return other;\

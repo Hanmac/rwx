@@ -311,7 +311,7 @@ DLL_LOCAL VALUE _DrawBitmap(int argc,VALUE *argv,VALUE self)
 		wxPoint point(unwrap<wxPoint>(x));
 		_self->DrawBitmap(bit, point.x, point.y);
 	} else {
-		_self->DrawBitmap(bit, NUM2INT(x), NUM2INT(y));
+		_self->DrawBitmap(bit, RB_NUM2INT(x), RB_NUM2INT(y));
 	}
 
 	return self;
@@ -342,7 +342,7 @@ DLL_LOCAL VALUE _DrawText(int argc, VALUE *argv, VALUE self)
 		wxPoint point(unwrap<wxPoint>(x));
 		_self->DrawText(unwrap<wxString>(text), point.x, point.y);
 	} else {
-		_self->DrawText(unwrap<wxString>(text), NUM2INT(x), NUM2INT(y));
+		_self->DrawText(unwrap<wxString>(text), RB_NUM2INT(x), RB_NUM2INT(y));
 	}
 
 	return self;
@@ -374,7 +374,7 @@ DLL_LOCAL VALUE _DrawRotatedText(int argc, VALUE *argv, VALUE self)
 		wxPoint point(unwrap<wxPoint>(x));
 		_self->DrawRotatedText(unwrap<wxString>(text), NUM2DBL(angle), point.x, point.y);
 	} else {
-		_self->DrawRotatedText(unwrap<wxString>(text), NUM2DBL(angle), NUM2INT(x), NUM2INT(y));
+		_self->DrawRotatedText(unwrap<wxString>(text), NUM2DBL(angle), RB_NUM2INT(x), RB_NUM2INT(y));
 	}
 
 	return self;
@@ -396,7 +396,7 @@ DLL_LOCAL VALUE _DrawLines(int argc,VALUE *argv,VALUE self)
 	VALUE x,y,points;
 	rb_scan_args(argc, argv, "2*",&x,&y,&points);
 	rb_check_frozen(self);
-	_self->DrawLines(unwrap<wxPointList*>(points), NUM2INT(x), NUM2INT(y));
+	_self->DrawLines(unwrap<wxPointList*>(points), RB_NUM2INT(x), RB_NUM2INT(y));
 	return self;
 }
 
@@ -437,7 +437,7 @@ DLL_LOCAL VALUE _DrawPolygon(int argc,VALUE *argv,VALUE self)
 	VALUE x,y,points;
 	rb_scan_args(argc, argv, "2*",&x,&y,&points);
 	rb_check_frozen(self);
-	_self->DrawPolygon(unwrap<wxPointList*>(points), NUM2INT(x), NUM2INT(y));
+	_self->DrawPolygon(unwrap<wxPointList*>(points), RB_NUM2INT(x), RB_NUM2INT(y));
 	return self;
 }
 

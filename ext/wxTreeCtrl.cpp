@@ -60,7 +60,6 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	}
 
 	rb_call_super(argc,argv);
-	rb_call_super(argc,argv);
 	return self;
 }
 
@@ -72,9 +71,9 @@ DLL_LOCAL VALUE _root(int argc,VALUE *argv,VALUE self)
 	if(NIL_P(str) || _self->GetRootItem().IsOk())
 		return wrap(_self,_self->GetRootItem());
 	if(!NIL_P(id))
-		cid = NUM2INT(id);
+		cid = RB_NUM2INT(id);
 	if(!NIL_P(selid))
-		cid = NUM2INT(selid);
+		cid = RB_NUM2INT(selid);
 	VALUE result = wrap(_self,_self->AddRoot(unwrap<wxString>(str),cid,cselid));
 	if(rb_block_given_p())
 		rb_yield(result);
@@ -112,9 +111,9 @@ DLL_LOCAL VALUE _AppendItem(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "12",&str, &id, &selid);
 	int cid = -1,cselid = -1;
 	if(!NIL_P(id))
-		cid = NUM2INT(id);
+		cid = RB_NUM2INT(id);
 	if(!NIL_P(selid))
-		cid = NUM2INT(selid);
+		cid = RB_NUM2INT(selid);
 	VALUE result = _self->AppendItem(unwrap<wxString>(str),cid,cselid);
 
 	if(rb_block_given_p())
@@ -129,9 +128,9 @@ DLL_LOCAL VALUE _PrependItem(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "12",&str, &id, &selid);
 	int cid = -1,cselid = -1;
 	if(!NIL_P(id))
-		cid = NUM2INT(id);
+		cid = RB_NUM2INT(id);
 	if(!NIL_P(selid))
-		cid = NUM2INT(selid);
+		cid = RB_NUM2INT(selid);
 	VALUE result = _self->PrependItem(unwrap<wxString>(str),cid,cselid);
 
 	if(rb_block_given_p())

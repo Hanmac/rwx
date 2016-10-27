@@ -120,9 +120,9 @@ DLL_LOCAL void Init_WXFontPickerWidget(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXFontPickerWidget,"selected_color",_getSelectedColour,_setSelectedColour);
 #endif
 
-	rb_define_const(rb_cWXFontPickerWidget,"DEFAULT_STYLE",INT2NUM(wxFNTP_DEFAULT_STYLE));
-	rb_define_const(rb_cWXFontPickerWidget,"FONTDESC_AS_LABEL",INT2NUM(wxFNTP_FONTDESC_AS_LABEL));
-	rb_define_const(rb_cWXFontPickerWidget,"USEFONT_FOR_LABEL",INT2NUM(wxFNTP_USEFONT_FOR_LABEL));
+	rb_define_const(rb_cWXFontPickerWidget,"DEFAULT_STYLE",RB_INT2NUM(wxFNTP_DEFAULT_STYLE));
+	rb_define_const(rb_cWXFontPickerWidget,"FONTDESC_AS_LABEL",RB_INT2NUM(wxFNTP_FONTDESC_AS_LABEL));
+	rb_define_const(rb_cWXFontPickerWidget,"USEFONT_FOR_LABEL",RB_INT2NUM(wxFNTP_USEFONT_FOR_LABEL));
 
 	registerInfo<wxFontPickerWidget>(rb_cWXFontPickerWidget);
 #endif

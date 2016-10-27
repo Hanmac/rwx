@@ -32,7 +32,7 @@ DLL_LOCAL VALUE _initialize(VALUE self)
 
 DLL_LOCAL VALUE _start(VALUE self,VALUE msec)
 {
-	return wrap(_self->Start(NUM2UINT(msec)));
+	return wrap(_self->Start(RB_NUM2UINT(msec)));
 }
 
 singlefunc(Stop)

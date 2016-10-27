@@ -229,10 +229,10 @@ DLL_LOCAL void Init_WXComboCtrl(VALUE rb_mWX)
 	rb_include_module(rb_cWXComboCtrl,rb_mWXTextEntry);
 
 	//define TextCtrl constants
-	rb_define_const(rb_cWXComboCtrl,"MULTILINE",INT2NUM(wxTE_MULTILINE));
-	rb_define_const(rb_cWXComboCtrl,"PROCESS_TAB",INT2NUM(wxTE_PROCESS_TAB));
-	rb_define_const(rb_cWXComboCtrl,"PROCESS_ENTER",INT2NUM(wxTE_PROCESS_ENTER));
-	rb_define_const(rb_cWXComboCtrl,"PASSWORD",INT2NUM(wxTE_PASSWORD));
+	rb_define_const(rb_cWXComboCtrl,"MULTILINE",RB_INT2NUM(wxTE_MULTILINE));
+	rb_define_const(rb_cWXComboCtrl,"PROCESS_TAB",RB_INT2NUM(wxTE_PROCESS_TAB));
+	rb_define_const(rb_cWXComboCtrl,"PROCESS_ENTER",RB_INT2NUM(wxTE_PROCESS_ENTER));
+	rb_define_const(rb_cWXComboCtrl,"PASSWORD",RB_INT2NUM(wxTE_PASSWORD));
 
 	registerInfo<wxComboCtrl>(rb_cWXComboCtrl);
 

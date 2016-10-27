@@ -199,10 +199,10 @@ VALUE _setTargetRange(VALUE self, VALUE range)
 
 	if(rb_range_values(range, &begin, &end, &excl)) {
 #if HAVE_WXSTYLEDTEXTCTRL_SETTARGETRANGE
-		_self->SetTargetRange(NUM2INT(begin), NUM2INT(end));
+		_self->SetTargetRange(RB_NUM2INT(begin), RB_NUM2INT(end));
 #else
-		_self->SetTargetStart(NUM2INT(begin));
-		_self->SetTargetEnd(NUM2INT(end));
+		_self->SetTargetStart(RB_NUM2INT(begin));
+		_self->SetTargetEnd(RB_NUM2INT(end));
 #endif
 	}
 	return range;

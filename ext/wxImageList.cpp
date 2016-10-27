@@ -105,7 +105,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "02",&width,&height);
 
 	if(!NIL_P(width)) {
-		_self->Create(NUM2UINT(width), NUM2UINT(height));
+		_self->Create(RB_NUM2UINT(width), RB_NUM2UINT(height));
 	} else {
 		_self->Create();
 	}
@@ -150,7 +150,7 @@ DLL_LOCAL VALUE _add(int argc,VALUE *argv,VALUE self)
 	
 	wxBitmap cbitmap(unwrap<wxBitmap>(bitmap));
 
-	if(RTEST(rb_hash_aref(opt, ID2SYM(rb_intern("scale"))))) {
+	if(RTEST(rb_hash_aref(opt, RB_ID2SYM(rb_intern("scale"))))) {
 		if(_self->GetImageCount() > 0) {
 #if wxUSE_IMAGE
 			int width(0), height(0);
@@ -173,7 +173,7 @@ DLL_LOCAL VALUE _add(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL VALUE _get(VALUE self, VALUE idx)
 {
-	int cidx = NUM2INT(idx);
+	int cidx = RB_NUM2INT(idx);
 	if(check_index(cidx,_self->GetImageCount()))
 		return wrap(_self->GetBitmap(cidx));
 	return Qnil;

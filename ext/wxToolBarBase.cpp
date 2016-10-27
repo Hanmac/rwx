@@ -57,7 +57,7 @@ DLL_LOCAL wxToolBarToolBase* _getItemBase(wxToolBarBase *toolbar, VALUE val)
 	wxToolBarToolBase* item = toolbar->FindById(id);
 
 	if(!item) {
-		int cidx = NUM2INT(val);
+		int cidx = RB_NUM2INT(val);
 		if(check_index(cidx,toolbar->GetToolsCount()))
 			item = const_cast<wxToolBarToolBase*>(toolbar->GetToolByPos(cidx));
 	}
@@ -258,7 +258,7 @@ DLL_LOCAL wxToolBarToolBase* _insert_base(int argc,VALUE *argv,VALUE self, wxIte
 	rb_scan_args(argc, argv, "34",&idx,&id,&text,&bitmap,&bmpDisabled,&shorthelp,&longhelp);
 
 
-	int cidx = NUM2INT(idx);
+	int cidx = RB_NUM2INT(idx);
 	if(check_index(cidx,_self->GetToolsCount()+1))
 	{
 		wxWindowID wxid = unwrapID(id);
@@ -390,13 +390,12 @@ DLL_LOCAL VALUE _insertControl(int argc,VALUE *argv,VALUE self)
 {
 	VALUE idx,id,text,arg;
 	rb_scan_args(argc, argv, "21:",&idx,&id,&text,&arg);
-	int cidx = NUM2INT(idx);
+	int cidx = RB_NUM2INT(idx);
 	if(check_index(cidx,_self->GetToolsCount()+1))
 	{
-
 		wxControl *c = create_control(self,id,arg);
 
-		return wrap( _self->InsertControl(NUM2UINT(idx),c,unwrap<wxString>(text)));
+		return wrap(_self->InsertControl(cidx,c,unwrap<wxString>(text)));
 	}
 	return Qnil;
 }
@@ -416,7 +415,7 @@ DLL_LOCAL VALUE _insertControl(int argc,VALUE *argv,VALUE self)
 */
 DLL_LOCAL VALUE _insert_separator(VALUE self,VALUE idx)
 {
-	int cidx = NUM2INT(idx);
+	int cidx = RB_NUM2INT(idx);
 	if(check_index(cidx,_self->GetToolsCount()+1))
 	{
 		return wrap(_self->InsertSeparator(cidx));
@@ -439,7 +438,7 @@ DLL_LOCAL VALUE _insert_separator(VALUE self,VALUE idx)
 */
 DLL_LOCAL VALUE _insert_stretchable_space(VALUE self,VALUE idx)
 {
-	int cidx = NUM2INT(idx);
+	int cidx = RB_NUM2INT(idx);
 	if(check_index(cidx,_self->GetToolsCount()+1))
 	{
 		return wrap(_self->InsertStretchableSpace(cidx));
@@ -602,7 +601,7 @@ DLL_LOCAL VALUE _each(VALUE self)
 
 DLL_LOCAL VALUE _set_rows(VALUE self,VALUE val)
 {
-	_self->SetRows(NUM2INT(val));
+	_self->SetRows(RB_NUM2INT(val));
 	return val;
 }
 

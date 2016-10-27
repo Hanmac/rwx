@@ -103,7 +103,7 @@ DLL_LOCAL VALUE _setCustomColors(VALUE self,VALUE val)
 */
 DLL_LOCAL VALUE _getCustomColor(VALUE self, VALUE idx)
 {
-	int i = NUM2INT(idx);
+	int i = RB_NUM2INT(idx);
 
 	wxColourData &data = _self->GetColourData();
 	if(check_index(i, wxColourData::NUM_CUSTOM))
@@ -128,7 +128,7 @@ DLL_LOCAL VALUE _getCustomColor(VALUE self, VALUE idx)
 */
 DLL_LOCAL VALUE _setCustomColor(VALUE self, VALUE idx, VALUE col)
 {
-	int i = NUM2INT(idx);
+	int i = RB_NUM2INT(idx);
 
 	wxColourData &data = _self->GetColourData();
 	if(check_index(i, wxColourData::NUM_CUSTOM))
@@ -243,7 +243,7 @@ DLL_LOCAL void Init_WXColorDialog(VALUE rb_mWX)
 
 	rb_define_module_function(rb_mWX,"color_dialog",RUBY_METHOD_FUNC(_getUserColor),-1);
 
-	rb_define_const(rb_cWXColorDialog,"NUM_CUSTOM",INT2NUM(wxColourData::NUM_CUSTOM));
+	rb_define_const(rb_cWXColorDialog,"NUM_CUSTOM",RB_INT2NUM(wxColourData::NUM_CUSTOM));
 
 	registerInfo<wxColourDialog>(rb_cWXColorDialog);
 #endif

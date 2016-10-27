@@ -40,7 +40,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 	if(NIL_P(title))
 		_self->SetTitle("");
-	else if(SYMBOL_P(title))
+	else if(RB_SYMBOL_P(title))
 		_self->SetTitle(wxGetStockLabel(unwrapID(title)));
 	else
 		_setTitle(self,title);
@@ -100,7 +100,7 @@ DLL_LOCAL wxMenuItem* _getItemBase(wxMenu *menu, VALUE val)
 		item = menu->FindItem(id);
 	}
 	if(!item) {
-		int cidx = NUM2INT(val);
+		int cidx = RB_NUM2INT(val);
 		if(check_index(cidx,menu->GetMenuItemCount()))
 			item = menu->FindItemByPosition(cidx);
 	}
@@ -321,7 +321,7 @@ DLL_LOCAL VALUE _insert_base(int argc,VALUE *argv,VALUE self,wxItemKind kind)
 
 	if(check_title(wid,id,text))
 	{
-		int cidx = NUM2INT(idx);
+		int cidx = RB_NUM2INT(idx);
 		if(check_index(cidx,_self->GetMenuItemCount()+1))
 		{
 			wxMenuItem *item = _self->Insert(cidx,wid,unwrap<wxString>(text),unwrap<wxString>(help),kind);
@@ -455,7 +455,7 @@ DLL_LOCAL VALUE _insert_menu(int argc,VALUE *argv,VALUE self)
 
 	if(check_menu_mitle(m,wtext))
 	{
-		int cidx = NUM2INT(idx);
+		int cidx = RB_NUM2INT(idx);
 		if(check_index(cidx,_self->GetMenuItemCount()+1))
 		{
 			return wrap(_self->Insert(cidx,wxID_ANY,wtext,m,unwrap<wxString>(help)));
@@ -467,7 +467,7 @@ DLL_LOCAL VALUE _insert_menu(int argc,VALUE *argv,VALUE self)
 
 DLL_LOCAL VALUE _InsertSeparator(VALUE self,VALUE idx)
 {
-	int cidx = NUM2INT(idx);
+	int cidx = RB_NUM2INT(idx);
 	if(check_index(cidx,_self->GetMenuItemCount()+1))
 	{
 		return wrap(_self->InsertSeparator(idx));

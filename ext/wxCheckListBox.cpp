@@ -70,7 +70,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL VALUE _each_checked_size(VALUE self)
 {
 	wxArrayInt data;
-	return UINT2NUM(_self->GetCheckedItems(data));
+	return RB_UINT2NUM(_self->GetCheckedItems(data));
 }
 
 
@@ -92,7 +92,7 @@ DLL_LOCAL VALUE _each_checked(VALUE self)
 	_self->GetCheckedItems(data);
 
 	for(wxArrayInt::iterator it = data.begin(); it != data.end();++it)
-		rb_yield_values(2,INT2NUM(*it),check_index(*it, _self->GetCount()) ? wrap(_self->GetString(*it)) : Qnil );
+		rb_yield_values(2,RB_INT2NUM(*it),check_index(*it, _self->GetCount()) ? wrap(_self->GetString(*it)) : Qnil );
 
 	return self;
 }

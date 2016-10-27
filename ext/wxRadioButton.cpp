@@ -113,7 +113,7 @@ DLL_LOCAL void Init_WXRadioButton(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXRadioButton,"value",_getValue,_setValue);
 
-	rb_define_const(rb_cWXRadioButton,"GROUP",INT2NUM(wxRB_GROUP));
+	rb_define_const(rb_cWXRadioButton,"GROUP",RB_INT2NUM(wxRB_GROUP));
 
 	registerInfo<wxRadioButton>(rb_cWXRadioButton);
 	registerEventType("radiobutton",wxEVT_RADIOBUTTON);

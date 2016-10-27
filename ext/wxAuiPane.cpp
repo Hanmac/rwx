@@ -25,9 +25,9 @@ wxAuiPaneInfo unwrap< wxAuiPaneInfo >(const VALUE &vinfo)
 {
 	if(NIL_P(vinfo))
 		return wxAuiPaneInfo();
-	else if(SYMBOL_P(vinfo))
+	else if(RB_SYMBOL_P(vinfo))
 	{
-		ID id(SYM2ID(vinfo));
+		ID id(RB_SYM2ID(vinfo));
 		if(id == rb_intern("default"))
 			return wxAuiPaneInfo().DefaultPane();
 		else if(id == rb_intern("toolbar"))

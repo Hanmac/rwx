@@ -239,15 +239,15 @@ DLL_LOCAL void Init_WXOwnerDrawnComboBox(VALUE rb_mWX)
 	}
 
 	//define Choice constants
-	rb_define_const(rb_cWXOwnerDrawnComboBox,"SORT",INT2NUM(wxCB_SORT));
-	rb_define_const(rb_cWXOwnerDrawnComboBox,"READONLY",INT2NUM(wxCB_READONLY));
-	rb_define_const(rb_cWXOwnerDrawnComboBox,"DROPDOWN",INT2NUM(wxCB_DROPDOWN));
+	rb_define_const(rb_cWXOwnerDrawnComboBox,"SORT",RB_INT2NUM(wxCB_SORT));
+	rb_define_const(rb_cWXOwnerDrawnComboBox,"READONLY",RB_INT2NUM(wxCB_READONLY));
+	rb_define_const(rb_cWXOwnerDrawnComboBox,"DROPDOWN",RB_INT2NUM(wxCB_DROPDOWN));
 
 	//define TextCtrl constants
-	rb_define_const(rb_cWXOwnerDrawnComboBox,"MULTILINE",INT2NUM(wxTE_MULTILINE));
-	rb_define_const(rb_cWXOwnerDrawnComboBox,"PROCESS_TAB",INT2NUM(wxTE_PROCESS_TAB));
-	rb_define_const(rb_cWXOwnerDrawnComboBox,"PROCESS_ENTER",INT2NUM(wxTE_PROCESS_ENTER));
-	rb_define_const(rb_cWXOwnerDrawnComboBox,"PASSWORD",INT2NUM(wxTE_PASSWORD));
+	rb_define_const(rb_cWXOwnerDrawnComboBox,"MULTILINE",RB_INT2NUM(wxTE_MULTILINE));
+	rb_define_const(rb_cWXOwnerDrawnComboBox,"PROCESS_TAB",RB_INT2NUM(wxTE_PROCESS_TAB));
+	rb_define_const(rb_cWXOwnerDrawnComboBox,"PROCESS_ENTER",RB_INT2NUM(wxTE_PROCESS_ENTER));
+	rb_define_const(rb_cWXOwnerDrawnComboBox,"PASSWORD",RB_INT2NUM(wxTE_PASSWORD));
 
 	registerInfo<wxOwnerDrawnComboBox>(rb_cWXOwnerDrawnComboBox);
 

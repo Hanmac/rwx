@@ -142,7 +142,7 @@ DLL_LOCAL VALUE _setStringSelection(VALUE self,VALUE val)
 DLL_LOCAL VALUE _each_selection_size(VALUE self)
 {
 	wxArrayInt data;
-	return INT2NUM(_self->GetSelections(data));
+	return RB_INT2NUM(_self->GetSelections(data));
 }
 
 /*
@@ -161,7 +161,7 @@ DLL_LOCAL VALUE _each_selection(VALUE self)
 	wxArrayInt data;
 	_self->GetSelections(data);
 	for(wxArrayInt::iterator it = data.begin(); it != data.end();++it)
-		rb_yield_values(2,INT2NUM(*it),wrap(_self->GetString(*it)));
+		rb_yield_values(2,RB_INT2NUM(*it),wrap(_self->GetString(*it)));
 	return self;
 }
 
@@ -265,10 +265,10 @@ DLL_LOCAL void Init_WXListBox(VALUE rb_mWX)
 	registerEventType("listbox", wxEVT_LISTBOX,rb_cWXCommandEvent);
 	registerEventType("listbox_dclick",  wxEVT_LISTBOX_DCLICK,rb_cWXCommandEvent);
 
-	rb_define_const(rb_cWXListBox,"SORT",INT2NUM(wxLB_SORT));
-	rb_define_const(rb_cWXListBox,"SINGLE",INT2NUM(wxLB_SINGLE));
-	rb_define_const(rb_cWXListBox,"MULTIPLE",INT2NUM(wxLB_MULTIPLE));
-	rb_define_const(rb_cWXListBox,"EXTENDED",INT2NUM(wxLB_EXTENDED));
+	rb_define_const(rb_cWXListBox,"SORT",RB_INT2NUM(wxLB_SORT));
+	rb_define_const(rb_cWXListBox,"SINGLE",RB_INT2NUM(wxLB_SINGLE));
+	rb_define_const(rb_cWXListBox,"MULTIPLE",RB_INT2NUM(wxLB_MULTIPLE));
+	rb_define_const(rb_cWXListBox,"EXTENDED",RB_INT2NUM(wxLB_EXTENDED));
 
 	registerInfo<wxListBox>(rb_cWXListBox);
 #endif

@@ -194,9 +194,9 @@ DLL_LOCAL void Init_WXDirDialog(VALUE rb_mWX)
 
 	rb_define_module_function(rb_mWX,"dir_dialog",RUBY_METHOD_FUNC(_getUserDir),-1);
 
-	rb_define_const(rb_cWXDirDialog,"DEFAULT_STYLE",INT2NUM(wxDD_DEFAULT_STYLE));
-	rb_define_const(rb_cWXDirDialog,"MUST_EXIST",INT2NUM(wxDD_DIR_MUST_EXIST));
-	rb_define_const(rb_cWXDirDialog,"CHANGE_DIR",INT2NUM(wxDD_CHANGE_DIR));
+	rb_define_const(rb_cWXDirDialog,"DEFAULT_STYLE",RB_INT2NUM(wxDD_DEFAULT_STYLE));
+	rb_define_const(rb_cWXDirDialog,"MUST_EXIST",RB_INT2NUM(wxDD_DIR_MUST_EXIST));
+	rb_define_const(rb_cWXDirDialog,"CHANGE_DIR",RB_INT2NUM(wxDD_CHANGE_DIR));
 
 	rb_define_const(rb_cWXDirDialog,"DEFAULT_NAME",wrap(wxString(wxDirDialogNameStr)));
 	rb_define_const(rb_cWXDirDialog,"DEFAULT_FOLDER",wrap(wxString(wxDirDialogDefaultFolderStr)));

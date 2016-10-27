@@ -104,12 +104,12 @@ DLL_LOCAL VALUE _add_page(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "21&",&kind,&klass,&bitmap,&block);
 	wxPreferencesPage *page = NULL;
 	//VALUE block = rb_block_proc();
-	if(SYMBOL_P(kind))
+	if(RB_SYMBOL_P(kind))
 	{
 		wxStockPreferencesPage::Kind wxkind = wxStockPreferencesPage::Kind_General;
-		if(SYM2ID(kind) == rb_intern("general"))
+		if(RB_SYM2ID(kind) == rb_intern("general"))
 			wxkind = wxStockPreferencesPage::Kind_General;
-		if(SYM2ID(kind) == rb_intern("advanced"))
+		if(RB_SYM2ID(kind) == rb_intern("advanced"))
 			wxkind = wxStockPreferencesPage::Kind_Advanced;
 		page = new RubyStockPreferencesPage(block,klass,wxkind);
 	}else

@@ -140,7 +140,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	VALUE bulletObj, leftIndent, leftSubIndent, bulletStyle;\
 	rb_scan_args(argc, argv, "31",&bulletObj, &leftIndent, &leftSubIndent, &bulletStyle);\
 	_self->Begin##n##Bullet(\
-		func1(bulletObj), NUM2INT(leftIndent), NUM2INT(leftSubIndent),\
+		func1(bulletObj), RB_NUM2INT(leftIndent), RB_NUM2INT(leftSubIndent),\
 		NIL_P(bulletStyle) ? style : unwrapenum<wxTextAttrBulletStyle>(bulletStyle)\
 	);\
 	rb_yield(self);\
@@ -152,17 +152,17 @@ block_func0(Bold)
 block_func0(Italic)
 block_func0(Underline)
 
-block_func1(FontSize,NUM2INT)
+block_func1(FontSize,RB_NUM2INT)
 block_func1(Font,unwrap<wxFont>)
 block_func1(TextColour,unwrap<wxColor>)
 block_func1(Alignment,unwrapenum<wxTextAttrAlignment>)
 
-block_func1(RightIndent,NUM2INT)
-block_func1(LineSpacing,NUM2INT)
+block_func1(RightIndent,RB_NUM2INT)
+block_func1(LineSpacing,RB_NUM2INT)
 block_func1(CharacterStyle,unwrap<wxString>)
 block_func1(ParagraphStyle,unwrap<wxString>)
 
-block_bullet(Numbered,NUM2INT,wxTEXT_ATTR_BULLET_STYLE_ARABIC|wxTEXT_ATTR_BULLET_STYLE_PERIOD)
+block_bullet(Numbered,RB_NUM2INT,wxTEXT_ATTR_BULLET_STYLE_ARABIC|wxTEXT_ATTR_BULLET_STYLE_PERIOD)
 block_bullet(Symbol,unwrap<wxString>,wxTEXT_ATTR_BULLET_STYLE_SYMBOL)
 block_bullet(Standard,unwrap<wxString>,wxTEXT_ATTR_BULLET_STYLE_STANDARD)
 
@@ -458,9 +458,9 @@ DLL_LOCAL void Init_WXRichTextCtrl(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXRichTextCtrl,"basic_style",_getBasicStyle,_setBasicStyle);
 	rb_define_attr_method(rb_cWXRichTextCtrl,"style_sheet",_getStyleSheet,_setStyleSheet);
 
-	rb_define_const(rb_cWXRichTextCtrl,"READONLY",INT2NUM(wxRE_READONLY));
-	rb_define_const(rb_cWXRichTextCtrl,"MULTILINE",INT2NUM(wxRE_MULTILINE));
-	rb_define_const(rb_cWXRichTextCtrl,"CENTER_CARET",INT2NUM(wxRE_CENTRE_CARET));
+	rb_define_const(rb_cWXRichTextCtrl,"READONLY",RB_INT2NUM(wxRE_READONLY));
+	rb_define_const(rb_cWXRichTextCtrl,"MULTILINE",RB_INT2NUM(wxRE_MULTILINE));
+	rb_define_const(rb_cWXRichTextCtrl,"CENTER_CARET",RB_INT2NUM(wxRE_CENTRE_CARET));
 
 	rb_cWXRichTextCtrlEvent = rb_define_class_under(rb_cWXEvent,"RichTextCtrl",rb_cWXNotifyEvent);
 

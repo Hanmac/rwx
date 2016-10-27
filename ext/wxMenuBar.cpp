@@ -77,7 +77,7 @@ wxMenu* add_base(VALUE menu,wxString &name)
 
 		name = unwrap<wxString>(menu);
 
-		if(SYMBOL_P(menu))
+		if(RB_SYMBOL_P(menu))
 		{
 			wxWindowID id(unwrapID(menu));
 			if(wxIsStockID(id))
@@ -140,7 +140,7 @@ DLL_LOCAL VALUE _append(VALUE self,VALUE menu)
 DLL_LOCAL VALUE _insert(VALUE self,VALUE idx,VALUE menu)
 {
 	wxString name(wxEmptyString);
-	int cidx = NUM2INT(idx);
+	int cidx = RB_NUM2INT(idx);
 
 	if(check_index(cidx,_self->GetMenuCount()+1))
 		return wrap(_self->Insert(cidx,add_base(menu,name),name));
@@ -163,7 +163,7 @@ DLL_LOCAL VALUE _insert(VALUE self,VALUE idx,VALUE menu)
 DLL_LOCAL VALUE _replace(VALUE self,VALUE idx,VALUE menu)
 {
 	wxString name(wxEmptyString);
-	int cidx = NUM2INT(idx);
+	int cidx = RB_NUM2INT(idx);
 
 	if(check_index(cidx,_self->GetMenuCount()))
 		return wrap(_self->Replace(cidx,add_base(menu,name),name));
@@ -202,7 +202,7 @@ DLL_LOCAL VALUE _prepend(VALUE self,VALUE menu)
  */
 DLL_LOCAL VALUE _remove(VALUE self,VALUE idx)
 {
-	int cidx = NUM2INT(idx);
+	int cidx = RB_NUM2INT(idx);
 
 	if(check_index(cidx,_self->GetMenuCount()))
 		return wrap(_self->Remove(cidx));
@@ -242,7 +242,7 @@ DLL_LOCAL void Init_WXMenuBar(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXMenuBar,"frame",RUBY_METHOD_FUNC(_GetFrame),0);
 
-	rb_define_const(rb_cWXMenuBar,"DOCKABLE",INT2NUM(wxMB_DOCKABLE));
+	rb_define_const(rb_cWXMenuBar,"DOCKABLE",RB_INT2NUM(wxMB_DOCKABLE));
 
 	registerInfo<wxMenuBar>(rb_cWXMenuBar);
 #endif

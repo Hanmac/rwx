@@ -26,30 +26,30 @@ wxSizerFlags unwrap< wxSizerFlags >(const VALUE &hash)
 	set_obj_option(hash, "border", &wxSizerFlags::Border, result);
 	set_obj_option(hash, "proportion", &wxSizerFlags::Proportion, result);
 
-	if(!NIL_P(val=rb_hash_aref(hash,ID2SYM(rb_intern("align")))))
+	if(!NIL_P(val=rb_hash_aref(hash,RB_ID2SYM(rb_intern("align")))))
 	{
-		if(SYMBOL_P(val))
+		if(RB_SYMBOL_P(val))
 		{
-			if(SYM2ID(val) == rb_intern("left"))
+			if(RB_SYM2ID(val) == rb_intern("left"))
 				result.Left();
-			if(SYM2ID(val) == rb_intern("right"))
+			if(RB_SYM2ID(val) == rb_intern("right"))
 				result.Right();
-			if(SYM2ID(val) == rb_intern("bottom"))
+			if(RB_SYM2ID(val) == rb_intern("bottom"))
 				result.Bottom();
-			if(SYM2ID(val) == rb_intern("top"))
+			if(RB_SYM2ID(val) == rb_intern("top"))
 				result.Top();
-			if(SYM2ID(val) == rb_intern("center"))
+			if(RB_SYM2ID(val) == rb_intern("center"))
 				result.Center();
 #ifdef HAVE_CONST_WXALIGN_CENTER_VERTICAL
 #ifdef HAVE_WXSIZERFLAGS_CENTERVERTICAL
-			if(SYM2ID(val) == rb_intern("center_vertical"))
+			if(RB_SYM2ID(val) == rb_intern("center_vertical"))
 				result.CenterVertical();
-			if(SYM2ID(val) == rb_intern("center_horizontal"))
+			if(RB_SYM2ID(val) == rb_intern("center_horizontal"))
 				result.CenterHorizontal();
 #else
-			if(SYM2ID(val) == rb_intern("center_vertical"))
+			if(RB_SYM2ID(val) == rb_intern("center_vertical"))
 				result.Align(wxALIGN_CENTER_VERTICAL);
-			if(SYM2ID(val) == rb_intern("center_horizontal"))
+			if(RB_SYM2ID(val) == rb_intern("center_horizontal"))
 				result.Align(wxALIGN_CENTER_HORIZONTAL);
 #endif
 #endif
@@ -158,7 +158,7 @@ DLL_LOCAL VALUE _add(int argc,VALUE *argv,VALUE self)
  */
 DLL_LOCAL VALUE _add_spacer(VALUE self,VALUE size)
 {
-	return wrap(_self->AddSpacer(NUM2INT(size)));
+	return wrap(_self->AddSpacer(RB_NUM2INT(size)));
 }
 
 /*
@@ -176,7 +176,7 @@ DLL_LOCAL VALUE _add_stretch_spacer(int argc,VALUE *argv,VALUE self)
 	VALUE prop;
 	rb_scan_args(argc, argv, "01",&prop);
 
-	return wrap(_self->AddStretchSpacer(NIL_P(prop) ? 1 : NUM2INT(prop)));
+	return wrap(_self->AddStretchSpacer(NIL_P(prop) ? 1 : RB_NUM2INT(prop)));
 }
 
 
@@ -209,12 +209,12 @@ DLL_LOCAL VALUE _insert(int argc,VALUE *argv,VALUE self)
 	if(rb_obj_is_kind_of(obj, rb_cWXWindow)) {
 		wxWindow *win = unwrap<wxWindow*>(obj);
 		if(check_window(_self, win, hash))
-			return wrap(_self->Insert(NUM2INT(index), win, flags));
+			return wrap(_self->Insert(RB_NUM2INT(index), win, flags));
 	} else if(rb_obj_is_kind_of(obj, rb_cWXSizer))
-		return wrap(_self->Insert(NUM2INT(index),unwrap<wxSizer*>(obj),flags));
+		return wrap(_self->Insert(RB_NUM2INT(index),unwrap<wxSizer*>(obj),flags));
 	else {
 		const wxSize &size = unwrap<wxSize>(obj);
-		return wrap(_self->Insert(NUM2INT(index),size.GetWidth(),size.GetHeight(),flags));
+		return wrap(_self->Insert(RB_NUM2INT(index),size.GetWidth(),size.GetHeight(),flags));
 	}
 	return Qnil;
 }
@@ -232,7 +232,7 @@ DLL_LOCAL VALUE _insert(int argc,VALUE *argv,VALUE self)
  */
 DLL_LOCAL VALUE _insert_spacer(VALUE self,VALUE idx,VALUE size)
 {
-	return wrap(_self->InsertSpacer(NUM2UINT(idx),NUM2INT(size)));
+	return wrap(_self->InsertSpacer(RB_NUM2UINT(idx),RB_NUM2INT(size)));
 }
 
 /*
@@ -251,7 +251,7 @@ DLL_LOCAL VALUE _insert_stretch_spacer(int argc,VALUE *argv,VALUE self)
 	VALUE idx,prop;
 	rb_scan_args(argc, argv, "11",&idx,&prop);
 
-	return wrap(_self->InsertStretchSpacer(NUM2UINT(idx),NIL_P(prop) ? 1 : NUM2INT(prop)));
+	return wrap(_self->InsertStretchSpacer(RB_NUM2UINT(idx),NIL_P(prop) ? 1 : RB_NUM2INT(prop)));
 }
 
 
@@ -305,7 +305,7 @@ DLL_LOCAL VALUE _prepend(int argc,VALUE *argv,VALUE self)
  */
 DLL_LOCAL VALUE _prepend_spacer(VALUE self,VALUE size)
 {
-	return wrap(_self->PrependSpacer(NUM2INT(size)));
+	return wrap(_self->PrependSpacer(RB_NUM2INT(size)));
 }
 
 /*
@@ -323,14 +323,14 @@ DLL_LOCAL VALUE _prepend_stretch_spacer(int argc,VALUE *argv,VALUE self)
 	VALUE prop;
 	rb_scan_args(argc, argv, "01",&prop);
 
-	return wrap(_self->PrependStretchSpacer(NIL_P(prop) ? 1 : NUM2INT(prop)));
+	return wrap(_self->PrependStretchSpacer(NIL_P(prop) ? 1 : RB_NUM2INT(prop)));
 }
 
 
 
 DLL_LOCAL VALUE _getItem(VALUE self,VALUE index)
 {
-	int cidx = NUM2INT(index);
+	int cidx = RB_NUM2INT(index);
 	if(check_index(cidx,_self->GetItemCount()))
 		return wrap(_self->GetItem(cidx));
 	return Qnil;
@@ -338,7 +338,7 @@ DLL_LOCAL VALUE _getItem(VALUE self,VALUE index)
 
 DLL_LOCAL VALUE _each_size(VALUE self)
 {
-	return UINT2NUM(_self->GetItemCount());
+	return RB_UINT2NUM(_self->GetItemCount());
 }
 
 
@@ -355,7 +355,7 @@ DLL_LOCAL VALUE _each(VALUE self)
 DLL_LOCAL VALUE _remove(VALUE self,VALUE index)
 {
 	rb_check_frozen(self);
-	int cidx = NUM2INT(index);
+	int cidx = RB_NUM2INT(index);
 	if(check_index(cidx,_self->GetItemCount()))
 		return wrap(_self->Remove(cidx));
 	return Qnil;

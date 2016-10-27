@@ -158,9 +158,9 @@ DLL_LOCAL void Init_WXFontPicker(VALUE rb_mWX)
 	registerEventType("fontpicker_changed",wxEVT_FONTPICKER_CHANGED,rb_cWXFontPickerEvent);
 	rb_define_attr_method(rb_cWXFontPickerEvent,"font",Event::_getFont,Event::_setFont);
 
-	rb_define_const(rb_cWXFontPicker,"DEFAULT_STYLE",INT2NUM(wxFNTP_DEFAULT_STYLE));
-	rb_define_const(rb_cWXFontPicker,"FONTDESC_AS_LABEL",INT2NUM(wxFNTP_FONTDESC_AS_LABEL));
-	rb_define_const(rb_cWXFontPicker,"USEFONT_FOR_LABEL",INT2NUM(wxFNTP_USEFONT_FOR_LABEL));
+	rb_define_const(rb_cWXFontPicker,"DEFAULT_STYLE",RB_INT2NUM(wxFNTP_DEFAULT_STYLE));
+	rb_define_const(rb_cWXFontPicker,"FONTDESC_AS_LABEL",RB_INT2NUM(wxFNTP_FONTDESC_AS_LABEL));
+	rb_define_const(rb_cWXFontPicker,"USEFONT_FOR_LABEL",RB_INT2NUM(wxFNTP_USEFONT_FOR_LABEL));
 
 	registerInfo<wxFontPickerCtrl>(rb_cWXFontPicker);
 #endif

@@ -128,15 +128,15 @@ wxEventType unwrapEventType(VALUE type)
 	if(NIL_P(type))
 		return wxEVT_ANY;
 
-	if(!SYMBOL_P(type))
-		return NUM2INT(type);
+	if(!RB_SYMBOL_P(type))
+		return RB_NUM2INT(type);
 
-	evttypeholdertype::iterator it = evttypeholder.find(SYM2ID(type));
+	evttypeholdertype::iterator it = evttypeholder.find(RB_SYM2ID(type));
 	if(it != evttypeholder.end())
 		return it->second;
 
 	wxEventType evt = wxNewEventType();
-	evttypeholder[SYM2ID(type)] = evt;
+	evttypeholder[RB_SYM2ID(type)] = evt;
 	return evt;
 }
 
@@ -145,9 +145,9 @@ VALUE wrapEventType(wxEventType type)
 	for(evttypeholdertype::iterator it = evttypeholder.begin();it != evttypeholder.end(); ++it)
 	{
 		if(it->second == type)
-			return ID2SYM(it->first);
+			return RB_ID2SYM(it->first);
 	}
-	return INT2NUM(type);
+	return RB_INT2NUM(type);
 }
 
 void registerEventType(const char *sym, wxEventType type,wxClassInfo *info)

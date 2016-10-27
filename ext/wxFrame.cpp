@@ -148,7 +148,7 @@ DLL_LOCAL VALUE _pushStatusText(int argc,VALUE *argv,VALUE self)
 	int cidx(0);
 
 	if(!NIL_P(num))
-		cidx = NUM2INT(num);
+		cidx = RB_NUM2INT(num);
 
 	if(check_index(cidx,_self->GetStatusBar()->GetFieldsCount()))
 		_self->PushStatusText(unwrap<wxString>(str),cidx);
@@ -185,7 +185,7 @@ DLL_LOCAL VALUE _popStatusText(int argc,VALUE *argv,VALUE self)
 	int cidx(0);
 
 	if(!NIL_P(num))
-		cidx = NUM2INT(num);
+		cidx = RB_NUM2INT(num);
 
 	if(check_index(cidx,_self->GetStatusBar()->GetFieldsCount()))
 		_self->PopStatusText(cidx);
@@ -314,10 +314,10 @@ DLL_LOCAL void Init_WXFrame(VALUE rb_mWX)
 	rb_define_attr_method_missing(rb_cWXFrame,"toolbar");
 #endif // wxUSE_TOOLBAR
 
-	rb_define_const(rb_cWXFrame,"DEFAULT_STYLE",INT2NUM(wxDEFAULT_FRAME_STYLE));
+	rb_define_const(rb_cWXFrame,"DEFAULT_STYLE",RB_INT2NUM(wxDEFAULT_FRAME_STYLE));
 
-	rb_define_const(rb_cWXFrame,"FRAME_TOOL_WINDOW",INT2NUM(wxFRAME_TOOL_WINDOW));
-	rb_define_const(rb_cWXFrame,"FRAME_FLOAT_ON_PARENT",INT2NUM(wxFRAME_FLOAT_ON_PARENT));
+	rb_define_const(rb_cWXFrame,"FRAME_TOOL_WINDOW",RB_INT2NUM(wxFRAME_TOOL_WINDOW));
+	rb_define_const(rb_cWXFrame,"FRAME_FLOAT_ON_PARENT",RB_INT2NUM(wxFRAME_FLOAT_ON_PARENT));
 
 	registerInfo<wxFrame>(rb_cWXFrame);
 }

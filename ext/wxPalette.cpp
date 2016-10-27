@@ -87,7 +87,7 @@ DLL_LOCAL VALUE _initialize_copy(VALUE self,VALUE other) {
 DLL_LOCAL VALUE _get(VALUE self,VALUE idx)
 {
 	unsigned char red,green,blue;
-	if(_self->GetRGB(NUM2UINT(idx),&red,&green,&blue))
+	if(_self->GetRGB(RB_NUM2UINT(idx),&red,&green,&blue))
 		return wrap(new wxColor(red,green,blue));
 	return Qnil;
 }
@@ -140,7 +140,7 @@ DLL_LOCAL VALUE _getHash(VALUE self)
 	}
 
 	h = rb_hash_end(h);
-	return LONG2FIX(h);
+	return RB_LONG2FIX(h);
 }
 
 bool check_equal(const wxPalette &self, const wxPalette &cother)
@@ -211,7 +211,7 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
 	{
 		unsigned char red,green,blue;
 		_self->GetRGB(i,&red,&green,&blue);
-		rb_ary_push(ary, UINT2NUM(red | (green << 8) | (blue << 16)));
+		rb_ary_push(ary, RB_UINT2NUM(red | (green << 8) | (blue << 16)));
 	}
 	return ary;
 }
@@ -235,7 +235,7 @@ DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 
 	for(std::size_t i = 0; i < count; ++i)
 	{
-		unsigned int colRGB = NUM2UINT(RARRAY_AREF(data,i));
+		unsigned int colRGB = RB_NUM2UINT(RARRAY_AREF(data,i));
 		red[i]   = 0xFF & colRGB;
 		green[i] = 0xFF & (colRGB >> 8);
 		blue[i]  = 0xFF & (colRGB >> 16);

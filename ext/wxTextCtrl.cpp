@@ -165,11 +165,11 @@ DLL_LOCAL void Init_WXTextCtrl(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXTextCtrl,"value",_getValue,_setValue);
 
-	rb_define_const(rb_cWXTextCtrl,"READONLY",INT2NUM(wxTE_READONLY));
-	rb_define_const(rb_cWXTextCtrl,"MULTILINE",INT2NUM(wxTE_MULTILINE));
-	rb_define_const(rb_cWXTextCtrl,"PROCESS_TAB",INT2NUM(wxTE_PROCESS_TAB));
-	rb_define_const(rb_cWXTextCtrl,"PROCESS_ENTER",INT2NUM(wxTE_PROCESS_ENTER));
-	rb_define_const(rb_cWXTextCtrl,"PASSWORD",INT2NUM(wxTE_PASSWORD));
+	rb_define_const(rb_cWXTextCtrl,"READONLY",RB_INT2NUM(wxTE_READONLY));
+	rb_define_const(rb_cWXTextCtrl,"MULTILINE",RB_INT2NUM(wxTE_MULTILINE));
+	rb_define_const(rb_cWXTextCtrl,"PROCESS_TAB",RB_INT2NUM(wxTE_PROCESS_TAB));
+	rb_define_const(rb_cWXTextCtrl,"PROCESS_ENTER",RB_INT2NUM(wxTE_PROCESS_ENTER));
+	rb_define_const(rb_cWXTextCtrl,"PASSWORD",RB_INT2NUM(wxTE_PASSWORD));
 
 	registerEventType("text",wxEVT_TEXT,rb_cWXCommandEvent);
 	registerEventType("text_enter",wxEVT_TEXT_ENTER,rb_cWXCommandEvent);

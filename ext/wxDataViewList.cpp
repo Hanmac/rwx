@@ -136,8 +136,8 @@ DLL_LOCAL VALUE _InsertItem(int argc,VALUE *argv,VALUE self)
 
 	for(unsigned int i = 0; i < count;++i)
 		vecvar.push_back(unwrapVariant(RARRAY_AREF(arg,i),_self->GetModel()->GetColumnType(i)));
-	_self->InsertItem(NUM2INT(index),vecvar,0);
-	return wrap(_self->GetModel(),_self->GetStore()->GetItem(NUM2INT(index)));
+	_self->InsertItem(RB_NUM2INT(index),vecvar,0);
+	return wrap(_self->GetModel(),_self->GetStore()->GetItem(RB_NUM2INT(index)));
 }
 
 

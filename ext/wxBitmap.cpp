@@ -20,6 +20,10 @@
 
 #include <wx/rawbmp.h>
 
+#if wxUSE_MIMETYPE
+#include <wx/mimetype.h>
+#endif
+
 #define _self unwrap<wxBitmap*>(self)
 
 VALUE rb_cWXBitmap, rb_cWXMask;
@@ -156,8 +160,8 @@ DLL_LOCAL VALUE _setMask(VALUE self, VALUE val) {
 	else if(is_wrapable<wxColor>(val))
 		_self->SetMask(new wxMask(*_self, unwrap<wxColor>(val)));
 #if wxUSE_PALETTE
-	else if(FIXNUM_P(val))
-		_self->SetMask(new wxMask(*_self, NUM2INT(val)));
+	else if(RB_FIXNUM_P(val))
+		_self->SetMask(new wxMask(*_self, RB_NUM2INT(val)));
 #endif
 	else
 		_self->SetMask(new wxMask(unwrap<wxBitmap>(val)));
@@ -225,8 +229,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			set_hash_option(opts, "depth", cdepth);
 		}
 
-		int width = NUM2INT(x);
-		int height = NUM2INT(y);
+		int width = RB_NUM2INT(x);
+		int height = RB_NUM2INT(y);
 
 		double cscale(1.0);
 
@@ -520,7 +524,7 @@ DLL_LOCAL VALUE _getHash(VALUE self)
 	}
 
 	h = rb_hash_end(h);
-	return LONG2FIX(h);
+	return RB_LONG2FIX(h);
 }
 
 /*
@@ -614,9 +618,9 @@ DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 	data = rb_Array(data);
 
 	_self->CreateScaled(
-		NUM2UINT(RARRAY_AREF(data,0)),
-		NUM2UINT(RARRAY_AREF(data,1)),
-		NUM2INT(RARRAY_AREF(data,2)),
+		RB_NUM2UINT(RARRAY_AREF(data,0)),
+		RB_NUM2UINT(RARRAY_AREF(data,1)),
+		RB_NUM2INT(RARRAY_AREF(data,2)),
 		NUM2DBL(RARRAY_AREF(data,3))
 	);
 
@@ -807,6 +811,78 @@ DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
 }
 }
 
+#if wxUSE_MIMETYPE
+DLL_LOCAL VALUE _getIconfromFileType(wxFileType *type)
+{
+	wxIconLocation iconloc;
+	if(type->GetIcon(&iconloc)) {
+		return wrap(new wxIcon(iconloc));
+	}
+	return Qnil;
+}
+
+/*
+ * call-seq:
+ *   from_extension(ext) -> WX::Bitmap
+ *
+ * returns the icon from the given file extension
+ * ===Arguments
+ * * ext String file extension
+ * ===Return value
+ * WX::Bitmap
+ *
+ */
+DLL_LOCAL VALUE _getIconfromFromExtension(VALUE self, VALUE ext)
+{
+	app_protected();
+	wxMimeTypesManager *man = wxTheMimeTypesManager;
+
+	if(!man) {
+		man = new wxMimeTypesManager;
+	}
+
+	wxFileType *type = man->GetFileTypeFromExtension(unwrap<wxString>(ext));
+	if(type) {
+		VALUE result = _getIconfromFileType(type);
+		delete type;
+		return result;
+	}
+
+	return Qnil;
+}
+
+/*
+ * call-seq:
+ *   from_mimetype(mimetype) -> WX::Bitmap
+ *
+ * returns the icon from the given mimetype
+ * ===Arguments
+ * * mimetype String MimeType
+ * ===Return value
+ * WX::Bitmap
+ *
+ */
+DLL_LOCAL VALUE _getIconfromFromMimeType(VALUE self, VALUE ext)
+{
+	app_protected();
+	wxMimeTypesManager *man = wxTheMimeTypesManager;
+
+	if(!man) {
+		man = new wxMimeTypesManager;
+	}
+
+	wxFileType *type = man->GetFileTypeFromMimeType(unwrap<wxString>(ext));
+	if(type) {
+		VALUE result = _getIconfromFileType(type);
+		delete type;
+		return result;
+	}
+
+	return Qnil;
+}
+
+#endif
+
 DLL_LOCAL wxArtID get_art_from_id(wxWindowID id)
 {
 	wxString result;
@@ -895,8 +971,8 @@ DLL_LOCAL VALUE _getBitmapFromID(int argc,VALUE *argv,VALUE self)
 
 	wxArtID artid = get_art_from_id(unwrapID(id));
 
-	if(SYMBOL_P(client))
-		 artclient = get_client_from_sym(SYM2ID(client));
+	if(RB_SYMBOL_P(client))
+		 artclient = get_client_from_sym(RB_SYM2ID(client));
 
 	wxSize csize = NIL_P(size) ? wxDefaultSize : unwrap<wxSize>(size);
 	if(artid == wxEmptyString)
@@ -922,10 +998,10 @@ DLL_LOCAL VALUE _getBitmapProvider(int argc,VALUE *argv,VALUE self)
 
 	wxArtClient artclient = wxART_OTHER;
 
-	wxArtID artid =	SYMBOL_P(client) ? get_art_from_sym(SYM2ID(client)) : unwrap<wxString>(id);
+	wxArtID artid =	RB_SYMBOL_P(client) ? get_art_from_sym(RB_SYM2ID(client)) : unwrap<wxString>(id);
 
-	if(SYMBOL_P(client))
-		 artclient = get_client_from_sym(SYM2ID(client));
+	if(RB_SYMBOL_P(client))
+		 artclient = get_client_from_sym(RB_SYM2ID(client));
 
 	wxSize csize = NIL_P(size) ? wxDefaultSize : unwrap<wxSize>(size);
 	if(artid == wxEmptyString)
@@ -947,9 +1023,9 @@ wxBitmap wrapBitmap(const VALUE &vbitmap,wxWindowID id,wrapBitmapType type,const
 			artid = get_art_from_id(id);
 			useid = true;
 		}
-	}else if(SYMBOL_P(vbitmap))
+	}else if(RB_SYMBOL_P(vbitmap))
 	{
-		artid = get_art_from_sym(SYM2ID(vbitmap));
+		artid = get_art_from_sym(RB_SYM2ID(vbitmap));
 		useid = true;
 	}
 
@@ -1066,6 +1142,11 @@ DLL_LOCAL void Init_WXBitmap(VALUE rb_mWX)
 	rb_define_singleton_method(rb_cWXBitmap,"art_from_id", RUBY_METHOD_FUNC(_getArtFromID), 1);
 	rb_define_singleton_method(rb_cWXBitmap,"from_id",RUBY_METHOD_FUNC(_getBitmapFromID),-1);
 	rb_define_singleton_method(rb_cWXBitmap,"from_provider",RUBY_METHOD_FUNC(_getBitmapProvider),-1);
+
+#if wxUSE_MIMETYPE
+	rb_define_singleton_method(rb_cWXBitmap,"from_extension",RUBY_METHOD_FUNC(_getIconfromFromExtension),1);
+	rb_define_singleton_method(rb_cWXBitmap,"from_mimetype",RUBY_METHOD_FUNC(_getIconfromFromMimeType),1);
+#endif
 
 	registerInfo<wxBitmap>(rb_cWXBitmap);
 

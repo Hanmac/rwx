@@ -162,14 +162,14 @@ DLL_LOCAL VALUE _getHash(VALUE self)
 {
 	st_index_t h = rb_hash_start(0);
 
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getId(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getId(self))));
 	h = rb_hash_uint(h, _self->GetKind());
 	h = rb_hash_uint32(h, rb_str_hash(_getItemLabel(self)));
 	h = rb_hash_uint(h, rb_str_hash(_getHelp(self)));
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getBitmap(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getBitmap(self))));
 
 	h = rb_hash_end(h);
-	return LONG2FIX(h);
+	return RB_LONG2FIX(h);
 }
 
 struct equal_obj {
@@ -238,7 +238,7 @@ DLL_LOCAL VALUE _marshal_dump(VALUE self)
 {
 	VALUE result = rb_ary_new();
 
-	rb_ary_push(result,INT2NUM(_self->GetKind()));
+	rb_ary_push(result,RB_INT2NUM(_self->GetKind()));
 	rb_ary_push(result,_getId(self));
 	rb_ary_push(result,_getItemLabel(self));
 //	rb_ary_push(result,_getSubMenu(self));

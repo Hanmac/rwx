@@ -129,12 +129,12 @@ DLL_LOCAL void Init_WXPropertyGridInterface(VALUE rb_mWX)
 
 	rb_define_method(rb_mWXPropertyGridInterface,"selections",RUBY_METHOD_FUNC(_get_selections),0);
 
-	rb_define_const(rb_mWXPropertyGridInterface,"EX_MODE_BUTTONS",INT2NUM(wxPG_EX_MODE_BUTTONS));
+	rb_define_const(rb_mWXPropertyGridInterface,"EX_MODE_BUTTONS",RB_INT2NUM(wxPG_EX_MODE_BUTTONS));
 
-	rb_define_const(rb_mWXPropertyGridInterface,"EX_HELP_AS_TOOLTIPS",INT2NUM(wxPG_EX_HELP_AS_TOOLTIPS));
-	rb_define_const(rb_mWXPropertyGridInterface,"EX_HIDE_PAGE_BUTTONS",INT2NUM(wxPG_EX_HIDE_PAGE_BUTTONS));
-	rb_define_const(rb_mWXPropertyGridInterface,"EX_MULTIPLE_SELECTION",INT2NUM(wxPG_EX_MULTIPLE_SELECTION));
-	rb_define_const(rb_mWXPropertyGridInterface,"EX_TOOLBAR_SEPARATOR",INT2NUM(wxPG_EX_TOOLBAR_SEPARATOR));
+	rb_define_const(rb_mWXPropertyGridInterface,"EX_HELP_AS_TOOLTIPS",RB_INT2NUM(wxPG_EX_HELP_AS_TOOLTIPS));
+	rb_define_const(rb_mWXPropertyGridInterface,"EX_HIDE_PAGE_BUTTONS",RB_INT2NUM(wxPG_EX_HIDE_PAGE_BUTTONS));
+	rb_define_const(rb_mWXPropertyGridInterface,"EX_MULTIPLE_SELECTION",RB_INT2NUM(wxPG_EX_MULTIPLE_SELECTION));
+	rb_define_const(rb_mWXPropertyGridInterface,"EX_TOOLBAR_SEPARATOR",RB_INT2NUM(wxPG_EX_TOOLBAR_SEPARATOR));
 
 
 	wxPropertyGrid::InitAllTypeHandlers();

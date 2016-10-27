@@ -96,7 +96,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 */
 DLL_LOCAL VALUE _page(VALUE self,VALUE idx)
 {
-	int cidx(NUM2INT(idx));
+	int cidx(RB_NUM2INT(idx));
 
 	if(check_index(cidx,_self->GetPageCount()))
 		return wrap(_self->GetPage(cidx));
@@ -105,7 +105,7 @@ DLL_LOCAL VALUE _page(VALUE self,VALUE idx)
 
 DLL_LOCAL VALUE _each_size(VALUE self)
 {
-	return UINT2NUM(_self->GetPageCount());
+	return RB_UINT2NUM(_self->GetPageCount());
 }
 
 
@@ -154,9 +154,9 @@ DLL_LOCAL VALUE _get_page_image(VALUE self,VALUE idx)
 			RB_CLASSNAME(rb_cWXAuiNotebook)
 		);
 #endif
-	int cidx(NUM2INT(idx));
+	int cidx(RB_NUM2INT(idx));
 	if(check_index(cidx,_self->GetPageCount()))
-		return INT2NUM(_self->GetPageImage(cidx));
+		return RB_INT2NUM(_self->GetPageImage(cidx));
 	return Qnil;
 }
 
@@ -179,11 +179,11 @@ DLL_LOCAL VALUE _get_page_image(VALUE self,VALUE idx)
 DLL_LOCAL VALUE _set_page_image(VALUE self,VALUE idx,VALUE iid)
 {
 	rb_check_frozen(self);
-	int cidx(NUM2INT(idx));
+	int cidx(RB_NUM2INT(idx));
 
 	if(check_index(cidx,_self->GetPageCount()))
 	{
-		int ciid(NUM2INT(iid));
+		int ciid(RB_NUM2INT(iid));
 		wxImageList *imglist = _self->GetImageList();
 		if(imglist && check_index(ciid,imglist->GetImageCount()))
 		{
@@ -200,7 +200,7 @@ DLL_LOCAL bool check_imagelist(wxBookCtrlBase* self, VALUE imageid, int& iid)
 	if(NIL_P(imageid))
 		return true;
 
-	iid = NUM2INT(imageid);
+	iid = RB_NUM2INT(imageid);
 	wxImageList *imglist = self->GetImageList();
 	if(imglist)
 		return check_index(iid,imglist->GetImageCount());
@@ -303,7 +303,7 @@ DLL_LOCAL VALUE _insertPage(int argc,VALUE *argv,VALUE self)
 
 	rb_check_frozen(self);
 
-	int cidx = NUM2INT(idx);
+	int cidx = RB_NUM2INT(idx);
 	if(check_index(cidx,_self->GetPageCount()+1))
 	{
 		if(!NIL_P(select))
@@ -377,7 +377,7 @@ DLL_LOCAL VALUE _prependPage(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL VALUE _deletePage(VALUE self,VALUE idx)
 {
 	rb_check_frozen(self);
-	int cidx = NUM2INT(idx);
+	int cidx = RB_NUM2INT(idx);
 	if(check_index(cidx,_self->GetPageCount()))
 	{
 		wxWindow *w = _self->GetPage(cidx);
@@ -603,10 +603,10 @@ DLL_LOCAL void Init_WXBookCtrl(VALUE rb_mWX)
 	rb_define_method(rb_cWXBookCtrlBase,"next_page",RUBY_METHOD_FUNC(_AdvanceSelection),0);
 	rb_define_method(rb_cWXBookCtrlBase,"prev_page",RUBY_METHOD_FUNC(_prev_page),0);
 
-	rb_define_const(rb_cWXBookCtrlBase,"TOP",INT2NUM(wxBK_TOP));
-	rb_define_const(rb_cWXBookCtrlBase,"BOTTOM",INT2NUM(wxBK_BOTTOM));
-	rb_define_const(rb_cWXBookCtrlBase,"LEFT",INT2NUM(wxBK_LEFT));
-	rb_define_const(rb_cWXBookCtrlBase,"RIGHT",INT2NUM(wxBK_RIGHT));
+	rb_define_const(rb_cWXBookCtrlBase,"TOP",RB_INT2NUM(wxBK_TOP));
+	rb_define_const(rb_cWXBookCtrlBase,"BOTTOM",RB_INT2NUM(wxBK_BOTTOM));
+	rb_define_const(rb_cWXBookCtrlBase,"LEFT",RB_INT2NUM(wxBK_LEFT));
+	rb_define_const(rb_cWXBookCtrlBase,"RIGHT",RB_INT2NUM(wxBK_RIGHT));
 
 	rb_define_attr_method(rb_cWXBookCtrlEvent,"selection",Event::_getSelection,Event::_setSelection);
 	rb_define_attr_method(rb_cWXBookCtrlEvent,"old_selection",Event::_getOldSelection,Event::_setOldSelection);

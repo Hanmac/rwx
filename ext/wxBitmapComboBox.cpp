@@ -299,15 +299,15 @@ DLL_LOCAL void Init_WXBitmapComboBox(VALUE rb_mWX)
 	}
 
 	//define Choice constants
-	rb_define_const(rb_cWXBitmapComboBox,"SORT",INT2NUM(wxCB_SORT));
-	rb_define_const(rb_cWXBitmapComboBox,"READONLY",INT2NUM(wxCB_READONLY));
-	rb_define_const(rb_cWXBitmapComboBox,"DROPDOWN",INT2NUM(wxCB_DROPDOWN));
+	rb_define_const(rb_cWXBitmapComboBox,"SORT",RB_INT2NUM(wxCB_SORT));
+	rb_define_const(rb_cWXBitmapComboBox,"READONLY",RB_INT2NUM(wxCB_READONLY));
+	rb_define_const(rb_cWXBitmapComboBox,"DROPDOWN",RB_INT2NUM(wxCB_DROPDOWN));
 
 	//define TextCtrl constants
-	rb_define_const(rb_cWXBitmapComboBox,"MULTILINE",INT2NUM(wxTE_MULTILINE));
-	rb_define_const(rb_cWXBitmapComboBox,"PROCESS_TAB",INT2NUM(wxTE_PROCESS_TAB));
-	rb_define_const(rb_cWXBitmapComboBox,"PROCESS_ENTER",INT2NUM(wxTE_PROCESS_ENTER));
-	rb_define_const(rb_cWXBitmapComboBox,"PASSWORD",INT2NUM(wxTE_PASSWORD));
+	rb_define_const(rb_cWXBitmapComboBox,"MULTILINE",RB_INT2NUM(wxTE_MULTILINE));
+	rb_define_const(rb_cWXBitmapComboBox,"PROCESS_TAB",RB_INT2NUM(wxTE_PROCESS_TAB));
+	rb_define_const(rb_cWXBitmapComboBox,"PROCESS_ENTER",RB_INT2NUM(wxTE_PROCESS_ENTER));
+	rb_define_const(rb_cWXBitmapComboBox,"PASSWORD",RB_INT2NUM(wxTE_PASSWORD));
 
 	registerInfo<wxBitmapComboBox>(rb_cWXBitmapComboBox);
 

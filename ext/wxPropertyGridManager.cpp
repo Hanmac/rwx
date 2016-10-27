@@ -150,7 +150,7 @@ DLL_LOCAL VALUE _insert_page(int argc,VALUE *argv,VALUE self)
 
 	rb_check_frozen(self);
 
-	int cidx = NUM2INT(idx);
+	int cidx = RB_NUM2INT(idx);
 	if(check_index(cidx,_self->GetPageCount()))
 	{
 		wxPropertyGridPage* cpage = create_page(self,page,hash);
@@ -275,9 +275,9 @@ DLL_LOCAL void Init_WXPropertyGridManager(VALUE rb_mWX)
 	rb_define_method(rb_cWXPropertyGridManager,"insert_page",RUBY_METHOD_FUNC(_insert_page),-1);
 	rb_define_method(rb_cWXPropertyGridManager,"each_page",RUBY_METHOD_FUNC(_each),0);
 
-	rb_define_const(rb_cWXPropertyGridManager,"DEFAULT_STYLE",INT2NUM(wxPGMAN_DEFAULT_STYLE));
-	rb_define_const(rb_cWXPropertyGridManager,"TOOLBAR",INT2NUM(wxPG_TOOLBAR));
-	rb_define_const(rb_cWXPropertyGridManager,"DESCRIPTION",INT2NUM(wxPG_DESCRIPTION));
+	rb_define_const(rb_cWXPropertyGridManager,"DEFAULT_STYLE",RB_INT2NUM(wxPGMAN_DEFAULT_STYLE));
+	rb_define_const(rb_cWXPropertyGridManager,"TOOLBAR",RB_INT2NUM(wxPG_TOOLBAR));
+	rb_define_const(rb_cWXPropertyGridManager,"DESCRIPTION",RB_INT2NUM(wxPG_DESCRIPTION));
 
 	registerInfo<wxPropertyGridManager>(rb_cWXPropertyGridManager);
 #endif

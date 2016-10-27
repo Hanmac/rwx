@@ -19,6 +19,28 @@
 VALUE rb_cWXGrid, rb_cWXGridEvent;
 #if wxUSE_GRID
 
+template <>
+VALUE wrap< wxGridCellCoords >(const wxGridCellCoords& coord)
+{
+	VALUE result = rb_ary_new();
+	rb_ary_push(result,RB_INT2NUM(coord.GetCol()));
+	rb_ary_push(result,RB_INT2NUM(coord.GetRow()));
+	return result;
+}
+
+
+template <>
+VALUE wrap< wxGridCellCoordsArray >(const wxGridCellCoordsArray &st )
+{
+	VALUE ary = rb_ary_new();
+
+	for(size_t i = 0; i < st.Count() ; ++i)
+	{
+		rb_ary_push(ary,wrap(st.Item(i)));
+	}
+	return ary;
+}
+
 #define _self unwrap<wxGrid*>(self)
 
 namespace RubyWX {
@@ -102,27 +124,27 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 }
 DLL_LOCAL VALUE _getRowSize(VALUE self,VALUE row)
 {
-	return INT2NUM(_self->GetRowSize(NUM2INT(row)));
+	return RB_INT2NUM(_self->GetRowSize(RB_NUM2INT(row)));
 }
 
 DLL_LOCAL VALUE _getColSize(VALUE self,VALUE row)
 {
-	return INT2NUM(_self->GetColSize(NUM2INT(row)));
+	return RB_INT2NUM(_self->GetColSize(RB_NUM2INT(row)));
 }
 
 DLL_LOCAL VALUE _getCellSize(VALUE self,VALUE x,VALUE y)
 {
-	return wrap(_self->GetCellSize(wxGridCellCoords(NUM2INT(x),NUM2INT(y))));
+	return wrap(_self->GetCellSize(wxGridCellCoords(RB_NUM2INT(x),RB_NUM2INT(y))));
 }
 
 DLL_LOCAL VALUE _getRowGridLinePen(VALUE self,VALUE row)
 {
-	return wrap(_self->GetRowGridLinePen(NUM2INT(row)));
+	return wrap(_self->GetRowGridLinePen(RB_NUM2INT(row)));
 }
 
 DLL_LOCAL VALUE _getColGridLinePen(VALUE self,VALUE row)
 {
-	return wrap(_self->GetColGridLinePen(NUM2INT(row)));
+	return wrap(_self->GetColGridLinePen(RB_NUM2INT(row)));
 }
 
 

@@ -18,28 +18,28 @@ RubyGridTable::RubyGridTable(VALUE klass) : wxGridTableBase()
 
 int RubyGridTable::GetNumberRows()
 {
-	return NUM2INT(rb_funcall(mRuby,rb_intern("rows"),0));
+	return RB_NUM2INT(rb_funcall(mRuby,rb_intern("rows"),0));
 }
 int RubyGridTable::GetNumberCols()
 {
-	return NUM2INT(rb_funcall(mRuby,rb_intern("cols"),0));
+	return RB_NUM2INT(rb_funcall(mRuby,rb_intern("cols"),0));
 }
 
 wxString RubyGridTable::GetValue( int row, int col )
 {
-	return unwrap<wxString>(rb_funcall(mRuby,rb_intern("[]"),2,INT2NUM(row),INT2NUM(col)));
+	return unwrap<wxString>(rb_funcall(mRuby,rb_intern("[]"),2,RB_INT2NUM(row),RB_INT2NUM(col)));
 }
 
 void RubyGridTable::SetValue( int row, int col, const wxString& value )
 {
-	rb_funcall(mRuby,rb_intern("[]="),3,INT2NUM(row),INT2NUM(col),wrap(value));
+	rb_funcall(mRuby,rb_intern("[]="),3,RB_INT2NUM(row),RB_INT2NUM(col),wrap(value));
 }
 
 
 
 wxString RubyGridTable::GetTypeName( int row, int col )
 {
-	return unwrap<wxString>(rb_funcall(mRuby,rb_intern("typename"),2,INT2NUM(row),INT2NUM(col)));
+	return unwrap<wxString>(rb_funcall(mRuby,rb_intern("typename"),2,RB_INT2NUM(row),RB_INT2NUM(col)));
 }
 
 void RubyGridTable::Clear()
@@ -49,28 +49,28 @@ void RubyGridTable::Clear()
 
 bool RubyGridTable::InsertRows( size_t pos, size_t numRows)
 {
-	return RTEST(rb_funcall(mRuby,rb_intern("insert_rows"),2,UINT2NUM(pos),UINT2NUM(numRows)));
+	return RTEST(rb_funcall(mRuby,rb_intern("insert_rows"),2,RB_UINT2NUM(pos),RB_UINT2NUM(numRows)));
 }
 
 bool RubyGridTable::AppendRows( size_t numRows)
 {
-	return RTEST(rb_funcall(mRuby,rb_intern("append_rows"),1,UINT2NUM(numRows)));
+	return RTEST(rb_funcall(mRuby,rb_intern("append_rows"),1,RB_UINT2NUM(numRows)));
 }
 bool RubyGridTable::DeleteRows( size_t pos, size_t numRows)
 {
-	return RTEST(rb_funcall(mRuby,rb_intern("delete_rows"),2,UINT2NUM(pos),UINT2NUM(numRows)));
+	return RTEST(rb_funcall(mRuby,rb_intern("delete_rows"),2,RB_UINT2NUM(pos),RB_UINT2NUM(numRows)));
 }
 bool RubyGridTable::InsertCols( size_t pos, size_t numCols)
 {
-	return RTEST(rb_funcall(mRuby,rb_intern("insert_cols"),2,UINT2NUM(pos),UINT2NUM(numCols)));
+	return RTEST(rb_funcall(mRuby,rb_intern("insert_cols"),2,RB_UINT2NUM(pos),RB_UINT2NUM(numCols)));
 }
 bool RubyGridTable::AppendCols( size_t numCols)
 {
-	return RTEST(rb_funcall(mRuby,rb_intern("append_cols"),1,UINT2NUM(numCols)));
+	return RTEST(rb_funcall(mRuby,rb_intern("append_cols"),1,RB_UINT2NUM(numCols)));
 }
 bool RubyGridTable::DeleteCols( size_t pos, size_t numCols)
 {
-	return RTEST(rb_funcall(mRuby,rb_intern("delete_cols"),2,UINT2NUM(pos),UINT2NUM(numCols)));
+	return RTEST(rb_funcall(mRuby,rb_intern("delete_cols"),2,RB_UINT2NUM(pos),RB_UINT2NUM(numCols)));
 }
 
 

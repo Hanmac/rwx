@@ -29,7 +29,7 @@ ref_countertype ref_counter;
 void rwx_refobject(VALUE object)
 {
 	if(ref_counter[object] == 0)
-		rb_hash_aset(global_holder,INT2NUM(object),object);
+		rb_hash_aset(global_holder,RB_INT2NUM(object),object);
 	ref_counter[object]++;
 }
 
@@ -38,7 +38,7 @@ bool rwx_unrefobject(VALUE object)
 	if(ref_counter[object] != 0)
 		ref_counter[object]--;
 	if(ref_counter[object] == 0) {
-		rb_hash_delete(global_holder,INT2NUM(object));
+		rb_hash_delete(global_holder,RB_INT2NUM(object));
 		return true;
 	}
 	return false;
@@ -327,18 +327,18 @@ wxDateTime unwrap< wxDateTime >(const VALUE &val )
 	wxDateTime result;
 	result.SetToCurrent();
 	result.MakeTimezone(
-		NUM2UINT(rb_funcall(val,rb_intern("gmt_offset"),0)) - 3600,
+		RB_NUM2UINT(rb_funcall(val,rb_intern("gmt_offset"),0)) - 3600,
 		RTEST(rb_funcall(val,rb_intern("dst?"),0))
 	);
 
 	result.Set(
-		NUM2UINT(rb_funcall(val,rb_intern("day"),0)),
-		(wxDateTime::Month)(NUM2UINT(rb_funcall(val,rb_intern("month"),0))-1),
-		NUM2UINT(rb_funcall(val,rb_intern("year"),0)),
-		NUM2UINT(rb_funcall(val,rb_intern("hour"),0)),
-		NUM2UINT(rb_funcall(val,rb_intern("min"),0)),
-		NUM2UINT(rb_funcall(val,rb_intern("sec"),0)),
-		NUM2UINT(rb_funcall(val,rb_intern("usec"),0)) / 1000
+		RB_NUM2UINT(rb_funcall(val,rb_intern("day"),0)),
+		(wxDateTime::Month)(RB_NUM2UINT(rb_funcall(val,rb_intern("month"),0))-1),
+		RB_NUM2UINT(rb_funcall(val,rb_intern("year"),0)),
+		RB_NUM2UINT(rb_funcall(val,rb_intern("hour"),0)),
+		RB_NUM2UINT(rb_funcall(val,rb_intern("min"),0)),
+		RB_NUM2UINT(rb_funcall(val,rb_intern("sec"),0)),
+		RB_NUM2UINT(rb_funcall(val,rb_intern("usec"),0)) / 1000
 	);
 	return result;
 }
@@ -359,7 +359,7 @@ VALUE wrapenum(const int &arg, const std::string& name)
 	enumtype::value_type &enummap = enumregister[name]->values;
 	enumtype::value_type::iterator it = enummap.find(arg);
 	if(it != enummap.end())
-		return ID2SYM(it->second);
+		return RB_ID2SYM(it->second);
 	bool found = false;
 
 	int carg(arg);
@@ -370,7 +370,7 @@ VALUE wrapenum(const int &arg, const std::string& name)
 		if((carg & it->first) != 0)
 		{
 			found = true;
-			rb_ary_push(result,ID2SYM(it->second));
+			rb_ary_push(result,RB_ID2SYM(it->second));
 			carg &= ~it->first;
 		}
 	}
@@ -385,9 +385,9 @@ int unwrapenum(const VALUE &arg, const std::string& name)
 		enumtype* etype = it->second;
 		if(NIL_P(arg))
 			return etype->defaults;
-		else if(SYMBOL_P(arg))
+		else if(RB_SYMBOL_P(arg))
 		{
-			ID id(SYM2ID(arg));
+			ID id(RB_SYM2ID(arg));
 
 			for(enumtype::value_type::iterator it2 = etype->values.begin();
 					it2 != etype->values.end();
@@ -480,7 +480,7 @@ bool check_file_saveable(const wxString& path)
 
 bool set_hash_option(VALUE hash,const char* name,VALUE& val)
 {
-	val = rb_hash_aref(hash,ID2SYM(rb_intern(name)));
+	val = rb_hash_aref(hash,RB_ID2SYM(rb_intern(name)));
 	return !NIL_P(val);
 }
 

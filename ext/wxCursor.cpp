@@ -27,7 +27,7 @@ wxCursor* unwrap< wxCursor* >(const VALUE &vbitmap)
 {
 	if(NIL_P(vbitmap))
 		return &wxNullCursor;
-	if(FIXNUM_P(vbitmap) || SYMBOL_P(vbitmap))
+	if(RB_FIXNUM_P(vbitmap) || RB_SYMBOL_P(vbitmap))
 	{
 		return new wxCursor(unwrapenum<wxStockCursor>(vbitmap));
 	}else if(rb_obj_is_kind_of(vbitmap,rb_cWXCursor))

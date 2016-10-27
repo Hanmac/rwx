@@ -120,9 +120,9 @@ DLL_LOCAL void Init_WXDirPickerWidget(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXDirPickerWidget,"path",_getPath,_setPath);
 
-	rb_define_const(rb_cWXDirPickerWidget,"DEFAULT_STYLE",INT2NUM(wxDIRBTN_DEFAULT_STYLE));
-	rb_define_const(rb_cWXDirPickerWidget,"MUST_EXIST",INT2NUM(wxDIRP_DIR_MUST_EXIST));
-	rb_define_const(rb_cWXDirPickerWidget,"CHANGE_DIR",INT2NUM(wxDIRP_CHANGE_DIR));
+	rb_define_const(rb_cWXDirPickerWidget,"DEFAULT_STYLE",RB_INT2NUM(wxDIRBTN_DEFAULT_STYLE));
+	rb_define_const(rb_cWXDirPickerWidget,"MUST_EXIST",RB_INT2NUM(wxDIRP_DIR_MUST_EXIST));
+	rb_define_const(rb_cWXDirPickerWidget,"CHANGE_DIR",RB_INT2NUM(wxDIRP_CHANGE_DIR));
 
 	registerInfo<wxDirPickerWidget>(rb_cWXDirPickerWidget);
 #endif

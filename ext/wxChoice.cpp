@@ -117,9 +117,9 @@ DLL_LOCAL void Init_WXChoice(VALUE rb_mWX)
 
 	rb_include_module(rb_cWXChoice,rb_mWXItemContainer);
 
-	rb_define_const(rb_cWXChoice,"SORT",INT2NUM(wxCB_SORT));
-	rb_define_const(rb_cWXChoice,"READONLY",INT2NUM(wxCB_READONLY));
-	rb_define_const(rb_cWXChoice,"DROPDOWN",INT2NUM(wxCB_DROPDOWN));
+	rb_define_const(rb_cWXChoice,"SORT",RB_INT2NUM(wxCB_SORT));
+	rb_define_const(rb_cWXChoice,"READONLY",RB_INT2NUM(wxCB_READONLY));
+	rb_define_const(rb_cWXChoice,"DROPDOWN",RB_INT2NUM(wxCB_DROPDOWN));
 
 	registerInfo<wxChoice>(rb_cWXChoice);
 	registerEventType("choice",wxEVT_CHOICE);

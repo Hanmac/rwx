@@ -80,7 +80,7 @@ DLL_LOCAL bool check_imagelist(wxAuiNotebook* self, VALUE imageid, int& iid)
 		return true;
 	if(rb_obj_is_kind_of(imageid,rb_cInteger))
 	{
-		iid = NUM2INT(imageid);
+		iid = RB_NUM2INT(imageid);
 		wxImageList *imglist = self->GetImageList();
 		if(imglist)
 			return check_index(iid,imglist->GetImageCount());
@@ -191,7 +191,7 @@ DLL_LOCAL VALUE _insertPage(int argc,VALUE *argv,VALUE self)
 
 	check_window(self,hash,window,w);
 
-	int cidx = NUM2INT(idx);
+	int cidx = RB_NUM2INT(idx);
 	if(check_index(cidx,_self->GetPageCount()+1))
 	{
 		int iid = -1;
@@ -390,17 +390,17 @@ DLL_LOCAL void Init_WXAuiNoteBookCtrl(VALUE rb_mWX)
 //	rb_define_method(rb_cWXAuiNotebook,"each_page",RUBY_METHOD_FUNC(_each),0);
 //	rb_define_method(rb_cWXAuiNotebook,"page",RUBY_METHOD_FUNC(_page),1);
 
-	rb_define_const(rb_cWXAuiNotebook,"TAB_SPLIT",INT2NUM(wxAUI_NB_TAB_SPLIT));
-	rb_define_const(rb_cWXAuiNotebook,"TAB_MOVE",INT2NUM(wxAUI_NB_TAB_MOVE));
-	rb_define_const(rb_cWXAuiNotebook,"TAB_EXTERNAL_MOVE",INT2NUM(wxAUI_NB_TAB_EXTERNAL_MOVE));
-	rb_define_const(rb_cWXAuiNotebook,"TAB_FIXED_WIDTH",INT2NUM(wxAUI_NB_TAB_FIXED_WIDTH));
-	rb_define_const(rb_cWXAuiNotebook,"SCROLLBUTTONS",INT2NUM(wxAUI_NB_SCROLL_BUTTONS));
-	rb_define_const(rb_cWXAuiNotebook,"WINDOWLIST_BUTTON",INT2NUM(wxAUI_NB_WINDOWLIST_BUTTON));
-	rb_define_const(rb_cWXAuiNotebook,"CLOSE_BUTTON",INT2NUM(wxAUI_NB_CLOSE_BUTTON));
-	rb_define_const(rb_cWXAuiNotebook,"CLOSE_ON_ACTIVE_TAB",INT2NUM(wxAUI_NB_CLOSE_ON_ACTIVE_TAB));
-	rb_define_const(rb_cWXAuiNotebook,"CLOSE_ON_ALL_TABS",INT2NUM(wxAUI_NB_CLOSE_ON_ALL_TABS));
-	rb_define_const(rb_cWXAuiNotebook,"MIDDLE_CLICK_CLOSE",INT2NUM(wxAUI_NB_MIDDLE_CLICK_CLOSE));
-	rb_define_const(rb_cWXAuiNotebook,"DEFAULT_STYLE",INT2NUM(wxAUI_NB_DEFAULT_STYLE));
+	rb_define_const(rb_cWXAuiNotebook,"TAB_SPLIT",RB_INT2NUM(wxAUI_NB_TAB_SPLIT));
+	rb_define_const(rb_cWXAuiNotebook,"TAB_MOVE",RB_INT2NUM(wxAUI_NB_TAB_MOVE));
+	rb_define_const(rb_cWXAuiNotebook,"TAB_EXTERNAL_MOVE",RB_INT2NUM(wxAUI_NB_TAB_EXTERNAL_MOVE));
+	rb_define_const(rb_cWXAuiNotebook,"TAB_FIXED_WIDTH",RB_INT2NUM(wxAUI_NB_TAB_FIXED_WIDTH));
+	rb_define_const(rb_cWXAuiNotebook,"SCROLLBUTTONS",RB_INT2NUM(wxAUI_NB_SCROLL_BUTTONS));
+	rb_define_const(rb_cWXAuiNotebook,"WINDOWLIST_BUTTON",RB_INT2NUM(wxAUI_NB_WINDOWLIST_BUTTON));
+	rb_define_const(rb_cWXAuiNotebook,"CLOSE_BUTTON",RB_INT2NUM(wxAUI_NB_CLOSE_BUTTON));
+	rb_define_const(rb_cWXAuiNotebook,"CLOSE_ON_ACTIVE_TAB",RB_INT2NUM(wxAUI_NB_CLOSE_ON_ACTIVE_TAB));
+	rb_define_const(rb_cWXAuiNotebook,"CLOSE_ON_ALL_TABS",RB_INT2NUM(wxAUI_NB_CLOSE_ON_ALL_TABS));
+	rb_define_const(rb_cWXAuiNotebook,"MIDDLE_CLICK_CLOSE",RB_INT2NUM(wxAUI_NB_MIDDLE_CLICK_CLOSE));
+	rb_define_const(rb_cWXAuiNotebook,"DEFAULT_STYLE",RB_INT2NUM(wxAUI_NB_DEFAULT_STYLE));
 
 	registerInfo<wxAuiNotebook>(rb_cWXAuiNotebook);
 

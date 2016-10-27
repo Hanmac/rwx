@@ -184,8 +184,8 @@ DLL_LOCAL void Init_WXSpinCtrlDouble(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXSpinCtrlDouble,"max",_GetMax,_setMax);
 
 	//from SpinButton
-	rb_define_const(rb_cWXSpinCtrlDouble,"ARROW_KEYS",INT2NUM(wxSP_ARROW_KEYS));
-	rb_define_const(rb_cWXSpinCtrlDouble,"WRAP",INT2NUM(wxSP_WRAP));
+	rb_define_const(rb_cWXSpinCtrlDouble,"ARROW_KEYS",RB_INT2NUM(wxSP_ARROW_KEYS));
+	rb_define_const(rb_cWXSpinCtrlDouble,"WRAP",RB_INT2NUM(wxSP_WRAP));
 
 	rb_define_attr_method(rb_cWXSpinDoubleEvent,"value",Event::_getValue,Event::_setValue);
 

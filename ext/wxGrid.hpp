@@ -17,26 +17,10 @@ void Init_WXGrid(VALUE rb_mWX);
 #include <wx/grid.h>
 
 template <>
-inline VALUE wrap< wxGridCellCoords >(const wxGridCellCoords& coord)
-{
-	VALUE result = rb_ary_new();
-	rb_ary_push(result,INT2NUM(coord.GetCol()));
-	rb_ary_push(result,INT2NUM(coord.GetRow()));
-	return result;
-}
-
+VALUE wrap< wxGridCellCoords >(const wxGridCellCoords& coord);
 
 template <>
-inline VALUE wrap< wxGridCellCoordsArray >(const wxGridCellCoordsArray &st )
-{
-	VALUE ary = rb_ary_new();
-
-	for(size_t i = 0; i < st.Count() ; ++i)
-	{
-		rb_ary_push(ary,wrap(st.Item(i)));
-	}
-	return ary;
-}
+VALUE wrap< wxGridCellCoordsArray >(const wxGridCellCoordsArray &st );
 
 #endif
 

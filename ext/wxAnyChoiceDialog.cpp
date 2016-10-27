@@ -86,7 +86,7 @@ DLL_LOCAL void Init_WXAnyChoiceDialog(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXAnyChoiceDialog,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 
-	rb_define_const(rb_cWXAnyChoiceDialog,"DEFAULT_STYLE",INT2NUM(wxCHOICEDLG_STYLE));
+	rb_define_const(rb_cWXAnyChoiceDialog,"DEFAULT_STYLE",RB_INT2NUM(wxCHOICEDLG_STYLE));
 
 
 	registerInfo<wxAnyChoiceDialog>(rb_cWXAnyChoiceDialog);

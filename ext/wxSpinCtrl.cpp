@@ -29,14 +29,14 @@ singlereturn(GetMin)
 DLL_LOCAL VALUE _setMin(VALUE self,VALUE val)
 {
 	rb_check_frozen(self);
-	_self->SetRange(NUM2INT(val),_self->GetMax());
+	_self->SetRange(RB_NUM2INT(val),_self->GetMax());
 	return val;
 }
 
 DLL_LOCAL VALUE _setMax(VALUE self,VALUE val)
 {
 	rb_check_frozen(self);
-	_self->SetRange(_self->GetMin(), NUM2INT(val));
+	_self->SetRange(_self->GetMin(), RB_NUM2INT(val));
 	return val;
 }
 
@@ -158,8 +158,8 @@ DLL_LOCAL void Init_WXSpinCtrl(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXSpinCtrl,"max",_GetMax,_setMax);
 
 	//from SpinButton
-	rb_define_const(rb_cWXSpinCtrl,"ARROW_KEYS",INT2NUM(wxSP_ARROW_KEYS));
-	rb_define_const(rb_cWXSpinCtrl,"WRAP",INT2NUM(wxSP_WRAP));
+	rb_define_const(rb_cWXSpinCtrl,"ARROW_KEYS",RB_INT2NUM(wxSP_ARROW_KEYS));
+	rb_define_const(rb_cWXSpinCtrl,"WRAP",RB_INT2NUM(wxSP_WRAP));
 
 	registerInfo<wxSpinCtrl>(rb_cWXSpinCtrl);
 

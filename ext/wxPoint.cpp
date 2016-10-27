@@ -52,8 +52,8 @@ wxRealPoint unwrap< wxRealPoint >(const VALUE &vpoint)
 		return point;
 	}else if(rb_obj_is_kind_of(vpoint, rb_cHash)){
 		wxRealPoint point;
-		point.x = NUM2DBL(rb_hash_aref(vpoint,ID2SYM(rwxID_x)));
-		point.y = NUM2DBL(rb_hash_aref(vpoint,ID2SYM(rwxID_y)));
+		point.x = NUM2DBL(rb_hash_aref(vpoint,RB_ID2SYM(rwxID_x)));
+		point.y = NUM2DBL(rb_hash_aref(vpoint,RB_ID2SYM(rwxID_y)));
 		return point;
 	}else if(!rb_obj_is_kind_of(vpoint, rb_cwxPoint) &&
 		rb_respond_to(vpoint,rwxID_x) &&
@@ -74,20 +74,20 @@ wxPoint unwrap< wxPoint >(const VALUE &vpoint)
 {
 	if(rb_obj_is_kind_of(vpoint, rb_cArray) && RARRAY_LEN(vpoint) == 2){
 		wxPoint point;
-		point.x = NUM2INT(RARRAY_AREF(vpoint,0));
-		point.y = NUM2INT(RARRAY_AREF(vpoint,1));
+		point.x = RB_NUM2INT(RARRAY_AREF(vpoint,0));
+		point.y = RB_NUM2INT(RARRAY_AREF(vpoint,1));
 		return point;
 	}else if(rb_obj_is_kind_of(vpoint, rb_cHash)){
 		wxPoint point;
-		point.x = NUM2INT(rb_hash_aref(vpoint,ID2SYM(rwxID_x)));
-		point.y = NUM2INT(rb_hash_aref(vpoint,ID2SYM(rwxID_y)));
+		point.x = RB_NUM2INT(rb_hash_aref(vpoint,RB_ID2SYM(rwxID_x)));
+		point.y = RB_NUM2INT(rb_hash_aref(vpoint,RB_ID2SYM(rwxID_y)));
 		return point;
 	}else if(!rb_obj_is_kind_of(vpoint, rb_cwxPoint) &&
 		rb_respond_to(vpoint,rwxID_x) &&
 		rb_respond_to(vpoint,rwxID_y)){
 		wxPoint point;
-		point.x = NUM2INT(rb_funcall(vpoint,rwxID_x,0));
-		point.y = NUM2INT(rb_funcall(vpoint,rwxID_y,0));
+		point.x = RB_NUM2INT(rb_funcall(vpoint,rwxID_x,0));
+		point.y = RB_NUM2INT(rb_funcall(vpoint,rwxID_y,0));
 		return point;
 	}else{
 		return *unwrap<wxRealPoint*>(vpoint);
@@ -204,11 +204,11 @@ DLL_LOCAL VALUE _getHash(VALUE self)
 {
 	st_index_t h = rb_hash_start(0);
 
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_get_x(self))));
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_get_y(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_get_x(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_get_y(self))));
 
 	h = rb_hash_end(h);
-	return LONG2FIX(h);
+	return RB_LONG2FIX(h);
 }
 
 

@@ -29,7 +29,7 @@ singlefunc(Unlink)
 
 #define macro_style_type(n,t) DLL_LOCAL VALUE _each_##n##_style_size(VALUE self)\
 {\
-	return UINT2NUM(_self->Get##t##StyleCount());\
+	return RB_UINT2NUM(_self->Get##t##StyleCount());\
 }\
 DLL_LOCAL VALUE _each_##n##_style(VALUE self)\
 {\

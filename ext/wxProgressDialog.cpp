@@ -76,7 +76,7 @@ DLL_LOCAL VALUE _update(int argc,VALUE *argv,VALUE self)
 	VALUE val,message;
 	rb_scan_args(argc, argv, "11",&val,&message);
 
-	int value = NUM2INT(val);
+	int value = RB_NUM2INT(val);
 
 	if(check_index(value,_self->GetRange()))
 		return wrap(_self->Update(value,unwrap<wxString>(message)));
@@ -150,14 +150,14 @@ DLL_LOCAL void Init_WXProgressDialog(VALUE rb_mWX)
 	rb_define_method(rb_cWXProgressDialog,"pulse",RUBY_METHOD_FUNC(_pulse),-1);
 
 
-	rb_define_const(rb_cWXProgressDialog,"CAN_ABORT",INT2NUM(wxPD_CAN_ABORT));
-	rb_define_const(rb_cWXProgressDialog,"APP_MODAL",INT2NUM(wxPD_APP_MODAL));
-	rb_define_const(rb_cWXProgressDialog,"AUTO_HIDE",INT2NUM(wxPD_AUTO_HIDE));
-	rb_define_const(rb_cWXProgressDialog,"ELAPSED_TIME",INT2NUM(wxPD_ELAPSED_TIME));
-	rb_define_const(rb_cWXProgressDialog,"ESTIMATED_TIME",INT2NUM(wxPD_ESTIMATED_TIME));
-	rb_define_const(rb_cWXProgressDialog,"SMOOTH",INT2NUM(wxPD_SMOOTH));
-	rb_define_const(rb_cWXProgressDialog,"REMAINING_TIME",INT2NUM(wxPD_REMAINING_TIME));
-	rb_define_const(rb_cWXProgressDialog,"CAN_SKIP",INT2NUM(wxPD_CAN_SKIP));
+	rb_define_const(rb_cWXProgressDialog,"CAN_ABORT",RB_INT2NUM(wxPD_CAN_ABORT));
+	rb_define_const(rb_cWXProgressDialog,"APP_MODAL",RB_INT2NUM(wxPD_APP_MODAL));
+	rb_define_const(rb_cWXProgressDialog,"AUTO_HIDE",RB_INT2NUM(wxPD_AUTO_HIDE));
+	rb_define_const(rb_cWXProgressDialog,"ELAPSED_TIME",RB_INT2NUM(wxPD_ELAPSED_TIME));
+	rb_define_const(rb_cWXProgressDialog,"ESTIMATED_TIME",RB_INT2NUM(wxPD_ESTIMATED_TIME));
+	rb_define_const(rb_cWXProgressDialog,"SMOOTH",RB_INT2NUM(wxPD_SMOOTH));
+	rb_define_const(rb_cWXProgressDialog,"REMAINING_TIME",RB_INT2NUM(wxPD_REMAINING_TIME));
+	rb_define_const(rb_cWXProgressDialog,"CAN_SKIP",RB_INT2NUM(wxPD_CAN_SKIP));
 
 #ifdef HAVE_WXPROGRESSDIALOG
 	registerInfo<wxProgressDialog>(rb_cWXProgressDialog);

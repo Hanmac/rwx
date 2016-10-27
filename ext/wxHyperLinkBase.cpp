@@ -101,7 +101,7 @@ DLL_LOCAL void Init_WXHyperLinkBase(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXHyperLinkBase,"url",_getURL,_setURL);
 	rb_define_attr_method(rb_cWXHyperLinkBase,"visited",_getVisited,_setVisited);
 
-	rb_define_const(rb_cWXHyperLinkBase,"DEFAULT_STYLE",INT2NUM(wxHL_DEFAULT_STYLE));
+	rb_define_const(rb_cWXHyperLinkBase,"DEFAULT_STYLE",RB_INT2NUM(wxHL_DEFAULT_STYLE));
 
 	registerType<wxHyperlinkCtrlBase>(rb_cWXHyperLinkBase);
 #endif

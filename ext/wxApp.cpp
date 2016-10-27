@@ -149,7 +149,7 @@ DLL_LOCAL VALUE _main_loop(VALUE self)
 {
 	wxChar* argv[] = { NULL};
 	int argc = 0;
-	return INT2NUM(wxEntry(argc, argv));
+	return RB_INT2NUM(wxEntry(argc, argv));
 }
 
 DLL_LOCAL VALUE _on_init(VALUE self)

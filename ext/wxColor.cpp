@@ -29,7 +29,7 @@ VALUE wrap< wxColor >(wxColor *color )
 template <>
 bool is_wrapable< wxColor >(const VALUE &vcolor)
 {
-	if(rb_obj_is_kind_of(vcolor, rb_cWXColor) || FIXNUM_P(vcolor)){
+	if(rb_obj_is_kind_of(vcolor, rb_cWXColor) || RB_FIXNUM_P(vcolor)){
 		return true;
 	}else if(rb_obj_is_kind_of(vcolor, rb_cString)){
 		wxLogNull logNo;
@@ -53,8 +53,8 @@ wxColor* unwrap< wxColor* >(const VALUE &vcolor)
 
 char to_col_part(const VALUE &val)
 {
-	if(FIXNUM_P(val))
-		return NUM2CHR(val);
+	if(RB_FIXNUM_P(val))
+		return RB_NUM2CHR(val);
 	else
 		return NUM2DBL(val) * 256;
 }
@@ -67,7 +67,7 @@ void set_color_part(char& cv,const VALUE &val, const ID &id)
 void set_color_part_hash(char& cv,const VALUE &val, const ID &id)
 {
 	VALUE tmp;
-	if((tmp = rb_hash_aref(val, ID2SYM(id))) != Qnil)
+	if((tmp = rb_hash_aref(val, RB_ID2SYM(id))) != Qnil)
 		cv = to_col_part(tmp);
 }
 
@@ -85,7 +85,7 @@ wxColor unwrap< wxColor >(const VALUE &vcolor)
 	//	if(NIL_P(vcolor))
 	//		return wxNullColour;
 
-	if(SYMBOL_P(vcolor)) {
+	if(RB_SYMBOL_P(vcolor)) {
 		app_protected();
 		wxSystemColour sys = unwrapenum<wxSystemColour>(vcolor);
 		wxColor col = wxSystemSettings::GetColour(sys);
@@ -99,8 +99,8 @@ wxColor unwrap< wxColor >(const VALUE &vcolor)
 		if(!col.IsOk())
 			not_valid(vcolor,rb_cWXColor);
 		return col;
-	}else if(FIXNUM_P(vcolor))
-		return wxColor(FIX2LONG(vcolor));
+	}else if(RB_FIXNUM_P(vcolor))
+		return wxColor(RB_FIX2LONG(vcolor));
 	else if(rb_obj_is_kind_of(vcolor, rb_cArray) && RARRAY_LEN(vcolor) >= 3 &&
 		RARRAY_LEN(vcolor) <= 4){
 		char red,green,blue,alpha(wxALPHA_OPAQUE);
@@ -194,8 +194,8 @@ DLL_LOCAL void init_values(wxColor *self, char &red, char &green, char &blue, ch
 DLL_LOCAL char val_to_char(VALUE val)
 {
 	char cval(0);
-	if(FIXNUM_P(val))
-		cval = NUM2CHR(val);
+	if(RB_FIXNUM_P(val))
+		cval = RB_NUM2CHR(val);
 	else
 		cval = NUM2DBL(val) * 256;
 	return cval;
@@ -204,9 +204,9 @@ DLL_LOCAL char val_to_char(VALUE val)
 #define attr(name,val) DLL_LOCAL VALUE _get##name(VALUE self)\
 {\
 	if(_self->IsOk())\
-		return CHR2FIX(_self->name());\
+		return RB_CHR2FIX(_self->name());\
 	else\
-		return CHR2FIX(0);\
+		return RB_CHR2FIX(0);\
 }\
 DLL_LOCAL VALUE _set##name(VALUE self,VALUE cval)\
 {\
@@ -227,9 +227,9 @@ attr(Blue,blue)
 DLL_LOCAL VALUE _getAlpha(VALUE self)
 {
 	if(_self->IsOk())
-		return CHR2FIX(_self->Alpha());
+		return RB_CHR2FIX(_self->Alpha());
 	else
-		return CHR2FIX(0);
+		return RB_CHR2FIX(0);
 }
 
 DLL_LOCAL VALUE _setAlpha(VALUE self,VALUE val)
@@ -322,10 +322,10 @@ DLL_LOCAL VALUE _inspect(VALUE self)
 {
 	return rb_sprintf( "%s(%d, %d, %d, %d)",
 		rb_obj_classname( self ),
-		FIX2INT(_getRed(self)),
-		FIX2INT(_getGreen(self)),
-		FIX2INT(_getBlue(self)),
-		FIX2INT(_getAlpha(self))
+		RB_FIX2INT(_getRed(self)),
+		RB_FIX2INT(_getGreen(self)),
+		RB_FIX2INT(_getBlue(self)),
+		RB_FIX2INT(_getAlpha(self))
 	);
 }
 
@@ -391,7 +391,7 @@ DLL_LOCAL VALUE _getHash(VALUE self)
 	}
 
 	h = rb_hash_end(h);
-	return LONG2FIX(h);
+	return RB_LONG2FIX(h);
 }
 
 struct equal_obj {
@@ -428,7 +428,7 @@ DLL_LOCAL VALUE _equal(VALUE self, VALUE other)
 DLL_LOCAL VALUE _class_get(VALUE self, VALUE name)
 {
 	wxColor col;
-	if(SYMBOL_P(name)) {
+	if(RB_SYMBOL_P(name)) {
 		if(ruby_app_inited)
 			col = wxSystemSettings::GetColour(unwrapenum<wxSystemColour>(name));
 	}else if(wxColourDatabase *database = wxTheColourDatabase) {

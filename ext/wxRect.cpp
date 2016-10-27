@@ -40,17 +40,17 @@ wxRect unwrap< wxRect >(const VALUE &vrect)
 {
 	if(rb_obj_is_kind_of(vrect, rb_cArray) && RARRAY_LEN(vrect) == 4 ){
 		wxRect rect;
-		rect.SetX(NUM2INT(RARRAY_AREF(vrect,0)));
-		rect.SetY(NUM2INT(RARRAY_AREF(vrect,1)));
-		rect.SetWidth(NUM2INT(RARRAY_AREF(vrect,2)));
-		rect.SetHeight(NUM2INT(RARRAY_AREF(vrect,3)));
+		rect.SetX(RB_NUM2INT(RARRAY_AREF(vrect,0)));
+		rect.SetY(RB_NUM2INT(RARRAY_AREF(vrect,1)));
+		rect.SetWidth(RB_NUM2INT(RARRAY_AREF(vrect,2)));
+		rect.SetHeight(RB_NUM2INT(RARRAY_AREF(vrect,3)));
 		return rect;
 	}else if(rb_obj_is_kind_of(vrect, rb_cHash)){
 		wxRect rect;
-		rect.SetX(NUM2INT(rb_hash_aref(vrect,ID2SYM(rwxID_x))));
-		rect.SetY(NUM2INT(rb_hash_aref(vrect,ID2SYM(rwxID_y))));
-		rect.SetWidth(NUM2INT(rb_hash_aref(vrect,ID2SYM(rwxID_width))));
-		rect.SetHeight(NUM2INT(rb_hash_aref(vrect,ID2SYM(rwxID_height))));
+		rect.SetX(RB_NUM2INT(rb_hash_aref(vrect,RB_ID2SYM(rwxID_x))));
+		rect.SetY(RB_NUM2INT(rb_hash_aref(vrect,RB_ID2SYM(rwxID_y))));
+		rect.SetWidth(RB_NUM2INT(rb_hash_aref(vrect,RB_ID2SYM(rwxID_width))));
+		rect.SetHeight(RB_NUM2INT(rb_hash_aref(vrect,RB_ID2SYM(rwxID_height))));
 		return rect;
 	}else if(!rb_obj_is_kind_of(vrect, rb_cWXRect) &&
 		rb_respond_to(vrect,rwxID_x) &&
@@ -58,11 +58,11 @@ wxRect unwrap< wxRect >(const VALUE &vrect)
 		rb_respond_to(vrect,rwxID_width) &&
 		rb_respond_to(vrect,rwxID_height)){
 		wxRect rect;
-		rect.SetX(NUM2INT(rb_funcall(vrect,rwxID_x,0)));
-		rect.SetY(NUM2INT(rb_funcall(vrect,rwxID_y,0)));
+		rect.SetX(RB_NUM2INT(rb_funcall(vrect,rwxID_x,0)));
+		rect.SetY(RB_NUM2INT(rb_funcall(vrect,rwxID_y,0)));
 
-		rect.SetWidth(NUM2INT(rb_funcall(vrect,rwxID_width,0)));
-		rect.SetHeight(NUM2INT(rb_funcall(vrect,rwxID_height,0)));
+		rect.SetWidth(RB_NUM2INT(rb_funcall(vrect,rwxID_width,0)));
+		rect.SetHeight(RB_NUM2INT(rb_funcall(vrect,rwxID_height,0)));
 		return rect;
 	}else{
 		return *unwrap<wxRect*>(vrect);
@@ -163,10 +163,10 @@ DLL_LOCAL VALUE _inspect(VALUE self)
 {
 	return rb_sprintf( "%s(%d, %d, %d, %d)",
 		rb_obj_classname( self ),
-		FIX2INT(_getX(self)),
-		FIX2INT(_getY(self)),
-		FIX2INT(_getWidth(self)),
-		FIX2INT(_getHeight(self)));
+		RB_FIX2INT(_getX(self)),
+		RB_FIX2INT(_getY(self)),
+		RB_FIX2INT(_getWidth(self)),
+		RB_FIX2INT(_getHeight(self)));
 }
 
 /*
@@ -223,7 +223,7 @@ DLL_LOCAL VALUE _getHash(VALUE self)
 	h = rb_hash_uint(h, _self->GetHeight());
 
 	h = rb_hash_end(h);
-	return LONG2FIX(h);
+	return RB_LONG2FIX(h);
 }
 
 struct equal_obj {
@@ -286,7 +286,7 @@ DLL_LOCAL VALUE _contains(int argc,VALUE *argv,VALUE self)
 			return wrap(_self->Contains(unwrap<wxPoint>(x)));
 		}
 	} else {
-		return wrap(_self->Contains(NUM2INT(x), NUM2INT(y)));
+		return wrap(_self->Contains(RB_NUM2INT(x), RB_NUM2INT(y)));
 	}
 }
 
@@ -330,10 +330,10 @@ DLL_LOCAL VALUE _inflate(int argc,VALUE *argv,VALUE self)
 		if(is_wrapable<wxSize>(x)) {
 			result->Inflate(unwrap<wxSize>(x));
 		} else {
-			result->Inflate(NUM2INT(x));
+			result->Inflate(RB_NUM2INT(x));
 		}
 	} else {
-		result->Inflate(NUM2INT(x), NUM2INT(y));
+		result->Inflate(RB_NUM2INT(x), RB_NUM2INT(y));
 	}
 	return wrapTypedPtr(result, rb_class_of(self));
 }
@@ -361,10 +361,10 @@ DLL_LOCAL VALUE _inflate_self(int argc,VALUE *argv,VALUE self)
 		if(is_wrapable<wxSize>(x)) {
 			_self->Inflate(unwrap<wxSize>(x));
 		} else {
-			_self->Inflate(NUM2INT(x));
+			_self->Inflate(RB_NUM2INT(x));
 		}
 	} else {
-		_self->Inflate(NUM2INT(x), NUM2INT(y));
+		_self->Inflate(RB_NUM2INT(x), RB_NUM2INT(y));
 	}
 	return self;
 }
@@ -393,10 +393,10 @@ DLL_LOCAL VALUE _deflate(int argc,VALUE *argv,VALUE self)
 		if(is_wrapable<wxSize>(x)) {
 			result->Deflate(unwrap<wxSize>(x));
 		} else {
-			result->Deflate(NUM2INT(x));
+			result->Deflate(RB_NUM2INT(x));
 		}
 	} else {
-		result->Deflate(NUM2INT(x), NUM2INT(y));
+		result->Deflate(RB_NUM2INT(x), RB_NUM2INT(y));
 	}
 	return wrapTypedPtr(result, rb_class_of(self));
 }
@@ -424,10 +424,10 @@ DLL_LOCAL VALUE _deflate_self(int argc,VALUE *argv,VALUE self)
 		if(is_wrapable<wxSize>(x)) {
 			_self->Deflate(unwrap<wxSize>(x));
 		} else {
-			_self->Deflate(NUM2INT(x));
+			_self->Deflate(RB_NUM2INT(x));
 		}
 	} else {
-		_self->Deflate(NUM2INT(x), NUM2INT(y));
+		_self->Deflate(RB_NUM2INT(x), RB_NUM2INT(y));
 	}
 	return self;
 }
@@ -453,7 +453,7 @@ DLL_LOCAL VALUE _offset(int argc,VALUE *argv,VALUE self)
 	if(NIL_P(y)) {
 		result->Offset(unwrap<wxPoint>(x));
 	} else {
-		result->Offset(NUM2INT(x), NUM2INT(y));
+		result->Offset(RB_NUM2INT(x), RB_NUM2INT(y));
 	}
 	return wrapTypedPtr(result, rb_class_of(self));
 }
@@ -479,7 +479,7 @@ DLL_LOCAL VALUE _offset_self(int argc,VALUE *argv,VALUE self)
 	if(NIL_P(y)) {
 		_self->Offset(unwrap<wxPoint>(x));
 	} else {
-		_self->Offset(NUM2INT(x), NUM2INT(y));
+		_self->Offset(RB_NUM2INT(x), RB_NUM2INT(y));
 	}
 	return self;
 }

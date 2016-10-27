@@ -102,8 +102,8 @@ DLL_LOCAL void Init_WXColorPickerWidget(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXColorPickerWidget,"color",_getColour,_setColour);
 
-	rb_define_const(rb_cWXColorPickerWidget,"DEFAULT_STYLE",INT2NUM(wxCLRBTN_DEFAULT_STYLE));
-	rb_define_const(rb_cWXColorPickerWidget,"SHOW_LABEL",INT2NUM(wxCLRBTN_SHOW_LABEL));
+	rb_define_const(rb_cWXColorPickerWidget,"DEFAULT_STYLE",RB_INT2NUM(wxCLRBTN_DEFAULT_STYLE));
+	rb_define_const(rb_cWXColorPickerWidget,"SHOW_LABEL",RB_INT2NUM(wxCLRBTN_SHOW_LABEL));
 
 	registerInfo<wxColourPickerWidget>(rb_cWXColorPickerWidget);
 #endif

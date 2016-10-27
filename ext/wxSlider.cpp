@@ -192,11 +192,11 @@ DLL_LOCAL void Init_WXSlider(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXSlider,"vertical?",RUBY_METHOD_FUNC(_IsVertical),0);
 
-	rb_define_const(rb_cWXSlider,"VERTICAL",INT2NUM(wxSL_VERTICAL));
-	rb_define_const(rb_cWXSlider,"INVERSE",INT2NUM(wxSL_INVERSE));
-	rb_define_const(rb_cWXSlider,"MIN_MAX_LABELS",INT2NUM(wxSL_MIN_MAX_LABELS));
-	rb_define_const(rb_cWXSlider,"VALUE_LABEL",INT2NUM(wxSL_VALUE_LABEL));
-	rb_define_const(rb_cWXSlider,"LABELS",INT2NUM(wxSL_LABELS));
+	rb_define_const(rb_cWXSlider,"VERTICAL",RB_INT2NUM(wxSL_VERTICAL));
+	rb_define_const(rb_cWXSlider,"INVERSE",RB_INT2NUM(wxSL_INVERSE));
+	rb_define_const(rb_cWXSlider,"MIN_MAX_LABELS",RB_INT2NUM(wxSL_MIN_MAX_LABELS));
+	rb_define_const(rb_cWXSlider,"VALUE_LABEL",RB_INT2NUM(wxSL_VALUE_LABEL));
+	rb_define_const(rb_cWXSlider,"LABELS",RB_INT2NUM(wxSL_LABELS));
 
 	registerEventType("slider", wxEVT_SLIDER,rb_cWXCommandEvent);
 

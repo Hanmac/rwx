@@ -28,7 +28,7 @@ DLL_LOCAL VALUE _setValue(VALUE self,VALUE other)
 {
 	rb_check_frozen(self);
 
-	int val = NUM2UINT(other);
+	int val = RB_NUM2UINT(other);
 	//extra check, because value can't be bigger than range
 	if(check_index(val,_self->GetRange()))
 		_self->SetValue(val);
@@ -158,8 +158,8 @@ DLL_LOCAL void Init_WXGauge(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXGauge,"vertical?",RUBY_METHOD_FUNC(_IsVertical),0);
 
-	rb_define_const(rb_cWXGauge,"VERTICAL",INT2NUM(wxGA_VERTICAL));
-	rb_define_const(rb_cWXGauge,"SMOOTH",INT2NUM(wxGA_SMOOTH));
+	rb_define_const(rb_cWXGauge,"VERTICAL",RB_INT2NUM(wxGA_VERTICAL));
+	rb_define_const(rb_cWXGauge,"SMOOTH",RB_INT2NUM(wxGA_SMOOTH));
 
 
 	registerInfo<wxGauge>(rb_cWXGauge);

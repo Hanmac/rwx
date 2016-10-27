@@ -60,7 +60,7 @@ DLL_LOCAL VALUE _load(int argc,VALUE *argv,VALUE self)
 	bool result;
 
 	if(NIL_P(nr))
-		nr = INT2NUM(-1);
+		nr = RB_INT2NUM(-1);
 
 #if wxUSE_STREAMS
 	if(!rb_respond_to(name,rb_intern("read")))
@@ -73,21 +73,21 @@ DLL_LOCAL VALUE _load(int argc,VALUE *argv,VALUE self)
 		file.MakeAbsolute(wxGetCwd());
 
 		if(NIL_P(mime)){
-			result = _self->LoadFile(file.GetFullPath(), wxBITMAP_TYPE_ANY, NUM2INT(nr));
-		}else if(SYMBOL_P(mime) || FIXNUM_P(mime)){
-//			result = _self->LoadFile(file.GetFullPath(),unwrap<wxBitmapType>(mime),NUM2INT(nr));
+			result = _self->LoadFile(file.GetFullPath(), wxBITMAP_TYPE_ANY, RB_NUM2INT(nr));
+		}else if(RB_SYMBOL_P(mime) || RB_FIXNUM_P(mime)){
+//			result = _self->LoadFile(file.GetFullPath(),unwrap<wxBitmapType>(mime),RB_NUM2INT(nr));
 		}else
-			result = _self->LoadFile(file.GetFullPath(),unwrap<wxString>(mime),NUM2INT(nr));
+			result = _self->LoadFile(file.GetFullPath(),unwrap<wxString>(mime),RB_NUM2INT(nr));
 #if wxUSE_STREAMS
 	}else{
 		RubyInputStream st(name);
 
 		if(NIL_P(mime)){
-			result = _self->LoadFile(st, wxBITMAP_TYPE_ANY, NUM2INT(nr));
-		}else if(SYMBOL_P(mime) || FIXNUM_P(mime)){
-//			result = _self->LoadFile(st,unwrap<wxBitmapType>(mime),NUM2INT(nr));
+			result = _self->LoadFile(st, wxBITMAP_TYPE_ANY, RB_NUM2INT(nr));
+		}else if(RB_SYMBOL_P(mime) || RB_FIXNUM_P(mime)){
+//			result = _self->LoadFile(st,unwrap<wxBitmapType>(mime),RB_NUM2INT(nr));
 		}else
-			result = _self->LoadFile(st,unwrap<wxString>(mime),NUM2INT(nr));
+			result = _self->LoadFile(st,unwrap<wxString>(mime),RB_NUM2INT(nr));
 	}
 #endif
 	return wrap(result);
@@ -118,8 +118,8 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	} else if(! rb_obj_is_kind_of(width, rb_cNumeric) || NIL_P(height) || !NIL_P(arg1))
 		_load(argc,argv,self);
 	else {
-		int cwidth = NUM2INT(width);
-		int cheight = NUM2INT(height);
+		int cwidth = RB_NUM2INT(width);
+		int cheight = RB_NUM2INT(height);
 
 		if(check_negative_size(cwidth, cheight)) {
 			_self->Create(cwidth, cheight);
@@ -220,8 +220,8 @@ DLL_LOCAL VALUE _get(int argc,VALUE *argv,VALUE self)
 			return _getSubImage(self, vy);
 
 		int x,y;
-		x = NUM2UINT(vx);
-		y = NUM2UINT(vy);
+		x = RB_NUM2UINT(vx);
+		y = RB_NUM2UINT(vy);
 
 		if(!check_inside(x,y, _self->GetSize()))
 			return Qnil;
@@ -303,7 +303,7 @@ DLL_LOCAL VALUE _set(int argc,VALUE *argv,VALUE self)
 				set_at_pos(vpoint.x, vpoint.y, _self, vy);
 			}
 		} else {
-			set_at_pos(NUM2UINT(vx), NUM2UINT(vy), _self, value);
+			set_at_pos(RB_NUM2UINT(vx), RB_NUM2UINT(vy), _self, value);
 		}
 	}
 
@@ -707,7 +707,7 @@ DLL_LOCAL VALUE _save(int argc,VALUE *argv,VALUE self)
 
 	if(NIL_P(mime)){
 		result = _self->SaveFile(file.GetFullPath());
-	}else if(SYMBOL_P(mime) || FIXNUM_P(mime)){
+	}else if(RB_SYMBOL_P(mime) || RB_FIXNUM_P(mime)){
 //		if(wxImage::FindHandler(unwrap<wxBitmapType>(mime)))
 //			result = _self->SaveFile(file.GetFullPath(),unwrap<wxBitmapType>(mime));
 //		else
@@ -733,7 +733,7 @@ DLL_LOCAL VALUE _save(int argc,VALUE *argv,VALUE self)
 */
 DLL_LOCAL VALUE _Blur(VALUE self, VALUE radius)
 {
-	return wrap(_self->Blur(NUM2INT(radius)));
+	return wrap(_self->Blur(RB_NUM2INT(radius)));
 }
 
 /*
@@ -749,7 +749,7 @@ DLL_LOCAL VALUE _Blur(VALUE self, VALUE radius)
 DLL_LOCAL VALUE _Blur_self(VALUE self, VALUE radius)
 {
 	rb_check_frozen(self);
-	_self->Paste(_self->Blur(NUM2INT(radius)), 0, 0);
+	_self->Paste(_self->Blur(RB_NUM2INT(radius)), 0, 0);
 	return self;
 }
 
@@ -765,7 +765,7 @@ DLL_LOCAL VALUE _Blur_self(VALUE self, VALUE radius)
 */
 DLL_LOCAL VALUE _BlurHorizontal(VALUE self, VALUE radius)
 {
-	return wrap(_self->BlurHorizontal(NUM2INT(radius)));
+	return wrap(_self->BlurHorizontal(RB_NUM2INT(radius)));
 }
 
 /*
@@ -781,7 +781,7 @@ DLL_LOCAL VALUE _BlurHorizontal(VALUE self, VALUE radius)
 DLL_LOCAL VALUE _BlurHorizontal_self(VALUE self, VALUE radius)
 {
 	rb_check_frozen(self);
-	_self->Paste(_self->BlurHorizontal(NUM2INT(radius)), 0, 0);
+	_self->Paste(_self->BlurHorizontal(RB_NUM2INT(radius)), 0, 0);
 	return self;
 }
 
@@ -797,7 +797,7 @@ DLL_LOCAL VALUE _BlurHorizontal_self(VALUE self, VALUE radius)
 */
 DLL_LOCAL VALUE _BlurVertical(VALUE self, VALUE radius)
 {
-	return wrap(_self->BlurVertical(NUM2INT(radius)));
+	return wrap(_self->BlurVertical(RB_NUM2INT(radius)));
 }
 
 /*
@@ -813,7 +813,7 @@ DLL_LOCAL VALUE _BlurVertical(VALUE self, VALUE radius)
 DLL_LOCAL VALUE _BlurVertical_self(VALUE self, VALUE radius)
 {
 	rb_check_frozen(self);
-	_self->Paste(_self->BlurVertical(NUM2INT(radius)), 0, 0);
+	_self->Paste(_self->BlurVertical(RB_NUM2INT(radius)), 0, 0);
 	return self;
 }
 
@@ -831,7 +831,7 @@ DLL_LOCAL VALUE _ConvertToDisabled(int argc,VALUE *argv,VALUE self)
 {
 	VALUE brightness;
 	rb_scan_args(argc, argv, "01",&brightness);
-	return wrap(_self->ConvertToDisabled(NUM2CHR(brightness)));
+	return wrap(_self->ConvertToDisabled(RB_NUM2CHR(brightness)));
 }
 
 /*
@@ -849,7 +849,7 @@ DLL_LOCAL VALUE _ConvertToDisabled_self(int argc,VALUE *argv,VALUE self)
 	VALUE brightness;
 	rb_scan_args(argc, argv, "01",&brightness);
 	rb_check_frozen(self);
-	_self->Paste(_self->ConvertToDisabled(NUM2CHR(brightness)), 0, 0);
+	_self->Paste(_self->ConvertToDisabled(RB_NUM2CHR(brightness)), 0, 0);
 	return self;
 }
 
@@ -1133,7 +1133,7 @@ DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 
 	VALUE val = RARRAY_AREF(data,2);
 	_self->Create(
-		NUM2UINT(RARRAY_AREF(data,0)),NUM2UINT(RARRAY_AREF(data,1)),
+		RB_NUM2UINT(RARRAY_AREF(data,0)),RB_NUM2UINT(RARRAY_AREF(data,1)),
 		(unsigned char*)StringValuePtr(val),alpha);
 
 	_setMask(self,RARRAY_AREF(data,4));

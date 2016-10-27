@@ -37,13 +37,13 @@ wxSize unwrap< wxSize >(const VALUE &vsize)
 {
 	if(rb_obj_is_kind_of(vsize, rb_cArray) && RARRAY_LEN(vsize) == 2 ){
 			wxSize size;
-			size.SetWidth(NUM2INT(RARRAY_AREF(vsize,0)));
-			size.SetHeight(NUM2INT(RARRAY_AREF(vsize,1)));
+			size.SetWidth(RB_NUM2INT(RARRAY_AREF(vsize,0)));
+			size.SetHeight(RB_NUM2INT(RARRAY_AREF(vsize,1)));
 			return size;
 	}else if(rb_obj_is_kind_of(vsize, rb_cHash)){
 		wxSize size;
-		size.SetWidth(NUM2INT(rb_hash_aref(vsize,ID2SYM(rwxID_width))));
-		size.SetHeight(NUM2INT(rb_hash_aref(vsize,ID2SYM(rwxID_height))));
+		size.SetWidth(RB_NUM2INT(rb_hash_aref(vsize,RB_ID2SYM(rwxID_width))));
+		size.SetHeight(RB_NUM2INT(rb_hash_aref(vsize,RB_ID2SYM(rwxID_height))));
 		return size;
 	}else if(rb_obj_is_kind_of(vsize, rb_cWXRect)){
 		return unwrapTypedPtr<wxRect>(vsize, rb_cWXRect)->GetSize();
@@ -51,8 +51,8 @@ wxSize unwrap< wxSize >(const VALUE &vsize)
 		rb_respond_to(vsize,rwxID_width) &&
 		rb_respond_to(vsize,rwxID_height)){
 		wxSize size;
-		size.SetWidth(NUM2INT(rb_funcall(vsize,rwxID_width,0)));
-		size.SetHeight(NUM2INT(rb_funcall(vsize,rwxID_height,0)));
+		size.SetWidth(RB_NUM2INT(rb_funcall(vsize,rwxID_width,0)));
+		size.SetHeight(RB_NUM2INT(rb_funcall(vsize,rwxID_height,0)));
 		return size;
 	}else{
 		return *unwrap<wxSize*>(vsize);
@@ -141,8 +141,8 @@ DLL_LOCAL VALUE _inspect(VALUE self)
 {
 	return rb_sprintf( "%s(%d, %d)",
 		rb_obj_classname( self ),
-		NUM2INT(_getWidth(self)),
-		NUM2INT(_getHeight(self)));
+		RB_NUM2INT(_getWidth(self)),
+		RB_NUM2INT(_getHeight(self)));
 }
 
 /*
@@ -193,7 +193,7 @@ DLL_LOCAL VALUE _getHash(VALUE self)
 	h = rb_hash_uint(h, _self->GetHeight());
 
 	h = rb_hash_end(h);
-	return LONG2FIX(h);
+	return RB_LONG2FIX(h);
 }
 
 struct equal_obj {
@@ -324,10 +324,10 @@ DLL_LOCAL VALUE _incBy(int argc,VALUE *argv,VALUE self)
 		if(is_wrapable<wxSize>(x)) {
 			result->IncBy(unwrap<wxSize>(x));
 		} else {
-			result->IncBy(NUM2INT(x));
+			result->IncBy(RB_NUM2INT(x));
 		}
 	} else {
-		result->IncBy(NUM2INT(x), NUM2INT(y));
+		result->IncBy(RB_NUM2INT(x), RB_NUM2INT(y));
 	}
 	return wrapTypedPtr(result, rb_class_of(self));
 }
@@ -356,10 +356,10 @@ DLL_LOCAL VALUE _incBy_self(int argc,VALUE *argv,VALUE self)
 		if(is_wrapable<wxSize>(x)) {
 			_self->IncBy(unwrap<wxSize>(x));
 		} else {
-			_self->IncBy(NUM2INT(x));
+			_self->IncBy(RB_NUM2INT(x));
 		}
 	} else {
-		_self->IncBy(NUM2INT(x), NUM2INT(y));
+		_self->IncBy(RB_NUM2INT(x), RB_NUM2INT(y));
 	}
 	return self;
 }
@@ -389,10 +389,10 @@ DLL_LOCAL VALUE _decBy(int argc,VALUE *argv,VALUE self)
 		if(is_wrapable<wxSize>(x)) {
 			result->DecBy(unwrap<wxSize>(x));
 		} else {
-			result->DecBy(NUM2INT(x));
+			result->DecBy(RB_NUM2INT(x));
 		}
 	} else {
-		result->DecBy(NUM2INT(x), NUM2INT(y));
+		result->DecBy(RB_NUM2INT(x), RB_NUM2INT(y));
 	}
 	return wrapTypedPtr(result, rb_class_of(self));
 }
@@ -421,10 +421,10 @@ DLL_LOCAL VALUE _decBy_self(int argc,VALUE *argv,VALUE self)
 		if(is_wrapable<wxSize>(x)) {
 			_self->DecBy(unwrap<wxSize>(x));
 		} else {
-			_self->DecBy(NUM2INT(x));
+			_self->DecBy(RB_NUM2INT(x));
 		}
 	} else {
-		_self->DecBy(NUM2INT(x), NUM2INT(y));
+		_self->DecBy(RB_NUM2INT(x), RB_NUM2INT(y));
 	}
 	return self;
 }

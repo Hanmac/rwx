@@ -144,8 +144,8 @@ DLL_LOCAL void Init_WXCheckBox(VALUE rb_mWX)
 	rb_define_method(rb_cWXCheckBox,"third_state?",RUBY_METHOD_FUNC(_Is3State),0);
 	rb_define_method(rb_cWXCheckBox,"third_state_user?",RUBY_METHOD_FUNC(_Is3rdStateAllowedForUser),0);
 
-	rb_define_const(rb_cWXCheckBox,"THIRD_STATE",INT2NUM(wxCHK_3STATE));
-	rb_define_const(rb_cWXCheckBox,"THIRD_STATE_USER",INT2NUM(wxCHK_ALLOW_3RD_STATE_FOR_USER));
+	rb_define_const(rb_cWXCheckBox,"THIRD_STATE",RB_INT2NUM(wxCHK_3STATE));
+	rb_define_const(rb_cWXCheckBox,"THIRD_STATE_USER",RB_INT2NUM(wxCHK_ALLOW_3RD_STATE_FOR_USER));
 
 	registerInfo<wxCheckBox>(rb_cWXCheckBox);
 	registerEventType("checkbox",wxEVT_CHECKBOX);

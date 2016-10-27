@@ -67,7 +67,7 @@ DLL_LOCAL bool check_imagelist(wxTreebook* self, VALUE imageid, int& iid)
 	if(NIL_P(imageid))
 		return true;
 
-	iid = NUM2INT(imageid);
+	iid = RB_NUM2INT(imageid);
 	wxImageList *imglist = self->GetImageList();
 	if(imglist)
 		return check_index(iid,imglist->GetImageCount());
@@ -161,7 +161,7 @@ DLL_LOCAL VALUE _insertSubPage(int argc,VALUE *argv,VALUE self)
 	check_imagelist(_self,imageid,iid);
 	check_window(self,hash,window,w);
 
-	return wrap(_self->InsertSubPage(NUM2INT(n),w,unwrap<wxString>(text),sel,iid));
+	return wrap(_self->InsertSubPage(RB_NUM2INT(n),w,unwrap<wxString>(text),sel,iid));
 }
 
 

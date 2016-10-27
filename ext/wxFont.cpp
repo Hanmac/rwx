@@ -127,7 +127,7 @@ DLL_LOCAL wxFontInfo to_info(VALUE size,VALUE hash)
 	if(is_wrapable< wxSize >(rsize))
 		val = wxFontInfo(unwrap<wxSize>(rsize));
 	else
-		val = wxFontInfo(NUM2INT(rsize));
+		val = wxFontInfo(RB_NUM2INT(rsize));
 
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
@@ -236,7 +236,7 @@ DLL_LOCAL VALUE _marshal_load(VALUE self,VALUE data)
 	data = rb_Array(data);
 
 	_self->Create(
-		NUM2INT(RARRAY_AREF(data,0)),
+		RB_NUM2INT(RARRAY_AREF(data,0)),
 		unwrapenum<wxFontFamily>(RARRAY_AREF(data,1)),
 		unwrapenum<wxFontStyle>(RARRAY_AREF(data,2)),
 		unwrapenum<wxFontWeight>(RARRAY_AREF(data,3)),
@@ -275,7 +275,7 @@ DLL_LOCAL VALUE _getHash(VALUE self)
 	h = rb_hash_uint(h, rb_str_hash(wrap(_self->GetFaceName())));
 
 	h = rb_hash_end(h);
-	return LONG2FIX(h);
+	return RB_LONG2FIX(h);
 }
 
 struct equal_obj {
@@ -319,7 +319,7 @@ DLL_LOCAL VALUE _class_get(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "41",&size,&family,&style,&weight,&underlined);
 	//TODO add refcounting
 	wxFont *font = wxTheFontList->FindOrCreateFont(
-		NUM2INT(size),
+		RB_NUM2INT(size),
 		unwrapenum<wxFontFamily>(family),
 		unwrapenum<wxFontStyle>(style),
 		unwrapenum<wxFontWeight>(weight),

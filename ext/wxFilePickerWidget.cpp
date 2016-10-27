@@ -127,13 +127,13 @@ DLL_LOCAL void Init_WXFilePickerWidget(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXFilePickerWidget,"path",_getPath,_setPath);
 
-	rb_define_const(rb_cWXFilePickerWidget,"OPEN",INT2NUM(wxFLP_OPEN));
-	rb_define_const(rb_cWXFilePickerWidget,"SAVE",INT2NUM(wxFLP_SAVE));
-	rb_define_const(rb_cWXFilePickerWidget,"OVERWRITE_PROMPT",INT2NUM(wxFLP_OVERWRITE_PROMPT));
-	rb_define_const(rb_cWXFilePickerWidget,"MUST_EXIST",INT2NUM(wxFLP_FILE_MUST_EXIST));
-	rb_define_const(rb_cWXFilePickerWidget,"CHANGE_DIR",INT2NUM(wxFLP_CHANGE_DIR));
+	rb_define_const(rb_cWXFilePickerWidget,"OPEN",RB_INT2NUM(wxFLP_OPEN));
+	rb_define_const(rb_cWXFilePickerWidget,"SAVE",RB_INT2NUM(wxFLP_SAVE));
+	rb_define_const(rb_cWXFilePickerWidget,"OVERWRITE_PROMPT",RB_INT2NUM(wxFLP_OVERWRITE_PROMPT));
+	rb_define_const(rb_cWXFilePickerWidget,"MUST_EXIST",RB_INT2NUM(wxFLP_FILE_MUST_EXIST));
+	rb_define_const(rb_cWXFilePickerWidget,"CHANGE_DIR",RB_INT2NUM(wxFLP_CHANGE_DIR));
 
-	rb_define_const(rb_cWXFilePickerWidget,"DEFAULT_STYLE",INT2NUM(wxFILEBTN_DEFAULT_STYLE));
+	rb_define_const(rb_cWXFilePickerWidget,"DEFAULT_STYLE",RB_INT2NUM(wxFILEBTN_DEFAULT_STYLE));
 
 	registerInfo<wxFilePickerWidget>(rb_cWXFilePickerWidget);
 #endif

@@ -112,7 +112,7 @@ DLL_LOCAL void Init_WXCollapsiblePane(VALUE rb_mWX)
 
 	rb_define_attr_method(rb_cWXCollapsiblePaneEvent,"collapsed",Event::_getCollapsed,Event::_setCollapsed);
 
-	rb_define_const(rb_cWXCollapsiblePane,"DEFAULT_STYLE",INT2NUM(wxCP_DEFAULT_STYLE));
+	rb_define_const(rb_cWXCollapsiblePane,"DEFAULT_STYLE",RB_INT2NUM(wxCP_DEFAULT_STYLE));
 
 	registerInfo<wxCollapsiblePane>(rb_cWXCollapsiblePane);
 

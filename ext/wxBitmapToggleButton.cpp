@@ -43,7 +43,7 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			VALUE temp;
 			set_hash_option(hash,"id",id,unwrapID);
 
-			temp = rb_hash_aref(hash,ID2SYM(rb_intern("bitmap")));
+			temp = rb_hash_aref(hash,RB_ID2SYM(rb_intern("bitmap")));
 			bitmap = wrapBitmap(temp,id,WRAP_BITMAP_ID,wxART_BUTTON);
 		}
 		

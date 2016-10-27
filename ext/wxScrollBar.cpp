@@ -31,7 +31,7 @@ VALUE _setThumbSize(VALUE self, VALUE val)
 	wxScrollBar* sb = _self;
 	sb->SetScrollbar(
 		sb->GetThumbPosition(),
-		NUM2INT(val),
+		RB_NUM2INT(val),
 		sb->GetRange(),
 		sb->GetPageSize()
 	);
@@ -156,7 +156,7 @@ DLL_LOCAL void Init_WXScrollBar(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXScrollBar,"vertical?",RUBY_METHOD_FUNC(_IsVertical),0);
 
-	rb_define_const(rb_cWXScrollBar,"VERTICAL",INT2NUM(wxSB_VERTICAL));
+	rb_define_const(rb_cWXScrollBar,"VERTICAL",RB_INT2NUM(wxSB_VERTICAL));
 
 	registerInfo<wxScrollBar>(rb_cWXScrollBar);
 #endif

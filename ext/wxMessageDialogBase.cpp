@@ -32,7 +32,7 @@ macro_attr(ExtendedMessage,wxString)
 
 wxMessageDialogBase::ButtonLabel unwrapButtonLabel(VALUE val)
 {
-	if(FIXNUM_P(val) || SYMBOL_P(val)){
+	if(RB_FIXNUM_P(val) || RB_SYMBOL_P(val)){
 		wxWindowID id = unwrapID(val);
 		if(wxIsStockID(id))
 			return id;

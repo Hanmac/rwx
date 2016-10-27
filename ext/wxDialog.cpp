@@ -163,7 +163,7 @@ DLL_LOCAL void Init_WXDialog(VALUE rb_mWX)
 #if wxUSE_STATTEXT
 	rb_define_method(rb_cWXDialog,"create_text_sizer",RUBY_METHOD_FUNC(_CreateTextSizer),1);
 #endif
-	rb_define_const(rb_cWXDialog,"DEFAULT_STYLE",INT2NUM(wxDEFAULT_DIALOG_STYLE));
+	rb_define_const(rb_cWXDialog,"DEFAULT_STYLE",RB_INT2NUM(wxDEFAULT_DIALOG_STYLE));
 
 
 	registerInfo<wxDialog>(rb_cWXDialog);

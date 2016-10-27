@@ -113,7 +113,7 @@ void check_style_flags(const int& style)
 VALUE _setFilterIndex(VALUE self,VALUE other)
 {
 	rb_check_frozen(self);
-	int filter(NUM2INT(other));
+	int filter(RB_NUM2INT(other));
 
 	if(check_filter_index(filter,_self->GetWildcard()))
 		_self->SetFilterIndex(filter);
@@ -266,12 +266,12 @@ DLL_LOCAL void Init_WXFileCtrlBase(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXFileCtrlBase,"filenames",_GetFilenames,NULL);
 	rb_define_attr_method(rb_cWXFileCtrlBase,"paths",_GetPaths,NULL);
 
-	rb_define_const(rb_cWXFileCtrlBase,"OPEN",INT2NUM(wxFC_OPEN));
-	rb_define_const(rb_cWXFileCtrlBase,"SAVE",INT2NUM(wxFC_SAVE));
-	rb_define_const(rb_cWXFileCtrlBase,"MULTIPLE",INT2NUM(wxFC_MULTIPLE));
-	rb_define_const(rb_cWXFileCtrlBase,"NOSHOWHIDDEN",INT2NUM(wxFC_NOSHOWHIDDEN));
+	rb_define_const(rb_cWXFileCtrlBase,"OPEN",RB_INT2NUM(wxFC_OPEN));
+	rb_define_const(rb_cWXFileCtrlBase,"SAVE",RB_INT2NUM(wxFC_SAVE));
+	rb_define_const(rb_cWXFileCtrlBase,"MULTIPLE",RB_INT2NUM(wxFC_MULTIPLE));
+	rb_define_const(rb_cWXFileCtrlBase,"NOSHOWHIDDEN",RB_INT2NUM(wxFC_NOSHOWHIDDEN));
 
-	rb_define_const(rb_cWXFileCtrlBase,"DEFAULT_STYLE",INT2NUM(wxFC_DEFAULT_STYLE));
+	rb_define_const(rb_cWXFileCtrlBase,"DEFAULT_STYLE",RB_INT2NUM(wxFC_DEFAULT_STYLE));
 	rb_define_const(rb_cWXFileCtrlBase,"DEFAULT_WILDCARD",wrap(wxString(wxFileSelectorDefaultWildcardStr)));
 
 	registerEventType("filectrl_selectionchanged",wxEVT_FILECTRL_SELECTIONCHANGED,rb_cWXFileCtrlEvent);

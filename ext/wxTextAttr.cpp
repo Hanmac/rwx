@@ -203,44 +203,44 @@ DLL_LOCAL VALUE _getHash(VALUE self)
 {
 	st_index_t h = rb_hash_start(0);
 
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getTextColour(self))));
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getBackgroundColour(self))));
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getAlignment(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getTextColour(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getBackgroundColour(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getAlignment(self))));
 
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getTabs(self))));
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getLeftIndent(self))));
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getRightIndent(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getTabs(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getLeftIndent(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getRightIndent(self))));
 
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getFontSize(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getFontSize(self))));
 
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getFontPointSize(self))));
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getFontPixelSize(self))));
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getFontStyle(self))));
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getFontWeight(self))));
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getFontFaceName(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getFontPointSize(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getFontPixelSize(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getFontStyle(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getFontWeight(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getFontFaceName(self))));
 
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getFontUnderlined(self))));
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getFontStrikethrough(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getFontUnderlined(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getFontStrikethrough(self))));
 
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getFontFamily(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getFontFamily(self))));
 
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getFont(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getFont(self))));
 
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getCharacterStyleName(self))));
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getParagraphStyleName(self))));
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getListStyleName(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getCharacterStyleName(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getParagraphStyleName(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getListStyleName(self))));
 
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getParagraphSpacingAfter(self))));
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getParagraphSpacingBefore(self))));
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getLineSpacing(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getParagraphSpacingAfter(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getParagraphSpacingBefore(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getLineSpacing(self))));
 
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getBulletStyle(self))));
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getBulletNumber(self))));
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getBulletText(self))));
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getBulletFont(self))));
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getBulletName(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getBulletStyle(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getBulletNumber(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getBulletText(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getBulletFont(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getBulletName(self))));
 
-	h = rb_hash_uint(h, NUM2LONG(rb_hash(_getURL(self))));
+	h = rb_hash_uint(h, RB_NUM2LONG(rb_hash(_getURL(self))));
 
 	h = rb_hash_end(h);
 	return LONG2FIX(h);

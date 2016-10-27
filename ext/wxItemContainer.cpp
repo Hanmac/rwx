@@ -121,7 +121,7 @@ DLL_LOCAL VALUE _Insert(VALUE self,VALUE idx,VALUE items)
 
 	if(!_self->IsSorted())
 	{
-		int cidx = NUM2INT(idx);
+		int cidx = RB_NUM2INT(idx);
 		if(check_index(cidx,_self->GetCount()+1))
 			_self->Insert(unwrap<wxArrayString>(items),cidx);
 	}else
@@ -158,7 +158,7 @@ DLL_LOCAL VALUE _Delete(VALUE self,VALUE idx)
 {
 	rb_check_frozen(self);
 
-	int cidx = NUM2INT(idx);
+	int cidx = RB_NUM2INT(idx);
 	if(check_index(cidx,_self->GetCount()))
 		_self->Delete(cidx);
 	return self;

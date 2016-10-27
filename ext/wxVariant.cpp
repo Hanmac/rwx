@@ -23,7 +23,7 @@ VALUE wrap< wxVariant >(const wxVariant &var)
 	else if(type == "arrstring")
 		return wrap(var.GetArrayString());
 	else if(type == "long")
-		return LONG2NUM(var.GetLong());
+		return RB_LONG2NUM(var.GetLong());
 	else if(type == "double")
 		return DBL2NUM(var.GetDouble());
 	else if(type == "wxFont")
@@ -51,7 +51,7 @@ wxVariant unwrapVariant(VALUE obj,const wxString &type)
 	else if(type == "bool")
 		result = RTEST(obj);
 	else if(type == "long")
-		result = NUM2LONG(obj);
+		result = RB_NUM2LONG(obj);
 	else if(type == "double")
 		result = NUM2DBL(obj);
 	else if(type == "wxFont")

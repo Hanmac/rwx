@@ -209,7 +209,6 @@ DLL_LOCAL void Init_WXPropertyGrid(VALUE rb_mWX)
 
 #if wxUSE_STATUSBAR
 	rb_define_attr_method(rb_cWXPropertyGrid,"status_bar",_GetStatusBar,0);
-
 #endif
 
 	rb_define_method(rb_cWXPropertyGrid,"caption_font",RUBY_METHOD_FUNC(_GetCaptionFont),0);
@@ -226,7 +225,7 @@ DLL_LOCAL void Init_WXPropertyGrid(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXPropertyGrid,"line_color",_getLineColour,_setLineColour);
 	rb_define_attr_method(rb_cWXPropertyGrid,"margin_color",_getMarginColour,_setMarginColour);
 
-	rb_define_const(rb_cWXPropertyGrid,"DEFAULT_STYLE",INT2NUM(wxPG_DEFAULT_STYLE));
+	rb_define_const(rb_cWXPropertyGrid,"DEFAULT_STYLE",RB_INT2NUM(wxPG_DEFAULT_STYLE));
 
 	registerInfo<wxPropertyGrid>(rb_cWXPropertyGrid);
 #endif

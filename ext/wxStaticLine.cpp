@@ -96,7 +96,7 @@ DLL_LOCAL void Init_WXStaticLine(VALUE rb_mWX)
 
 	rb_define_method(rb_cWXStaticLine,"vertical?",RUBY_METHOD_FUNC(_IsVertical),0);
 
-	rb_define_const(rb_cWXStaticLine,"VERTICAL",INT2NUM(wxLI_VERTICAL));
+	rb_define_const(rb_cWXStaticLine,"VERTICAL",RB_INT2NUM(wxLI_VERTICAL));
 
 	registerInfo<wxStaticLine>(rb_cWXStaticLine);
 #endif

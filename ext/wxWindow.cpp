@@ -45,26 +45,26 @@ VALUE wrapID(wxWindowID val)
 			it++)
 	{
 		if(it->second == val)
-			return ID2SYM(it->first);
+			return RB_ID2SYM(it->first);
 	}
 #if wxUSE_XRC
 	wxString str(wxXmlResource::FindXRCIDById(val));
 	if(!str.IsEmpty()) {
 		ID id = rb_intern(str.c_str());
 		idholder.insert(std::make_pair(id,val));
-		return ID2SYM(id);
+		return RB_ID2SYM(id);
 	}
 #endif
-	return INT2NUM(val);
+	return RB_INT2NUM(val);
 }
 
 wxWindowID unwrapID(const VALUE &val)
 {
 	if(NIL_P(val))
 		return wxID_ANY;
-	if(SYMBOL_P(val))
+	if(RB_SYMBOL_P(val))
 	{
-		ID id = SYM2ID(val);
+		ID id = RB_SYM2ID(val);
 		std::map<ID,wxWindowID>::iterator it = idholder.find(id);
 		if(it != idholder.end())
 			return it->second;
@@ -80,7 +80,7 @@ wxWindowID unwrapID(const VALUE &val)
 			return newid;
 		}
 	}else
-		return NUM2INT(val);
+		return RB_NUM2INT(val);
 }
 
 void registerID(const char *name,wxWindowID id)
@@ -135,8 +135,8 @@ macro_attr_enum(BackgroundStyle,wxBackgroundStyle)
 macro_attr(Font,wxFont)
 macro_attr(Cursor,wxCursor)
 
-macro_attr_with_func(WindowStyleFlag,LONG2NUM,NUM2LONG)
-macro_attr_with_func(ExtraStyle,LONG2NUM,NUM2LONG)
+macro_attr_with_func(WindowStyleFlag,RB_LONG2NUM,RB_NUM2LONG)
+macro_attr_with_func(ExtraStyle,RB_LONG2NUM,RB_NUM2LONG)
 
 #if wxUSE_VALIDATORS
 //macro_attr(Validator,wxValidator)
@@ -421,7 +421,7 @@ DLL_LOCAL VALUE _aui(VALUE self)
 
 DLL_LOCAL VALUE _each_size(VALUE self)
 {
-	return UINT2NUM(_self->GetChildren().GetCount());
+	return RB_UINT2NUM(_self->GetChildren().GetCount());
 }
 
 
@@ -480,7 +480,7 @@ DLL_LOCAL VALUE _FromDIP(VALUE self,VALUE value)
 	} else if(is_wrapable<wxPoint>(value)) {
 		return wrap(_self->FromDIP(unwrap<wxPoint>(value)));
 	} else {
-		return INT2NUM(wrap(_self->FromDIP(NUM2INT(value))));
+		return RB_INT2NUM(wrap(_self->FromDIP(RB_NUM2INT(value))));
 	}
 }
 #endif
@@ -494,7 +494,7 @@ DLL_LOCAL VALUE _ToDIP(VALUE self,VALUE value)
 	} else if(is_wrapable<wxPoint>(value)) {
 		return wrap(_self->ToDIP(unwrap<wxPoint>(value)));
 	} else {
-		return INT2NUM(wrap(_self->ToDIP(NUM2INT(value))));
+		return RB_INT2NUM(wrap(_self->ToDIP(RB_NUM2INT(value))));
 	}
 }
 #endif

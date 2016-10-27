@@ -112,8 +112,8 @@ DLL_LOCAL void Init_WXPickerBase(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXPickerBase,"text_ctrl_growable",_getTextCtrlGrowable,_setTextCtrlGrowable);
 	rb_define_attr_method(rb_cWXPickerBase,"picker_ctrl_growable",_getPickerCtrlGrowable,_setPickerCtrlGrowable);
 
-	rb_define_const(rb_cWXPickerBase,"USE_TEXTCTRL",INT2NUM(wxPB_USE_TEXTCTRL));
-	rb_define_const(rb_cWXPickerBase,"SMALL",INT2NUM(wxPB_SMALL));
+	rb_define_const(rb_cWXPickerBase,"USE_TEXTCTRL",RB_INT2NUM(wxPB_USE_TEXTCTRL));
+	rb_define_const(rb_cWXPickerBase,"SMALL",RB_INT2NUM(wxPB_SMALL));
 #endif
 
 }

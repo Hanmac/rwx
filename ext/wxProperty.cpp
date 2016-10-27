@@ -210,7 +210,7 @@ DLL_LOCAL VALUE _each_choice_count(VALUE self)
 {
 	const wxPGChoices& choices = _self->GetChoices();
 	if(!choices.IsOk())
-		return INT2FIX(0);
+		return RB_INT2FIX(0);
 
 	return wrap(choices.GetCount());
 }
@@ -301,7 +301,7 @@ DLL_LOCAL VALUE _add_choice(int argc,VALUE *argv,VALUE self)
 	int cvalue = wxPG_INVALID_VALUE;
 
 	if(!NIL_P(value))
-		cvalue = NUM2INT(value);
+		cvalue = RB_NUM2INT(value);
 
 	return _set_choice(_self,_self->AddChoice(unwrap<wxString>(label),cvalue),hash);
 
@@ -336,7 +336,7 @@ DLL_LOCAL VALUE _insert_choice(int argc,VALUE *argv,VALUE self)
 
 	int cvalue = wxPG_INVALID_VALUE;
 
-	int cidx = NUM2INT(idx);
+	int cidx = RB_NUM2INT(idx);
 
 	std::size_t size = 0;
 
@@ -345,7 +345,7 @@ DLL_LOCAL VALUE _insert_choice(int argc,VALUE *argv,VALUE self)
 		size = choices.GetCount();
 
 	if(!NIL_P(value))
-		cvalue = NUM2INT(value);
+		cvalue = RB_NUM2INT(value);
 
 	if(check_index(cidx,size+1))
 		return _set_choice(_self,_self->InsertChoice(unwrap<wxString>(label),cidx,cvalue),hash);
@@ -379,7 +379,7 @@ DLL_LOCAL VALUE _prepend_choice(int argc,VALUE *argv,VALUE self)
 	int cvalue = wxPG_INVALID_VALUE;
 
 	if(!NIL_P(value))
-		cvalue = NUM2INT(value);
+		cvalue = RB_NUM2INT(value);
 
 	return _set_choice(_self,_self->InsertChoice(unwrap<wxString>(label),0,cvalue),hash);
 
@@ -403,7 +403,7 @@ DLL_LOCAL VALUE _prepend_choice(int argc,VALUE *argv,VALUE self)
 DLL_LOCAL VALUE _delete_choice(VALUE self,VALUE idx)
 {
 
-	int cidx = NUM2INT(idx);
+	int cidx = RB_NUM2INT(idx);
 
 	std::size_t size = 0;
 
@@ -472,7 +472,7 @@ DLL_LOCAL VALUE _add_private_child(VALUE self,VALUE prop)
 */
 DLL_LOCAL VALUE _insert_child(VALUE self,VALUE idx,VALUE prop)
 {
-	int cidx = NUM2INT(idx);
+	int cidx = RB_NUM2INT(idx);
 
 	if(check_index(cidx,_self->GetChildCount()+1))
 		return wrap(_self->InsertChild(cidx,unwrap<wxPGProperty*>(prop)));

@@ -8,12 +8,12 @@
 #if wxUSE_STREAMS
 wxFileOffset RubyInputStream::OnSysSeek(wxFileOffset seek, wxSeekMode mode)
 {
-	return NUM2INT(rb_funcall(mRuby,rb_intern("seek"),2,INT2NUM(seek),INT2NUM(mode)));
+	return RB_NUM2INT(rb_funcall(mRuby,rb_intern("seek"),2,RB_INT2NUM(seek),RB_INT2NUM(mode)));
 }
 
 wxFileOffset RubyInputStream::OnSysTell() const
 {
-	return NUM2INT(rb_funcall(mRuby,rb_intern("tell"),0));
+	return RB_NUM2INT(rb_funcall(mRuby,rb_intern("tell"),0));
 }
 
 bool RubyInputStream::IsSeekable() const
@@ -33,7 +33,7 @@ bool RubyInputStream::CanRead() const
 
 size_t RubyInputStream::OnSysRead(void *buffer, size_t size)
 {
-	VALUE str = rb_funcall(mRuby,rb_intern("read"),1,INT2NUM(size));
+	VALUE str = rb_funcall(mRuby,rb_intern("read"),1,RB_INT2NUM(size));
 	size_t s = RSTRING_LEN(str);
 	memcpy(buffer, RSTRING_PTR(str), s);
 	return s;

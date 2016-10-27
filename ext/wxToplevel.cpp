@@ -172,20 +172,20 @@ DLL_LOCAL void Init_WXTopLevel(VALUE rb_mWX)
 	rb_define_attr_method(rb_cWXTopLevel, "iconized",_getIconized,_setIconized);
 	rb_define_attr_method(rb_cWXTopLevel, "fullscreen",_getFullScreen,_setFullScreen);
 
-	rb_define_const(rb_cWXTopLevel,"CAPTION",INT2NUM(wxCAPTION));
+	rb_define_const(rb_cWXTopLevel,"CAPTION",RB_INT2NUM(wxCAPTION));
 
-	rb_define_const(rb_cWXTopLevel,"STAY_ON_TOP",INT2NUM(wxSTAY_ON_TOP));
-	rb_define_const(rb_cWXTopLevel,"ICONIZE",INT2NUM(wxICONIZE));
-	rb_define_const(rb_cWXTopLevel,"MINIMIZE",INT2NUM(wxMINIMIZE));
-	rb_define_const(rb_cWXTopLevel,"MAXIMIZE",INT2NUM(wxMAXIMIZE));
-	rb_define_const(rb_cWXTopLevel,"CLOSE_BOX",INT2NUM(wxCLOSE_BOX));
+	rb_define_const(rb_cWXTopLevel,"STAY_ON_TOP",RB_INT2NUM(wxSTAY_ON_TOP));
+	rb_define_const(rb_cWXTopLevel,"ICONIZE",RB_INT2NUM(wxICONIZE));
+	rb_define_const(rb_cWXTopLevel,"MINIMIZE",RB_INT2NUM(wxMINIMIZE));
+	rb_define_const(rb_cWXTopLevel,"MAXIMIZE",RB_INT2NUM(wxMAXIMIZE));
+	rb_define_const(rb_cWXTopLevel,"CLOSE_BOX",RB_INT2NUM(wxCLOSE_BOX));
 
-	rb_define_const(rb_cWXTopLevel,"SYSTEM_MENU",INT2NUM(wxSYSTEM_MENU));
-	rb_define_const(rb_cWXTopLevel,"MINIMIZE_BOX",INT2NUM(wxMINIMIZE_BOX));
-	rb_define_const(rb_cWXTopLevel,"MAXIMIZE_BOX",INT2NUM(wxMAXIMIZE_BOX));
+	rb_define_const(rb_cWXTopLevel,"SYSTEM_MENU",RB_INT2NUM(wxSYSTEM_MENU));
+	rb_define_const(rb_cWXTopLevel,"MINIMIZE_BOX",RB_INT2NUM(wxMINIMIZE_BOX));
+	rb_define_const(rb_cWXTopLevel,"MAXIMIZE_BOX",RB_INT2NUM(wxMAXIMIZE_BOX));
 
-	rb_define_const(rb_cWXTopLevel,"TINY_CAPTION",INT2NUM(wxTINY_CAPTION));
-	rb_define_const(rb_cWXTopLevel,"RESIZE_BORDER",INT2NUM(wxRESIZE_BORDER));
+	rb_define_const(rb_cWXTopLevel,"TINY_CAPTION",RB_INT2NUM(wxTINY_CAPTION));
+	rb_define_const(rb_cWXTopLevel,"RESIZE_BORDER",RB_INT2NUM(wxRESIZE_BORDER));
 
 	registerInfo<wxTopLevelWindow>(rb_cWXTopLevel);
 }

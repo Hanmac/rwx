@@ -118,7 +118,7 @@ singlereturn_array(GetPaths, wxArrayString)
 VALUE _setFilterIndex(VALUE self,VALUE other)
 {
 	rb_check_frozen(self);
-	int filter(NUM2INT(other));
+	int filter(RB_NUM2INT(other));
 
 	if(check_filter_index(filter,_self->GetWildcard()))
 		_self->SetFilterIndex(filter);
@@ -251,18 +251,18 @@ DLL_LOCAL void Init_WXFileDialog(VALUE rb_mWX)
 	rb_define_module_function(rb_mWX,"load_dialog",RUBY_METHOD_FUNC(_loadFileSelector),-1);
 	rb_define_module_function(rb_mWX,"save_dialog",RUBY_METHOD_FUNC(_saveFileSelector),-1);
 
-	rb_define_const(rb_cWXFileDialog,"OPEN",INT2NUM(wxFD_OPEN));
-	rb_define_const(rb_cWXFileDialog,"SAVE",INT2NUM(wxFD_SAVE));
-	rb_define_const(rb_cWXFileDialog,"OVERWRITE_PROMPT",INT2NUM(wxFD_OVERWRITE_PROMPT));
+	rb_define_const(rb_cWXFileDialog,"OPEN",RB_INT2NUM(wxFD_OPEN));
+	rb_define_const(rb_cWXFileDialog,"SAVE",RB_INT2NUM(wxFD_SAVE));
+	rb_define_const(rb_cWXFileDialog,"OVERWRITE_PROMPT",RB_INT2NUM(wxFD_OVERWRITE_PROMPT));
 #ifdef HAVE_CONST_WXFD_NO_FOLLOW
-	rb_define_const(rb_cWXFileDialog,"NO_FOLLOW",INT2NUM(wxFD_NO_FOLLOW));
+	rb_define_const(rb_cWXFileDialog,"NO_FOLLOW",RB_INT2NUM(wxFD_NO_FOLLOW));
 #endif
-	rb_define_const(rb_cWXFileDialog,"MUST_EXIST",INT2NUM(wxFD_FILE_MUST_EXIST));
-	rb_define_const(rb_cWXFileDialog,"MULTIPLE",INT2NUM(wxFD_MULTIPLE));
-	rb_define_const(rb_cWXFileDialog,"CHANGE_DIR",INT2NUM(wxFD_CHANGE_DIR));
-	rb_define_const(rb_cWXFileDialog,"PREVIEW",INT2NUM(wxFD_PREVIEW));
+	rb_define_const(rb_cWXFileDialog,"MUST_EXIST",RB_INT2NUM(wxFD_FILE_MUST_EXIST));
+	rb_define_const(rb_cWXFileDialog,"MULTIPLE",RB_INT2NUM(wxFD_MULTIPLE));
+	rb_define_const(rb_cWXFileDialog,"CHANGE_DIR",RB_INT2NUM(wxFD_CHANGE_DIR));
+	rb_define_const(rb_cWXFileDialog,"PREVIEW",RB_INT2NUM(wxFD_PREVIEW));
 
-	rb_define_const(rb_cWXFileDialog,"DEFAULT_STYLE",INT2NUM(wxFD_DEFAULT_STYLE));
+	rb_define_const(rb_cWXFileDialog,"DEFAULT_STYLE",RB_INT2NUM(wxFD_DEFAULT_STYLE));
 
 	registerInfo<wxFileDialog>(rb_cWXFileDialog);
 #endif

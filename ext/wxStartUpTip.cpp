@@ -10,14 +10,14 @@
 class DLL_LOCAL RubyTipProvider : public wxTipProvider
 {
 public:
-	RubyTipProvider(VALUE obj,VALUE i) : wxTipProvider(NUM2UINT(i)), mRuby(obj) {}
+	RubyTipProvider(VALUE obj,VALUE i) : wxTipProvider(RB_NUM2UINT(i)), mRuby(obj) {}
 
 	wxString GetTip() {
 		if(rb_respond_to(mRuby,rb_intern("to_a"))){
 
-			if(m_currentTip >= NUM2UINT(rb_funcall(mRuby,rb_intern("size"),0)))
+			if(m_currentTip >= RB_NUM2UINT(rb_funcall(mRuby,rb_intern("size"),0)))
 				m_currentTip = 0;
-			return unwrap<wxString>(rb_funcall(mRuby,rb_intern("[]"),1,UINT2NUM(m_currentTip++)));
+			return unwrap<wxString>(rb_funcall(mRuby,rb_intern("[]"),1,RB_UINT2NUM(m_currentTip++)));
 		}else
 			return unwrap<wxString>(mRuby);
 	}

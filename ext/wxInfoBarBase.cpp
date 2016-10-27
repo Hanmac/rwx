@@ -156,7 +156,7 @@ DLL_LOCAL VALUE _each_button(VALUE self)
 */
 DLL_LOCAL VALUE _getButton(VALUE self,VALUE idx)
 {
-	int cidx = NUM2INT(idx);
+	int cidx = RB_NUM2INT(idx);
 	if(check_index(cidx,_self->GetButtonCount()))
 		return wrapID(_self->GetButtonId(cidx));
 	return Qnil;

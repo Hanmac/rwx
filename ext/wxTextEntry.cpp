@@ -97,7 +97,7 @@ VALUE _getSelection(VALUE self)
 	long begin(0), end(0);
 
 	_self->GetSelection(&begin, &end);
-	return rb_range_new(LONG2NUM(begin), LONG2NUM(end), false);
+	return rb_range_new(RB_LONG2NUM(begin), RB_LONG2NUM(end), false);
 }
 
 VALUE _setSelection(VALUE self, VALUE range)
@@ -108,7 +108,7 @@ VALUE _setSelection(VALUE self, VALUE range)
 	int excl;
 
 	if(rb_range_values(range, &begin, &end, &excl))
-		_self->SetSelection(NUM2LONG(begin), NUM2LONG(end));
+		_self->SetSelection(RB_NUM2LONG(begin), RB_NUM2LONG(end));
 
 	return range;
 }

@@ -210,7 +210,7 @@ DLL_LOCAL VALUE _class_get(int argc,VALUE *argv,VALUE self)
 	//TODO add refcounting
 	wxPen *pen = wxThePenList->FindOrCreatePen(
 		unwrap<wxColor>(color),
-		NUM2INT(width),
+		RB_NUM2INT(width),
 		NIL_P(style) ? wxPENSTYLE_SOLID : unwrapenum<wxPenStyle>(style)
 	);
 
