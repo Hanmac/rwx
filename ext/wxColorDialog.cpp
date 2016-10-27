@@ -43,11 +43,12 @@ DLL_LOCAL VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		if(rb_obj_is_kind_of(hash,rb_cHash))
 		{
 			data = new wxColourData;
-			bool full, alpha;
+			bool full;
 
 			if(set_hash_option(hash,"full",full))
 				data->SetChooseFull(full);
 #ifdef HAVE_WXCOLOURDATA_GETCHOOSEALPHA
+			bool alpha;
 			if(set_hash_option(hash,"alpha",alpha))
 				data->SetChooseAlpha(alpha);
 #endif
@@ -168,7 +169,7 @@ DLL_LOCAL VALUE _getUserColor(int argc,VALUE *argv,VALUE self)
 	if(rb_obj_is_kind_of(hash,rb_cHash))
 	{
 		data = new wxColourData;
-		bool full, alpha;
+		bool full;
 
 		set_hash_option(hash,"color",caption);
 		set_hash_option(hash,"caption",caption);
@@ -177,6 +178,7 @@ DLL_LOCAL VALUE _getUserColor(int argc,VALUE *argv,VALUE self)
 			data->SetChooseFull(full);
 
 #ifdef HAVE_WXCOLOURDATA_GETCHOOSEALPHA
+		bool alpha;
 		if(set_hash_option(hash,"alpha",alpha))
 			data->SetChooseAlpha(alpha);
 #endif
