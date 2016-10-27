@@ -136,6 +136,9 @@
 #ifndef RB_NUM2CHR
 #define RB_NUM2CHR NUM2CHR
 #endif
+#ifndef RB_CHR2FIX
+#define RB_CHR2FIX CHR2FIX
+#endif
 
 #ifndef RB_SYMBOL_P
 #define RB_SYMBOL_P SYMBOL_P
