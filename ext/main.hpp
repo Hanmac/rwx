@@ -123,6 +123,8 @@
 
 #ifndef RB_LONG2FIX
 #define RB_LONG2FIX LONG2FIX
+#endif
+#ifndef RB_FIX2INT
 #define RB_FIX2INT FIX2INT
 #endif
 
