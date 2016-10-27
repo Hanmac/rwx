@@ -126,6 +126,7 @@
 #endif
 #ifndef RB_FIX2INT
 #define RB_FIX2INT FIX2INT
+#define RB_INT2FIX INT2FIX
 #endif
 
 #ifndef RB_SYMBOL_P
