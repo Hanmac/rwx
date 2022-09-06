@@ -40,14 +40,16 @@ if(wxversion = pkg_config('wx', 'version'))
 	end
 	
 	wxcc = pkg_config('wx', 'cc')
-	unless wxcc == ruby_cc
-		abort("CC compiler missmatch %s == %s" % [wxcc, ruby_cc])
-	end
+# there's no actual need to check "compiler compatibility" because Linux compilers make
+# compatible ABI calls anyway.
+#	unless wxcc == ruby_cc
+#		abort("CC compiler missmatch %s == %s" % [wxcc, ruby_cc])
+#	end
 	
 	wxcxx = pkg_config('wx', 'cxx')
-	unless wxcxx == ruby_cxx
-		abort("CXX compiler missmatch %s == %s" % [wxcxx, ruby_cxx])
-	end
+#	unless wxcxx == ruby_cxx
+#		abort("CXX compiler missmatch %s == %s" % [wxcxx, ruby_cxx])
+#	end
 	
 	#earlier versions of ruby does not have that constant
 	$CXXFLAGS = CONFIG["CXXFLAGS"] unless defined?($CXXFLAGS)
@@ -67,7 +69,7 @@ if(wxversion = pkg_config('wx', 'version'))
 		$CXXFLAGS << " " << pkg[0] if pkg && !$CXXFLAGS[pkg[0]]
 	}
 	
-	all = " -fvisibility-inlines-hidden"
+	all = " -fvisibility-inlines-hidden -fpermissive"
 	$CFLAGS << all << " -x c++ -g "
 	$CXXFLAGS << all << " -g "
 	$CPPFLAGS << all << " -g "
