@@ -69,7 +69,8 @@ if(wxversion = pkg_config('wx', 'version'))
 		$CXXFLAGS << " " << pkg[0] if pkg && !$CXXFLAGS[pkg[0]]
 	}
 	
-	all = " -fvisibility-inlines-hidden -fpermissive"
+	all = " -fvisibility-inlines-hidden"
+
 	$CFLAGS << all << " -x c++ -g "
 	$CXXFLAGS << all << " -g "
 	$CPPFLAGS << all << " -g "
