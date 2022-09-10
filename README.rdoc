@@ -15,3 +15,19 @@ gem
 
 == Description
 rwx is a ruby extension that was created after wxRuby died.
+
+=== Install instructions
+
+For Debian Bullseye, you need to install packages ruby, ruby-dev, rubygems, wx-common, libwxgtk3.0-gtk3-dev, libwxbase3.0-dev, libgtk-3-dev, libwxgtk-media3.0-gtk3-dev and dependencies.
+
+You also need gcc and g++.
+
+If compilers error occur, you probably need to install other libraries!
+
+Test the compilation:
+
+- go to the rwx directory and type "rake", see whether it goes well
+- if all goes well then type sudo gem build rwx.gemspec
+
+This will install rwx to your computer's gem repository.
+

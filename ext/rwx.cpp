@@ -225,10 +225,16 @@ VALUE rb_mWX;
 
 void rb_define_attr_method_base(VALUE klass,const std::string& name,VALUE(get)(ANYARGS),VALUE(set)(ANYARGS), bool missing = false)
 {
-	if(get)
-		rb_define_method(klass,name.c_str(),RUBY_METHOD_FUNC(get), missing ? -1 : 0);
-	if(set)
-		rb_define_method(klass,(name + "=").c_str(),RUBY_METHOD_FUNC(set), missing ? -1 : 1);
+    /* let's get this to compile: macro expects a constant */
+	if(get && missing)
+		rb_define_method(klass,name.c_str(),RUBY_METHOD_FUNC(get), -1);
+    else if (get && ! missing)
+		rb_define_method(klass,name.c_str(),RUBY_METHOD_FUNC(get), 0);    
+	if(set && missing)
+		rb_define_method(klass,(name + "=").c_str(),RUBY_METHOD_FUNC(set), -1);
+    else if (set && ! missing)
+		rb_define_method(klass,(name + "=").c_str(),RUBY_METHOD_FUNC(set), 1);
+
 }
 
 void rb_define_attr_method(VALUE klass,const std::string& name,VALUE(get)(VALUE),VALUE(set)(VALUE,VALUE))
